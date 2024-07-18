@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/idea-demo/static/css/main.5e20a4f0.css",
-    "main.js": "/idea-demo/static/js/main.5bf69a60.js",
+    "main.css": "/idea-demo/static/css/main.1cc7e4f0.css",
+    "main.js": "/idea-demo/static/js/main.b44c41e1.js",
     "static/js/453.5a1a5cc3.chunk.js": "/idea-demo/static/js/453.5a1a5cc3.chunk.js",
     "static/media/img-0.3.png": "/idea-demo/static/media/img-0.3.7dc8b54bb4dae264776a.png",
     "static/media/img-0.8.png": "/idea-demo/static/media/img-0.8.6f713cc02ac57a224fe6.png",
@@ -11,16 +11,22 @@
     "static/media/img-0.9.PNG": "/idea-demo/static/media/img-0.9.15f6a1bc51e7fc8a5aac.PNG",
     "static/media/img-0.11.PNG": "/idea-demo/static/media/img-0.11.a6440847c0a88e904f2d.PNG",
     "static/media/img-0.7.png": "/idea-demo/static/media/img-0.7.3620a3fe0896b772ab58.png",
+    "static/media/img-0.17.png": "/idea-demo/static/media/img-0.17.fc254ee6519ae50953aa.png",
+    "static/media/img-0.16.png": "/idea-demo/static/media/img-0.16.980c017207414944cdf3.png",
     "static/media/img-0.10.PNG": "/idea-demo/static/media/img-0.10.949051b5a67781389b92.PNG",
     "static/media/idea.png": "/idea-demo/static/media/idea.9e0f77205fd4396590ac.png",
     "static/media/img-0.2.jpg": "/idea-demo/static/media/img-0.2.80b5856a07dacb1d5ea9.jpg",
+    "static/media/img-0.12.png": "/idea-demo/static/media/img-0.12.aacef3a7dbcdf84ffc45.png",
+    "static/media/img-0.13.jpg": "/idea-demo/static/media/img-0.13.275c4970c389631f320d.jpg",
+    "static/media/img-0.15.webp": "/idea-demo/static/media/img-0.15.6645329ad81dd4410da0.webp",
+    "static/media/img-0.14.png": "/idea-demo/static/media/img-0.14.4a8dd0c579f75ac8a549.png",
     "index.html": "/idea-demo/index.html",
-    "main.5e20a4f0.css.map": "/idea-demo/static/css/main.5e20a4f0.css.map",
-    "main.5bf69a60.js.map": "/idea-demo/static/js/main.5bf69a60.js.map",
+    "main.1cc7e4f0.css.map": "/idea-demo/static/css/main.1cc7e4f0.css.map",
+    "main.b44c41e1.js.map": "/idea-demo/static/js/main.b44c41e1.js.map",
     "453.5a1a5cc3.chunk.js.map": "/idea-demo/static/js/453.5a1a5cc3.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5e20a4f0.css",
-    "static/js/main.5bf69a60.js"
+    "static/css/main.1cc7e4f0.css",
+    "static/js/main.b44c41e1.js"
   ]
 }

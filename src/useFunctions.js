@@ -55,14 +55,14 @@ export const useFunctions = () => {
   };
 
   
-    const handleInputChange = (event) => {
-      setSearchTerm(event.target.value);
-    };
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
   
-    const handleSearch = () => {
-      console.log('Search term:', searchTerm);
-      // Add your search logic here
-    };
+  const handleSearch = () => {
+    console.log('Search term:', searchTerm);
+    // Add your search logic here
+  };
 
     useEffect(()=>{
         const fetchText = async () => {

@@ -91,7 +91,7 @@ nav.hidden-nav {
   justify-content: space-between;
 }
 .dropdownMenu {
-  top: 5%;
+  top: 7%;
   right: 6%;
   position: absolute;
   background-color: white;
@@ -281,7 +281,7 @@ nav.hidden-nav {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -332,18 +332,18 @@ nav.hidden-nav {
 .logo {
   width: 100px;
   height: auto; /* Ensures logos maintain aspect ratio */
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  /* transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, background-color 0.3s ease-in-out; */
   border-radius: 10px; /* Adds rounded corners to logos */
   padding: 10px; /* Adds padding around the logos */
   background-color: white; /* Background color for padding */
 }
 
-.logo:hover {
+/* .logo:hover {
   transform: scale(1.5) rotate(360deg);
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-  background-color: #f0f0f0; /* Slight background color change on hover */
-  border: 2px solid #ddd; /* Border on hover */
-}
+  background-color: #f0f0f0; 
+  border: 2px solid #ddd; 
+} */
 
 /* footer */
 .footer {
@@ -355,6 +355,7 @@ nav.hidden-nav {
   display: flex;
   justify-content: flex-start;
   padding: 2%;
+  z-index: 10;
 }
 .footerLogo .nameLogo{
   color: #fff;
@@ -448,8 +449,8 @@ nav.hidden-nav {
     width: 89%;
   }
   .dropdownMenu{
-    top: 82%;
-    right: 60%;
+    top: 83%;
+    right: 58%;
   }
   .searchBox:hover::after {
     width: calc(100% - 50px); /* Extend the underline, accounting for padding */

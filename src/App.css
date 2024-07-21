@@ -77,22 +77,23 @@ nav.hidden-nav {
 }
 .navSearchLangUser{
   display: flex;
-  margin-right: 2%;
-  width: 60%;
-  align-items: center;
-  justify-content: flex-end;
-}
-.navlang {
-  display: flex;
-  cursor: pointer;
-  font-size: 20px;
-  margin-right: 4%;
+  width: 75%;
+  margin-right: 5%;
   align-items: center;
   justify-content: space-between;
 }
+.navlang {
+  position: relative;
+  display: flex;
+  font-size: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+.navlang svg{
+  cursor: pointer;
+}
 .dropdownMenu {
-  top: 7%;
-  right: 6%;
+  top: 1.6em;
   position: absolute;
   background-color: white;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
@@ -127,8 +128,7 @@ nav.hidden-nav {
   width: 100%;
 }
 .dropdown {
-  top: 1.7em;
-  right: -1em;
+  top: 1.6em;
   z-index: 5;
   display: flex;
   min-width: 120px;
@@ -157,7 +157,7 @@ nav.hidden-nav {
   margin: 5px 0px;
 }
 .Links a{
-  margin: 0 50px;
+  margin: 0 5%;
 }
 .Links a:hover{
   color: #0029A4;
@@ -166,12 +166,59 @@ nav.hidden-nav {
 
 /* SearchBox.css */
 .searchBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+}
+.searchContainer {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  width: 100%;
+}
+.searchInput {
+  border: none;
+  flex: 1;
+  outline: none;
+  border-radius: 25px;
+  width: 100%;
+}
+.iconButton {
+  background: none;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+.separator{
+  display: inline-block;
+  color: #ccc;
+  padding: 0 10px;
+}
+.searchContainer .iconButton:first-child {
+  margin-left: 10px;
+}
+.searchInput::-webkit-search-cancel-button {
+  -webkit-appearance: none; /* Remove default X button */
+  height: 20px;
+  width: 20px;
+  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICA8cGF0aCBmaWxsPSIjMDAwMDAwIiBkPSJNMTMuMzYgMy43OGEuNzQuNzQgMCAwIDAgMCAxLjA0TDEwLjA0IDguMGwzLjMyIDMuMzhhLjc0Ljc0IDAgMSAwIC0xLjA0IDEuMDRMOSA5LjA0bC0zLjM4IDMuMzJhLjc0Ljc0IDAgMSAwIC0xLjA0LTEuMDRMNy45NiA4IDQuNjQgNC42MmEuNzQuNzQgMCAxIDAgMS4wNC0xLjA0TDkgNy45NmwzLjM4LTMuMzhhLjc0Ljc0IDAgMCAwIDEuMDQtLjAwMDF6Ii8+Cjwvc3ZnPgo=');
+  background-size: contain;
+  cursor: pointer;
+}
+
+
+
+
+
+/* .searchBox {
   background: #fff;
   border-radius: 40px;
   display: flex;
   align-items: center;
   padding: 0 10px;
-  position: relative; /* Add relative positioning for the underline */
+  position: relative;
 }
 
 .searchBox::after {
@@ -182,11 +229,11 @@ nav.hidden-nav {
   height: 2px;
   width: 0;
   background: #000;
-  transition: width 0.4s; /* Animate the underline */
+  transition: width 0.4s; 
 }
 
 .searchBox:hover::after {
-  width: calc(100% - 20px); /* Extend the underline, accounting for padding */
+  width: calc(100% - 20px);
 }
 
 .searchButton {
@@ -198,27 +245,27 @@ nav.hidden-nav {
   justify-content: center;
   align-items: center;
   transition: 0.4s;
-  border: none; /* Remove the border */
-  outline: none; /* Remove the default outline */
+  border: none; 
+  outline: none;
 }
 
 .searchInput {
   border: none;
   background: none;
   outline: none;
-  color: #fff; /* Default text color when collapsed */
+  color: #fff; 
   font-size: 16px;
-  transition: width 0.4s; /* Animate width */
+  transition: width 0.4s; 
   line-height: 40px;
   width: 0px;
-  padding-left: 10px; /* Ensure padding for text */
+  padding-left: 10px; 
 }
 
 .searchBox:hover > .searchInput {
   width: 240px;
   padding: 0 6px;
   color: #000; 
-}
+} */
 
 /* side bar */
 .sideBarNav {
@@ -287,6 +334,10 @@ nav.hidden-nav {
 .WhoAreWeHeader {
   font-size: 2rem;
   font-weight: bold;
+}
+.WhoAreWeImg{
+  display: flex;
+  justify-content: center;
 }
 
 /* carousel section */
@@ -401,8 +452,8 @@ nav.hidden-nav {
   overflow: hidden;
   border-radius: 25px;
   cursor: pointer;
-  width: 500px; /* Adjust as needed */
-  height: 200px; /* Adjust as needed */
+  width: 300px; /* Adjust as needed */
+  height: 150px; /* Adjust as needed */
 }
 
 .IndustriesBox img {
@@ -520,9 +571,13 @@ nav.hidden-nav {
 }
 .form-control{
   width: 60% !important;
+  border-radius: 25px !important;
 }
 .SubscribeButton{
   width: 25%;
+  background-color: #D9D9D9;
+  color: #000;
+  border-radius: 25px !important;
 }
 .footerHeaderSection {
   border-bottom: solid 2px #fff;
@@ -584,6 +639,7 @@ nav.hidden-nav {
 }
 @media screen and (min-width:961px){
   .sideBartoggleButton{display: none;}
+  
 }
 
 @media screen and (max-width: 960px) {
@@ -594,20 +650,19 @@ nav.hidden-nav {
     font-size: 25px;
     width: 100%; /* Adjusted for better visibility */
   }
-  .searchBox:hover > .searchInput{
-    width: 89%;
-  }
-  .dropdownMenu{
-    top: 83%;
-    right: 58%;
-  }
+  .sideBarSearch {
+    display: flex;
+    justify-content: center;
+}
+.dropdownMenu {
+  top: -5em;
+  right: -1em;
+}
   .dropdown{
     top: -5.3em;
     right: -2.5em;
   }
-  .searchBox:hover::after {
-    width: calc(100% - 50px); /* Extend the underline, accounting for padding */
-  }
+  
   .footerContainer{
     display: flex;
     flex-direction: column;
@@ -664,12 +719,7 @@ nav.hidden-nav {
   .CompaniesStoriesContainer{
     padding: 13% 0%;
   }
-  .searchBox:hover > .searchInput{
-    width: 88%;
-  }
-  .searchBox:hover::after {
-    width: calc(100% - 20px); /* Extend the underline, accounting for padding */
-  }
+  
   .carousel-caption{
     left: 3%;
     width: 70%;

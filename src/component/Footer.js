@@ -13,7 +13,7 @@ library.add(fas, fab);
 function Footer() {
   return (
     <div className="footer">
-      <div className="container">
+      <div className="container-fluid">
         <div className="row">
           <div className="col-12 footerLogo">
             <Logo />

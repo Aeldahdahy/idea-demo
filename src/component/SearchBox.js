@@ -7,22 +7,25 @@ import { useFunctions } from '../useFunctions';
 library.add(fas);
 
 function SearchBox() {
-    const { searchTerm, handleInputChange, handleSearch } = useFunctions();
-  
-    return (
-      <form className="searchBox">
+  const { searchTerm, handleInputChange, handleSearch } = useFunctions();
+
+  return (
+    <form className="searchBox" onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+      <div className="searchContainer">
+        <button type="button" className="iconButton" onClick={handleSearch}>
+          <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
+        </button>
+        <span className="separator">|</span>
         <input
           className="searchInput"
-          type="text"
-          placeholder="Search"
+          type="search"
+          placeholder="Search..."
           value={searchTerm}
           onChange={handleInputChange}
-        />
-        <button className="searchButton" onClick={handleSearch}>
-            <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
-        </button>
-      </form>
-    );
+        />        
+      </div>
+    </form>
+  );
 }
 
 export default SearchBox;

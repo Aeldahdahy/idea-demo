@@ -11,12 +11,12 @@ function LanguageSelector() {
 
   return (
     <div className='navlang'> 
-      <FontAwesomeIcon icon="globe"  onMouseEnter={toggleDropdown}/>
+      <FontAwesomeIcon icon="globe" />
       {currentLanguage}
       {dropdownVisible ? (
-        <FontAwesomeIcon icon="angle-up"  onMouseEnter={toggleDropdown}/>
+        <FontAwesomeIcon icon="angle-up"  onClick={toggleDropdown} />
       ) : (
-        <FontAwesomeIcon icon="angle-down"  onMouseEnter={toggleDropdown}/>
+        <FontAwesomeIcon icon="angle-down"  onClick={toggleDropdown} />
       )}
       {dropdownVisible && (
         <div className='dropdownMenu'>

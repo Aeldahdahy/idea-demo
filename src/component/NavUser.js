@@ -49,7 +49,7 @@ function NavUser() {
             onClick={toggleDropdown}
           />
         ) : (
-          <FontAwesomeIcon icon="user" />
+          <FontAwesomeIcon icon="user"  onClick={toggleDropdown} />
         )}
       </div>
       {isDropdownOpen && (

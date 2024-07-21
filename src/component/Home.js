@@ -3,10 +3,17 @@ import WhoAreWe from './WhoAreWe';
 import Industries from './Industries';
 import CompaniesStories from './CompaniesStories';
 import PartnersFeatured from './PartnersFeatured';
+import CarouselMain from './CarouselMain';
+import Statistics from './Statistics';
+
 
 function Home() {
   return (
     <>
+      <CarouselMain />
+      <div className='spacemax'></div>
+      <Statistics />
+      <div className='spacemax'></div>
       <WhoAreWe />
       <div className='space'></div>
       <Industries />

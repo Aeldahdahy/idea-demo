@@ -29,7 +29,6 @@ function NavBar() {
         </div>
       </nav>
       <NavbarSide toggleSideBar={toggleSideBar} sideBarVisible={sideBarVisible} isFixed={isFixed} isVisible={isVisible} />
-      <div className='space'></div>
     </>
   );
 }

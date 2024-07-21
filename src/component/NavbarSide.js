@@ -1,5 +1,3 @@
-// File: NavbarSide.js
-
 import React from 'react';
 import SearchBox from './SearchBox';
 import LanguageSelector from './LanguageSelector';

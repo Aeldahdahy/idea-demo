@@ -3,10 +3,10 @@
   padding: 0;
 }
 body {
-  font-family: 'Signika', sans-serif;
+  font-family: 'Bitter', sans-serif;
 }
 h1,h2,h3,h4,h5,h6{
-  font-family: 'Bitter', sans-serif;
+  font-family: 'Signika', sans-serif;
 }
 .space{
   margin: 2%;
@@ -185,10 +185,7 @@ nav.hidden-nav {
   color: #000; 
 }
 
-
-
 /* side bar */
-
 .sideBarNav {
   top: 0;
   width: 50%;
@@ -257,7 +254,7 @@ nav.hidden-nav {
   font-weight: bold;
 }
 
-/* carousel section *//* Ensure the container has rounded corners */
+/* carousel section */
 .carousel-rounded-bottom-custom {
   position: relative;
   border-radius: 0 0 0 200px !important; /* Rounded bottom-left corner */
@@ -277,7 +274,7 @@ nav.hidden-nav {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.399);
   border-radius: 0 0 0 200px; /* Rounded bottom-left corner for overlay */
   z-index: 1;
 }
@@ -300,11 +297,18 @@ nav.hidden-nav {
   padding: 10px 25px;
   border: solid 1px #fff;
 }
-.carousel-caption h3, .carousel-caption p {
+.carousel-caption h1, .carousel-caption p {
   margin: 0;
 }
 .carousel-caption .btn {
   margin-top: 10px; /* Space between text and button */
+}
+.carousel-caption h1{
+  font-size: 5rem;
+}
+.carousel-caption p{
+  font-size: 1.5rem;
+  max-width: 50%;
 }
 
 /* Statistics section */
@@ -316,10 +320,11 @@ nav.hidden-nav {
   padding: 20px; /* Add padding for better spacing */
 }
 .Statistics-container h2 {
-  font-size: 1.8em;
+  font-size: 2em;
   color: #333; /* Dark text color for the heading */
-  margin-bottom: 20px; /* Spacing between heading and boxes */
-  max-width: 80%; /* Limit the width for better readability */
+  margin-bottom: 2%; /* Spacing between heading and boxes */
+  max-width: 50%;
+  font-weight: bold;
 }
 .StatisticsCon {
   display: flex;
@@ -354,9 +359,6 @@ nav.hidden-nav {
   color: #333; /* Dark text color for span */
   text-align: center;
 }
-
-
-
 
 /* Section Industries */
 .IndustriesBox {
@@ -533,6 +535,18 @@ nav.hidden-nav {
 
 
 /* responsive */
+@media screen and (max-width:1171px){
+  .carousel-caption h1{
+    font-size: 4rem;
+  }
+  .carousel-caption p{
+    font-size: 1.5rem;
+    max-width: 60%;
+  }
+  .Statistics-container h2{
+    max-width: 70%;
+  }
+}
 @media screen and (min-width:961px){
   .sideBartoggleButton{display: none;}
 }
@@ -569,6 +583,16 @@ nav.hidden-nav {
   .footerHeaderSection{
     margin-bottom: 3rem;
   }
+  .carousel-caption h1{
+    font-size: 3.2rem;
+  }
+  .carousel-caption p{
+    font-size: 1.5rem;
+    max-width: 70%;
+  }
+  .Statistics-container h2{
+    max-width: 90%;
+  }
 }
 
 @media screen and (max-width:768px) {
@@ -576,19 +600,25 @@ nav.hidden-nav {
     width: 150px; /* Adjust width for smaller screens */
     padding: 15px;
   }
-
   .box img {
     width: 60px;
     height: 60px;
   }
-
   .Statistics-container h2 {
-    font-size: 1.2em; /* Adjust font size for heading on smaller screens */
+    font-size: 1.2em;
+    max-width: 100%;
   }
-
   .box span {
     font-size: 0.9em;
   }
+  .carousel-caption h1{
+    font-size: 2.5rem;
+  }
+  .carousel-caption p{
+    font-size: 1rem;
+    max-width: 80%;
+  }
+
 }
 
 @media screen and (max-width:580px){
@@ -604,5 +634,15 @@ nav.hidden-nav {
   .carousel-caption{
     left: 3%;
     width: 70%;
+  }
+  .carousel-caption h1{
+    font-size: 2.5rem;
+  }
+  .carousel-caption p{
+    font-size: 1rem;
+    max-width: 80%;
+  }
+  .Statistics-container h2 {
+    font-size: 1em;
   }
 }

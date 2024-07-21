@@ -96,7 +96,7 @@ nav.hidden-nav {
   position: absolute;
   background-color: white;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 5;
 }
 .dropdownItem {
   padding: 8px 16px;
@@ -105,16 +105,51 @@ nav.hidden-nav {
 .dropdownItem:hover {
   background-color: #f1f1f1;
 }
+
 .navUser {
-  width: 29px;
+  width: 30px;
   height: 30px;
   display: flex;
   font-size: 20px;
   border-radius: 50%;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   border: solid 2px #000;
+  position: relative;
+  cursor: pointer;
 }
+.navUser svg{
+  position: absolute;
+  bottom: 0;
+  right: 17%;
+}
+.navUser img{
+  width: 100%;
+}
+.dropdown {
+  top: 1.7em;
+  right: -1em;
+  z-index: 5;
+  display: flex;
+  min-width: 120px;
+  position: absolute;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+.dropdown button {
+  padding: 8px 12px; /* Adjust padding as needed */
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: center;
+  width: 100%; /* Ensure button takes full width of dropdown */
+}
+.dropdown button:hover {
+  background-color: #f1f1f1;
+}
+
 .Links{
   width: 100%;
   display: flex;
@@ -565,6 +600,10 @@ nav.hidden-nav {
   .dropdownMenu{
     top: 83%;
     right: 58%;
+  }
+  .dropdown{
+    top: -5.3em;
+    right: -2.5em;
   }
   .searchBox:hover::after {
     width: calc(100% - 50px); /* Extend the underline, accounting for padding */

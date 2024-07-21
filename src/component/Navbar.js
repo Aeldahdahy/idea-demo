@@ -19,9 +19,7 @@ function NavBar() {
           <div className='navSearchLangUser'>
             <SearchBox />
             <LanguageSelector />
-            <div className='navUser'>
               <NavUser />
-            </div>
           </div>
         </div>
         <div className='Links'>

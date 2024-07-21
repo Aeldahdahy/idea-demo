@@ -10,7 +10,7 @@ function SearchBox() {
     const { searchTerm, handleInputChange, handleSearch } = useFunctions();
   
     return (
-      <div className="searchBox">
+      <form className="searchBox">
         <input
           className="searchInput"
           type="text"
@@ -21,7 +21,7 @@ function SearchBox() {
         <button className="searchButton" onClick={handleSearch}>
             <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
         </button>
-      </div>
+      </form>
     );
 }
 

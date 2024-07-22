@@ -102,6 +102,7 @@ nav.hidden-nav {
 .dropdownItem {
   padding: 8px 16px;
   cursor: pointer;
+  color: #000;
 }
 .dropdownItem:hover {
   background-color: #f1f1f1;
@@ -190,13 +191,13 @@ nav.hidden-nav {
   padding: 5px 10px;
   transition: padding 0.4s ease, opacity 0.4s ease;
   opacity: 0; 
-  color: #000;
 }
 .iconButton {
-  background: none;
-  border: none;
   padding: 5px;
+  border: none;
+  color: #000;
   cursor: pointer;
+  background: none;
   transition: transform 0.2s ease;
 }
 .iconButton:hover {
@@ -218,7 +219,7 @@ nav.hidden-nav {
 }
 .searchContainer:hover .searchInput,
 .searchContainer:focus-within .searchInput {
-  padding: 5px 10px 5px 30px; /* Adjusted padding for a smooth transition */
+  padding: 0px 20px 0px 10px; /* Adjusted padding for a smooth transition */
   opacity: 1; /* Fade in */
 }
 .searchContainer .iconButton:first-child {

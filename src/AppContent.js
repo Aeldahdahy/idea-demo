@@ -5,7 +5,7 @@ import NavBar from './component/Navbar';
 import Footer from './component/Footer';
 import CopyRight from './component/CopyRight';
 import Home from './component/Home'; 
-
+import SingOptions from './component/SingOptions';
 
 
 function Invest() {
@@ -27,18 +27,13 @@ function AboutUs() {
 function ContactUs() {
   return <h2>Contact Us Page</h2>;
 }
-function SignUp() {
-  return <h2>SignUp Page</h2>;
-}
-function SignIn() {
-  return <h2>SignIn Page</h2>;
-}
+
   
 
 
 function AppContent() {
     const location = useLocation();
-    const hideNavAndFooter = location.pathname === '/signup' || location.pathname === '/signin';
+    const hideNavAndFooter = location.pathname === '/signup&signin';
   
     return (
    <>
@@ -50,8 +45,7 @@ function AppContent() {
           <Route path="/stories" element={<Stories />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup&signin" element={<SingOptions />} />
         </Routes>
         {!hideNavAndFooter && <Footer />}
         {<CopyRight />}

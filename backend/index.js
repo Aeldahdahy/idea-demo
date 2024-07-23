@@ -22,7 +22,7 @@ app.get('/api/whoarewe', (req, res) => {
 app.use(express.json());
 
 const data = [
-    { id: 1, name: 'Apple' },
+    { id: 1, name: 'Applee' },
     { id: 2, name: 'Banana' },
     { id: 3, name: 'Cherry' },
     // Add more items as needed

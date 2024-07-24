@@ -91,6 +91,26 @@ export const useFunctions = () => {
       fetchStories();
     }, []);
 
+// sign up 
+  const signUp = async (formData) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post('/signUp', formData);
+      console.log('Sign up successful:', response.data);
+      // Handle successful sign-up (e.g., redirect to another page, display a success message, etc.)
+      setLoading(false);
+      return response.data;
+    } catch (err) {
+      console.error('Error during sign up:', err);
+      setError(err);
+      setLoading(false);
+      // Handle sign-up error (e.g., display an error message)
+      throw err;
+    }
+  };
+
     const chunkArray = (arr, size) => {
       return arr.reduce((acc, _, i) => {
         if (i % size === 0) {
@@ -108,6 +128,7 @@ export const useFunctions = () => {
     handleInputChange,
     handleSearch,
     chunkArray,
+    signUp,
     isFixed,
     isVisible,
     sideBarVisible,

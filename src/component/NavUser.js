@@ -3,6 +3,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userAvatar from '../assets/img-0.24.png';
+import { Link } from 'react-router-dom';
 
 library.add(fas);
 
@@ -40,7 +41,7 @@ function NavUser() {
     
 
     <div className="navUser" style={navBorderStyle}>
-      <div className="userIcon" onMouseEnter={toggleDropdown}>
+      <div className="userIcon" onClick={toggleDropdown}>
         {isLoggedIn ? (
           <img 
             src={userAvatar}
@@ -62,7 +63,7 @@ function NavUser() {
           ) : (
             <>
               <button className="dropdownItem" onClick={handleSignIn}>Sign In</button>
-              <button className="dropdownItem" onClick={handleSignUp}>Sign Up</button>
+              <button className="dropdownItem" onClick={handleSignUp} as={Link} to='/signup&signin'>Sign Up</button>
             </>
           )}
         </div>

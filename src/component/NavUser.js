@@ -4,19 +4,21 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userAvatar from '../assets/img-0.24.png';
 import { Link } from 'react-router-dom';
+import PopUpSignInForm from './PopUpSignInForm';
 
 library.add(fas);
 
 function NavUser() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
-  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // State to control popup visibility
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleSignIn = () => {
-    setIsLoggedIn(true);
+    setIsPopupOpen(true); // Open the popup
     setIsDropdownOpen(false);
   };
 
@@ -33,13 +35,15 @@ function NavUser() {
     setIsDropdownOpen(false);
   };
 
+  const closePopup = () => {
+    setIsPopupOpen(false); // Close the popup
+  };
+
   const navBorderStyle = {
     border: isLoggedIn ? 'none' : '2px solid #000', // Hide border when logged in, show otherwise
   };
 
   return (
-    
-
     <div className="navUser" style={navBorderStyle}>
       <div className="userIcon" onClick={toggleDropdown}>
         {isLoggedIn ? (
@@ -50,7 +54,7 @@ function NavUser() {
             onClick={toggleDropdown}
           />
         ) : (
-          <FontAwesomeIcon icon="user"  onClick={toggleDropdown} />
+          <FontAwesomeIcon icon="user" onClick={toggleDropdown} />
         )}
       </div>
       {isDropdownOpen && (
@@ -63,11 +67,14 @@ function NavUser() {
           ) : (
             <>
               <button className="dropdownItem" onClick={handleSignIn}>Sign In</button>
-              <button className="dropdownItem" onClick={handleSignUp} as={Link} to='/signup&signin'>Sign Up</button>
+              <Link to='/signup&signin'>
+                <button className="dropdownItem" onClick={handleSignUp}>Sign Up</button>
+              </Link>
             </>
           )}
         </div>
       )}
+      {isPopupOpen && <PopUpSignInForm onClose={closePopup} />}
     </div>
   );
 }

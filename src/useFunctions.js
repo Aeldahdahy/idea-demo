@@ -97,7 +97,7 @@ export const useFunctions = () => {
     setError(null);
 
     try {
-      const response = await axios.post('/signUp', formData);
+      const response = await axios.post('http://127.0.0.1:2000/api/signup', formData);
       console.log('Sign up successful:', response.data);
       // Handle successful sign-up (e.g., redirect to another page, display a success message, etc.)
       setLoading(false);

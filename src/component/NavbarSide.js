@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 library.add(fas);
 
 
-function NavbarSide({ isFixed, isVisible, toggleSideBar, sideBarVisible }) {
+function NavbarSide({ isFixed, isVisible, toggleSideBar, sideBarVisible, onSignInClick  }) {
   return (
     <>
       <button className={`sideBartoggleButton ${isFixed ? 'fixed-nav' : ''} ${!isVisible ? 'hidden-nav' : ''}`} onClick={toggleSideBar}>
@@ -25,7 +25,7 @@ function NavbarSide({ isFixed, isVisible, toggleSideBar, sideBarVisible }) {
         </div>
         <div className='SideBarLangUser'>
           <LanguageSelector />
-          <NavUser />
+          <NavUser onSignInClick={onSignInClick} />
         </div>
       </div>
     </>

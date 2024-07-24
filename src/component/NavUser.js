@@ -4,21 +4,19 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userAvatar from '../assets/img-0.24.png';
 import { Link } from 'react-router-dom';
-import PopUpSignInForm from './PopUpSignInForm';
 
 library.add(fas);
 
-function NavUser() {
+function NavUser({ onSignInClick }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // State to control popup visibility
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleSignIn = () => {
-    setIsPopupOpen(true); // Open the popup
+    onSignInClick(); // Call the parent handler to open the popup
     setIsDropdownOpen(false);
   };
 
@@ -33,10 +31,6 @@ function NavUser() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setIsDropdownOpen(false);
-  };
-
-  const closePopup = () => {
-    setIsPopupOpen(false); // Close the popup
   };
 
   const navBorderStyle = {
@@ -74,7 +68,6 @@ function NavUser() {
           )}
         </div>
       )}
-      {isPopupOpen && <PopUpSignInForm onClose={closePopup} />}
     </div>
   );
 }

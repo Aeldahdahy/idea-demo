@@ -7,7 +7,7 @@ import NavbarSide from './NavbarSide';
 import { useFunctions } from '../useFunctions';
 import Logo from './Logo';
 
-function NavBar() {
+function NavBar({ onSignInClick }) {
   const { isFixed, isVisible, toggleSideBar, sideBarVisible } = useFunctions();
 
   return (
@@ -19,14 +19,14 @@ function NavBar() {
           <div className='navSearchLangUser'>
             <SearchBox />
             <LanguageSelector />
-            <NavUser />
+            <NavUser onSignInClick={onSignInClick} />
           </div>
         </div>
         <div className='Links'>
           <NavigationLinks />
         </div>
       </nav>
-      <NavbarSide toggleSideBar={toggleSideBar} sideBarVisible={sideBarVisible} isFixed={isFixed} isVisible={isVisible} />
+      <NavbarSide toggleSideBar={toggleSideBar} sideBarVisible={sideBarVisible} isFixed={isFixed} isVisible={isVisible} onSignInClick={onSignInClick} />
     </>
   );
 }

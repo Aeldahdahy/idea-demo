@@ -1,28 +1,30 @@
-const mongoose = require('mongoose'); // Import Mongoose
-const validator = require('validator'); // Import validator package
-const bcrypt = require('bcrypt'); // Import bcrypt for encryption
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     role: {
         type: String,
-        required: true,
-        enum: ['entrepreneur', 'investor'], // Ensure role is either 'entrepreneur' or 'investor'
-        message: 'Role should be either entrepreneur or investor'
+        required: [true, 'Role is required'],
+        enum: {
+            values: ['entrepreneur', 'investor'],
+            message: 'Role should be either entrepreneur or investor'
+        }
     },
     fullName: {
         type: String,
-        required: true,
+        required: [true, 'Full name is required'],
         validate: {
             validator: function (v) {
-                return validator.isAlpha(v, 'en-US', { ignore: ' ' }); // Validates that the name contains only letters and spaces
+                return validator.isAlpha(v, 'en-US', { ignore: ' ' });
             },
             message: 'Full name should contain only letters and spaces'
         }
     },
     email: {
         type: String,
-        required: true,
-        unique: true, // Ensure email is unique
+        required: [true, 'Email is required'],
+        unique: true,
         validate: {
             validator: validator.isEmail,
             message: 'Invalid email format'
@@ -30,18 +32,19 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
-        minlength: 8 // Ensure password has a minimum length
+        required: [true, 'Password is required'],
+        minlength: [8, 'Password should be at least 8 characters long']
     }
 });
 
 // Pre-save hook to encrypt password
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
-        const salt = await bcrypt.genSalt(10); // Generate salt
-        this.password = await bcrypt.hash(this.password, salt); // Encrypt password
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
     }
     next();
 });
 
-module.exports = mongoose.model('User', userSchema); // Export the model
+module.exports = mongoose.model('User', userSchema);
+

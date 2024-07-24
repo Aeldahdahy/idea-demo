@@ -25,18 +25,24 @@ router.post('/contact', async (req, res) => {
 // Handle signup form submission
 router.post('/signup', async (req, res) => {
   try {
-    const { role, fullName, email, password } = req.body;
-
-    // Create a new user instance
-    const newUser = new User({ role, fullName, email, password });
-
-    // Save the user to the database
-    await newUser.save();
-
-    res.status(201).send('User signed up successfully');
+      const user = new User(req.body);
+      await user.save();
+      res.status(201).send({ message: 'User registered successfully!' });
   } catch (error) {
-    res.status(400).send(`Error signing up user: ${error.message}`);
+      let errors = {};
+      if (error instanceof mongoose.Error.ValidationError) {
+          for (let field in error.errors) {
+              errors[field] = error.errors[field].message;
+          }
+      } else if (error.code === 11000) {
+          // Handle unique constraint errors (duplicate email)
+          errors['email'] = 'Email already exists';
+      } else {
+          errors['general'] = 'An error occurred during registration';
+      }
+      res.status(400).send(errors);
   }
 });
+
 
 module.exports = router;

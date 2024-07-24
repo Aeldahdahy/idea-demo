@@ -1,8 +1,9 @@
-
 const express = require('express');
 const app = express();
-const mongoose = require('mongoose'); // Corrected the spelling of 'mongoose'
+const mongoose = require('mongoose'); 
 const db_connection = require('./config/db');
+const bodyParser = require('body-parser');
+const ideaRoutes = require('./routes/idea_routes');
 const cors = require('cors');
 
 db_connection(); // Ensure this is called correctly
@@ -12,35 +13,15 @@ const port = 2000;
 
 app.use(cors());
 
-app.get('/api/whoarewe', (req, res) => {
-    res.json({
-        mainText: "We are a company committed to delivering the best services.",
-        subText: "Our mission is to enhance customer satisfaction through excellence."
-    });
-});
 
-app.use(express.json());
 
-const data = [
-    { id: 1, name: 'Apple' },
-    { id: 2, name: 'Banana' },
-    { id: 3, name: 'Cherry' },
-    // Add more items as needed
-];
-app.get('/search', (req, res) => {
-    const query = req.query.query?.toLowerCase() || '';
-  
-    if (!query) {
-      return res.status(400).json({ message: 'Query parameter is required' });
-    }
-  
-    // Simulate a search operation
-    const results = data.filter(item =>
-      item.name.toLowerCase().includes(query)
-    );
-  
-    res.json(results);
-  });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Use the idea routes for handling contact and signup
+app.use('/api', ideaRoutes); // Adjust the base path as necessary
+
 
 
   

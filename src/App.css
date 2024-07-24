@@ -27,6 +27,12 @@ h1,h2,h3,h4,h5,h6{
 .MainButton:hover {
   background-color: #0536ca;
 }
+.error-message {
+  color: red;
+  margin-top: 5px;
+  display: block;
+}
+
 
 /* Main Navigation bar */
 

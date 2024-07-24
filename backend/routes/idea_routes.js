@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const mongoose = require('mongoose');
 const Contact = require('../modules/contact'); // Assuming your contact schema is in models/contact.js
 const User = require('../modules/signup'); // Assuming your user schema is in models/signup.js
 
@@ -50,9 +51,10 @@ router.post('/signup', async (req, res) => {
       } else {
           errors['general'] = 'An error occurred during registration';
       }
-      res.status(400).send(errors);
+      res.status(400).json(errors); // Changed to json method directly
   }
 });
+
 
 
 module.exports = router;

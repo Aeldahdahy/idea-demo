@@ -10,7 +10,7 @@ library.add(fas);
 
 function SignUpForm({ onSignInClick }) {
   const [formData, setFormData] = useState({
-    role: 'investor',  // Default role
+    role: '',  // Default role
     fullName: '',
     email: '',
     password: '',
@@ -18,6 +18,7 @@ function SignUpForm({ onSignInClick }) {
   });
 
   const { signUp, loading, error } = useFunctions();
+  const [formError, setFormError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,13 +34,13 @@ function SignUpForm({ onSignInClick }) {
       await signUp(formData);
       // Optionally handle additional logic after successful sign-up
     } catch (err) {
-      // Error handling is already done in the hook, but you can add more here if needed
+      setFormError(err.response?.data || { general: 'An unexpected error occurred.' });
     }
   };
 
   return (
     <div className='form-wrapper sign-up'>
-      <Link to='/' ><img src={Logo} alt='loding...' width={100}  /></Link>
+      <Link to='/' ><img src={Logo} alt='loding...' width={100} /></Link>
       <form onSubmit={handleSubmit}>
         <h2>Sign-Up</h2>
         <div className='switch-container'>
@@ -74,6 +75,7 @@ function SignUpForm({ onSignInClick }) {
             required
           />
           <label htmlFor='SignUpFullName'><FontAwesomeIcon icon="fa-solid fa-user" />&nbsp;&nbsp; Full Name</label>
+          {formError?.fullName && <span className="error-message">{formError.fullName}</span>}
         </div>
         <div className='input-group'>
           <input
@@ -85,6 +87,7 @@ function SignUpForm({ onSignInClick }) {
             required
           />
           <label htmlFor='SignUpEmail'><FontAwesomeIcon icon="fa-solid fa-envelope" />&nbsp;&nbsp; E-mail</label>
+          {formError?.email && <span className="error-message">{formError.email}</span>}
         </div>
         <div className='input-group'>
           <input
@@ -96,6 +99,7 @@ function SignUpForm({ onSignInClick }) {
             required
           />
           <label htmlFor='SignUpPassword'><FontAwesomeIcon icon="fa-solid fa-lock" />&nbsp;&nbsp; Password</label>
+          {formError?.password && <span className="error-message">{formError.password}</span>}
         </div>
         <div className='input-group'>
           <input
@@ -107,12 +111,13 @@ function SignUpForm({ onSignInClick }) {
             required
           />
           <label htmlFor='SignUpConfirmPassword'><FontAwesomeIcon icon="fa-solid fa-lock" />&nbsp;&nbsp; Confirm Password</label>
+          {formError?.confirmPassword && <span className="error-message">{formError.confirmPassword}</span>}
         </div>
      
         <button type='submit' className='MainButton' disabled={loading}>
           {loading ? 'Signing Up...' : 'Sign Up'}
         </button>
-        {error && <p className='error-message'>Error: {error.message}</p>}
+        {formError?.general && <p className='error-message'>{formError.general}</p>}
         <div className='sign-link'>
           <p>Already have an account? <Link to='#' className='signIn-link' onClick={onSignInClick}>Sign In</Link></p>
         </div>

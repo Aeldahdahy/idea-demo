@@ -1,21 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const contact = require('../modules/contact');
+const Contact = require('../modules/contact'); // Assuming your contact schema is in models/contact.js
+const User = require('../modules/signup'); // Assuming your user schema is in models/signup.js
 
-// Show Home route
-router.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+// Handle contact form submission
+router.post('/contact', async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    // Create a new contact instance
+    const newContact = new Contact({ name, email, message });
+
+    // Save the contact to the database
+    await newContact.save();
+
+    res.status(201).send('Contact message received successfully');
+  } catch (error) {
+    res.status(400).send(`Error saving contact message: ${error.message}`);
+  }
 });
 
-// Show about route
-router.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/about.html'));
-});
 
-// create contact schema route 
-router.post('/contact', (req, res) => {
-  res.sendFile(path.join(__dirname, '../modules/contact.js'));
+// Handle signup form submission
+router.post('/signup', async (req, res) => {
+  try {
+    const { role, fullName, email, password } = req.body;
+
+    // Create a new user instance
+    const newUser = new User({ role, fullName, email, password });
+
+    // Save the user to the database
+    await newUser.save();
+
+    res.status(201).send('User signed up successfully');
+  } catch (error) {
+    res.status(400).send(`Error signing up user: ${error.message}`);
+  }
 });
 
 module.exports = router;

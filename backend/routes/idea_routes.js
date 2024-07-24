@@ -7,19 +7,29 @@ const User = require('../modules/signup'); // Assuming your user schema is in mo
 // Handle contact form submission
 router.post('/contact', async (req, res) => {
   try {
-    const { name, email, message } = req.body;
+      const { fullname, email, message } = req.body;
 
-    // Create a new contact instance
-    const newContact = new Contact({ name, email, message });
+      // Create a new contact instance
+      const newContact = new Contact({ fullname, email, message });
 
-    // Save the contact to the database
-    await newContact.save();
+      // Save the contact to the database
+      await newContact.save();
 
-    res.status(201).send('Contact message received successfully');
+      res.status(201).send({ message: 'Contact message received successfully' });
   } catch (error) {
-    res.status(400).send(`Error saving contact message: ${error.message}`);
+      let errors = {};
+      if (error instanceof mongoose.Error.ValidationError) {
+          for (let field in error.errors) {
+              errors[field] = error.errors[field].message;
+          }
+      } else {
+          errors['general'] = 'An error occurred while saving the contact message';
+      }
+      res.status(400).send(errors);
   }
 });
+
+
 
 
 // Handle signup form submission

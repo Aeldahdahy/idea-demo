@@ -1,21 +1,21 @@
-const mongoose = require('mongoose'); // Import Mongoose
-const validator = require('validator'); // Import validator package
-const bcrypt = require('bcrypt'); // Import bcrypt for encryption
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 const contactSchema = new mongoose.Schema({
-    name: {
+    fullname: {
         type: String,
-        required: true,
+        required: [true, 'Full name is required'],
         validate: {
             validator: function (v) {
-                return validator.isAlpha(v, 'en-US', { ignore: ' ' }); // Validates that the name contains only letters and spaces
+                return validator.isAlpha(v, 'en-US', { ignore: ' ' });
             },
-            message: 'Name should contain only letters and spaces'
+            message: 'Full name should contain only letters and spaces'
         }
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'Email is required'],
         validate: {
             validator: validator.isEmail,
             message: 'Invalid email format'
@@ -23,7 +23,7 @@ const contactSchema = new mongoose.Schema({
     },
     message: {
         type: String,
-        required: true,
+        required: [true, 'Message is required'],
         default: null
     }
 });
@@ -31,11 +31,12 @@ const contactSchema = new mongoose.Schema({
 // Pre-save hook to encrypt email
 contactSchema.pre('save', async function (next) {
     if (this.isModified('email')) {
-        const salt = await bcrypt.genSalt(10); // Generate salt
-        this.email = await bcrypt.hash(this.email, salt); // Encrypt email
+        const salt = await bcrypt.genSalt(10);
+        this.email = await bcrypt.hash(this.email, salt);
     }
     next();
 });
 
-module.exports = mongoose.model('Contact', contactSchema); // Export the model
+module.exports = mongoose.model('Contact', contactSchema);
+
 

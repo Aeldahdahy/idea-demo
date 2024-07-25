@@ -363,7 +363,9 @@ nav.hidden-nav {
   margin-top: 20px;
 }
 .buttons-container .MainButton{
-  padding: 10px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border: solid 1px #fff;
 }
 .carousel-caption h1, .carousel-caption p {
@@ -1178,7 +1180,7 @@ form.sign-in-form {
 @media (max-width: 870px) {
   .SignContainer{
     min-height: 800px;
-    height: 100vh;
+    height: 96vh;
   }
   .signin-signup {
     width: 100%;
@@ -1301,6 +1303,9 @@ form.sign-in-form {
     font-size: 1rem;
     max-width: 80%;
   }
+  .input-field {
+    height: 40px;
+  }
   /* .wrapper{
     width: 400px;
   }
@@ -1372,6 +1377,10 @@ form.sign-in-form {
     bottom: 28%;
     left: 50%;
   }
+  .switch-container{
+    margin: 20px 0;
+  }
+
   /* .wrapper{
     width: 300px;
     height: 600px;

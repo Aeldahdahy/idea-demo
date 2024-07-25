@@ -51,7 +51,7 @@ function AppContent() {
         <Route path="/stories" element={<Stories />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<ContactUs />} />
-        <Route path="/signup&signin" element={<SingOptions />} /> {/*onClick={closePopup}*/}
+        <Route path="/signup&signin" element={<SingOptions  />} /> {/*onClick={closePopup}*/}
       </Routes>
       {!hideNavAndFooter && <Footer />}
       <CopyRight />

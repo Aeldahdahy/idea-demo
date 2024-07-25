@@ -16,7 +16,6 @@ function NavUser({ onSignInClick }) {
   };
 
   const handleSignIn = () => {
-    onSignInClick(); // Call the parent handler to open the popup
     setIsDropdownOpen(false);
   };
 
@@ -60,7 +59,9 @@ function NavUser({ onSignInClick }) {
             </>
           ) : (
             <>
+              <Link to='/signup&signin'>
               <button className="dropdownItem" onClick={handleSignIn}>Sign In</button>
+              </Link>
               <Link to='/signup&signin'>
                 <button className="dropdownItem" onClick={handleSignUp}>Sign Up</button>
               </Link>

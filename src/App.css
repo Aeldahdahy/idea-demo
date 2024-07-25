@@ -1067,10 +1067,25 @@ form.sign-in-form {
 
 
 
+.error-box {
+  border: 1px solid red;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.error-message {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
 
 
 /* pop up login  */
-.popupOverlay {
+/* .popupOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -1092,8 +1107,7 @@ form.sign-in-form {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 90%;
   height: 600px;
-  max-width: 600px; /* Adjust the max-width as needed */
-}
+  max-width: 600px; 
 
 .popupCloseButton {
   position: absolute;
@@ -1108,7 +1122,7 @@ form.sign-in-form {
 
 .popupContent {
   margin-top: 20px;
-}
+} */
 
 
 

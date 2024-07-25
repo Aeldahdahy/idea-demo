@@ -92,24 +92,40 @@ export const useFunctions = () => {
     }, []);
 
 // sign up 
-  const signUp = async (formData) => {
-    setLoading(true);
-    setError(null);
+const signUp = async (formData) => {
+  setLoading(true);
+  setError(null);
+  try {
+    // Step 1: Send OTP
+    const otpResponse = await axios.post('http://127.0.0.1:2000/api/signup', { email: formData.email });
 
-    try {
-      const response = await axios.post('http://127.0.0.1:2000/api/signup', formData);
-      console.log('Sign up successful:', response.data);
-      // Handle successful sign-up (e.g., redirect to another page, display a success message, etc.)
-      setLoading(false);
-      return response.data;
-    } catch (err) {
-      console.error('Error during sign up:', err);
-      setError(err);
-      setLoading(false);
-      // Handle sign-up error (e.g., display an error message)
-      throw err;
+    if (otpResponse.status === 200) {
+      // Step 2: Verify OTP and complete signup
+      const otp = prompt("Enter the OTP sent to your email");
+      const verifyResponse = await axios.post('http://127.0.0.1:2000/api/verify-otp', {
+        email: formData.email,
+        otp,
+        role: formData.role,
+        fullName: formData.fullName,
+        password: formData.password,
+      });
+
+      if (verifyResponse.status === 201) {
+        // User registered successfully
+        return verifyResponse.data;
+      } else {
+        throw verifyResponse.data;
+      }
+    } else {
+      throw otpResponse.data;
     }
-  };
+  } catch (err) {
+    setError(err);
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+};
 
     const chunkArray = (arr, size) => {
       return arr.reduce((acc, _, i) => {

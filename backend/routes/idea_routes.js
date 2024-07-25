@@ -45,7 +45,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'tahaelrajel8@gmail.com',
-      pass: 'taha2002'
+      pass: 'bwdj iofo hirn vqmx'
     }
   });
 
@@ -94,10 +94,7 @@ router.post('/signup', async (req, res) => {
       console.error(error);
       res.status(500).json({ message: 'Server error' });
     }
-  });
-  
-
-
+});
 
 // Verify OTP and complete signup route
 router.post('/verify-otp', async (req, res) => {

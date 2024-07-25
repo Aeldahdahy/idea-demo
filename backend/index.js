@@ -25,50 +25,7 @@ app.use('/api', ideaRoutes); // Adjust the base path as necessary
 
 
   
-  app.listen(port, hostname, () => {
-      console.log(`Server is running on http://${hostname}:${port}`);
-    });
+app.listen(port, hostname, () => {
+    console.log(`Server is running on http://${hostname}:${port}`);
+});
   
-    
-    // const successStories = [
-    //     {
-    //       id: 1,
-    //       name: "Fati's",
-    //       text: "Founded by Fatma Ahmed, this bakery specializes in handcrafted donuts in classic and unique flavors. They've taken social media by storm, particularly TikTok, becoming a go-to spot for satisfying your sweet tooth.",
-    //       image: '../src/assets/img-0.9.PNG',
-    //     },
-    //     {
-    //       id: 2,
-    //       name: 'POV',
-    //       text: 'POV Egypt invents clever solutions in Egypt, for Egypt. Think: phone holders that work in the heat, or innovative gadgets to tackle common hassles.',
-    //       image: '../src/assets/img-0.10.PNG',
-    //     },
-    //     {
-    //       id: 3,
-    //       name: 'Cult',
-    //       text: 'Cult Egypt offers a unique fusion, serving up delicious New York-style bagels alongside specialty matcha drinks. Its a trendy spot to grab a satisfying breakfast or a tasty afternoon pick-me-up.',
-    //       image: '../src/assets/img-0.11.PNG',
-    //     },
-    //     {
-    //       id: 4,
-    //       name: "Fati's",
-    //       text: "Founded by Fatma Ahmed, this bakery specializes in handcrafted donuts in classic and unique flavors. They've taken social media by storm, particularly TikTok, becoming a go-to spot for satisfying your sweet tooth.",
-    //       image: '../src/assets/img-0.9.PNG',
-    //     },
-    //     {
-    //       id: 5,
-    //       name: 'POV',
-    //       text: 'POV Egypt invents clever solutions in Egypt, for Egypt. Think: phone holders that work in the heat, or innovative gadgets to tackle common hassles.',
-    //       image: '../src/assets/img-0.10.PNG',
-    //     },
-    //     {
-    //       id: 6,
-    //       name: 'Cult',
-    //       text: 'Cult Egypt offers a unique fusion, serving up delicious New York-style bagels alongside specialty matcha drinks. Its a trendy spot to grab a satisfying breakfast or a tasty afternoon pick-me-up.',
-    //       image: '../src/assets/img-0.11.PNG',
-    //     },
-    // ];
-    
-    // app.get('/api/successstories', (req, res) => {
-    //   res.json(successStories);
-    // });

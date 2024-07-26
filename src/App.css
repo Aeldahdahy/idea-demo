@@ -170,8 +170,10 @@ nav.hidden-nav {
 .searchBox {
   display: flex;
   justify-content: flex-end;
+  flex-direction: row;
   align-items: center;
   width: 80%;
+  padding: 0 !important;
 }
 .searchContainer {
   display: flex;
@@ -933,7 +935,7 @@ form.sign-in-form {
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(-45deg, #4481eb 0%, #04befe 100%);
+  background-image:  linear-gradient(-45deg, #0029A4 0%, #0536ca 100%) ;
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 6;
@@ -1096,13 +1098,41 @@ form.sign-in-form {
   text-align: center;
   max-width: 380px;
 }
-
 .error-message {
   margin: 0;
   padding: 2px;
   font-size: 14px;
 }
+.inputErrorMessage{
+  color: red;
+  margin-left: 10px;
+  font-size: 14px;
+  text-align: center;
+  border: solid 1px rgb(206, 13, 13);
+  border-radius: 5px;
+  max-width: 380px;
+  padding: 10px 5px;
+  background-color: #f8d7da;
+}
+.input-field.error {
+  border-color: red;
+}
 
+.SuccessverificationImage{
+  border: solid 1px #fff;
+  border-radius: 100px;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-content: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background-color: #19B000;
+  font-size: 80px;
+  color: #fff;
+  margin-bottom: 20px;
+}
 
 
 /* pop up login  */

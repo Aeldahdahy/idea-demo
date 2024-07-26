@@ -29,8 +29,8 @@ function SignOptions() {
     <div className={`SignContainer ${isSignUpMode ? 'sign-up-mode' : ''}`}>
       <div className="forms-container">
         <div className="signin-signup">
-          <SignInForm onSignUpClick={handleSignUpClick} />
-          <SignUpForm onSignInClick={handleSignInClick} />
+          <SignInForm handleSignInClick={handleSignInClick} />
+          <SignUpForm handleSignUpClick={handleSignUpClick} />
         </div>
       </div>
       <div className="panels-container">

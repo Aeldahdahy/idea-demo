@@ -14,7 +14,12 @@ export const useFunctions = () => {
   const [loading, setLoading] = useState(false); // State for loading
   const [error, setError] = useState(null);
   const [isOtpSent, setIsOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [otp, setOtp] = useState(['', '', '', '']);
+  const [timer, setTimer] = useState(180); // 3 minutes
+  const [isTimerActive, setIsTimerActive] = useState(true);
+  
+
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -92,6 +97,8 @@ export const useFunctions = () => {
     fetchStories();
   }, []);
 
+// Sign Up
+
   const signUp = async (formData) => {
     setLoading(true);
     setError(null);
@@ -100,9 +107,10 @@ export const useFunctions = () => {
       const otpResponse = await axios.post('http://127.0.0.1:2000/api/signup', { email: formData.email });
       
       if (otpResponse.status === 200) {
-        setIsOtpSent(true);
+        setIsOtpSent(true); 
         return otpResponse.data;
       } else {
+        // throw new Error('Failed to send OTP');
         throw otpResponse.data;
       }
     } catch (err) {
@@ -126,10 +134,12 @@ export const useFunctions = () => {
       });
 
       if (verifyResponse.status === 201) {
+        setIsOtpVerified(true);
         return verifyResponse.data;
       } else if (verifyResponse.status === 400 || verifyResponse.status === 500) {
         setError(verifyResponse.data.message || 'An error occurred. Please try again.');
       } else {
+        // throw new Error(response.data.message || 'Verification failed');
         throw verifyResponse.data;
       }
     } catch (err) {
@@ -145,12 +155,32 @@ export const useFunctions = () => {
     setError(null);
     try {
       await axios.post('http://127.0.0.1:2000/api/signup', { email });
+      setIsTimerActive(true);
+      setTimer(180);
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isOtpSent && isTimerActive) {
+      const interval = setInterval(() => {
+        setTimer(prevTimer => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            setIsTimerActive(false);
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }
+  }, [isOtpSent, isTimerActive]);
+  
 
   const chunkArray = (arr, size) => {
     return arr.reduce((acc, _, i) => {
@@ -183,6 +213,9 @@ export const useFunctions = () => {
     loading,
     error,
     isOtpSent,
+    isOtpVerified,
     otp,
-  };
+    timer,
+    isTimerActive,
+  };  
 };

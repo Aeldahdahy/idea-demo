@@ -9,27 +9,29 @@ import Logo from '../assets/idea.png';
 
 library.add(fas);
 
-function SignUpForm() {
+function SignUpForm({ handleSignInClick }) {
   const [formData, setFormData] = useState({
     role: 'investor',
     fullName: '',
     email: '',
     password: '',
   });
+  
 
   const {
     signUp,
     verifyOtp,
     resendOtp,
     loading,
-    error,
     isOtpSent,
   } = useFunctions();
   const [formError, setFormError] = useState({});
   const [backendError, setBackendError] = useState(null);
   const [otp, setOtp] = useState(['', '', '', '']);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [timer, setTimer] = useState(180); // 3 minutes in seconds
   const [isTimerActive, setIsTimerActive] = useState(true);
+
 
   useEffect(() => {
     if (isOtpSent && isTimerActive) {
@@ -80,11 +82,11 @@ function SignUpForm() {
       }
 
       case 'password': {
-        const passwordPattern = /^(?=.*[0-9])(?=.*[\W_]).{6,}$/;
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
         if (!value) {
           errors.password = 'Password is required.';
         } else if (!passwordPattern.test(value)) {
-          errors.password = 'Password must be at least 6 characters long and contain at least one number and one symbol.';
+          errors.password = 'Password must be at least 6 characters long and contain at least one lower and upper characters one number and one symbol.';
         } else {
           delete errors.password;
         }
@@ -156,6 +158,8 @@ function SignUpForm() {
       try {
         setBackendError(null);
         await verifyOtp(formData, combinedOtp);
+        setIsOtpVerified(true); 
+        // navigate('/signin');
         // Optionally handle additional logic after successful OTP verification
       } catch (err) {
         const errorMessage =
@@ -186,108 +190,123 @@ function SignUpForm() {
     }
   };
 
-  return (
-    <>
-      {!isOtpSent ? (
-        <form className="sign-up-form" onSubmit={handleSubmit}>
-          <Link to='/' ><img src={Logo} alt='loading...' width={100} /></Link>
-          <h2 className="title">Sign up</h2>
-          {(Object.keys(formError).length > 0 || backendError) && (
-            <div className="error-box">
-              {backendError && <p className="error-message">{backendError}</p>}
-              {Object.keys(formError).map((key) => (
-                <p key={key} className="error-message">{formError[key]}</p>
-              ))}
-            </div>
-          )}
-          <div className="switch-container">
-            <label className={`switch-label ${formData.role === 'investor' ? 'active' : ''}`}>
-              <input type="radio" name="role" value="investor" checked={formData.role === 'investor'} onChange={handleChange} />
-              Investor
-            </label>
-            <label className={`switch-label ${formData.role === 'entrepreneur' ? 'active' : ''}`}>
-              <input type="radio" name="role" value="entrepreneur" checked={formData.role === 'entrepreneur'} onChange={handleChange} />
-              Entrepreneur
-            </label>
+  let content;
+
+  if (!isOtpSent) {
+    content = (
+      <form className="sign-up-form" onSubmit={handleSubmit}>
+        <Link to='/'><img src={Logo} alt='loading...' width={100} /></Link>
+        <h2 className="title">Sign up</h2>
+        {backendError && (
+          <div className="error-box">
+            <p className="error-message">{backendError}</p>
           </div>
-          <div className="input-field">
-            <FontAwesomeIcon icon="fa-solid fa-user" />
-            <input
-              type="text"
-              placeholder="Full Name"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
+        )}
+        <div className="switch-container">
+          <label className={`switch-label ${formData.role === 'investor' ? 'active' : ''}`}>
+            <input type="radio" name="role" value="investor" checked={formData.role === 'investor'} onChange={handleChange} />
+            Investor
+          </label>
+          <label className={`switch-label ${formData.role === 'entrepreneur' ? 'active' : ''}`}>
+            <input type="radio" name="role" value="entrepreneur" checked={formData.role === 'entrepreneur'} onChange={handleChange} />
+            Entrepreneur
+          </label>
+        </div>
+        <div className={`input-field ${formError.fullName ? 'error' : ''}`}>
+          <FontAwesomeIcon icon="fa-solid fa-user" />
+          <input
+            type="text"
+            placeholder="Full Name"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {formError.fullName && <span className='inputErrorMessage'>{formError.fullName}</span>}
+        <div className={`input-field ${formError.email ? 'error' : ''}`}>
+          <FontAwesomeIcon icon="fa-solid fa-envelope" />
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {formError.email && <span className='inputErrorMessage'>{formError.email}</span>}
+        <div className={`input-field ${formError.password ? 'error' : ''}`}>
+          <FontAwesomeIcon icon="fa-solid fa-lock" />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {formError.password && <span className='inputErrorMessage'>{formError.password}</span>}
+        <div className={`input-field ${formError.confirmPassword ? 'error' : ''}`}>
+          <FontAwesomeIcon icon="fa-solid fa-lock" />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {formError.confirmPassword && <span className='inputErrorMessage'>{formError.confirmPassword}</span>}
+        <input type="submit" className="btn" value="Sign up" disabled={loading || Object.keys(formError).length > 0} />
+      </form>
+    );
+  } else if (!isOtpVerified) {
+    content = (
+      <form className="sign-up-form">
+        <Link to='/'><img src={Logo} alt='loading...' width={100} /></Link>
+        <h2 className="title">Verify Your Email</h2>
+        {formData.email && <p className='UserEmailVerification'>Please Enter The 4 Digit Code Sent To <br /> {`${formData.email}`}</p>}
+        {backendError && (
+          <div className="error-box">
+            <p className="error-message">{backendError}</p>
           </div>
-          <div className="input-field">
-            <FontAwesomeIcon icon="fa-solid fa-envelope" />
-            <input
-              type="email"
-              placeholder="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="input-field">
-            <FontAwesomeIcon icon="fa-solid fa-lock" />
-            <input
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="input-field">
-            <FontAwesomeIcon icon="fa-solid fa-lock" />
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <input type="submit" className="btn" value="Sign up" disabled={loading || Object.keys(formError).length > 0} />
-        </form>
-      ) : (
-        <form className="sign-up-form">
-          <Link to='/' ><img src={Logo} alt='loading...' width={100} /></Link>
-          <h2 className="title">Verify Your Email</h2>
-          {formData && <p className='UserEmailVerification'>Please Enter The 4 Digit Code Sent To <br /> {`${formData.email}`}</p>}
-          {backendError && (
-            <div className="error-box">
-            {backendError && <p className="error-message">{backendError}</p>}
-            </div>
-          )}
-          <p className="timer">Time left: {formatTime(timer)}</p>
-          <div className="otpInputs">
-            {otp.map((digit, index) => (
-              <React.Fragment key={index}>
-                <input
-                  type="text"
-                  name={`otp-${index}`}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(e, index)}
-                  maxLength="1"
-                  required
-                />
-                {index < otp.length - 1 && <span className="divider">-</span>}
-              </React.Fragment>
-            ))}
-          </div>
-          <button className="btn" type="button" onClick={handleVerifyOtp} disabled={loading || otp.join('').length !== 4}>Verify</button>
-          <p>Didn't receive OTP? <Link to='#' onClick={handleResendOtp}>Resend code</Link></p>
-        </form>
-      )}
-    </>
-  );
+        )}
+        <p className="timer">Time left: {formatTime(timer)}</p>
+        <div className="otpInputs">
+          {otp.map((digit, index) => (
+            <React.Fragment key={index}>
+              <input
+                type="text"
+                name={`otp-${index}`}
+                value={digit}
+                onChange={(e) => handleOtpChange(e, index)}
+                maxLength="1"
+                required
+              />
+              {index < otp.length - 1 && <span className="divider">-</span>}
+            </React.Fragment>
+          ))}
+        </div>
+        <button className="btn" type="button" onClick={handleVerifyOtp} disabled={loading || otp.join('').length !== 4}>Verify</button>
+        <p>Didn't receive OTP? <Link to='#' onClick={handleResendOtp} disabled={!isTimerActive}>Resend code</Link></p>
+      </form>
+    );
+  } else {
+    content = (
+      <form className="sign-up-form" onSubmit={handleSignInClick}>
+        <div className='SuccessverificationImage'>
+          <FontAwesomeIcon icon="fa-solid fa-check" />
+        </div>
+        <h2>Verification Successful!</h2>
+        <p>You've been successfully registered.</p>
+      </form>
+    );
+  }
+
+  return content;
 }
 
 export default SignUpForm;

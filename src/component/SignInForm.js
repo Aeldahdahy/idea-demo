@@ -9,7 +9,7 @@ import Logo from '../assets/idea.png';
 library.add(fas);
 
 
-function SignInForm({ onSignUpClick }) {
+function SignInForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

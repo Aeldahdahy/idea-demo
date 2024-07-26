@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFunctions } from '../useFunctions';
 import { Link } from 'react-router-dom';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -15,57 +15,92 @@ function SignUpForm() {
     fullName: '',
     email: '',
     password: '',
-    confirmPassword: '', // Added confirmPassword field
   });
 
-  const { signUp, loading } = useFunctions();
+  const {
+    signUp,
+    verifyOtp,
+    resendOtp,
+    loading,
+    error,
+    isOtpSent,
+  } = useFunctions();
   const [formError, setFormError] = useState({});
-  const [backendError, setBackendError] = useState(null); // State for backend errors
+  const [backendError, setBackendError] = useState(null);
+  const [otp, setOtp] = useState(['', '', '', '']);
+  const [timer, setTimer] = useState(180); // 3 minutes in seconds
+  const [isTimerActive, setIsTimerActive] = useState(true);
+
+  useEffect(() => {
+    if (isOtpSent && isTimerActive) {
+      const interval = setInterval(() => {
+        setTimer(prevTimer => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            setIsTimerActive(false);
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isOtpSent, isTimerActive]);
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const validate = (name, value) => {
     let errors = { ...formError };
 
     switch (name) {
-      case 'fullName':
-        const fullNamePattern = /^[A-Za-z ]{6,}$/;
+      case 'fullName': {
         if (!value) {
-          errors.fullName = 'Full Name is required';
-        } else if (!fullNamePattern.test(value) || value.split(' ').length > 3) {
-          errors.fullName = 'Full Name must be at least 6 characters long, contain one or two spaces, and no special characters';
+          errors.fullName = 'Full Name is required.';
         } else {
           delete errors.fullName;
         }
         break;
+      }
 
-      case 'email':
+      case 'email': {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value) {
-          errors.email = 'Email is required';
+          errors.email = 'E-mail is required.';
         } else if (!emailPattern.test(value)) {
-          errors.email = 'Email is invalid';
+          errors.email = 'Email must be formatted correctly.';
         } else {
           delete errors.email;
         }
         break;
+      }
 
-      case 'password':
+      case 'password': {
         const passwordPattern = /^(?=.*[0-9])(?=.*[\W_]).{6,}$/;
         if (!value) {
-          errors.password = 'Password is required';
+          errors.password = 'Password is required.';
         } else if (!passwordPattern.test(value)) {
-          errors.password = 'Password must be at least 6 characters long and contain at least one number and one symbol';
+          errors.password = 'Password must be at least 6 characters long and contain at least one number and one symbol.';
         } else {
           delete errors.password;
         }
         break;
+      }
 
-      case 'confirmPassword':
-        if (value !== formData.password) {
-          errors.confirmPassword = 'Passwords do not match';
+      case 'confirmPassword': {
+        if (!value) {
+          errors.confirmPassword = 'Confirm Password is required.';
+        } else if (value !== formData.password) {
+          errors.confirmPassword = 'Passwords do not match.';
         } else {
           delete errors.confirmPassword;
         }
         break;
+      }
 
       default:
         break;
@@ -84,98 +119,174 @@ function SignUpForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Final validation before submission
     Object.keys(formData).forEach((key) => validate(key, formData[key]));
 
     if (Object.keys(formError).length === 0) {
       try {
-        setBackendError(null); // Clear any previous backend errors
+        setBackendError(null);
         await signUp(formData);
         // Optionally handle additional logic after successful sign-up
       } catch (err) {
-        setBackendError(err.response?.data?.general || 'An error occurred'); // Extract backend error message
-        console.log(err);
+        const errorMessage =
+          err.response?.data?.message ||
+          err.response?.data?.general ||
+          err.message ||
+          'An error occurred. Please try again.';
+        setBackendError(errorMessage);
       }
     }
   };
 
+  const handleOtpChange = (e, index) => {
+    const { value } = e.target;
+    if (/^\d?$/.test(value)) { // Only allow a single digit
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+      // Move focus to the next input field
+      if (value && index < otp.length - 1) {
+        document.querySelector(`input[name="otp-${index + 1}"]`).focus();
+      }
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    const combinedOtp = otp.join('');
+    if (combinedOtp.length === 4) {
+      try {
+        setBackendError(null);
+        await verifyOtp(formData, combinedOtp);
+        // Optionally handle additional logic after successful OTP verification
+      } catch (err) {
+        const errorMessage =
+          err.response?.data?.message ||
+          err.response?.data?.general ||
+          err.message ||
+          'An error occurred. Please try again.';
+        setBackendError(errorMessage);
+      }
+    } else {
+      setBackendError('OTP must be 4 digits long');
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      setBackendError(null);
+      setIsTimerActive(true); // Restart the timer
+      setTimer(180); // Reset timer to 3 minutes
+      await resendOtp(formData.email);
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.general ||
+        err.message ||
+        'An error occurred. Please try again.';
+      setBackendError(errorMessage);
+    }
+  };
+
   return (
-    <form className="sign-up-form" onSubmit={handleSubmit}>
-      <Link to='/' ><img src={Logo} alt='loading...' width={100} /></Link>
-      <h2 className="title">Sign up</h2>
-      {backendError && (
-        <div className="error-box">
-          <p className="error-message">{backendError}</p>
-        </div>
+    <>
+      {!isOtpSent ? (
+        <form className="sign-up-form" onSubmit={handleSubmit}>
+          <Link to='/' ><img src={Logo} alt='loading...' width={100} /></Link>
+          <h2 className="title">Sign up</h2>
+          {(Object.keys(formError).length > 0 || backendError) && (
+            <div className="error-box">
+              {backendError && <p className="error-message">{backendError}</p>}
+              {Object.keys(formError).map((key) => (
+                <p key={key} className="error-message">{formError[key]}</p>
+              ))}
+            </div>
+          )}
+          <div className="switch-container">
+            <label className={`switch-label ${formData.role === 'investor' ? 'active' : ''}`}>
+              <input type="radio" name="role" value="investor" checked={formData.role === 'investor'} onChange={handleChange} />
+              Investor
+            </label>
+            <label className={`switch-label ${formData.role === 'entrepreneur' ? 'active' : ''}`}>
+              <input type="radio" name="role" value="entrepreneur" checked={formData.role === 'entrepreneur'} onChange={handleChange} />
+              Entrepreneur
+            </label>
+          </div>
+          <div className="input-field">
+            <FontAwesomeIcon icon="fa-solid fa-user" />
+            <input
+              type="text"
+              placeholder="Full Name"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-field">
+            <FontAwesomeIcon icon="fa-solid fa-envelope" />
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-field">
+            <FontAwesomeIcon icon="fa-solid fa-lock" />
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-field">
+            <FontAwesomeIcon icon="fa-solid fa-lock" />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <input type="submit" className="btn" value="Sign up" disabled={loading || Object.keys(formError).length > 0} />
+        </form>
+      ) : (
+        <form className="sign-up-form">
+          <Link to='/' ><img src={Logo} alt='loading...' width={100} /></Link>
+          <h2 className="title">Verify Your Email</h2>
+          {formData && <p className='UserEmailVerification'>Please Enter The 4 Digit Code Sent To <br /> {`${formData.email}`}</p>}
+          {backendError && (
+            <div className="error-box">
+            {backendError && <p className="error-message">{backendError}</p>}
+            </div>
+          )}
+          <p className="timer">Time left: {formatTime(timer)}</p>
+          <div className="otpInputs">
+            {otp.map((digit, index) => (
+              <React.Fragment key={index}>
+                <input
+                  type="text"
+                  name={`otp-${index}`}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(e, index)}
+                  maxLength="1"
+                  required
+                />
+                {index < otp.length - 1 && <span className="divider">-</span>}
+              </React.Fragment>
+            ))}
+          </div>
+          <button className="btn" type="button" onClick={handleVerifyOtp} disabled={loading || otp.join('').length !== 4}>Verify</button>
+          <p>Didn't receive OTP? <Link to='#' onClick={handleResendOtp}>Resend code</Link></p>
+        </form>
       )}
-      {Object.keys(formError).length > 0 && (
-        <div className="error-box">
-          {formError.fullName && <p className="error-message">{formError.fullName}</p>}
-          {formError.email && <p className="error-message">{formError.email}</p>}
-          {formError.password && <p className="error-message">{formError.password}</p>}
-          {formError.confirmPassword && <p className="error-message">{formError.confirmPassword}</p>}
-        </div>
-      )}
-      <div className="switch-container">
-        <label className={`switch-label ${formData.role === 'investor' ? 'active' : ''}`}>
-          <input type="radio" name="role" value="investor" checked={formData.role === 'investor'} onChange={handleChange} />
-          Investor
-        </label>
-        <label className={`switch-label ${formData.role === 'entrepreneur' ? 'active' : ''}`}>
-          <input type="radio" name="role" value="entrepreneur" checked={formData.role === 'entrepreneur'} onChange={handleChange} />
-          Entrepreneur
-        </label>
-      </div>
-      <div className="input-field">
-        <FontAwesomeIcon icon="fa-solid fa-user" />
-        <input
-          type="text"
-          placeholder="Full Name"
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleChange}
-          required
-        />
-        {formError.fullName && <span className="error-message">{formError.fullName}</span>}
-      </div>
-      <div className="input-field">
-        <FontAwesomeIcon icon="fa-solid fa-envelope" />
-        <input
-          type="email"
-          placeholder="Email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        {formError.email && <span className="error-message">{formError.email}</span>}
-      </div>
-      <div className="input-field">
-        <FontAwesomeIcon icon="fa-solid fa-lock" />
-        <input
-          type="password"
-          placeholder="Password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        {formError.password && <span className="error-message">{formError.password}</span>}
-      </div>
-      <div className="input-field">
-        <FontAwesomeIcon icon="fa-solid fa-lock" />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required
-        />
-        {formError.confirmPassword && <span className="error-message">{formError.confirmPassword}</span>}
-      </div>
-      <input type="submit" className="btn" value="Sign up" disabled={loading || Object.keys(formError).length > 0} />
-    </form>
+    </>
   );
 }
 

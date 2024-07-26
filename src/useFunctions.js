@@ -11,9 +11,10 @@ export const useFunctions = () => {
   const [paragraphText, setParagraphText] = useState('');
   const [subText, setSubText] = useState('');
   const [stories, setStories] = useState([]); // State for success stories
-  const [loading, setLoading] = useState(true); // State for loading
+  const [loading, setLoading] = useState(false); // State for loading
   const [error, setError] = useState(null);
-
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -64,44 +65,58 @@ export const useFunctions = () => {
     // Add your search logic here
   };
 
-    useEffect(()=>{
-        const fetchText = async () => {
-            try{
-                const response = await axios.get("http://127.0.0.1:2000/api/whoarewe");
-                setParagraphText(response.data.mainText);
-                setSubText(response.data.subText);
-            }catch (error) {
-                console.log("Error Fetching the Paragraph", error);
-            }
-        };
-        fetchText();
-    }, []);
+  useEffect(()=>{
+    const fetchText = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:2000/api/whoarewe");
+        setParagraphText(response.data.mainText);
+        setSubText(response.data.subText);
+      } catch (error) {
+        console.log("Error Fetching the Paragraph", error);
+      }
+    };
+    fetchText();
+  }, []);
 
-    useEffect(() => {
-      const fetchStories = async () => {
-        try {
-          const response = await axios.get('http://127.0.0.1:2000/api/successstories');
-          setStories(response.data);
-          setLoading(false);
-        } catch (error) {
-          setError(error);
-          setLoading(false);
-        }
-      };
-      fetchStories();
-    }, []);
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:2000/api/successstories');
+        setStories(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+    fetchStories();
+  }, []);
 
-// sign up 
-const signUp = async (formData) => {
-  setLoading(true);
-  setError(null);
-  try {
-    // Step 1: Send OTP
-    const otpResponse = await axios.post('http://127.0.0.1:2000/api/signup', { email: formData.email });
+  const signUp = async (formData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Step 1: Send OTP
+      const otpResponse = await axios.post('http://127.0.0.1:2000/api/signup', { email: formData.email });
+      
+      if (otpResponse.status === 200) {
+        setIsOtpSent(true);
+        return otpResponse.data;
+      } else {
+        throw otpResponse.data;
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    if (otpResponse.status === 200) {
-      // Step 2: Verify OTP and complete signup
-      const otp = prompt("Enter the OTP sent to your email");
+  const verifyOtp = async (formData, otp) => {
+    setLoading(true);
+    setError(null);
+    try {
       const verifyResponse = await axios.post('http://127.0.0.1:2000/api/verify-otp', {
         email: formData.email,
         otp,
@@ -111,31 +126,40 @@ const signUp = async (formData) => {
       });
 
       if (verifyResponse.status === 201) {
-        // User registered successfully
         return verifyResponse.data;
+      } else if (verifyResponse.status === 400 || verifyResponse.status === 500) {
+        setError(verifyResponse.data.message || 'An error occurred. Please try again.');
       } else {
         throw verifyResponse.data;
       }
-    } else {
-      throw otpResponse.data;
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError(err);
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
-    const chunkArray = (arr, size) => {
-      return arr.reduce((acc, _, i) => {
-        if (i % size === 0) {
-          acc.push(arr.slice(i, i + size));
-        }
-        return acc;
-      }, []);
-    };
+  const resendOtp = async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.post('http://127.0.0.1:2000/api/signup', { email });
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const chunkArray = (arr, size) => {
+    return arr.reduce((acc, _, i) => {
+      if (i % size === 0) {
+        acc.push(arr.slice(i, i + size));
+      }
+      return acc;
+    }, []);
+  };
 
   return { 
     toggleSideBar,
@@ -145,6 +169,9 @@ const signUp = async (formData) => {
     handleSearch,
     chunkArray,
     signUp,
+    verifyOtp,
+    resendOtp,
+    setOtp,
     isFixed,
     isVisible,
     sideBarVisible,
@@ -155,5 +182,7 @@ const signUp = async (formData) => {
     stories,
     loading,
     error,
-   };
+    isOtpSent,
+    otp,
+  };
 };

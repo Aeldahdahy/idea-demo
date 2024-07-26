@@ -67,7 +67,7 @@ router.post('/signup', async (req, res) => {
     try {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ message: 'User already exists' });
+        return res.status(400).json({ message: 'User already exists!' });
       }
   
       const otp = generateOtp();
@@ -84,15 +84,15 @@ router.post('/signup', async (req, res) => {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error(error);
-          return res.status(500).json({ message: 'Failed to send OTP' });
+          return res.status(500).json({ message: 'Failed to send OTP!' });
         } else {
           console.log('Email sent: ' + info.response);
-          return res.status(200).json({ message: 'OTP sent to email' });
+          return res.status(200).json({ message: 'OTP sent to email.' });
         }
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ message: 'Server error!' });
     }
 });
 
@@ -104,7 +104,7 @@ router.post('/verify-otp', async (req, res) => {
       const otpEntry = await Otp.findOne({ email, otp });
   
       if (!otpEntry) {
-        return res.status(400).json({ message: 'Invalid OTP' });
+        return res.status(400).json({ message: 'Invalid OTP!' });
       }
   
       const newUser = new User({ email, password, role, fullName });
@@ -120,7 +120,7 @@ router.post('/verify-otp', async (req, res) => {
             errors[field] = error.errors[field].message;
           }
         } else if (error.code === 11000) {
-          errors['email'] = 'Email already exists';
+          errors['email'] = 'Email already exists!';
         } else {
           errors['general'] = 'An error occurred during registration';
         }
@@ -128,7 +128,7 @@ router.post('/verify-otp', async (req, res) => {
       }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ message: 'Server error!' });
     }
   });  
 

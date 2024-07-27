@@ -10,21 +10,6 @@ import Logo from '../assets/idea.png';
 library.add(fas);
 
 function SignUpForm({ handleSignInClick }) {
-  const [formData, setFormData] = useState({
-    role: 'investor',
-    fullName: '',
-    email: '',
-    password: '',
-  });
-  
-
-  const {
-    signUp,
-    verifyOtp,
-    resendOtp,
-    loading,
-    isOtpSent,
-  } = useFunctions();
   const [formError, setFormError] = useState({});
   const [backendError, setBackendError] = useState(null);
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -32,6 +17,20 @@ function SignUpForm({ handleSignInClick }) {
   const [timer, setTimer] = useState(180); // 3 minutes in seconds
   const [isTimerActive, setIsTimerActive] = useState(true);
 
+  const [formData, setFormData] = useState({
+    role: 'investor',
+    fullName: '',
+    email: '',
+    password: '',
+  });
+  
+  const {
+    signUp,
+    verifyOtp,
+    resendOtp,
+    loading,
+    isOtpSent,
+  } = useFunctions();
 
   useEffect(() => {
     if (isOtpSent && isTimerActive) {

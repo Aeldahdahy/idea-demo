@@ -1,5 +1,5 @@
-import React  from 'react'; //{ useState }
-import { Route, Routes, useLocation } from 'react-router-dom';
+import React, { useEffect }  from 'react'; //{ useState }
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import NavBar from './component/Navbar';
 import Footer from './component/Footer';
@@ -31,7 +31,15 @@ function ContactUs() {
 function AppContent() {
   // const [isPopupOpen, setIsPopupOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const hideNavAndFooter = location.pathname === '/signup&signin';
+  const isAuthenticated = !!localStorage.getItem('authToken');
+
+  useEffect(() => {
+    if (location.pathname === '/signup&signin' && isAuthenticated) {
+      navigate('/'); // Redirect authenticated users away from the sign-in page
+    }
+  }, [location, isAuthenticated, navigate]);
 
   // const openPopup = () => {
   //   setIsPopupOpen(true);
@@ -51,7 +59,7 @@ function AppContent() {
         <Route path="/stories" element={<Stories />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<ContactUs />} />
-        <Route path="/signup&signin" element={<SingOptions  />} /> {/*onClick={closePopup}*/}
+        <Route path="/signup&signin" element={isAuthenticated ? <navigate to='/' /> : <SingOptions  />} /> {/*onClick={closePopup}*/}
       </Routes>
       {!hideNavAndFooter && <Footer />}
       <CopyRight />

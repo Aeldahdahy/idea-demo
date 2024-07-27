@@ -78,8 +78,8 @@ nav.hidden-nav {
 }
 .navSearchLangUser{
   display: flex;
-  width: 75%;
-  margin-right: 5%;
+  width: 85%;
+  margin-right: 1%;
   align-items: center;
   justify-content: space-between;
 }
@@ -108,29 +108,35 @@ nav.hidden-nav {
 .dropdownItem:hover {
   background-color: #f1f1f1;
 }
-
+.userNameDownIcon{
+  text-align: center;
+  display: flex;
+  font-size: 20px;
+  align-items: center;
+}
 .navUser {
-  width: 30px;
-  height: 30px;
+  
   display: flex;
   font-size: 20px;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
-  border: solid 2px #000;
+  
   position: relative;
   cursor: pointer;
+
 }
-.navUser svg{
+.userIconSVG{
   position: absolute;
   bottom: 0;
   right: 17%;
 }
 .navUser img{
-  width: 100%;
+  max-width: 50px;
 }
 .dropdown {
   top: 1.6em;
+  right: -1em;
   z-index: 5;
   display: flex;
   min-width: 120px;

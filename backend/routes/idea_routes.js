@@ -126,8 +126,8 @@ router.post('/verify-otp', async (req, res) => {
 router.post(
   '/signin',
   [
-    body('email').isEmail().withMessage('Please enter a valid email'),
-    body('password').notEmpty().withMessage('Password is required')
+    body('email').isEmail().withMessage('Please enter a valid email.'),
+    body('password').notEmpty().withMessage('Password is required.')
   ],
   async (req, res) => {
     const errors = validationResult(req);

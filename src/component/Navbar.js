@@ -22,6 +22,8 @@ function NavBar({ onSignInClick }) {
             <NavUser onSignInClick={onSignInClick} />
           </div>
         </div>
+          <div className='spacemin'></div>
+
         <div className='Links'>
           <NavigationLinks />
         </div>

@@ -94,19 +94,40 @@ nav.hidden-nav {
   cursor: pointer;
 }
 .dropdownMenu {
-  top: 1.6em;
   position: absolute;
   background-color: white;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 5;
+  display: flex;
+  flex-direction: column;
+  width: 110px;
+  top: 1.7em;
+  opacity: 0;
+  visibility: hidden;
+  transition: visibility 0s, opacity 0.3s ease, transform 0.3s ease;
+}
+.dropdownMenu,
+.dropdownMenu:focus-within .dropdownMenu {
+  opacity: 1;
+  visibility: visible;
+  animation: fadeInSlideDown 0.3s ease forwards;
 }
 .dropdownItem {
   padding: 8px 16px;
   cursor: pointer;
   color: #000;
+  text-align: center;
+}
+.dropdownMenu a{
+  text-decoration: none;
+  padding: 8px 0px;
 }
 .dropdownItem:hover {
   background-color: #f1f1f1;
+}
+.navUser .dropdownMenu{
+  right: -.9em;
+  top: 2em;
 }
 .userNameDownIcon{
   text-align: center;
@@ -115,48 +136,48 @@ nav.hidden-nav {
   align-items: center;
 }
 .navUser {
-  
   display: flex;
   font-size: 20px;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
-  
+  flex-direction: column;
   position: relative;
   cursor: pointer;
-
+  max-width: 225px;
+}
+.userIconContainer {
+  display: flex;
+  align-items: center;
+}
+.userImage{
+  width: 40px;
+  height: 40px;
+}
+.userIconSvgContainer {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #000;
+  position: relative;
 }
 .userIconSVG{
+  width: 25px;
+  height: 25px;
   position: absolute;
   bottom: 0;
-  right: 17%;
+  left: 5px;
 }
-.navUser img{
-  max-width: 50px;
+.userName {
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: bold;
 }
-.dropdown {
-  top: 1.6em;
-  right: -1em;
-  z-index: 5;
-  display: flex;
-  min-width: 120px;
-  position: absolute;
-  flex-direction: column;
-  background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+.dropdownIcon {
+  margin-left: 5px;
 }
-.dropdown button {
-  padding: 8px 12px; /* Adjust padding as needed */
-  border: none;
-  background: none;
-  cursor: pointer;
-  text-align: center;
-  width: 100%; /* Ensure button takes full width of dropdown */
-}
-.dropdown button:hover {
-  background-color: #f1f1f1;
-}
+
+
 
 .Links{
   width: 100%;
@@ -900,8 +921,8 @@ form.sign-in-form {
 }
 
 .social-icon:hover {
-  color: #4481eb;
-  border-color: #4481eb;
+  color: #0029A4;
+  border-color: #0029A4;
 }
 
 .btn {

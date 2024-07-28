@@ -11,7 +11,7 @@ import Logo from '../assets/idea.png';
 library.add(fas);
 
 function SignInForm() {
-  const { signIn, loading, error } = useFunctions();
+  const { signIn, loading } = useFunctions();
   const [formError, setFormError] = useState({});
   const [backendError, setBackendError] = useState(null);
   const [formData, setFormData] = useState({

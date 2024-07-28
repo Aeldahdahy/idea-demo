@@ -6,7 +6,6 @@ import userAvatar from '../assets/img-0.24.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { height, width } from '@fortawesome/free-brands-svg-icons/fa42Group';
 library.add(fas);
 
 function NavUser() {
@@ -33,64 +32,61 @@ function NavUser() {
 
   const handleSignIn = () => {
     setIsDropdownOpen(false);
-    navigate('/signup&signin'); // Redirect to sign-in page
   };
 
   const handleSignUp = () => {
     setIsDropdownOpen(false);
-    navigate('/signup&signin'); // Redirect to sign-up page
   };
 
   const handleProfile = () => {
     setIsDropdownOpen(false);
-    navigate('/profile'); // Redirect to profile page
   };
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userFullName');
     setIsLoggedIn(false);
     setUserName('');
     setIsDropdownOpen(false);
-    navigate('/'); // Redirect to home page
-  };
-
-  const navBorderStyle = {
-    // border: isLoggedIn ? 'none' : '2px solid #000',
-    width: !isLoggedIn ? '30px' : '16%',
-    height: !isLoggedIn ? '30px': '60px',
-    border: !isLoggedIn ? 'solid 2px #000' : 'none',
+    navigate('/');
   };
 
   return (
-    <div className="navUser" style={navBorderStyle} onClick={toggleDropdown}>
+    <div className="navUser" onClick={toggleDropdown}>
+      <div className="userIconContainer">
         {isLoggedIn ? (
           <>
             <img 
               src={userAvatar}
               alt="User Avatar" 
               className="userImage"
-              onClick={toggleDropdown}
             />
-            <span className='userNameDownIcon'>{userName}<FontAwesomeIcon icon="fa-solid fa-angle-down" /></span>
+            <span className="userName">{userName}</span>
+            <FontAwesomeIcon icon="fa-solid fa-angle-down" className="dropdownIcon" />
           </>
         ) : (
-            <FontAwesomeIcon icon="user" className='userIconSVG' onClick={toggleDropdown} />
+          <div className='userIconSvgContainer'>
+            <FontAwesomeIcon icon="user" className='userIconSVG' />
+          </div>
         )}
+      </div>
       {isDropdownOpen && (
-        <div className="dropdown">
+        <div className="dropdownMenu">
           {isLoggedIn ? (
             <>
-              <button className="dropdownItem" onClick={handleProfile}>Profile</button>
-              <button className="dropdownItem" onClick={handleLogout}>Log Out</button>
+              <div className="dropdownItem" onClick={handleProfile}>
+                <span>Profile</span>
+              </div>
+              <div className="dropdownItem" onClick={handleLogout}>
+                <span>Log Out</span>
+              </div>
             </>
           ) : (
             <>
-              <Link to='/signup&signin'>
-                <button className="dropdownItem" onClick={handleSignIn}>Sign In</button>
+              <Link to='/signup&signin' className="dropdownItem" onClick={handleSignIn}>
+                <span>Sign In</span>
               </Link>
-              <Link to='/signup&signin'>
-                <button className="dropdownItem" onClick={handleSignUp}>Sign Up</button>
+              <Link to='/signup&signin' className="dropdownItem" onClick={handleSignUp}>
+                <span>Sign Up</span>
               </Link>
             </>
           )}

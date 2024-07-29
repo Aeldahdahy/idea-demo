@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-// import jwtDecode from 'jwt-decode'; 
 import { jwtDecode } from 'jwt-decode';
 
 export const useFunctions = () => {
@@ -122,7 +121,6 @@ export const useFunctions = () => {
         setIsOtpSent(true); 
         return otpResponse.data;
       } else {
-        // throw new Error('Failed to send OTP');
         throw otpResponse.data;
       }
     } catch (err) {
@@ -151,7 +149,6 @@ export const useFunctions = () => {
       } else if (verifyResponse.status === 400 || verifyResponse.status === 500) {
         setError(verifyResponse.data.message || 'An error occurred. Please try again.');
       } else {
-        // throw new Error(response.data.message || 'Verification failed');
         throw verifyResponse.data;
       }
     } catch (err) {
@@ -223,6 +220,76 @@ export const useFunctions = () => {
     }
   };
   
+  const sendOtp = async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post('http://127.0.0.1:2000/api/forgot-password', { email });
+      if (response.status === 200) {
+        setIsOtpSent(true);
+        return response.data;
+      } else {
+        throw new Error('Failed to send OTP');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOtpForPasswordReset = async (email, otp) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post('http://127.0.0.1:2000/api/verify-otp-for-reset', { email, otp });
+      if (response.status === 200) {
+        setIsOtpVerified(true);
+        return response.data;
+      } else {
+        throw new Error('Failed to verify OTP');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const resetPassword = async (data) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.put('http://127.0.0.1:2000/api/reset-password', data);
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error('Failed to reset password');
+      }
+    } catch (err) {
+      console.error('Error resetting password:', err); // Log the error for debugging
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const resendForgetPasswordOtp = async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.post('http://127.0.0.1:2000/api/forgot-password', { email });
+      setIsTimerActive(true);
+      setTimer(180);
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return { 
     toggleSideBar,
@@ -236,6 +303,10 @@ export const useFunctions = () => {
     resendOtp,
     setOtp,
     signIn,
+    sendOtp,
+    verifyOtpForPasswordReset,
+    resetPassword,
+    resendForgetPasswordOtp,
     isFixed,
     isVisible,
     sideBarVisible,

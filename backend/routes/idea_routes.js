@@ -173,8 +173,6 @@ router.post(
   }
 );
 
-
-
 // Request OTP for password reset
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
@@ -211,41 +209,43 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
-
-
 // Verify OTP and reset password
-router.post('/reset-password', async (req, res) => {
-  const { email, otp, newPassword, confirmPassword } = req.body;
-
-  if (newPassword !== confirmPassword) {
-    return res.status(400).json({ message: 'Passwords do not match!' });
-  }
+router.post('/verify-otp-for-reset', async (req, res) => {
+  const { email, otp } = req.body;
 
   try {
     const otpEntry = await Otp.findOne({ email, otp });
     if (!otpEntry) {
       return res.status(400).json({ message: 'Invalid OTP!' });
     }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'User with this email does not exist!' });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-    await user.save();
-
-    await Otp.deleteMany({ email });
-
-    res.status(200).json({ message: 'Password reset successfully!' });
+    res.status(200).json({ message: 'OTP is valid. Proceed to reset password.' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error!' });
   }
 });
 
+router.put('/reset-password', async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User with this email does not exist!' });
+    }
+
+    user.password = await newPassword;
+    await user.save();
+
+    // Optionally, delete the OTP entries if you are using the same OTP system for password resets
+    await Otp.deleteMany({ email });
+
+    res.status(200).json({ message: 'Password reset successfully!' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ message: 'Server error!' });
+  }
+});
 
 
 module.exports = router;
-

@@ -12,12 +12,14 @@ function SignInForm() {
     verifyOtpForPasswordReset,
     resetPassword,
     resendForgetPasswordOtp,
-    setFormError,
     setBackendError,
+    formatTime,
     loading,
     formError,
     backendError,
+    validate,
   } = useFunctions();
+
   const [formData, setFormData] = useState({ email: '', newPassword: '' });
   const [step, setStep] = useState('signIn');
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -40,69 +42,29 @@ function SignInForm() {
     return () => clearInterval(interval);
   }, [timer, isTimerActive, step]);
   // *
-  const validate = (name, value) => {
-    let errors = { ...formError };
-    switch (name) {
-      case 'email': {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(value)) {
-          errors.email = 'Please enter a valid email.';
-        } else {
-          delete errors.email;
-        }
-        break;
-      }
-      case 'password': {
-        if (!value) {
-          errors.password = 'Password is required.';
-        } else {
-          delete errors.password;
-        }
-        break;
-      }
-      case 'newPassword': {
-        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
-        if (!value) {
-          errors.password = 'Password is required.';
-        } else if (!passwordPattern.test(value)) {
-          errors.password = 'Password must be at least 6 characters long and contain at least one lower and upper character, one number, and one symbol.';
-        } else {
-          delete errors.password;
-        }
-        break;
-      }
-      case 'confirmPassword': {
-        if (!value) {
-          errors.confirmPassword = 'Confirm Password is required.';
-        } else if (value !== newPassword.password) {
-          errors.confirmPassword = 'Passwords do not match.';
-        } else {
-          delete errors.confirmPassword;
-        }
-        break;
-      }
-      default:
-        break;
-    }
-    setFormError(errors);
-  };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+  
     if (step === 'resetPassword') {
       setNewPassword({ ...newPassword, [name]: value });
-      validate(name, value);
+      // Since you're in the 'resetPassword' step, use 'resetPassword' as the formType
+      validate('resetPassword', name, value, { ...formData, ...newPassword });
     } else {
       setFormData({ ...formData, [name]: value });
-      validate(name, value);
+      // Use 'signin' as the formType for sign-in step
+      validate('signin', name, value, formData);
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (step === 'signIn') {
-      Object.keys(formData).forEach((key) => validate(key, formData[key]));
-
+      // Validate formData for signIn step
+      Object.keys(formData).forEach((key) => validate('signin', key, formData[key], formData));
+  
       if (Object.keys(formError).length === 0) {
         try {
           setBackendError(null);
@@ -118,11 +80,13 @@ function SignInForm() {
         }
       }
     } else if (step === 'resetPassword') {
-      Object.keys(newPassword).forEach((key) => validate(key, newPassword[key]));
+      // Validate newPassword for resetPassword step
+      Object.keys(newPassword).forEach((key) => validate('resetPassword', key, newPassword[key], { ...formData, ...newPassword }));
+  
       if (Object.keys(formError).length === 0) {
         try {
           setBackendError(null);
-          await resetPassword({ email: formData.email, newPassword: newPassword.password }); // Ensure the field name matches
+          await resetPassword({ email: formData.email, newPassword: newPassword.password });
           setStep('success'); // Update the step to show success message
         } catch (err) {
           const errorMessage =
@@ -135,6 +99,7 @@ function SignInForm() {
       }
     }
   };
+  
 
   const handleOtpChange = (e, index) => {
     const { value } = e.target;
@@ -200,11 +165,7 @@ function SignInForm() {
     }
   };
 // *
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+  
 
   let content;
 

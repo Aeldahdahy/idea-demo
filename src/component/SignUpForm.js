@@ -9,17 +9,22 @@ function SignUpForm({ handleSignInClick }) {
     signUp,
     verifyOtp,
     resendOtp,
+    formatTime,
+    setBackendError,
+    formError,
+    backendError,
     loading,
     isOtpSent,
+    validate,
   } = useFunctions();
 
-  const [formError, setFormError] = useState({});
-  const [backendError, setBackendError] = useState(null);
+  
   const [otp, setOtp] = useState(['', '', '', '']);
   const [, setIsOtpVerified] = useState(false);
-  const [timer, setTimer] = useState(180); // 3 minutes in seconds
+  const [timer, setTimer] = useState(180); 
   const [isTimerActive, setIsTimerActive] = useState(true);
   const [step, setStep] = useState('signup');
+  
 
   const [formData, setFormData] = useState({
     role: 'investor',
@@ -47,57 +52,8 @@ function SignUpForm({ handleSignInClick }) {
     }
   }, [isOtpSent, isTimerActive]);
 
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
-  const validate = (name, value) => {
-    let errors = { ...formError };
-
-    switch (name) {
-      case 'fullName':
-        if (!value) {
-          errors.fullName = 'Full Name is required.';
-        } else {
-          delete errors.fullName;
-        }
-        break;
-      case 'email':
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value) {
-          errors.email = 'E-mail is required.';
-        } else if (!emailPattern.test(value)) {
-          errors.email = 'Email must be formatted correctly.';
-        } else {
-          delete errors.email;
-        }
-        break;
-      case 'password':
-        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
-        if (!value) {
-          errors.password = 'Password is required.';
-        } else if (!passwordPattern.test(value)) {
-          errors.password = 'Password must be at least 6 characters long and contain at least one lower and upper character, one number, and one symbol.';
-        } else {
-          delete errors.password;
-        }
-        break;
-      case 'confirmPassword':
-        if (!value) {
-          errors.confirmPassword = 'Confirm Password is required.';
-        } else if (value !== formData.password) {
-          errors.confirmPassword = 'Passwords do not match.';
-        } else {
-          delete errors.confirmPassword;
-        }
-        break;
-      default:
-        break;
-    }
-    setFormError(errors);
-  };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -105,12 +61,12 @@ function SignUpForm({ handleSignInClick }) {
       ...formData,
       [name]: value,
     });
-    validate(name, value);
+    validate('signup', name, value, formData);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    Object.keys(formData).forEach((key) => validate(key, formData[key]));
+    Object.keys(formData).forEach((key) => validate('signup', key, formData[key], formData));
 
     if (Object.keys(formError).length === 0) {
       try {

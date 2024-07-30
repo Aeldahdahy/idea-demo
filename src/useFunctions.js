@@ -328,6 +328,69 @@ export const useFunctions = () => {
     }
   };
   
+  const validate = (formType, name, value, formData) => {
+    let errors = { ...formError };
+  
+    switch (name) {
+      case 'email': {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value) {
+          errors.email = 'E-mail is required.';
+        } else if (!emailPattern.test(value)) {
+          errors.email = 'Email must be formatted correctly.';
+        } else {
+          delete errors.email;
+        }
+        break;
+      }
+      case 'password': {
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+        if (!value) {
+          errors.password = 'Password is required.';
+        } else if (!passwordPattern.test(value) && (formType === "resetPassword" || formType === 'signup')) {
+          errors.password = 'Password must be at least 6 characters long and contain at least one lower and upper character, one number, and one symbol.';
+        } else {
+          delete errors.password;
+        }
+        break;
+      }
+      case 'confirmPassword': {
+        if (!value) {
+          errors.confirmPassword = 'Confirm Password is required.';
+        } else if (value !== formData.password) {
+          errors.confirmPassword = 'Passwords do not match.';
+        } else {
+          delete errors.confirmPassword;
+        }
+        break;
+      }
+      case 'newPassword': {
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+        if (formType === 'resetPassword') {
+          if (!value) {
+            errors.newPassword = 'New Password is required.';
+          } else if (!passwordPattern.test(value)) {
+            errors.newPassword = 'Password must be at least 6 characters long and contain at least one lower and upper character, one number, and one symbol.';
+          } else {
+            delete errors.newPassword;
+          }
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  
+    setFormError(errors);
+  };
+  
+
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return { 
     toggleSideBar,
@@ -348,6 +411,8 @@ export const useFunctions = () => {
     contactUs,
     setFormError,
     setBackendError,
+    formatTime,
+    validate,
     isFixed,
     isVisible,
     sideBarVisible,

@@ -5,7 +5,7 @@ import Logo from '../assets/idea.png';
 
 function SignInFormFields({ formData, formError, backendError, loading, handleChange, handleSubmit, handleForgotPassword }) {
   return (
-    <form className="sign-in-form" onSubmit={handleSubmit}>
+    <form className="sign-in-form" onSubmit={handleSubmit} method='post'>
       <Link to='/'><img src={Logo} alt='loading...' width={100} /></Link>
       <h2 className="title">Sign In</h2>
       {backendError && (

@@ -9,7 +9,7 @@ library.add(fas);
 
 function SignUpFormFields({ formData, formError, backendError, loading, handleChange, handleSubmit }) {
   return (
-    <form className="sign-up-form" onSubmit={handleSubmit}>
+    <form className="sign-up-form" onSubmit={handleSubmit} method='post'>
         <Link to='/'><img src={Logo} alt='loading...' width={100} /></Link>
         <h2 className="title">Sign up</h2>
         {backendError && (

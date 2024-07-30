@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // Correct import for jwtDecode
 
 export const useFunctions = () => {
   const navigate = useNavigate();
@@ -12,16 +12,17 @@ export const useFunctions = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('En');
   const [searchTerm, setSearchTerm] = useState('');
-  const [paragraphText, setParagraphText] = useState('');
-  const [subText, setSubText] = useState('');
-  const [stories, setStories] = useState([]); 
+  // const [paragraphText, setParagraphText] = useState('');
+  // const [subText, setSubText] = useState('');
+  // const [stories, setStories] = useState([]); 
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '']);
   const [timer, setTimer] = useState(180); 
   const [isTimerActive, setIsTimerActive] = useState(true);
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(null);
+  const [response, setResponse] = useState(null); // Initialize response as null
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); // Initialize error as null
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -81,33 +82,33 @@ export const useFunctions = () => {
   };
 
   // Who are we
-  useEffect(() => {
-    const fetchText = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:2000/api/whoarewe");
-        setParagraphText(response.data.mainText);
-        setSubText(response.data.subText);
-      } catch (error) {
-        console.log("Error Fetching the Paragraph", error);
-      }
-    };
-    fetchText();
-  }, []);
+  // useEffect(() => {
+  //   const fetchText = async () => {
+  //     try {
+  //       const response = await axios.get("http://127.0.0.1:2000/api/whoarewe");
+  //       setParagraphText(response.data.mainText);
+  //       setSubText(response.data.subText);
+  //     } catch (error) {
+  //       console.log("Error Fetching the Paragraph", error);
+  //     }
+  //   };
+  //   fetchText();
+  // }, []);
 
   // Success stories
-  useEffect(() => {
-    const fetchStories = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:2000/api/successstories');
-        setStories(response.data);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-    fetchStories();
-  }, []);
+  // useEffect(() => {
+  //   const fetchStories = async () => {
+  //     try {
+  //       const response = await axios.get('http://127.0.0.1:2000/api/successstories');
+  //       setStories(response.data);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       setError(error.response?.data?.message || 'An error occurred while fetching stories.');
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchStories();
+  // }, []);
 
   // Sign Up
   const signUp = async (formData) => {
@@ -210,10 +211,10 @@ export const useFunctions = () => {
         navigate('/');
         return response.data;
       } else {
-        setError({ message: 'Sign-in failed. Please try again.' });
+        setError('Sign-in failed. Please try again.');
       }
     } catch (err) {
-      setError({ message: err.response?.data?.message || `An error occurred. Please try again.${err.message}` });
+      setError(err.response?.data?.message || `An error occurred. Please try again. ${err.message}`);
       throw err;
     } finally {
       setLoading(false);
@@ -291,6 +292,41 @@ export const useFunctions = () => {
     }
   };
 
+  // contact us
+  const contactUs = async (formData) => {
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+    try {
+      const contactResponse = await axios.post('http://127.0.0.1:2000/api/contact', {
+        fullname: formData.fullname,
+        email: formData.email,
+        message: formData.message
+      });
+
+      if (contactResponse.status === 201) {
+        setResponse(contactResponse.data.message || 'Your message has been sent successfully.');
+      } else {
+        setResponse(contactResponse.data.message || 'There was an issue sending your message. Please try again later.');
+      }
+
+    } catch (error) {
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        setError(error.response.data.message || 'There was an error sending your message. Please check your input and try again.');
+      } else if (error.request) {
+        // Request was made but no response received
+        setError('No response received from the server. Please check your internet connection and try again.');
+      } else {
+        // Something else caused an error
+        setError(`Error: ${error.message}`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
   return { 
     toggleSideBar,
     toggleDropdown,
@@ -307,16 +343,18 @@ export const useFunctions = () => {
     verifyOtpForPasswordReset,
     resetPassword,
     resendForgetPasswordOtp,
+    contactUs,
     isFixed,
     isVisible,
     sideBarVisible,
     dropdownVisible,
     currentLanguage,
-    paragraphText,
-    subText,
-    stories,
+    // paragraphText,
+    // subText,
+    // stories,
     loading,
     error,
+    response,
     isOtpSent,
     isOtpVerified,
     otp,

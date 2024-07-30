@@ -6,6 +6,7 @@ import Footer from './component/Footer';
 import CopyRight from './component/CopyRight';
 import Home from './component/Home'; 
 import SingOptions from './component/SingOptions';
+import Contact from './component/Contact';
 // import PopUpSignInForm from './component/PopUpSignInForm';
 
 function Invest() {
@@ -24,9 +25,7 @@ function AboutUs() {
   return <h2>About Us Page</h2>;
 }
 
-function ContactUs() {
-  return <h2>Contact Us Page</h2>;
-}
+
 
 function AppContent() {
   // const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -58,7 +57,7 @@ function AppContent() {
         <Route path="/fundraise" element={<Fundraise />} />
         <Route path="/stories" element={<Stories />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/contact" element={<Contact  />} /> {/*text={'alyooo'}  */}
         <Route path="/signup&signin" element={isAuthenticated ? <navigate to='/' /> : <SingOptions  />} /> {/*onClick={closePopup}*/}
       </Routes>
       {!hideNavAndFooter && <Footer />}

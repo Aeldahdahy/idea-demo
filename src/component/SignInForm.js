@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useFunctions } from '../useFunctions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Logo from '../assets/idea.png';
+import SignInFormFields from './SignInFormFields';
+import OtpVerification from './OtpVerification';
+import ResetPasswordForm from './ResetPasswordForm';
+import Success from './Success';
 
-function SignInForm({ handleSignInClick }) {
+function SignInForm() {
   const {
     signIn,
     sendOtp,
     verifyOtpForPasswordReset,
     resetPassword,
     resendForgetPasswordOtp,
+    setFormError,
+    setBackendError,
     loading,
+    formError,
+    backendError,
   } = useFunctions();
-  const [formError, setFormError] = useState({});
-  const [backendError, setBackendError] = useState(null);
   const [formData, setFormData] = useState({ email: '', newPassword: '' });
   const [step, setStep] = useState('signIn');
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -22,6 +25,7 @@ function SignInForm({ handleSignInClick }) {
   const [, setOtpVerified] = useState(false);
   const [timer, setTimer] = useState(180); // 3 minutes in seconds
   const [isTimerActive, setIsTimerActive] = useState(true);
+  
   
 
   useEffect(() => {
@@ -35,7 +39,7 @@ function SignInForm({ handleSignInClick }) {
     }
     return () => clearInterval(interval);
   }, [timer, isTimerActive, step]);
-
+  // *
   const validate = (name, value) => {
     let errors = { ...formError };
     switch (name) {
@@ -195,7 +199,7 @@ function SignInForm({ handleSignInClick }) {
       setBackendError(errorMessage);
     }
   };
-
+// *
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -206,143 +210,53 @@ function SignInForm({ handleSignInClick }) {
 
   if (step === 'signIn') {
     content = (
-      <form className="sign-in-form" onSubmit={handleSubmit}>
-        <Link to='/'><img src={Logo} alt='loading...' width={100} /></Link>
-        <h2 className="title">Sign in</h2>
-        {backendError && (
-          <div className="error-box">
-            <p className="error-message">{backendError}</p>
-          </div>
-        )}
-        <div className="input-field">
-          <FontAwesomeIcon icon="fa-solid fa-envelope" />
-          <input
-            type="email"
-            placeholder="Email"
-            name='email'
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {formError.email && <span className='inputErrorMessage'>{formError.email}</span>}
-        <div className="input-field">
-          <FontAwesomeIcon icon="fa-solid fa-lock" />
-          <input
-            type="password"
-            placeholder="Password"
-            name='password'
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {formError.password && <span className='inputErrorMessage'>{formError.password}</span>}
-        <button type="submit" className="btn solid" disabled={loading}>
-          {loading ? 'Signing in...' : 'Login'}
-        </button>
-        <p className="forgot-pass">
-          <Link to="#" onClick={handleForgotPassword}>Forgot Password?</Link>
-        </p>
-        <p className="social-text">Or Sign in with social platforms</p>
-        <div className="social-media">
-          <Link to="#" className="social-icon">
-            <FontAwesomeIcon icon={['fab', 'google']} />
-          </Link>
-          <Link to="#" className="social-icon">
-            <FontAwesomeIcon icon={['fab', 'linkedin-in']} />
-          </Link>
-        </div>
-      </form>
+      <SignInFormFields
+        formData={formData}
+        formError={formError}
+        backendError={backendError}
+        loading={loading}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+        handleForgotPassword={handleForgotPassword}
+      />
     );
   } else if (step === 'otp') {
     content = (
-      <form className="sign-in-form">
-        <Link to='/'><img src={Logo} alt='loading...' width={100} /></Link>
-        <h2 className="title">OTP Verification</h2>
-        <p className='UserEmailVerification'>Please Enter The 4 Digit Code Sent To<br /> {formData.email}</p>
-        {backendError && (
-          <div className="error-box">
-            <p className="error-message">{backendError}</p>
-          </div>
-        )}
-        <p className="timer">Time left: {formatTime(timer)}</p>
-        <div className="otpInputs">
-          {otp.map((digit, index) => (
-            <React.Fragment key={index}>
-              <input
-                type="text"
-                name={`otp-${index}`}
-                maxLength="1"
-                value={digit}
-                onChange={(e) => handleOtpChange(e, index)}
-                className="otpInput"
-                required
-              />
-            </React.Fragment>
-          ))}
-        </div>
-        <button type="button" className="btn solid" onClick={handleVerifyOtp}>
-          Verify OTP
-        </button>
-        <p className="forgot-pass">
-          <Link to="#" onClick={() => setStep('signIn')}>Back to Sign In</Link>
-        </p>
-        <p>Didn't receive OTP? <Link to='#' onClick={handleResendOtp} disabled={isTimerActive}>Resend code</Link></p>
-      </form>
+      <OtpVerification
+      formData={formData}
+      backendError={backendError}
+      timer={timer}
+      otp={otp}
+      loading={loading}
+      handleOtpChange={handleOtpChange}
+      handleVerifyOtp={handleVerifyOtp}
+      handleResendOtp={handleResendOtp}
+      formatTime={formatTime}
+      isTimerActive={isTimerActive}
+      setStep={setStep}
+      otpDesignForm={'sign-in-form'}
+    />
     );
   } else if (step === 'resetPassword') {
     content = (
-      <form className="sign-in-form" onSubmit={handleSubmit}>
-        <Link to='/'><img src={Logo} alt='loading...' width={100} /></Link>
-        <h2 className="title">Reset Password</h2>
-        <p className='UserEmailVerification'>Please Enter The New Password For Your Account</p>
-        {backendError && (
-          <div className="error-box">
-            <p className="error-message">{backendError}</p>
-          </div>
-        )}
-        <div className="input-field">
-          <FontAwesomeIcon icon="fa-solid fa-lock" />
-          <input
-            type="password"
-            placeholder="New Password"
-            name='password'
-            value={newPassword.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {formError.password && <span className='inputErrorMessage'>{formError.password}</span>}
-        <div className="input-field">
-          <FontAwesomeIcon icon="fa-solid fa-lock" />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            name='confirmPassword'
-            value={newPassword.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {formError.confirmPassword && <span className='inputErrorMessage'>{formError.confirmPassword}</span>}
-        <button type="submit" className="btn solid resetPasswordButton" disabled={loading}>
-          {loading ? 'Resetting Password...' : 'Reset Password'}
-        </button>
-      </form>
+      <ResetPasswordForm
+      newPassword={newPassword}
+      formError={formError}
+      backendError={backendError}
+      loading={loading}
+      handleChange={handleChange}
+      handleSubmit={handleSubmit}
+    />
     );
   } else if (step === 'success') {
     content = (
-      <form className="sign-in-form" >
-        <div className='SuccessverificationImage'>
-          <FontAwesomeIcon icon="fa-solid fa-check" />
-        </div>
-        <h2>Password Changed!</h2>
-        <p>Your password has been successfully changed.</p>
-        <button type="submit" onClick={() => setStep('signIn')} className="btn solid backToSignInButton">
-          Back To Sign In
-        </button>
-      </form>
+      <Success  
+        setStep={setStep}  
+        AddDesignFormClass={'sign-in-form'} 
+        HeaderMessage={'Password Changed!'} 
+        SubTextMessage={'Your password has been successfully changed.'} 
+        formDirection={'signin'}
+      />
     );
   }
 

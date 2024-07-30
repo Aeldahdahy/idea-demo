@@ -23,6 +23,8 @@ export const useFunctions = () => {
   const [response, setResponse] = useState(null); // Initialize response as null
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); // Initialize error as null
+  const [formError, setFormError] = useState({});
+  const [backendError, setBackendError] = useState(null);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -344,6 +346,8 @@ export const useFunctions = () => {
     resetPassword,
     resendForgetPasswordOtp,
     contactUs,
+    setFormError,
+    setBackendError,
     isFixed,
     isVisible,
     sideBarVisible,
@@ -360,5 +364,7 @@ export const useFunctions = () => {
     otp,
     timer,
     isTimerActive,
+    formError,
+    backendError,
   };
 };

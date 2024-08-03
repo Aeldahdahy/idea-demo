@@ -8,21 +8,23 @@ const jwt = require('jsonwebtoken');
 const Contact = require('../modules/contact');
 const User = require('../modules/signup');
 const Otp = require('../modules/otp');
+const { session } = require('passport');
 
 const JWT_SECRET = 'your_jwt_secret_key'; // Replace with your actual secret key
 
-// Create a transporter for nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'tahaelrajel8@gmail.com',
-    pass: 'bwdj iofo hirn vqmx'
-  }
-});
+// Middleware to authenticate JWT tokens
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Get token from 'Bearer <token>' format
 
-// Generate OTP
-const generateOtp = () => {
-  return Math.floor(1000 + Math.random() * 9000).toString(); // 4-character OTP
+  if (token == null) return res.sendStatus(401); // No token
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403); // Invalid token
+
+    req.user = user;
+    next();
+  });
 };
 
 // Handle contact form submission
@@ -49,6 +51,20 @@ router.post('/contact', async (req, res) => {
     res.status(400).send(errors);
   }
 });
+
+// Create a transporter for nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'tahaelrajel8@gmail.com',
+    pass: 'bwdj iofo hirn vqmx'
+  }
+});
+
+// Generate OTP
+const generateOtp = () => {
+  return Math.floor(1000 + Math.random() * 9000).toString(); // 4-character OTP
+};
 
 // Initial signup route to send OTP
 router.post('/signup', async (req, res) => {
@@ -148,14 +164,28 @@ router.post(
         return res.status(400).json({ message: 'Invalid email or password' });
       }
 
-      req.session.user = {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        fullName: user.fullName
+      const payload = {
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          fullName: user.fullName
+        }
       };
 
-      res.status(200).json({ message: 'Sign-in successful' });
+      jwt.sign(
+        payload,
+        JWT_SECRET,
+        { expiresIn: '1h' },
+        (err, token) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Failed to generate token' });
+          }
+          req.session.user = payload.user; // Save user info in session
+          res.status(200).json({ token });
+        }
+      );
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error' });
@@ -167,12 +197,16 @@ router.post(
 router.post('/signout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
-      return res.status(500).json({ message: 'Failed to log out' });
+      console.error('Failed to destroy session:', err);
+      return res.status(500).json({ message: 'Failed to sign out' });
     }
-    res.clearCookie('connect.sid'); // clear the cookie on client side
-    res.status(200).json({ message: 'Sign-out successful' });
+
+    // Clear the session cookie
+    res.clearCookie('connect.sid', { path: '/' }); // Ensure path matches the cookie's path option
+    res.status(200).json({ message: 'Signed out successfully' });
   });
 });
+
 
 // Request OTP for password reset
 router.post('/forgot-password', async (req, res) => {
@@ -219,41 +253,27 @@ router.post('/verify-otp-for-reset', async (req, res) => {
     if (!otpEntry) {
       return res.status(400).json({ message: 'Invalid OTP!' });
     }
-    res.status(200).json({ message: 'OTP is valid. Proceed to reset password.' });
+
+    // Perform password reset here
+    res.status(200).json({ message: 'OTP verified successfully! You can now reset your password.' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error!' });
   }
 });
 
-router.put('/reset-password', async (req, res) => {
+// Reset password
+router.post('/reset-password', async (req, res) => {
   const { email, newPassword } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'User with this email does not exist!' });
-    }
-
-    user.password = await bcrypt.hash(newPassword, 10); // Hash the new password
-    await user.save();
-
-    // Optionally, delete the OTP entries if you are using the same OTP system for password reset
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await User.updateOne({ email }, { password: hashedPassword });
     await Otp.deleteMany({ email });
-
-    res.status(200).json({ message: 'Password reset successfully' });
+    res.status(200).json({ message: 'Password reset successfully!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error!' });
-  }
-});
-
-// Protected route example
-router.get('/protected-route', (req, res) => {
-  if (req.session.user) {
-    res.status(200).json({ message: 'This is a protected route', user: req.session.user });
-  } else {
-    res.status(401).json({ message: 'Unauthorized' });
   }
 });
 

@@ -294,6 +294,22 @@ export const useFunctions = () => {
     }
   };
 
+  // sign out
+  const signOutDistroySession = async () =>{
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post('http://127.0.0.1:2000/api/signout');
+      console.log(response.data);
+      return response.data;
+      
+    } catch (error) {
+      setError(error.response?.data?.message || 'An error occurred. please try again later.');
+    }finally{
+      setLoading(false);
+    }
+  };
+
   // contact us
   const contactUs = async (formData) => {
     setLoading(true);
@@ -384,6 +400,7 @@ export const useFunctions = () => {
     setFormError(errors);
   };
   
+  
 
 
   const formatTime = (seconds) => {
@@ -393,26 +410,30 @@ export const useFunctions = () => {
   };
 
   return { 
+    signIn,
+    signUp,
+    setOtp,
+    sendOtp,
+    validate,
+    contactUs,
+    resendOtp,
+    verifyOtp,
+    chunkArray,
+    formatTime,
+    handleSearch,
+    setFormError,
+    resetPassword,
     toggleSideBar,
     toggleDropdown,
     selectLanguage,
-    handleInputChange,
-    handleSearch,
-    chunkArray,
-    signUp,
-    verifyOtp,
-    resendOtp,
-    setOtp,
-    signIn,
-    sendOtp,
-    verifyOtpForPasswordReset,
-    resetPassword,
-    resendForgetPasswordOtp,
-    contactUs,
-    setFormError,
     setBackendError,
-    formatTime,
-    validate,
+    handleInputChange,
+    signOutDistroySession,
+    resendForgetPasswordOtp,
+    verifyOtpForPasswordReset,
+    otp,
+    timer,
+    error,
     isFixed,
     isVisible,
     sideBarVisible,
@@ -422,12 +443,9 @@ export const useFunctions = () => {
     // subText,
     // stories,
     loading,
-    error,
     response,
     isOtpSent,
     isOtpVerified,
-    otp,
-    timer,
     isTimerActive,
     formError,
     backendError,

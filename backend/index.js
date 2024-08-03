@@ -6,34 +6,51 @@ const ideaRoutes = require('./routes/idea_routes');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const mongoose = require('mongoose');
+const dbUsername = process.env.DB_USERNAME;
+const dbPassword = process.env.DB_PASSWORD;
+const dbHost = process.env.DB_HOST;
+const dbName = process.env.DB_NAME
+const dbOptions = process.env.DB_OPTIONS;
 
-// Connect to the database
-db_connection(); 
+const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${dbOptions}`;
+
+
+db_connection(); // Ensure this is called correctly
 
 const hostname = '127.0.0.1';
 const port = 2000;
 
-// Middleware
+
+
+
+
+app.use(session({
+  secret: 'your_session_secret_key', // Replace with your actual session secret
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: db_URL, // Ensure db_URL is correctly defined
+    collectionName: 'sessions', // Optional: specify a collection name for sessions
+    ttl: 2 * 60 * 60 // Session TTL in seconds (2 hours)
+  }),
+  cookie: {
+    secure: false, // Set to true if using HTTPS
+    maxAge: 2 * 60 * 60 * 1000 // Session cookie expiration time (2 hours in milliseconds)
+  }
+}));
+
+
+
 app.use(cors());
+
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session configuration
-app.use(session({
-  secret: 'your_session_secret', // Replace with your actual secret
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: 'mongodb://localhost:27017/ideaDB', // Use your MongoDB URL
-    ttl: 24 * 60 * 60 // 1 day session expiration
-  })
-}));
+// Use the idea routes for handling contact, sign up, and sign in
+app.use('/api', ideaRoutes);
 
-// Use the idea routes for handling contact, sign up and sign in 
-app.use('/api', ideaRoutes); 
-
-// Start the server
 app.listen(port, hostname, () => {
   console.log(`Server is running on http://${hostname}:${port}`);
 });

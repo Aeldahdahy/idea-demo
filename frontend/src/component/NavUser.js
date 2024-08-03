@@ -6,6 +6,8 @@ import userAvatar from '../assets/img-0.24.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { useFunctions } from '../useFunctions';
+
 library.add(fas);
 
 function NavUser() {
@@ -41,13 +43,18 @@ function NavUser() {
   const handleProfile = () => {
     setIsDropdownOpen(false);
   };
+  const {signOutDistroySession} = useFunctions();
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
     setUserName('');
     setIsDropdownOpen(false);
-    navigate('/');
+    try {
+      signOutDistroySession();
+    } finally {
+      navigate('/');
+    }
   };
 
   return (

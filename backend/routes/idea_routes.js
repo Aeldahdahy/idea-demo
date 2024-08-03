@@ -11,6 +11,20 @@ const Otp = require('../modules/otp');
 
 const JWT_SECRET = 'your_jwt_secret_key'; // Replace with your actual secret key
 
+// Create a transporter for nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'tahaelrajel8@gmail.com',
+    pass: 'bwdj iofo hirn vqmx'
+  }
+});
+
+// Generate OTP
+const generateOtp = () => {
+  return Math.floor(1000 + Math.random() * 9000).toString(); // 4-character OTP
+};
+
 // Handle contact form submission
 router.post('/contact', async (req, res) => {
   try {
@@ -35,20 +49,6 @@ router.post('/contact', async (req, res) => {
     res.status(400).send(errors);
   }
 });
-
-// Create a transporter for nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'tahaelrajel8@gmail.com',
-    pass: 'bwdj iofo hirn vqmx'
-  }
-});
-
-// Generate OTP
-const generateOtp = () => {
-  return Math.floor(1000 + Math.random() * 9000).toString(); // 4-character OTP
-};
 
 // Initial signup route to send OTP
 router.post('/signup', async (req, res) => {
@@ -148,30 +148,31 @@ router.post(
         return res.status(400).json({ message: 'Invalid email or password' });
       }
 
-      const payload = {
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          fullName: user.fullName // Include full name in the payload
-        }
+      req.session.user = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        fullName: user.fullName
       };
 
-      jwt.sign(
-        payload,
-        JWT_SECRET,
-        { expiresIn: '1h' },
-        (err, token) => {
-          if (err) throw err;
-          res.status(200).json({ token });
-        }
-      );
+      res.status(200).json({ message: 'Sign-in successful' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error' });
     }
   }
 );
+
+// Sign-out route
+router.post('/signout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      return res.status(500).json({ message: 'Failed to log out' });
+    }
+    res.clearCookie('connect.sid'); // clear the cookie on client side
+    res.status(200).json({ message: 'Sign-out successful' });
+  });
+});
 
 // Request OTP for password reset
 router.post('/forgot-password', async (req, res) => {
@@ -234,18 +235,26 @@ router.put('/reset-password', async (req, res) => {
       return res.status(400).json({ message: 'User with this email does not exist!' });
     }
 
-    user.password = await newPassword;
+    user.password = await bcrypt.hash(newPassword, 10); // Hash the new password
     await user.save();
 
-    // Optionally, delete the OTP entries if you are using the same OTP system for password resets
+    // Optionally, delete the OTP entries if you are using the same OTP system for password reset
     await Otp.deleteMany({ email });
 
-    res.status(200).json({ message: 'Password reset successfully!' });
+    res.status(200).json({ message: 'Password reset successfully' });
   } catch (error) {
-    console.error('Error resetting password:', error);
+    console.error(error);
     res.status(500).json({ message: 'Server error!' });
   }
 });
 
+// Protected route example
+router.get('/protected-route', (req, res) => {
+  if (req.session.user) {
+    res.status(200).json({ message: 'This is a protected route', user: req.session.user });
+  } else {
+    res.status(401).json({ message: 'Unauthorized' });
+  }
+});
 
 module.exports = router;

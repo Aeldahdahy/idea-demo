@@ -32,11 +32,11 @@ app.use(session({
   store: MongoStore.create({
     mongoUrl: db_URL, // Ensure db_URL is correctly defined
     collectionName: 'sessions', // Optional: specify a collection name for sessions
-    ttl: 2 * 60 * 60 // Session TTL in seconds (2 hours)
+    ttl: 2 * 60 // Session TTL in seconds (2 hours)
   }),
   cookie: {
     secure: false, // Set to true if using HTTPS
-    maxAge: 2 * 60 * 60 * 1000 // Session cookie expiration time (2 hours in milliseconds)
+    maxAge: 2  * 60 * 1000 // Session cookie expiration time (2 hours in milliseconds)
   }
 }));
 

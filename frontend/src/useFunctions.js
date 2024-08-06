@@ -400,9 +400,6 @@ export const useFunctions = () => {
     setFormError(errors);
   };
   
-  
-
-
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;

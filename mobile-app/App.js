@@ -1,30 +1,24 @@
-import React from 'react';
-import OnBoard from './component/OnBoard';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import SplashScreen from './component/SplashScreen';
+import HomeScreen from './component/HomeScreen';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <OnBoard />
-    </View>
-  );
+  console.log('App is running');
+
+  const [isShowSplash, setIsShowSplash] = useState(true);
+
+  useEffect(() => {
+    
+    setTimeout(()=>{
+    
+      setIsShowSplash(false);
+
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+
+  }, []);
+
+
+  return <>{isShowSplash ? <SplashScreen /> : <HomeScreen />}</>;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1, // Take up the full screen
-    justifyContent: 'center', // Center the child components vertically
-    alignItems: 'center', // Center the child components horizontally
-    backgroundColor: '#ffffff', // Optional background color
-  },
-});
-
-
-
-{/*
-  import SplashScreen from './component/SplashScreen';
-  import { SafeAreaProvider } from 'react-native-safe-area-context';
-  <SafeAreaProvider>
-    <SplashScreen />
-  </SafeAreaProvider>
-*/}

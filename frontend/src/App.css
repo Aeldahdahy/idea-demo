@@ -735,26 +735,34 @@ form.sign-in-form {
 .social-media {
   display: flex;
   justify-content: center;
+  width: 100%;
+  max-width: 380px;
 }
 
 .social-icon {
-  height: 46px;
-  width: 46px;
+  width: 100%;
+  max-width: 380px;
+  color: #000;
+  border: solid 1px #000;
+  border-radius: 25px;
+  padding: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 0 0.45rem;
-  color: #333;
-  border-radius: 50%;
-  border: 1px solid #333;
+  justify-content: center;
   text-decoration: none;
-  font-size: 1.1rem;
-  transition: 0.3s;
+  background-color: #fff;
+  font-size: 18px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+.social-icon svg{
+  color: #EB4436;
+  padding-right: 5px;
 }
 
 .social-icon:hover {
-  color: #0029A4;
-  border-color: #0029A4;
+  background-color: #0536ca;
+  color: #fff;
+  box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.3);
 }
 
 .btn {

@@ -1,10 +1,11 @@
 import React from 'react';
-import WhoAreWe from './WhoAreWe';
-import Industries from './Industries';
-import CompaniesStories from './CompaniesStories';
-import PartnersFeatured from './PartnersFeatured';
 import CarouselMain from './CarouselMain';
 import Statistics from './Statistics';
+import WhoAreWe from './WhoAreWe';
+import Industries from './Industries';
+// import HowItWorks from './HowItWorks';
+import CompaniesStories from './CompaniesStories';
+import PartnersFeatured from './PartnersFeatured';
 
 
 function Home() {
@@ -17,6 +18,7 @@ function Home() {
       <WhoAreWe />
       <div className='space'></div>
       <Industries />
+      {/* <HowItWorks /> */}
       <div className='space'></div>
       <CompaniesStories />
       <div className='space'></div>

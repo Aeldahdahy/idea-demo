@@ -55,11 +55,9 @@ function SignInFormFields({
       </p>
       <p className="social-text">Or Sign in with social platforms</p>
       <div className="social-media">
-        <Link to="#" className="social-icon" aria-label="Sign in with Google">
+        <Link to="#" className="social-icon" >
           <FontAwesomeIcon icon={['fab', 'google']} />
-        </Link>
-        <Link to="#" className="social-icon" aria-label="Sign in with LinkedIn">
-          <FontAwesomeIcon icon={['fab', 'linkedin-in']} />
+          Sign-in with Gmail
         </Link>
       </div>
     </form>

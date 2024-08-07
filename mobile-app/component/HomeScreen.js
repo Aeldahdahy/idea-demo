@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet  } from "react-native";
+import { View, StyleSheet  } from "react-native";
 import OnBoarding from "./OnBoarding";
 
 export default function HomeScreen() {
@@ -19,4 +19,9 @@ const styles = StyleSheet.create({
     containerText:{
         color: '#000',
     },
+    name:{
+      fontWeight:'bold',
+      fontSize: 50,
+
+    }
 });

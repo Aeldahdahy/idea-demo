@@ -1,7 +1,7 @@
 import { View, StyleSheet  } from "react-native";
 import OnBoarding from "./OnBoarding";
 
-export default function HomeScreen() {
+export default function Index() {
   return (
     <View style={styles.container}>
         <OnBoarding />

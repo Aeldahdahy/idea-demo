@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import SplashScreenComponent from './component/SplashScreen';
-import HomeScreen from './component/HomeScreen';
+import Index from './component/Index';
 
 SplashScreen.preventAutoHideAsync();
 
 const loadFonts = async () => {
   await Font.loadAsync({
-    'Signika-Regular': require('./assets/fonts/static/Signika-Regular.ttf'),
-    'Signika-Light': require('./assets/fonts/static/Signika-Light.ttf'),
-    'Signika-Bold': require('./assets/fonts/static/Signika-Bold.ttf'),
+    'Signika-Regular': require('./assets/static/Signika-Regular.ttf'),
+    'Signika-Light': require('./assets/static/Signika-Light.ttf'),
+    'Signika-Bold': require('./assets/static/Signika-Bold.ttf'),
   });
 };
 
@@ -49,6 +49,6 @@ export default function App() {
   }
 
   return (
-    <>{isShowSplash ? <SplashScreenComponent /> : <HomeScreen />}</>
+    <>{isShowSplash ? <SplashScreenComponent /> : <Index />}</>
   );
 }

@@ -1,192 +1,159 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Pressable, Image } from "react-native";
+import { StyleSheet, View, Text, Pressable, Image, Dimensions } from "react-native";
 // import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
+const { width, height } = Dimensions.get('window');
 
 export default function GetStarted1() {
     // const navigation = useNavigation();
 
-  return (
-    <View style={styles.getStartedPage1}>
-      <Pressable
-        style={[styles.rectangleParent, styles.groupChildLayout]}
-        // onPress={() => navigation.navigate("GetStartedPage1")}
-      >
-        <View style={[styles.groupChild, styles.groupChildPosition]} />
-        <Text style={styles.next}>{`Next `}</Text>
-      </Pressable>
-      <Text style={[styles.welcomeToIdeaContainer, styles.enFlexBox]}>
-        <Text style={styles.welcomeToIdeaContainer1}>
-          <Text style={styles.welcomeTo}>Welcome to</Text>
-          <Text style={styles.idea}> IDEA.</Text>
-        </Text>
-      </Text>
-      <Text
-        style={[styles.ourPlatformIs, styles.enFlexBox]}
-      >{`Our platform is dedicated to transforming innovative ideas into successful ventures by providing you with the tools, resources, and support needed `}</Text>
-      <Image
-        style={styles.screenshot20240722At753}
-        resizeMode="cover"
-        source={require("../assets/iamge-0.1.png")}
-      />
-      <View style={[styles.enParent, styles.enParentLayout]}>
-        <Text style={[styles.en, styles.enFlexBox]}>EN</Text>
-        <Image
-          style={[styles.screenshot20240701At656, styles.enParentLayout]}
-          resizeMode="cover"
-          source={require("../assets/image-0.5.png")}
-        />
-        <Image
-          style={styles.groupItem}
-          resizeMode="cover"
-          source={require("../assets/image-0.6.png")}
-        />
-      </View>
-      <Image
-        style={styles.getStartedPage1Child}
-        resizeMode="cover"
-        source={require("../assets/image-0.7.png")}
-      />
-    </View>
-  )
+    return (
+        <View style={styles.getStartedPage1}>
+            <Text style={styles.welcomeToIdeaContainer}>
+                <Text style={styles.welcomeTo}>Welcome to</Text>
+                <Text style={styles.idea}> IDEA.</Text>
+            </Text>
+            
+            <Image
+                style={styles.screenshot20240722At753}
+                resizeMode="cover"
+                source={require("../assets/iamge-0.1.png")}
+            />
+            <Text style={styles.ourPlatformIs}>
+                Our platform is dedicated to transforming innovative ideas into successful ventures by providing you with the tools, resources, and support needed
+            </Text>
+            <Image
+                style={styles.getStartedPage1Child}
+                resizeMode="cover"
+                source={require("../assets/image-0.15.png")}
+            />
+            <Pressable
+                style={styles.rectangleParent}
+                // onPress={() => navigation.navigate("GetStarted2")}
+            >
+                <View style={styles.groupChild} />
+                <Text style={styles.next}>Next</Text>
+            </Pressable>
+            <View style={styles.enParent}>
+                <Image
+                    style={styles.screenshot20240701At656}
+                    resizeMode="cover"
+                    source={require("../assets/image-0.21.png")}
+                    />
+                <Text style={styles.en}>EN</Text>
+                <View style={styles.groupItem}>
+                  <Image
+                    style={styles.groupItemImage}
+                    resizeMode="cover"
+                    source={require("../assets/image-0.20.png")}
+                    />
+                </View>
+            </View>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-    groupChildLayout: {
-      height: 60,
-      width: 270,
-      position: "absolute",
-    },
-    groupChildPosition: {
-      left: 0,
-      top: 0,
-    },
-    enFlexBox: {
-      color: Color.colorBlack,
-      alignItems: "center",
-      display: "flex",
-      textAlign: "center",
-      position: "absolute",
-    },
-    enParentLayout: {
-      height: 28,
-      position: "absolute",
-    },
-    groupChild: {
-      borderRadius: Border.br_21xl,
-      backgroundColor: Color.colorNavy,
-      borderStyle: "solid",
-      borderColor: Color.colorGray_100,
-      borderWidth: 2,
-      height: 60,
-      width: 270,
-      position: "absolute",
-    },
-    next: {
-      top: 18,
-      left: 17,
-      fontSize: FontSize.size_6xl,
-      color: Color.colorGray_200,
-      width: 234,
-      height: 25,
-      justifyContent: "center",
-      alignItems: "center",
-      display: "flex",
-      textAlign: "center",
-      fontFamily: FontFamily.signikaBold,
-      fontWeight: "700",
-      position: "absolute",
+    getStartedPage1: {
+        backgroundColor: Color.colorWhite,
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
     },
     rectangleParent: {
-      top: 765,
-      left: 80,
-      
-      shadowOffset: {
-        width: 0,
-        height: 6,
-      },
-      shadowRadius: 10,
-      elevation: 10,
-      shadowOpacity: 1,
+        width: '80%',
+        height: 60,
+        borderRadius: Border.br_21xl,
+        backgroundColor: Color.colorNavy,
+        borderColor: Color.colorGray_100,
+        borderWidth: 2,
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowRadius: 10,
+        elevation: 10,
+        shadowOpacity: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 35,
+        marginBottom: 35,
     },
-    welcomeTo: {
-      fontFamily: FontFamily.signikaRegular,
+    groupChild: {
+        borderRadius: Border.br_21xl,
+        backgroundColor: Color.colorNavy,
+        borderStyle: "solid",
+        borderColor: Color.colorGray_100,
+        borderWidth: 2,
+        height: 60,
+        width: '100%',
+        position: "absolute",
     },
-    idea: {
-      fontFamily: FontFamily.signikaBold,
-      fontWeight: "700",
-    },
-    welcomeToIdeaContainer1: {
-      width: "100%",
+    next: {
+        fontSize: FontSize.size_6xl,
+        color: Color.colorGray_200,
+        fontFamily: FontFamily.signikaBold,
+        fontWeight: "700",
     },
     welcomeToIdeaContainer: {
-      marginLeft: -121,
-      top: 92,
-      fontSize: FontSize.size_16xl,
-      width: 243,
-      height: 80,
-      left: "50%",
+        fontSize: FontSize.size_16xl,
+        textAlign: "center",
+        marginBottom: 10,
+        marginTop: 10,
+    },
+    welcomeTo: {
+        fontFamily: FontFamily.signikaRegular,
+    },
+    idea: {
+        fontFamily: FontFamily.signikaBold,
+        fontWeight: "700",
     },
     ourPlatformIs: {
-      marginLeft: -175,
-      top: 574,
-      fontSize: FontSize.size_2xl,
-      fontWeight: "300",
-      fontFamily: FontFamily.signikaLight,
-      width: 350,
-      height: 100,
-      left: "50%",
-      justifyContent: "center",
+        fontSize: FontSize.size_2xl,
+        fontWeight: "300",
+        fontFamily: FontFamily.signikaLight,
+        textAlign: "center",
+        marginBottom: 20,
+        paddingHorizontal: 20,
     },
     screenshot20240722At753: {
-      marginLeft: -167,
-      top: 223,
-      borderRadius: 167,
-      width: 334,
-      height: 340,
-      left: "50%",
-      position: "absolute",
-    },
-    en: {
-      top: 1,
-      left: 27,
-      fontSize: FontSize.size_8xl,
-      width: 44,
-      height: 26,
-      fontFamily: FontFamily.signikaRegular,
-      justifyContent: "center",
-    },
-    screenshot20240701At656: {
-      borderRadius: Border.br_195xl,
-      width: 31,
-      left: 0,
-      top: 0,
-    },
-    groupItem: {
-      top: 16,
-      left: 79,
-      maxHeight: "100%",
-      width: 15,
-      position: "absolute",
+        borderRadius: 167,
+        width: width * 0.8,
+        height: "40%",
+        marginBottom: 20,
     },
     enParent: {
-      top: 855,
-      left: 176,
-      width: 79,
+        flex:1,
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    en: {
+        fontSize: FontSize.size_8xl,
+        fontFamily: FontFamily.signikaRegular,
+        marginRight: 10,
+    },
+    screenshot20240701At656: {
+        borderRadius: Border.br_195xl,
+        width: 31,
+        height: 31,
+        marginRight: 10,
     },
     getStartedPage1Child: {
-      top: 700,
-      left: 165,
       width: 100,
       height: 12,
-      position: "absolute",
+      marginTop: 20,
     },
-    getStartedPage1: {
-      backgroundColor: Color.colorWhite,
-      flex: 1,
-      height: 932,
-      overflow: "hidden",
-      width: "100%",
+    groupItem: {
+      position:'relative',
+      width: 15,
+      height: 15,
+    },
+    groupItemImage:{
+      position: 'absolute',
+      width: '100%',
+      top:'50%'
     },
 });

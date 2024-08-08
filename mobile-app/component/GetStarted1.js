@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 35,
-        marginBottom: 35,
+        marginTop: 30,
+        marginBottom: 20,
     },
     groupChild: {
         borderRadius: Border.br_21xl,
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
     welcomeToIdeaContainer: {
         fontSize: FontSize.size_16xl,
         textAlign: "center",
-        marginBottom: 10,
-        marginTop: 10,
+        marginBottom: 30,
+        marginTop: 45,
     },
     welcomeTo: {
         fontFamily: FontFamily.signikaRegular,

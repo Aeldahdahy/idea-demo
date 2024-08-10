@@ -71,15 +71,17 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     topNavigation: {
-        flexDirection: 'row',
+        alignItems:'center',
         justifyContent: 'space-between',
+        flexDirection: 'row',
         width: '100%',
-        paddingHorizontal: 20,
         position: 'absolute',
-        top: 40,
+        top: "5%",
     },
     backButton: {
         backgroundColor: 'transparent',
+        width:40,
+        height:40,
     },
     skipButton: {
         backgroundColor: 'transparent',
@@ -88,12 +90,14 @@ const styles = StyleSheet.create({
         fontSize: FontSize.size_6xl,
         color: Color.colorNavy,
         fontFamily: FontFamily.signikaBold,
+        width:"100%",
+        height:"100%",
     },
     whoAreWe: {
         fontSize: FontSize.size_16xl,
         fontFamily: FontFamily.signikaBold,
         textAlign: "center",
-        marginTop: 100, // Adjust for space at the top
+        marginTop: 42, // Adjust for space at the top
     },
     ourMissionIs: {
         fontSize: FontSize.size_2xl,

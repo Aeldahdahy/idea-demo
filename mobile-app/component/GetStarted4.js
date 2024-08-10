@@ -100,15 +100,17 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     topNavigation: {
-        flexDirection: 'row',
+        alignItems:'center',
         justifyContent: 'space-between',
+        flexDirection: 'row',
         width: '100%',
-        paddingHorizontal: 20,
         position: 'absolute',
-        top: 40,
+        top: "5%",
     },
     backButton: {
-        backgroundColor: 'transparent',
+        backgroundColor: 'transparent', 
+        width:40,
+        height:40,
     },
     skipButton: {
         backgroundColor: 'transparent',
@@ -117,6 +119,8 @@ const styles = StyleSheet.create({
         fontSize: FontSize.size_6xl,
         color: Color.colorNavy,
         fontFamily: FontFamily.signikaBold,
+        width:"100%",
+        height:"100%",
     },
     Investor: {
         fontSize: FontSize.size_16xl,

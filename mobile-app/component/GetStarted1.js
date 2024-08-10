@@ -70,12 +70,12 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     topNavigation: {
-        flexDirection: 'row',
+       alignItems:'center',
         justifyContent: 'flex-end',
+        flexDirection: 'row',
         width: '100%',
-        paddingHorizontal: 20,
         position: 'absolute',
-        top: 40,
+        top: "5%",
     },
     backButton: {
         backgroundColor: 'transparent',
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     welcomeToIdeaContainer: {
         fontSize: FontSize.size_16xl,
         textAlign: "center",
-        marginTop: 100, // Adjust for space at the top
+        marginTop:42,
     },
     welcomeTo: {
         fontFamily: FontFamily.signikaRegular,

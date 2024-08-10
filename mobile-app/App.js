@@ -34,7 +34,7 @@ export default function App() {
           setFirstLaunch(true);
           await AsyncStorage.setItem('hasLaunched', 'true');
         } else {
-          setFirstLaunch(false);
+          setFirstLaunch(true);
         }
 
         timer = setTimeout(() => {

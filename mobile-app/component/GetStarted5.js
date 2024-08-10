@@ -5,6 +5,26 @@ import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 const { width } = Dimensions.get('window');
 
 export default function GetStarted5({ onBack, onBackImage }) {
+    const [currentIndex, setCurrentIndex] = React.useState(0);
+
+    const data = [
+        { id: 1, image: require('../assets/image-0.14.png'), text: 'Create your account as an entrepreneur and start your project' },
+        { id: 2, image: require('../assets/image-0.12.png'), text: 'verify your account and get connected with investors' },
+        { id: 3, image: require('../assets/image-0.8.png'), text: 'Step into the world of entrepreneurship and start creating your project with our comprehensive support system' },
+        { id: 4, image: require('../assets/image-0.11.png'), text: 'Launch your project and unlock the potential to raise money with our dedicated platform' },
+    ];
+
+    const goToNextSlide = () => {
+        if (currentIndex < data.length - 1) {
+            setCurrentIndex(currentIndex + 1);
+        }
+    };
+
+    const goToPreviousSlide = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex(currentIndex - 1);
+        }
+    };
 
     return (
         <View style={styles.getStartedPage2}>
@@ -21,11 +41,19 @@ export default function GetStarted5({ onBack, onBackImage }) {
             <Image
                 style={styles.screenshot20240722At753}
                 resizeMode="cover"
-                source={require("../assets/image-0.14.png")}
+                source={data[currentIndex].image}
             />
             <Text style={styles.ourMissionIs}>
-                Create your account as an entrepreneur and start your project 
+                {data[currentIndex].text}
             </Text>
+            <View style={styles.navigationButtons}>
+                <Pressable style={styles.navButton} onPress={goToPreviousSlide}>
+                    <Text style={styles.navButtonText}>{"<"}</Text>
+                </Pressable>
+                <Pressable style={styles.navButton} onPress={goToNextSlide}>
+                    <Text style={styles.navButtonText}>{">"}</Text>
+                </Pressable>
+            </View>
             <Image
                 style={styles.getStartedPage2Child}
                 resizeMode="cover"
@@ -172,4 +200,17 @@ const styles = StyleSheet.create({
         width: '100%',
         top: '50%',
     },
+    navigationButtons:{
+        flex:1,
+        flexDirection:'row',
+        justifyContent:"space-between",
+        width:"100%",
+        alignItems:'center',
+        position:'absolute',
+        top:"45%"
+    },
+    navButtonText:{
+        fontSize: 30,
+        fontWeight:"bold",
+    }
 });

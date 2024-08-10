@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreenComponent from './component/SplashScreen';
-import Index from './component/Index';
+import Main from './component/Main';
+import OnBoarding from './component/OnBoarding';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,24 +19,30 @@ const loadFonts = async () => {
 export default function App() {
   const [isShowSplash, setIsShowSplash] = useState(true);
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [isFirstLaunch, setFirstLaunch] = useState(null);
 
   useEffect(() => {
     let timer;
 
     async function loadResourcesAndDataAsync() {
       try {
-        // Load fonts
         await loadFonts();
         setFontsLoaded(true);
 
-        // Simulate a splash screen timer
+        const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+        if (hasLaunched === null) {
+          setFirstLaunch(true);
+          await AsyncStorage.setItem('hasLaunched', 'true');
+        } else {
+          setFirstLaunch(false);
+        }
+
         timer = setTimeout(() => {
           setIsShowSplash(false);
         }, 3000);
       } catch (e) {
         console.warn(e);
       } finally {
-        // Hide the splash screen after everything is loaded
         SplashScreen.hideAsync();
       }
     }
@@ -44,11 +52,17 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!fontsLoaded) {
-    return null; // Return null while fonts are loading
+  if (!fontsLoaded || isFirstLaunch === null) {
+    return null; 
   }
 
-  return (
-    <>{isShowSplash ? <SplashScreenComponent /> : <Index />}</>
-  );
+  if (isShowSplash) {
+    return <SplashScreenComponent />;
+  }
+
+  if (isFirstLaunch) {
+    return <OnBoarding onComplete={() => setFirstLaunch(false)} />;
+  } else {
+    return <Main />;
+  }
 }

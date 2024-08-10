@@ -4,7 +4,7 @@ import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
 const { width } = Dimensions.get('window');
 
-export default function GetStarted5({ onBack, onBackImage }) {
+export default function GetStarted5({ onBack, onBackImage, onComplete }) {
     const [currentIndex, setCurrentIndex] = React.useState(0);
 
     const data = [
@@ -62,6 +62,7 @@ export default function GetStarted5({ onBack, onBackImage }) {
 
             <Pressable
                 style={styles.rectangleParent}
+                onPress={onComplete}
             >
                 <View style={styles.groupChild} />
                 <Text style={styles.next}>Get Started</Text>

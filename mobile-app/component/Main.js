@@ -1,10 +1,9 @@
-import { View, StyleSheet  } from "react-native";
-import OnBoarding from "./OnBoarding";
+import { View, Text, StyleSheet  } from "react-native";
 
-export default function Index() {
+export default function Main() {
   return (
     <View style={styles.container}>
-        <OnBoarding />
+        <Text>Hello</Text>
     </View>
   )
 }

@@ -6,7 +6,7 @@ import GetStarted3 from './GetStarted3';
 import GetStarted4 from './GetStarted4';
 import GetStarted5 from './GetStarted5';
 
-export default function OnBoarding() {
+export default function OnBoarding({ onComplete  }) {
     const [currentPage, setCurrentPage] = useState(1);
 
     const handleNext = () => {
@@ -22,8 +22,8 @@ export default function OnBoarding() {
     };
 
     const handleSkip = () => {
-        // Handle skip logic (e.g., go to the last page or dashboard)
-        setCurrentPage(5); // Example: skip to the last page
+        setCurrentPage(5); 
+        onComplete();
     };
 
     return (
@@ -32,8 +32,7 @@ export default function OnBoarding() {
             {currentPage === 2 && <GetStarted2 onNext={handleNext} onBack={handleBack} onSkip={handleSkip} onBackImage={backButtonImage} />}
             {currentPage === 3 && <GetStarted3 onNext={handleNext} onBack={handleBack} onSkip={handleSkip} onBackImage={backButtonImage} />}
             {currentPage === 4 && <GetStarted4 onNext={handleNext} onBack={handleBack} onSkip={handleSkip} onBackImage={backButtonImage} />}
-            {currentPage === 5 && <GetStarted5 onBack={handleBack} onSkip={handleSkip} onBackImage={backButtonImage} />}
-            {/* Add more pages similarly */}
+            {currentPage === 5 && <GetStarted5 onBack={handleBack} onBackImage={backButtonImage} onComplete={onComplete} />}
         </>
     );
 }

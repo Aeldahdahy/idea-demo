@@ -1,9 +1,11 @@
 import { View, Text, StyleSheet  } from "react-native";
+import SignIn from './SignIn';
+
 
 export default function Main() {
   return (
     <View style={styles.container}>
-        <Text>Hello</Text>
+        <SignIn />
     </View>
   )
 }

@@ -7,13 +7,15 @@
     "icon": "./assets/favicon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.idea"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/favicon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.idea"
     },
     "web": {
       "favicon": "./assets/idea.png"
@@ -21,6 +23,17 @@
     "plugins": [
       "expo-font"
     ],
-    "jsEngine": "hermes"
+    "jsEngine": "hermes",
+    "extra": {
+      "eas": {
+        "projectId": "a00805a1-f4d2-4f95-94ce-c08a390692c7"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a00805a1-f4d2-4f95-94ce-c08a390692c7"
+    }
   }
 }

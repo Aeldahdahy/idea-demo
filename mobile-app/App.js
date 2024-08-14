@@ -6,6 +6,7 @@ import SplashScreenComponent from './component/SplashScreen';
 import Main from './component/Main';
 import OnBoarding from './component/OnBoarding';
 
+
 SplashScreen.preventAutoHideAsync();
 
 const loadFonts = async () => {
@@ -34,7 +35,7 @@ export default function App() {
           setFirstLaunch(true);
           await AsyncStorage.setItem('hasLaunched', 'true');
         } else {
-          setFirstLaunch(true);
+          setFirstLaunch(false);
         }
 
         timer = setTimeout(() => {

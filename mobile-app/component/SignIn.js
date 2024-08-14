@@ -1,14 +1,30 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, Dimensions } from "react-native";
-
+import { useFunctions } from "../useFunctions";
 
 const { width } = Dimensions.get('window');
 
 const LogIn = () => {
+  const { signIn } = useFunctions();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSignIn = () => {
-    // Handle the sign-in logic here
-    Alert.alert("Sign In", "Sign in logic here!");
+  const handleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await signIn({ email, password });
+      Alert.alert("Success", "You have successfully signed in!");
+      // Navigate to the next screen if needed
+    } catch (error) {
+      // Show the error message from the sign-in function
+      Alert.alert("Error", error.message || "Sign-in failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRegister = () => {
@@ -19,7 +35,7 @@ const LogIn = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Let’s get you logged in!</Text>
+        <Text style={styles.headerText}>Let's get you logged in!</Text>
       </View>
 
       <View style={styles.inputContainer}>
@@ -33,6 +49,8 @@ const LogIn = () => {
           placeholderTextColor="#7A7A7A"
           keyboardType="email-address"
           autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
@@ -46,15 +64,14 @@ const LogIn = () => {
           placeholder="Password"
           placeholderTextColor="#7A7A7A"
           secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
         />
       </View>
 
-    
-
-      <TouchableOpacity style={styles.loginButton} onPress={handleSignIn}>
-        <Text style={styles.loginButtonText}>Login</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleSignIn} disabled={loading}>
+        <Text style={styles.loginButtonText}>{loading ? "Logging in..." : "Login"}</Text>
       </TouchableOpacity>
-
 
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
@@ -77,12 +94,14 @@ const LogIn = () => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.registerText}>
-        Don’t have an account?
-        <TouchableOpacity onPress={handleRegister}>
-          <Text style={styles.registerLink}> Register</Text>
-        </TouchableOpacity>
-      </Text>
+      <View style={styles.registerContainer}>
+        <Text style={styles.registerText}>
+          Don't have an account?
+          <TouchableOpacity onPress={handleRegister}>
+            <Text style={styles.registerLink}> Register</Text>
+          </TouchableOpacity>
+        </Text>
+      </View>
     </View>
   );
 };

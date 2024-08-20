@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet  } from "react-native";
-import SignIn from './SignIn';
-
+// import SignIn from './SignIn';
+import VerifyForgotPasswordEmailAddress from'./VerifyForgotPasswordEmailAddress';
 
 export default function Main() {
   return (
     <View style={styles.container}>
-        <SignIn />
+        {/* <SignIn /> */}
+        <VerifyForgotPasswordEmailAddress />
     </View>
   )
 }

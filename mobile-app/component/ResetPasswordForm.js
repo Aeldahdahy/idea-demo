@@ -1,20 +1,18 @@
 import * as React from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, Navigate } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
-const ChangePassword = () => {
+export default function ResetPasswordForm ({ onNext, onBack }) {
   const [newPassword, setNewPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-//   const navigation = useNavigation(); // Initialize the navigation
 
   const handleDonePress = () => {
-    // Add your password change logic here
-    Alert.alert("Change Password", "Navigate to Successful page!");
+    
+    onNext();
   };
 
   const handleBackPress = () => {
-    // navigation.goBack(); // Navigate back to the previous screen
+    onBack();
   };
 
   return (
@@ -292,5 +290,3 @@ const styles = StyleSheet.create({
     left: 46,
   },
 });
-
-export default ChangePassword;

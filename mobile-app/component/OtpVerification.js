@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Navigate } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { Color, Border, FontFamily } from '../GlobalStyles';
 
-const VerifyForgotPasswordEmailAddress = () => {
-  // const navigation = useNavigation(); // Hook to access navigation
+export default function OtpVerification({ onNext, onBack }) {
 
   const handleVerifyPress = () => {
     console.log('Verify button pressed');
+    onNext();
   };
 
   const handleBackPress = () => {
-    // navigation.navigate('AnotherScreen'); // Navigate to your target screen
+    onBack();
   };
 
   return (
@@ -303,5 +302,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
-export default VerifyForgotPasswordEmailAddress;

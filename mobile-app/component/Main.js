@@ -1,18 +1,14 @@
 import { View, Text, StyleSheet  } from "react-native";
-// import SignIn from './SignIn';
-import VerifyForgotPasswordEmailAddress from'./VerifyForgotPasswordEmailAddress';
-
 import SignIn from './SignIn';
-import ChangePassword from './ChangePassword';
+import ForgetPassword from "./ForgetPassword";
+
+
 
 export default function Main() {
   return (
     <View style={styles.container}>
         {/* <SignIn /> */}
-        <VerifyForgotPasswordEmailAddress />
-
-      {/* <SignIn /> */}
-        <ChangePassword />
+        <ForgetPassword />
     </View>
   )
 }

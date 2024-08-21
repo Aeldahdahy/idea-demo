@@ -265,7 +265,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put('http://127.0.0.1:2000/api/reset-password', data);
+      const response = await axios.post('http://127.0.0.1:2000/api/reset-password', data);
       if (response.status === 200) {
         return response.data;
       } else {

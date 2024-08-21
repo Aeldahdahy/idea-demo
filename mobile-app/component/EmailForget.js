@@ -1,17 +1,16 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Navigate, inputValue, setInputValue } from "react-native";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { Border, FontFamily, Color, FontSize } from "../GlobalStyles";
 
-export default function EmailForget({ onNext, onBack }) {
-  // Define the state for input value and the function to handle button press
-  // const [inputValue, setInputValue] = React.useState("");
-  // const navigation = useNavigation(); // Initialize the navigation hook
+export default function EmailForget({ onNext, onBack, sendOtp, error }) {
+  const [inputValue, setInputValue] = React.useState("");
 
-  const handlePress = () => {
-    // Handle the button press (e.g., form submission)
-    console.log("Button pressed", inputValue);
-    onNext();
-
+  const handlePress = async () => {
+    try {
+      await sendOtp(inputValue);
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
   };
 
   const handleBackPress = () => {
@@ -33,18 +32,19 @@ export default function EmailForget({ onNext, onBack }) {
 
       <TextInput
         style={[styles.forgotPasswordInner, styles.rectangleViewShadowBox]}
-        placeholder="Enter your email or phone"
+        placeholder="Enter your email"
         value={inputValue}
         onChangeText={setInputValue}
       />
+
+      {error && <Text style={styles.errorText}>{error}</Text>}
+
       <Image
         style={styles.screenshot20240709At451}
         resizeMode="cover"
         source={require("../assets/image-0.24.png")}
       />
-      <Text style={[styles.emailOrPhone, styles.backToLoginTypo]}>
-        Email or Phone number
-      </Text>
+      
       <TouchableOpacity
         style={[styles.rectangleView, styles.rectangleViewShadowBox]}
         onPress={handlePress}
@@ -69,7 +69,7 @@ export default function EmailForget({ onNext, onBack }) {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   rectangleViewShadowBox: {
@@ -211,5 +211,10 @@ const styles = StyleSheet.create({
     height: 932,
     overflow: "hidden",
     backgroundColor: Color.colorWhite,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 10,
   },
 });

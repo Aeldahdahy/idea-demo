@@ -32,9 +32,11 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
+      // Step 1: Send OTP
       const otpResponse = await axios.post('http://127.0.0.1:2000/api/signup', { email: formData.email });
+      
       if (otpResponse.status === 200) {
-        setIsOtpSent(true);
+        setIsOtpSent(true); 
         return otpResponse.data;
       } else {
         throw otpResponse.data;
@@ -62,8 +64,10 @@ export const useFunctions = () => {
       if (verifyResponse.status === 201) {
         setIsOtpVerified(true);
         return verifyResponse.data;
-      } else {
+      } else if (verifyResponse.status === 400 || verifyResponse.status === 500) {
         setError(verifyResponse.data.message || 'An error occurred. Please try again.');
+      } else {
+        throw verifyResponse.data;
       }
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred. Please try again.');
@@ -86,6 +90,7 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     if (isOtpSent && isTimerActive) {
@@ -133,16 +138,17 @@ export const useFunctions = () => {
   };
   
   
-
   const sendOtp = async (email) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:2000/api/send-otp', { email });
+      const response = await axios.post('http://127.0.0.1:2000/api/forgot-password', { email });
       if (response.status === 200) {
         setIsOtpSent(true);
+        return response.data;
+      } else {
+        throw new Error('Failed to send OTP');
       }
-      return response.data;
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred. Please try again.');
       throw err;
@@ -151,13 +157,56 @@ export const useFunctions = () => {
     }
   };
 
-  const validate = (formData) => {
-    const errors = {};
-    if (!formData.email) errors.email = 'Email is required';
-    if (!formData.password) errors.password = 'Password is required';
-    if (!formData.fullName) errors.fullName = 'Full Name is required';
-    if (!formData.role) errors.role = 'Role is required';
-    return errors;
+  const verifyOtpForPasswordReset = async (email, otp) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post('http://127.0.0.1:2000/api/verify-otp-for-reset', { email, otp });
+      if (response.status === 200) {
+        setIsOtpVerified(true);
+        return response.data;
+      } else {
+        throw new Error('Failed to verify OTP');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const resetPassword = async (data) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post('http://127.0.0.1:2000/api/reset-password', data);
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error('Failed to reset password');
+      }
+    } catch (err) {
+      console.error('Error resetting password:', err); // Log the error for debugging
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const resendForgetPasswordOtp = async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await axios.post('http://127.0.0.1:2000/api/forgot-password', { email });
+      setIsTimerActive(true);
+      setTimer(180);
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactUs = async (contactData) => {
@@ -177,6 +226,7 @@ export const useFunctions = () => {
     }
   };
 
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -188,12 +238,14 @@ export const useFunctions = () => {
     signUp,
     setOtp,
     sendOtp,
-    validate,
     contactUs,
     resendOtp,
     verifyOtp,
     chunkArray,
     formatTime,
+    verifyOtpForPasswordReset,
+    resetPassword,
+    resendForgetPasswordOtp,
     error,
     loading,
     response,

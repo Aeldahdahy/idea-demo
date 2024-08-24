@@ -1,22 +1,88 @@
-import * as React from 'react';
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Navigate } from 'react-native';
-import { Color, Border, FontFamily } from '../GlobalStyles';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function OtpVerification({ onNext, onBack }) {
 
-  const handleVerifyPress = () => {
-    console.log('Verify button pressed');
-    onNext();
+export default function OtpVerification({ 
+  onNext, 
+  onBack, 
+  verifyOtpForPasswordReset, 
+  resendForgetPasswordOtp,
+  setLoading,
+  setError,
+  loading,
+  error,
+ }) {
+  
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '']); // State for OTP inputs
+
+  useEffect(() => {
+    const getEmail = async () => {
+      try {
+        const storedEmail = await AsyncStorage.getItem('email');
+        if (storedEmail) {
+          setEmail(storedEmail);
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to retrieve email.");
+      }
+    };
+
+    getEmail();
+  }, []);
+
+  const handleVerifyOtp = async () => {
+    if (!email || otp.some(digit => digit === '')) {
+      Alert.alert("Error", "Please enter both email and OTP.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      await verifyOtpForPasswordReset(email, otp.join('')); // Join OTP digits into a single string
+      onNext();
+    } catch (error) {
+      setError(error.message || 'Failed to verify OTP');
+      Alert.alert("Error", error.message || 'Failed to verify OTP');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleBackPress = () => {
-    onBack();
+  const handleResendOtp = async () => {
+    if (!email) {
+      Alert.alert("Error", "Please enter your email.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      await resendForgetPasswordOtp(email);
+      Alert.alert("Success", "OTP has been resent to your email.");
+    } catch (error) {
+      setError(error.message || 'Failed to resend OTP');
+      Alert.alert("Error", error.message || 'Failed to resend OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (index, value) => {
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
   };
 
   return (
     <View style={styles.verifyForgotPasswordEmai}>
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+      <TouchableOpacity style={styles.backButton} onPress={onBack}>
         <Image
           style={styles.backArrow}
           resizeMode="cover"
@@ -30,17 +96,23 @@ export default function OtpVerification({ onNext, onBack }) {
         Verify your email
       </Text>
       <Text style={[styles.pleaseEnterThe, styles.pleaseEnterTheFlexBox]}>
-        Please Enter The 4 Digit Code Sent To lamaelmor@gmail.com
+        Please Enter The 4 Digit Code Sent To {email}
       </Text>
       
       <View style={styles.inputContainer}>
-        <TextInput style={styles.inputBox} keyboardType="numeric" maxLength={1} />
-        <TextInput style={styles.inputBox} keyboardType="numeric" maxLength={1} />
-        <TextInput style={styles.inputBox} keyboardType="numeric" maxLength={1} />
-        <TextInput style={styles.inputBox} keyboardType="numeric" maxLength={1} />
+        {otp.map((digit, index) => (
+          <TextInput
+            key={index}
+            style={styles.inputBox}
+            keyboardType="numeric"
+            maxLength={1}
+            value={digit}
+            onChangeText={(value) => handleInputChange(index, value)}
+          />
+        ))}
       </View>
       
-      <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyPress}>
+      <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyOtp} disabled={loading}>
         <View style={styles.verifyButtonContent}>
           <Text style={styles.verify}>Verify</Text>
         </View>
@@ -49,7 +121,7 @@ export default function OtpVerification({ onNext, onBack }) {
       <Text style={[styles.didntReceiveOtpContainer, styles.pleaseEnterTheFlexBox]}>
         <Text style={styles.didntReceiveOtpContainer1}>
           <Text style={styles.didntReceiveOtp}>{`Didn't receive OTP? `}</Text>
-          <Text style={[styles.resendCode, styles.resendCodeTypo]}>
+          <Text style={[styles.resendCode, styles.resendCodeTypo]} onPress={handleResendOtp}>
             Resend code
           </Text>
         </Text>
@@ -67,11 +139,9 @@ export default function OtpVerification({ onNext, onBack }) {
           source={require('../assets/mobile.png')}
         />
       </View>
-      
-   
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   backButton: {
@@ -300,5 +370,19 @@ const styles = StyleSheet.create({
     height: 932,
     overflow: 'hidden',
     width: '100%',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+  },
+  inputBox: {
+    height: 40,
+    width: 40,
+    borderWidth: 1,
+    borderColor: Color.colorBlack,
+    borderRadius: Border.br_8xs,
+    textAlign: 'center',
+    fontSize: FontSize.size_xl,
   },
 });

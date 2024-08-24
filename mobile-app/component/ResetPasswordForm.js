@@ -1,15 +1,40 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, Navigate } from "react-native";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
-export default function ResetPasswordForm ({ onNext, onBack }) {
+export default function ResetPasswordForm ({ 
+    onNext,
+    onBack,
+    resetPassword,
+    setLoading,
+    setError,
+    loading,
+    error
+   }) {
   const [newPassword, setNewPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  
+  
+  const handleResetPassword = async (data) => {
+    if (!data.newPassword || !data.confirmPassword) {
+        Alert.alert("Error", "Please enter both new password and confirmation.");
+        return;
+    }
 
-  const handleDonePress = () => {
-    
-    onNext();
-  };
+    setLoading(true);
+    setError(null);
+
+    try {
+        await resetPassword(data);
+        Alert.alert("Success", "Password has been reset successfully!");
+        setStep(1); 
+    } catch (error) {
+        setError(error.message || 'Failed to reset password');
+        Alert.alert("Error", error.message || 'Failed to reset password');
+    } finally {
+        setLoading(false);
+    }
+};
 
   const handleBackPress = () => {
     onBack();
@@ -20,7 +45,7 @@ export default function ResetPasswordForm ({ onNext, onBack }) {
       <View style={styles.createPasswordChild} />
       <Text style={styles.createNewPassword}>Create new password</Text>
       <View style={styles.createPasswordItem} />
-      <TouchableOpacity style={styles.doneButton} onPress={handleDonePress}>
+      <TouchableOpacity style={styles.doneButton} onPress={handleResetPassword}>
         <Text style={styles.doneText}>Change Password</Text>
       </TouchableOpacity>
       

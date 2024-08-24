@@ -1,27 +1,32 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, Dimensions } from "react-native";
-import { useFunctions } from "../useFunctions";
+import { useFunctions } from "../useFunctions";  // Assuming useFunctions is a custom hook
 
 const { width } = Dimensions.get('window');
 
-const LogIn = () => {
-  const { signIn } = useFunctions();
+export default function LogIn() {
+  const { signIn, setLoading, setError, loading } = useFunctions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
       const response = await signIn({ email, password });
       Alert.alert("Success", "You have successfully signed in!");
-      // Navigate to the next screen if needed
+      console.log(response);
+      // Optionally navigate to the next screen here
     } catch (error) {
-      // Show the error message from the sign-in function
-      Alert.alert("Error", error.message || "Sign-in failed. Please try again.");
+      const errorMessage = error.message || "Sign-in failed. Please try again.";
+      setError(errorMessage);
+      Alert.alert("Error", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -222,4 +227,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LogIn;

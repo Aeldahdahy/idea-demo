@@ -1,20 +1,31 @@
-import * as React from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from "react-native";
-import { Border, FontFamily, Color, FontSize } from "../GlobalStyles";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function EmailForget({ onNext, onBack, sendOtp, error }) {
-  const [inputValue, setInputValue] = React.useState("");
+export default function EmailForget({ onNext, onBack, sendOtp, setLoading, setError, loading, error }) {
+  const [email, setEmail] = useState('');
+  
 
-  const handlePress = async () => {
-    try {
-      await sendOtp(inputValue);
-    } catch (error) {
-      console.error("Error sending OTP:", error);
+  const handleSendOtp = async () => {
+    if (!email) {
+      Alert.alert("Error", "Please enter your email.");
+      return;
     }
-  };
 
-  const handleBackPress = () => {
-    onBack();
+    setLoading(true);
+    setError(null);
+
+    try {
+      await sendOtp(email);
+      await AsyncStorage.setItem('email', email);
+      onNext(); 
+    } catch (error) {
+      setError(error.message || 'Failed to send OTP');
+      Alert.alert("Error", error.message || 'Failed to send OTP');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -22,7 +33,7 @@ export default function EmailForget({ onNext, onBack, sendOtp, error }) {
       <View style={styles.forgotPasswordChild} />
       <Text style={styles.forgotPassword1}>Forgot Password</Text>
 
-      <TouchableOpacity onPress={handleBackPress}>
+      <TouchableOpacity onPress={onBack}>
         <Image
           style={styles.forgotPasswordItem}
           resizeMode="cover"
@@ -33,27 +44,27 @@ export default function EmailForget({ onNext, onBack, sendOtp, error }) {
       <TextInput
         style={[styles.forgotPasswordInner, styles.rectangleViewShadowBox]}
         placeholder="Enter your email"
-        value={inputValue}
-        onChangeText={setInputValue}
+        value={email}
+        onChangeText={setEmail}
       />
 
       {error && <Text style={styles.errorText}>{error}</Text>}
 
-      <Image
-        style={styles.screenshot20240709At451}
-        resizeMode="cover"
-        source={require("../assets/image-0.24.png")}
-      />
-      
-      <TouchableOpacity
-        style={[styles.rectangleView, styles.rectangleViewShadowBox]}
-        onPress={handlePress}
-      >
-        <Text style={styles.next}>Next</Text>
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <TouchableOpacity
+          style={[styles.rectangleView, styles.rectangleViewShadowBox]}
+          onPress={handleSendOtp}
+        >
+          <Text style={styles.next}>Next</Text>
+        </TouchableOpacity>
+      )}
+
       <Text style={[styles.backToLogin, styles.backToLoginFlexBox]}>
         Back to Login
       </Text>
+
       <Image
         style={styles.ellipseIcon}
         resizeMode="cover"
@@ -70,7 +81,6 @@ export default function EmailForget({ onNext, onBack, sendOtp, error }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   rectangleViewShadowBox: {
     height: 55,

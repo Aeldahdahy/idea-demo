@@ -51,7 +51,7 @@ export default function ForgetPassword() {
             case 3:
                 return (
                     <ResetPasswordForm
-                    onNext={() => setStep(2)} 
+                    onNext={() => setStep(1)} 
                     onBack={() => {}}
                     resetPassword={resetPassword}
                     setLoading={setLoading}

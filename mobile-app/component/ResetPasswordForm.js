@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
-export default function ResetPasswordForm ({ 
+export default function ResetPasswordForm({ 
     onNext,
     onBack,
     resetPassword,
@@ -10,11 +10,10 @@ export default function ResetPasswordForm ({
     setError,
     loading,
     error
-   }) {
+}) {
   const [newPassword, setNewPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  
-  
+
   const handleResetPassword = async (data) => {
     if (!data.newPassword || !data.confirmPassword) {
         Alert.alert("Error", "Please enter both new password and confirmation.");
@@ -27,17 +26,26 @@ export default function ResetPasswordForm ({
     try {
         await resetPassword(data);
         Alert.alert("Success", "Password has been reset successfully!");
-        setStep(1); 
+        onNext(); 
     } catch (error) {
         setError(error.message || 'Failed to reset password');
         Alert.alert("Error", error.message || 'Failed to reset password');
     } finally {
         setLoading(false);
     }
-};
+  };
 
   const handleBackPress = () => {
     onBack();
+  };
+
+  const handleChangePasswordPress = () => {
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Error", "New Password and Confirm Password do not match.");
+      return;
+    }
+    
+    handleResetPassword({ newPassword, confirmPassword });
   };
 
   return (
@@ -45,7 +53,7 @@ export default function ResetPasswordForm ({
       <View style={styles.createPasswordChild} />
       <Text style={styles.createNewPassword}>Create new password</Text>
       <View style={styles.createPasswordItem} />
-      <TouchableOpacity style={styles.doneButton} onPress={handleResetPassword}>
+      <TouchableOpacity style={styles.doneButton} onPress={handleChangePasswordPress} disabled={loading}>
         <Text style={styles.doneText}>Change Password</Text>
       </TouchableOpacity>
       
@@ -75,34 +83,22 @@ export default function ResetPasswordForm ({
         onChangeText={setConfirmPassword}
       />
       <Image
-        style={[
-          styles.eye,
-          styles.screenshot20240709Layout1,
-        ]}
+        style={styles.eye}
         resizeMode="cover"
         source={require("../assets/eye.png")}
       />
       <Image
-        style={[
-          styles.lock,
-          styles.screenshot20240709Layout,
-        ]}
+        style={styles.lock}
         resizeMode="cover"
         source={require("../assets/lock.png")}
       />
       <Image
-        style={[
-          styles.eye2,
-          styles.screenshot20240709Layout,
-        ]}
+        style={styles.eye2}
         resizeMode="cover"
-        source={require("../assets/lock.png")}
+        source={require("../assets/eye.png")}
       />
       <Image
-        style={[
-          styles.eye3,
-          styles.screenshot20240709Layout1,
-        ]}
+        style={styles.eye3}
         resizeMode="cover"
         source={require("../assets/eye.png")}
       />
@@ -119,6 +115,7 @@ export default function ResetPasswordForm ({
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   rectangleViewShadowBox: {

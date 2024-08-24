@@ -1,14 +1,15 @@
 import { View, StyleSheet  } from "react-native";
 import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
-
+import RegisterForm from './RegisterForm';
 
 
 export default function Main() {
   return (
     <View style={styles.container}>
         {/* <SignIn /> */}
-        <ForgetPassword />
+        {/* <ForgetPassword /> */}
+<RegisterForm />
     </View>
   )
 }

@@ -1,8 +1,12 @@
 import { View, StyleSheet  } from "react-native";
 import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
+
 import OtpVerification2 from "./OtpVerification2";
 import OtpVerification from "./OtpVerification";
+
+
+import Identity from "./Identity";
 
 
 
@@ -11,8 +15,12 @@ export default function Main() {
     <View style={styles.container}>
         {/* <SignIn /> */}
         {/* <ForgetPassword /> */}
+
         {/* <OtpVerification2 /> */}
         <OtpVerification />
+
+        <Identity />
+
     </View>
   )
 }

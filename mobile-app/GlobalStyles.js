@@ -19,6 +19,7 @@ export const FontFamily = {
     colorGray_200: "rgba(255, 255, 255, 0.9)",
     colorNavy: "#0029a4",
     colorBlueviolet: "#9747ff",
+    colorGainsboro: "#e8e5e5",
   };
   /* border radiuses */
   export const Border = {

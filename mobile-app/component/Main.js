@@ -1,15 +1,9 @@
 import { View, StyleSheet  } from "react-native";
 import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
-
 import RegisterForm from './RegisterForm';
-
-
-import OtpVerification2 from "./OtpVerification2";
-import OtpVerification from "./OtpVerification";
-
-
 import Identity from "./Identity";
+
 
 
 
@@ -17,17 +11,11 @@ import Identity from "./Identity";
 export default function Main() {
   return (
     <View style={styles.container}>
-        {/* <SignIn /> */}
+        <SignIn />
         {/* <ForgetPassword /> */}
 
-<RegisterForm />
-
-
-        {/* <OtpVerification2 /> */}
-        <OtpVerification />
-
-        <Identity />
-
+        {/* <RegisterForm /> */}
+        {/* <Identity /> */}
 
     </View>
   )

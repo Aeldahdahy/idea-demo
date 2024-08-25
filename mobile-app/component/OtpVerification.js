@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
+import { Border, FontFamily, Color } from '../GlobalStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OtpVerification({ 

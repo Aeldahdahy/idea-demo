@@ -1,5 +1,6 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
 export default function ResetPasswordForm({ 
@@ -11,12 +12,37 @@ export default function ResetPasswordForm({
     loading,
     error
 }) {
-  const [newPassword, setNewPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [email, setEmail] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleResetPassword = async (data) => {
-    if (!data.newPassword || !data.confirmPassword) {
-        Alert.alert("Error", "Please enter both new password and confirmation.");
+  // Fetch email from AsyncStorage when the component mounts
+  useEffect(() => {
+    const fetchEmail = async () => {
+      try {
+        const storedEmail = await AsyncStorage.getItem('email');
+        if (storedEmail) {
+          setEmail(storedEmail);
+        } else {
+          Alert.alert("Error", "Email not found. Please log in again.");
+          onBack(); // Navigate back if email is not found
+        }
+      } catch (error) {
+        Alert.alert("Error", "Failed to load email from storage.");
+      }
+    };
+
+    fetchEmail();
+  }, []);
+
+  const handleResetPassword = async () => {
+    if (!newPassword || !confirmPassword) {
+        Alert.alert("Error", "Please enter your new password and confirmation.");
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        Alert.alert("Error", "New Password and Confirm Password do not match.");
         return;
     }
 
@@ -24,6 +50,7 @@ export default function ResetPasswordForm({
     setError(null);
 
     try {
+        const data = { email, newPassword };
         await resetPassword(data);
         Alert.alert("Success", "Password has been reset successfully!");
         onNext(); 
@@ -39,21 +66,12 @@ export default function ResetPasswordForm({
     onBack();
   };
 
-  const handleChangePasswordPress = () => {
-    if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "New Password and Confirm Password do not match.");
-      return;
-    }
-    
-    handleResetPassword({ newPassword, confirmPassword });
-  };
-
   return (
     <View style={styles.createPassword}>
       <View style={styles.createPasswordChild} />
       <Text style={styles.createNewPassword}>Create new password</Text>
       <View style={styles.createPasswordItem} />
-      <TouchableOpacity style={styles.doneButton} onPress={handleChangePasswordPress} disabled={loading}>
+      <TouchableOpacity style={styles.doneButton} onPress={handleResetPassword} disabled={loading}>
         <Text style={styles.doneText}>Change Password</Text>
       </TouchableOpacity>
       
@@ -115,6 +133,8 @@ export default function ResetPasswordForm({
     </View>
   );
 };
+
+
 
 
 const styles = StyleSheet.create({

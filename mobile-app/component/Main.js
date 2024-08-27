@@ -4,6 +4,7 @@ import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
 import SignUp from "./SignUp";
 import { useFunctions } from "../useFunctions";
+import PasswordChanged from "./PasswordChanged";
 
 
 
@@ -22,6 +23,7 @@ export default function Main() {
     switch (step){
       case 1:
         return(
+          // <PasswordChanged />
           <SignIn onForgetPassword={() => {setStep(2)}} onSignUp={() => {setStep(3)}} /> 
         );
       case 2:

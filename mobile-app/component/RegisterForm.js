@@ -1,23 +1,66 @@
-import React from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
 import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export default function RegisterForm({ onNext, onBack, onSignIn, signUp}) {
 
-const RegisterForm = () => {
-  const handleCreateAccount = () => {
-    // Handle create account logic here
-    console.log("Create Account button pressed");
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [identity, setIdentity] = useState('');
+
+  useEffect(() => {
+    const getIdentity = async () => {
+      try {
+        const storedIdentity = await AsyncStorage.getItem('identity');
+        if (storedIdentity) {
+          setIdentity(storedIdentity);
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to load identity from storage');
+      }
+    };
+
+    getIdentity();
+  }, []);
+
+  const handleCreateAccount = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    const formData = {
+      fullName,
+      email,
+      password,
+      identity,
+    };
+
+    // console.log("User Data:", formData);
+
+    try {
+      const userData = await signUp(formData);
+      if(userData){
+        onNext();
+      }
+    } catch (error) {
+      Alert.alert('Error', error);
+    }
+
   };
 
+
   const handleRegister = () => {
-    // Handle register logic here
     console.log("Register button pressed");
   };
 
   const handleLogin = () => {
-    // Handle login logic here
-    console.log("Login button pressed");
+    onSignIn();
   };
+
 
   return (
     <View style={styles.register}>
@@ -63,10 +106,36 @@ const RegisterForm = () => {
         resizeMode="cover"
         source={require("../assets/lock.png")}
       />
-      <TextInput style={[styles.fullName, styles.passwordTypo]} placeholder="Full Name" />
-      <TextInput style={[styles.emailAddress, styles.passwordTypo]} placeholder="Email Address" />
-      <TextInput style={[styles.password, styles.passwordTypo]} placeholder="Password" />
-      <TextInput style={[styles.confirmPassword, styles.passwordTypo]} placeholder="Confirm Password" />
+      <TextInput 
+        style={[styles.fullName, styles.passwordTypo]} 
+        placeholder="Full Name" 
+        value={fullName}
+        onChangeText={setFullName}
+      />
+
+      <TextInput 
+        style={[styles.emailAddress, styles.passwordTypo]} 
+        placeholder="Email Address" 
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <TextInput 
+      style={[styles.password, styles.passwordTypo]} 
+      placeholder="Password" 
+      secureTextEntry={true}
+      value={password}
+      onChangeText={setPassword}
+      />
+
+      <TextInput 
+      style={[styles.confirmPassword, styles.passwordTypo]} 
+      placeholder="Confirm Password"
+      secureTextEntry={true}
+      value={confirmPassword}
+      onChangeText={setConfirmPassword}
+      />
+
       <Text style={[styles.orRegisterWith, styles.passwordTypo]}>Or register with</Text>
       <Text style={[styles.alreadyHaveAnContainer, styles.loginTypo]}>
         <Text style={styles.alreadyHaveAnContainer1}>
@@ -98,7 +167,7 @@ const RegisterForm = () => {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   groupItemLayout: {
@@ -454,6 +523,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterForm;
 
 

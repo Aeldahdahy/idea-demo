@@ -1,11 +1,26 @@
-import * as React from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const EntrepreneurInvestor2 = () => {
-  const handlePress = () => {
-    // Handle the button press action here
-    console.log("Button Pressed!");
+export default function Identity({ onNext, onBack }) {
+  let identity;
+  const [ selectIdentity, setSelectIdentity ] = useState(null);
+
+  const handlePress = async (identity) => {
+    console.log(identity)
+    setSelectIdentity(identity);
+    try {
+      await AsyncStorage.setItem('identity', identity);
+      onNext();
+    } catch (error) {
+      Alert.alert('Error', error);
+    }
+
+  };
+
+  const backButton = () => {
+    onBack();
   };
 
   return (
@@ -26,13 +41,13 @@ const EntrepreneurInvestor2 = () => {
       {/* First Button */}
       <TouchableOpacity
         style={[styles.entrepreneurInvestor2Inner, styles.rectangleViewShadowBox]}
-        onPress={handlePress}
+        onPress={() => {handlePress(identity = 'Entrepreneur')}}
       />
 
       {/* Second Button */}
       <TouchableOpacity
         style={[styles.rectangleView, styles.rectangleViewShadowBox]}
-        onPress={handlePress}
+        onPress={() => {handlePress(identity = 'Investor')}}
       />
 
       <Image
@@ -74,7 +89,7 @@ const EntrepreneurInvestor2 = () => {
         />
         <TouchableOpacity
           style={[styles.icons8BackButton962, styles.ellipseParentLayout]}
-          onPress={handlePress} // Handle back button press here
+          onPress={backButton}
         >
           <Image
             style={styles.icons8BackButton962}
@@ -85,7 +100,7 @@ const EntrepreneurInvestor2 = () => {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   icons8BackButton962Position: {
@@ -245,4 +260,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EntrepreneurInvestor2;

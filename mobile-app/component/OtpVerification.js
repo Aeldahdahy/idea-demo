@@ -3,17 +3,18 @@ import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } fro
 import { Border, FontFamily, Color } from '../GlobalStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function OtpVerification({ 
-  onNext, 
-  onBack, 
-  verifyOtpForPasswordReset, 
-  resendForgetPasswordOtp,
+export default function OtpVerification({
+  onNext,
+  onBack,
+  verifyOtp,
+  resendOtp,
   setLoading,
   setError,
   loading,
   error,
- }) {
-  
+  otpPurpose,  // 'signUp' or 'forgetPassword' to determine the purpose
+}) {
+  // console.log(otpPurpose);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '']); // State for OTP inputs
 
@@ -42,11 +43,15 @@ export default function OtpVerification({
     setError(null);
 
     try {
-      await verifyOtpForPasswordReset(email, otp.join('')); // Join OTP digits into a single string
+      const enteredOtp = otp.join('');
+      console.log(`Verifying OTP for ${otpPurpose}:`, enteredOtp);
+
+      await verifyOtp(email, enteredOtp, otpPurpose);
       onNext();
     } catch (error) {
-      setError(error.message || 'Failed to verify OTP');
-      Alert.alert("Error", error.message || 'Failed to verify OTP');
+      console.log('Error during OTP verification:', error.response?.data || error.message || error);
+      setError(error.response?.data?.message || 'Failed to verify OTP');
+      Alert.alert("Error", error.response?.data?.message || 'Failed to verify OTP');
     } finally {
       setLoading(false);
     }
@@ -62,11 +67,14 @@ export default function OtpVerification({
     setError(null);
 
     try {
-      await resendForgetPasswordOtp(email);
+      console.log(`Resending OTP for ${otpPurpose} to:`, email);
+
+      await resendOtp(email, otpPurpose);
       Alert.alert("Success", "OTP has been resent to your email.");
     } catch (error) {
-      setError(error.message || 'Failed to resend OTP');
-      Alert.alert("Error", error.message || 'Failed to resend OTP');
+      console.log('Error during OTP resend:', error.response?.data || error.message || error);
+      setError(error.response?.data?.message || 'Failed to resend OTP');
+      Alert.alert("Error", error.response?.data?.message || 'Failed to resend OTP');
     } finally {
       setLoading(false);
     }
@@ -88,16 +96,16 @@ export default function OtpVerification({
           source={require('../assets/Group39.png')} // Replace with your back arrow image
         />
       </TouchableOpacity>
-      
+
       <View style={[styles.verifyForgotPasswordEmaiChild, styles.childPosition]} />
-      
+
       <Text style={[styles.verifyYourEmail, styles.verifyFlexBox]}>
-        Verify your email
+        {otpPurpose === 'signUp' ? 'Verify your email for Sign Up' : 'Verify your email for Password Reset'}
       </Text>
       <Text style={[styles.pleaseEnterThe, styles.pleaseEnterTheFlexBox]}>
         Please Enter The 4 Digit Code Sent To {email}
       </Text>
-      
+
       <View style={styles.inputContainer}>
         {otp.map((digit, index) => (
           <TextInput
@@ -110,13 +118,13 @@ export default function OtpVerification({
           />
         ))}
       </View>
-      
+
       <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyOtp} disabled={loading}>
         <View style={styles.verifyButtonContent}>
           <Text style={styles.verify}>Verify</Text>
         </View>
       </TouchableOpacity>
-      
+
       <Text style={[styles.didntReceiveOtpContainer, styles.pleaseEnterTheFlexBox]}>
         <Text style={styles.didntReceiveOtpContainer1}>
           <Text style={styles.didntReceiveOtp}>{`Didn't receive OTP? `}</Text>
@@ -125,7 +133,7 @@ export default function OtpVerification({
           </Text>
         </Text>
       </Text>
-      
+
       <View style={[styles.vectorParent, styles.groupChildLayout]}>
         <Image
           style={[styles.groupChild, styles.groupChildLayout]}

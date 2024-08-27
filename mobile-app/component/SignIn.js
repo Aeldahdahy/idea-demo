@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, Dimensions } from "react-native";
 import { useFunctions } from "../useFunctions";  // Assuming useFunctions is a custom hook
+import ForgetPassword from "./ForgetPassword";
 
 const { width } = Dimensions.get('window');
 
-export default function LogIn() {
+export default function LogIn({onForgetPassword, onSignUp}) {
   const { signIn, setLoading, setError, loading } = useFunctions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,8 +34,7 @@ export default function LogIn() {
   };
 
   const handleRegister = () => {
-    // Handle the navigation to the registration screen here
-    Alert.alert("Register", "Navigate to create account screen!");
+    onSignUp();
   };
 
   return (
@@ -78,7 +78,7 @@ export default function LogIn() {
         <Text style={styles.loginButtonText}>{loading ? "Logging in..." : "Login"}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onForgetPassword}>
         <Text style={styles.forgotPassword}>Forgot your password?</Text>
       </TouchableOpacity>
 

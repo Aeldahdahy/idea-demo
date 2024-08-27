@@ -1,22 +1,43 @@
-import { View, StyleSheet  } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, ActivityIndicator  } from "react-native";
 import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
-import RegisterForm from './RegisterForm';
-import Identity from "./Identity";
-
-
+import SignUp from "./SignUp";
+import { useFunctions } from "../useFunctions";
 
 
 
 export default function Main() {
+  const [step, setStep] = useState(1);
+
+  const {
+        setLoading,
+        setError,
+        loading,
+        error,
+  } = useFunctions();
+
+
+  const renderStep = () => {
+    switch (step){
+      case 1:
+        return(
+          <SignIn onForgetPassword={() => {setStep(2)}} onSignUp={() => {setStep(3)}} /> 
+        );
+      case 2:
+        return(
+          <ForgetPassword onSignIn={() => {setStep(1)}} /> 
+        );
+      case 3:
+        return(
+          <SignUp onSignIn={() => {setStep(1)}} />
+        );
+    }
+  }; 
+
   return (
     <View style={styles.container}>
-        <SignIn />
-        {/* <ForgetPassword /> */}
-
-        {/* <RegisterForm /> */}
-        {/* <Identity /> */}
-
+        {loading ? <ActivityIndicator size="large" color="#0000ff" /> : renderStep() }
     </View>
   )
 }

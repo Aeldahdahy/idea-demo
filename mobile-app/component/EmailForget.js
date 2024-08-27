@@ -61,7 +61,7 @@ export default function EmailForget({ onNext, onBack, sendOtp, setLoading, setEr
         </TouchableOpacity>
       )}
 
-      <Text style={[styles.backToLogin, styles.backToLoginFlexBox]}>
+      <Text style={[styles.backToLogin, styles.backToLoginFlexBox]} onPress={onBack}>
         Back to Login
       </Text>
 

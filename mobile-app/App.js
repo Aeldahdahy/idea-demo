@@ -11,9 +11,11 @@ SplashScreen.preventAutoHideAsync();
 
 const loadFonts = async () => {
   await Font.loadAsync({
-    'Signika-Regular': require('./assets/static/Signika-Regular.ttf'),
-    'Signika-Light': require('./assets/static/Signika-Light.ttf'),
-    'Signika-Bold': require('./assets/static/Signika-Bold.ttf'),
+    'Signika-Regular': require('./assets/Signika/static/Signika-Regular.ttf'),
+    'Signika-Light': require('./assets//Signika/static/Signika-Light.ttf'),
+    'Signika-Bold': require('./assets/Signika/static/Signika-Bold.ttf'),
+    'Signika-SemiBold': require('./assets/Signika/static/Signika-SemiBold.ttf'),
+    'Bitter-Bold': require('./assets/Bitter/static/Bitter-Bold.ttf'),
   });
 };
 

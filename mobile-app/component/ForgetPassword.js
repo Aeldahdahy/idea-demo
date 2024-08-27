@@ -5,70 +5,69 @@ import EmailForget from './EmailForget';
 import ResetPasswordForm from './ResetPasswordForm';
 import { useFunctions } from '../useFunctions';
 
-export default function ForgetPassword() {
+export default function ForgetPassword({ onSignIn }) {
     const [step, setStep] = useState(1);
-
+  
     const {
-        sendOtp,
-        verifyOtpForPasswordReset,
-        resetPassword,
-        resendForgetPasswordOtp,
-        setLoading,
-        setError,
-        loading,
-        error,
+      sendOtp,
+      verifyOtpForPasswordReset,
+      resetPassword,
+      resendForgetPasswordOtp,
+      setLoading,
+      setError,
+      loading,
+      error,
     } = useFunctions();
-
-
-
+  
     const renderStep = () => {
-        switch (step) {
-            case 1:
-                return (
-                    <EmailForget
-                        onNext={() => setStep(2)} 
-                        onBack={() => {}}
-                        sendOtp={sendOtp}
-                        setLoading={setLoading}
-                        setError={setError}
-                        loading={loading}
-                        error={error}
-                    />
-                );
-            case 2:
-                return (
-                    <OtpVerification
-                        onNext={() => setStep(3)}
-                        onBack={() => setStep(1)} // Back to EmailForget
-                        verifyOtpForPasswordReset={verifyOtpForPasswordReset}
-                        resendForgetPasswordOtp={resendForgetPasswordOtp}
-                        setLoading={setLoading}
-                        setError={setError}
-                        loading={loading}
-                        error={error}
-                    />
-                );
-            case 3:
-                return (
-                    <ResetPasswordForm
-                    onNext={() => setStep(1)} 
-                    onBack={() => {}}
-                    resetPassword={resetPassword}
-                    setLoading={setLoading}
-                    setError={setError}
-                    loading={loading}
-                    error={error}
-                    />
-                );
-            default:
-                return null;
-        }
+      switch (step) {
+        case 1:
+          return (
+            <EmailForget
+              onNext={() => setStep(2)}
+              onBack={() => onSignIn()}
+              sendOtp={sendOtp}
+              setLoading={setLoading}
+              setError={setError}
+              loading={loading}
+              error={error}
+            />
+          );
+        case 2:
+          return (
+            <OtpVerification
+              onNext={() => setStep(3)}
+              onBack={() => setStep(1)}
+              verifyOtp={() => {verifyOtpForPasswordReset}}
+              resendOtp={() => {resendForgetPasswordOtp}}
+              setLoading={setLoading}
+              setError={setError}
+              loading={loading}
+              error={error}
+              otpPurpose="forgetPassword"
+            />
+          );
+        case 3:
+          return (
+            <ResetPasswordForm
+              onNext={() => {}} // Define this based on your logic
+              onBack={() => setStep(2)}
+              resetPassword={resetPassword}
+              setLoading={setLoading}
+              setError={setError}
+              loading={loading}
+              error={error}
+            />
+          );
+        default:
+          return null;
+      }
     };
-
+  
     return (
-        <View style={styles.container}>
-            {loading ? <ActivityIndicator size="large" color="#0000ff" /> : renderStep()}
-        </View>
+      <View style={styles.container}>
+        {loading ? <ActivityIndicator size="large" color="#0000ff" /> : renderStep()}
+      </View>
     );
 }
 

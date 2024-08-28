@@ -5,7 +5,8 @@ import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
 
 const { width, height } = Dimensions.get('window');
 
-export default function RegisterForm({ onNext, onBack, onSignIn, signUp, sendOtp }) {
+export default function RegisterForm({ onNext, onBack, onSignIn, signUp }) {
+
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,26 +34,21 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp, sendOtp
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-  
+
     const formData = {
       fullName,
       email,
       password,
       identity,
     };
-  
+
     try {
       const userData = await signUp(formData);
-      console.log("userData:", userData); // Debugging line
-  
-      if (userData && userData.email) { // Ensure userData has an email property
-        await AsyncStorage.setItem('email', userData.email);
+      if(userData){
         onNext();
-      } else {
-        throw new Error("User data or email is missing");
       }
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to create account');
+      Alert.alert('Error', error);
     }
   };
 
@@ -72,16 +68,16 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp, sendOtp
       </View>
       <View style={styles.tabContainer}>
         <TouchableOpacity 
-          style={[styles.tabButton, activeTab === 'register' ? styles.activeTab : styles.inactiveTab]} 
-          onPress={handleRegister}
-        >
-          <Text style={styles.tabButtonText}>Register</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
           style={[styles.tabButton, activeTab === 'login' ? styles.activeTab : styles.inactiveTab]} 
           onPress={handleLogin}
         >
           <Text style={styles.tabButtonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tabButton, activeTab === 'register' ? styles.activeTab : styles.inactiveTab]} 
+          onPress={handleRegister}
+        >
+          <Text style={styles.tabButtonText}>Register</Text>
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -154,7 +150,6 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp, sendOtp
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -170,10 +165,10 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     width: '100%',
-    height: "25%",
+    height: "20%",
   },
   headerText: {
-    top: "40%",
+    top: "50%",
     fontWeight: "700",
     textAlign: "center",
     color: Color.colorWhite,
@@ -183,7 +178,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     height: 60,
     width: "80%", // Set tab container width to 80% of screen width
-    marginTop: -40,
+    marginTop: -45,
     marginBottom: "5%",
     flexDirection: "row",
     borderWidth: 1,

@@ -3,6 +3,7 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import RegisterForm from './RegisterForm';
 import Identity from './Identity';
 import OtpVerification from './OtpVerification';
+import Success from './Success';
 import { useFunctions } from '../useFunctions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -58,15 +59,24 @@ export default function SignUp({ onSignIn }) {
         case 3:
           return (
             <OtpVerification
-              onNext={() => onSignIn()} // Navigates back to sign-in on successful OTP verification
-              onBack={() => setStep(2)}
-              verifyOtp={() => {verifyOtp}}
-              resendOtp={() => {resendOtp}}
+              onNext={() => {setStep(4)}} // Navigates back to sign-in on successful OTP verification
+              onBack={() => {setStep(2)}}
+              verifyOtp={() => {verifyOtp()}}
+              resendOtp={() => {resendOtp()}}
               setLoading={setLoading}
               setError={setError}
               loading={loading}
               error={error}
               otpPurpose="signUp"
+            />
+          );
+        case 4:
+          return(
+            <Success
+              onNext={() => {onSignIn()}} 
+              HeaderText={'Registered successfully!'}
+              SubText={'Your account has been created successfully.'}
+              ButtonText={'Sign-in'}
             />
           );
         default:

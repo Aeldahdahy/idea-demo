@@ -12,9 +12,8 @@ export default function OtpVerification({
   setError,
   loading,
   error,
-  otpPurpose,  // 'signUp' or 'forgetPassword' to determine the purpose
+  otpPurpose,  
 }) {
-  // console.log(otpPurpose);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '']); // State for OTP inputs
 
@@ -34,28 +33,46 @@ export default function OtpVerification({
   }, []);
 
   const handleVerifyOtp = async () => {
+    // Validate email and OTP
     if (!email || otp.some(digit => digit === '')) {
       Alert.alert("Error", "Please enter both email and OTP.");
       return;
     }
-
+  
+    // Log the OTP and email for debugging
+    console.log("Verifying OTP with email:", email);
+    console.log("Entered OTP:", otp.join(''));
+  
     setLoading(true);
     setError(null);
-
+  
     try {
-      const enteredOtp = otp.join('');
-      console.log(`Verifying OTP for ${otpPurpose}:`, enteredOtp);
-
+      const enteredOtp = otp.join('');  // Combine OTP digits into a single string
+  
+      // Call the verifyOtp function
       await verifyOtp(email, enteredOtp, otpPurpose);
+  
+      // If successful, proceed to the next step
       onNext();
     } catch (error) {
-      console.log('Error during OTP verification:', error.response?.data || error.message || error);
+      // Check if the error has a response object with a data property
+      if (error.response && error.response.data) {
+        console.error("Verification Error Data:", error.response.data);
+      } else {
+        console.error("Verification Error:", error);
+      }
+  
+      // Set an error message in the state for UI purposes
       setError(error.response?.data?.message || 'Failed to verify OTP');
+  
+      // Show an alert to the user with the error message
       Alert.alert("Error", error.response?.data?.message || 'Failed to verify OTP');
     } finally {
+      // Stop the loading indicator
       setLoading(false);
     }
   };
+  
 
   const handleResendOtp = async () => {
     if (!email) {
@@ -67,12 +84,9 @@ export default function OtpVerification({
     setError(null);
 
     try {
-      console.log(`Resending OTP for ${otpPurpose} to:`, email);
-
       await resendOtp(email, otpPurpose);
       Alert.alert("Success", "OTP has been resent to your email.");
     } catch (error) {
-      console.log('Error during OTP resend:', error.response?.data || error.message || error);
       setError(error.response?.data?.message || 'Failed to resend OTP');
       Alert.alert("Error", error.response?.data?.message || 'Failed to resend OTP');
     } finally {
@@ -88,12 +102,11 @@ export default function OtpVerification({
 
   return (
     <View style={styles.verifyForgotPasswordEmai}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={onBack}>
         <Image
           style={styles.backArrow}
           resizeMode="cover"
-          source={require('../assets/Group39.png')} // Replace with your back arrow image
+          source={require('../assets/Group39.png')}
         />
       </TouchableOpacity>
 
@@ -149,7 +162,6 @@ export default function OtpVerification({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',

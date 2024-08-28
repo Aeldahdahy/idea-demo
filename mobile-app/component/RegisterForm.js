@@ -5,8 +5,7 @@ import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
 
 const { width, height } = Dimensions.get('window');
 
-export default function RegisterForm({ onNext, onBack, onSignIn, signUp }) {
-
+export default function RegisterForm({ onNext, onBack, onSignIn, signUp, sendOtp }) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,21 +33,26 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp }) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-
+  
     const formData = {
       fullName,
       email,
       password,
       identity,
     };
-
+  
     try {
       const userData = await signUp(formData);
-      if(userData){
+      console.log("userData:", userData); // Debugging line
+  
+      if (userData && userData.email) { // Ensure userData has an email property
+        await AsyncStorage.setItem('email', userData.email);
         onNext();
+      } else {
+        throw new Error("User data or email is missing");
       }
     } catch (error) {
-      Alert.alert('Error', error);
+      Alert.alert('Error', error.message || 'Failed to create account');
     }
   };
 
@@ -150,6 +154,7 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -165,10 +170,10 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     width: '100%',
-    height: "20%",
+    height: "25%",
   },
   headerText: {
-    top: "50%",
+    top: "40%",
     fontWeight: "700",
     textAlign: "center",
     color: Color.colorWhite,
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
   tabContainer: {
     height: 60,
     width: "80%", // Set tab container width to 80% of screen width
-    marginTop: -45,
+    marginTop: -40,
     marginBottom: "5%",
     flexDirection: "row",
     borderWidth: 1,

@@ -1,11 +1,19 @@
-import * as React from "react";
-import { Image, StyleSheet, Text, View, TouchableOpacity, Alert, Dimensions } from "react-native";
+import React from "react";
+import { Image, StyleSheet, Text, View, TouchableOpacity, Dimensions } from "react-native";
+import { Color } from "../GlobalStyles";
+
 
 const { width, height } = Dimensions.get("window");
 
-const PasswordChanged = () => {
+
+export default function Success({
+  onNext,
+  HeaderText,
+  SubText,
+  ButtonText,
+}) {
   const handleLoginPress = () => {
-    Alert.alert("Login button pressed");
+    onNext();
   };
 
   return (
@@ -15,12 +23,12 @@ const PasswordChanged = () => {
         resizeMode="contain"
         source={require("../assets/successtick.png")}
       />
-      <Text style={styles.passwordChangedText}>Password Changed!</Text>
+      <Text style={styles.passwordChangedText}>{HeaderText}</Text>
       <Text style={styles.description}>
-        Your password has been changed successfully.
+       {SubText}
       </Text>
       <TouchableOpacity style={styles.button} onPress={handleLoginPress}>
-        <Text style={styles.loginText}>Login</Text>
+        <Text style={styles.loginText}>{ButtonText}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -55,7 +63,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "90%",  // Increased button width
-    backgroundColor: "#000080",
+    backgroundColor: Color.colorMidnightblue,
     paddingVertical: height * 0.015,  // Reduced button height for minimal top/bottom padding
     paddingHorizontal: width * 0.2,  // Increased padding for larger left and right borders
     borderRadius: width * 0.1,
@@ -73,5 +81,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
-export default PasswordChanged;

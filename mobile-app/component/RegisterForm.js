@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
-import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
 
-export default function RegisterForm({ onNext, onBack, onSignIn, signUp}) {
+const { width, height } = Dimensions.get('window');
+
+export default function RegisterForm({ onNext, onBack, onSignIn, signUp }) {
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [identity, setIdentity] = useState('');
+  const [activeTab, setActiveTab] = useState('register'); // 'register' or 'login'
 
   useEffect(() => {
     const getIdentity = async () => {
@@ -39,8 +42,6 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp}) {
       identity,
     };
 
-    // console.log("User Data:", formData);
-
     try {
       const userData = await signUp(formData);
       if(userData){
@@ -49,479 +50,228 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp}) {
     } catch (error) {
       Alert.alert('Error', error);
     }
-
   };
 
-
   const handleRegister = () => {
-    console.log("Register button pressed");
+    setActiveTab('register');
   };
 
   const handleLogin = () => {
+    setActiveTab('login');
     onSignIn();
   };
 
-
   return (
-    <View style={styles.register}>
-      <View style={styles.registerChild} />
-      <Text style={styles.letsGetYou}>Let's get you registered !</Text>
-      <View style={[styles.registerItem, styles.groupItemLayout]} />
-      <View style={[styles.registerInner, styles.groupItemLayout]} />
-      <Image
-        style={[styles.eye, styles.screenshot20240709Layout1]}
-        resizeMode="cover"
-        source={require("../assets/eye.png")}
-      />
-      <Image
-        style={[styles.eye1, styles.screenshot20240709Layout]}
-        resizeMode="cover"
-        source={require("../assets/lock.png")}
-      />
-      <View style={[styles.rectangleView, styles.groupItemLayout]} />
-      <View style={[styles.registerChild1, styles.groupItemLayout]} />
-      <View style={[styles.registerChild2, styles.groupItemLayout]} />
-      <View style={[styles.rectangleParent, styles.groupItemLayout]}>
-        <View style={[styles.groupChild, styles.groupItemLayout]} />
-        <TouchableOpacity onPress={handleLogin}>
-          <Text style={[styles.login, styles.loginTypo]}>Login</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Let's get you registered!</Text>
+      </View>
+      <View style={styles.tabContainer}>
+        <TouchableOpacity 
+          style={[styles.tabButton, activeTab === 'register' ? styles.activeTab : styles.inactiveTab]} 
+          onPress={handleRegister}
+        >
+          <Text style={styles.tabButtonText}>Register</Text>
         </TouchableOpacity>
-        <View style={[styles.groupItem, styles.groupItemLayout]} />
-        <TouchableOpacity onPress={handleRegister}>
-          <Text style={[styles.register1, styles.loginTypo]}>Register</Text>
+        <TouchableOpacity 
+          style={[styles.tabButton, activeTab === 'login' ? styles.activeTab : styles.inactiveTab]} 
+          onPress={handleLogin}
+        >
+          <Text style={styles.tabButtonText}>Login</Text>
         </TouchableOpacity>
       </View>
-      <Image
-        style={styles.person}
-        resizeMode="cover"
-        source={require("../assets/person.png")}
-      />
-      <Image
-        style={styles.mailIcon}
-        resizeMode="cover"
-        source={require("../assets/mail.png")}
-      />
-      <Image
-        style={[styles.lock, styles.screenshot20240709Layout]}
-        resizeMode="cover"
-        source={require("../assets/lock.png")}
-      />
-      <TextInput 
-        style={[styles.fullName, styles.passwordTypo]} 
-        placeholder="Full Name" 
-        value={fullName}
-        onChangeText={setFullName}
-      />
-
-      <TextInput 
-        style={[styles.emailAddress, styles.passwordTypo]} 
-        placeholder="Email Address" 
-        value={email}
-        onChangeText={setEmail}
-      />
-
-      <TextInput 
-      style={[styles.password, styles.passwordTypo]} 
-      placeholder="Password" 
-      secureTextEntry={true}
-      value={password}
-      onChangeText={setPassword}
-      />
-
-      <TextInput 
-      style={[styles.confirmPassword, styles.passwordTypo]} 
-      placeholder="Confirm Password"
-      secureTextEntry={true}
-      value={confirmPassword}
-      onChangeText={setConfirmPassword}
-      />
-
-      <Text style={[styles.orRegisterWith, styles.passwordTypo]}>Or register with</Text>
-      <Text style={[styles.alreadyHaveAnContainer, styles.loginTypo]}>
-        <Text style={styles.alreadyHaveAnContainer1}>
-          <Text style={styles.alreadyHaveAn}>{`Already have an account? `}</Text>
-          <TouchableOpacity onPress={handleLogin}>
-            <Text style={styles.logIn1} onPress={handleLogin}>Log-In</Text>
-          </TouchableOpacity>
-        </Text>
-      </Text>
-      <Image
-        style={[styles.eye4, styles.screenshot20240709Layout1]}
-        resizeMode="cover"
-        source={require("../assets/eye.png")}
-      />
-      <TouchableOpacity onPress={handleCreateAccount}>
-        <Text style={styles.createAccount}>Create account</Text>
-      </TouchableOpacity>
-      <View style={[styles.lineView, styles.lineViewPosition]} />
-      <View style={[styles.registerChild3, styles.lineViewPosition]} />
-      <Image
-        style={[styles.screenshot20240723At1006, styles.screenshot20240723Layout]}
-        resizeMode="cover"
-        source={require("../assets/google.png")}
-      />
-      <Image
-        style={[styles.screenshot20240723At1008, styles.screenshot20240723Layout]}
-        resizeMode="cover"
-        source={require("../assets/facebook.png")}
-      />
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        {activeTab === 'register' && (
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <Image
+                style={styles.icon}
+                resizeMode="cover"
+                source={require("../assets/person.png")}
+              />
+              <TextInput 
+                style={styles.input} 
+                placeholder="Full Name" 
+                value={fullName}
+                onChangeText={setFullName}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Image
+                style={styles.icon}
+                resizeMode="cover"
+                source={require("../assets/mail.png")}
+              />
+              <TextInput 
+                style={styles.input} 
+                placeholder="Email Address" 
+                value={email}
+                onChangeText={setEmail}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Image
+                style={styles.icon}
+                resizeMode="cover"
+                source={require("../assets/lock.png")}
+              />
+              <TextInput 
+                style={styles.input} 
+                placeholder="Password" 
+                secureTextEntry={true}
+                value={password}
+                onChangeText={setPassword}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Image
+                style={styles.icon}
+                resizeMode="cover"
+                source={require("../assets/lock.png")}
+              />
+              <TextInput 
+                style={styles.input} 
+                placeholder="Confirm Password"
+                secureTextEntry={true}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+              />
+            </View>
+            <TouchableOpacity style={styles.createAccountButton} onPress={handleCreateAccount}>
+              <Text style={styles.createAccountText}>Create Account</Text>
+            </TouchableOpacity>
+            <Text style={styles.orText}>Or register with</Text>
+            <View style={styles.socialIcons}>
+              <Image style={styles.socialIcon} resizeMode="cover" source={require("../assets/google.png")} />
+            </View>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
-  groupItemLayout: {
-    height: 55,
-    position: "absolute",
-  },
-  screenshot20240709Layout1: {
-    height: 20,
-    width: 32,
-    borderRadius: Border.br_120xl_5,
-    left: 337,
-    position: "absolute",
-  },
-  screenshot20240709Layout: {
-    height: 27,
-    width: 21,
-    left: 76,
-    position: "absolute",
-  },
-  loginTypo: {
-    color: Color.colorBlack,
-    fontSize: FontSize.size_xl,
+  container: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
     alignItems: "center",
-    display: "flex",
-    textAlign: "center",
-    position: "absolute",
+    backgroundColor: Color.colorWhite,
   },
-  passwordTypo: {
-    height: 25,
-    textAlign: "left",
-    color: Color.colorGray_100,
-    fontFamily: FontFamily.signikaLight,
-    fontWeight: "300",
-    alignItems: "center",
-    display: "flex",
-    position: "absolute",
-  },
-  lineViewPosition: {
-    height: 1,
-    borderTopWidth: 1,
-    borderColor: Color.colorGray_100,
-    top: 723,
-    borderStyle: "solid",
-    position: "absolute",
-  },
-  screenshot20240723Layout: {
-    width: 33,
-    top: 760,
-    height: 33,
-    position: "absolute",
-  },
-  registerChild: {
+  header: {
+    backgroundColor: Color.colorMidnightblue,
     borderBottomRightRadius: Border.br_36xl,
     borderBottomLeftRadius: Border.br_36xl,
-    backgroundColor: Color.colorMidnightblue,
-    width: 430,
-    height: 181,
-    left: 0,
-    top: 0,
-    position: "absolute",
+    padding: 16,
+    marginBottom: 16,
+    width: '100%',
+    height: "20%",
   },
-  letsGetYou: {
-    top: 58,
-    left: 13,
+  headerText: {
+    top: "50%",
+    fontWeight: "700",
+    textAlign: "center",
+    color: Color.colorWhite,
     fontSize: FontSize.size_11xl,
     fontFamily: FontFamily.bitterBold,
-    width: 385,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
-    textAlign: "center",
-    color: Color.colorWhite,
-    fontWeight: "700",
-    position: "absolute",
   },
-  registerItem: {
-    top: 268,
-    width: 333,
-    height: 55,
+  tabContainer: {
+    height: 60,
+    width: "80%", // Set tab container width to 80% of screen width
+    marginTop: -45,
+    marginBottom: "5%",
+    flexDirection: "row",
     borderWidth: 1,
-    left: 53,
-    borderStyle: "solid",
-    borderRadius: Border.br_16xl,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    borderColor: Color.colorBlack,
-    backgroundColor: Color.colorWhite,
-  },
-  registerInner: {
-    top: 521,
-    width: 333,
-    height: 55,
-    borderWidth: 1,
-    left: 53,
-    borderStyle: "solid",
-    borderRadius: Border.br_16xl,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    borderColor: Color.colorBlack,
-    backgroundColor: Color.colorWhite,
-  },
-  eye: {
-    top: 539,
-  },
-  eye1: {
-    top: 535,
-  },
-  rectangleView: {
-    top: 610,
-    backgroundColor: Color.colorNavy,
     borderColor: Color.colorWhite,
-    width: 333,
-    height: 55,
-    borderWidth: 1,
-    left: 53,
-    borderStyle: "solid",
-    borderRadius: Border.br_16xl,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
+    borderRadius: Border.br_120xl_5,
+    backgroundColor: Color.colorGainsboro,
   },
-  registerChild1: {
-    top: 437,
-    width: 333,
-    height: 55,
-    borderWidth: 1,
-    left: 53,
-    borderStyle: "solid",
-    borderRadius: Border.br_16xl,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    borderColor: Color.colorBlack,
-    backgroundColor: Color.colorWhite,
-  },
-  registerChild2: {
-    top: 353,
-    width: 333,
-    height: 55,
-    borderWidth: 1,
-    left: 53,
-    borderStyle: "solid",
-    borderRadius: Border.br_16xl,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    borderColor: Color.colorBlack,
-    backgroundColor: Color.colorWhite,
-  },
-  groupChild: {
-    backgroundColor: "#e8e5e5",
-    width: 333,
-    height: 55,
-    borderRadius: Border.br_16xl,
-    left: 0,
-    top: 0,
-  },
-  login: {
-    top: 19,
-    left: 209,
-    width: 64,
-    fontFamily: FontFamily.signikaRegular,
-    color: Color.colorBlack,
-    height: 20,
-    justifyContent: "center",
-  },
-  groupItem: {
-    borderRadius: 28,
-    backgroundColor: "#ffe284",
-    borderColor: "rgba(255, 255, 255, 0.8)",
-    borderWidth: 2,
-    width: 170,
-    height: 55,
-    borderStyle: "solid",
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    left: 0,
-    top: 0,
-  },
-  register1: {
-    top: 18,
-    left: 41,
-    width: 89,
-    fontFamily: FontFamily.signikaRegular,
-    color: Color.colorBlack,
-    height: 20,
-    justifyContent: "center",
-  },
-  rectangleParent: {
-    top: 150,
-    left: 50,
-    width: 333,
-    height: 55,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-  },
-  person: {
-    top: 282,
-    left: 77,
-    height: 28,
-    width: 21,
-    position: "absolute",
-  },
-  mailIcon: {
-    top: 369,
-    width: 26,
-    height: 26,
-    left: 76,
-    position: "absolute",
-    overflow: "hidden",
-  },
-  lock: {
-    top: 451,
-  },
-  fullName: {
-    top: 284,
-    width: 92,
-    left: 112,
-    textAlign: "left",
-    color: Color.colorGray_100,
-    fontSize: FontSize.size_xl,
-  },
-  emailAddress: {
-    top: 368,
-    width: 129,
-    left: 112,
-    textAlign: "left",
-    color: Color.colorGray_100,
-    fontSize: FontSize.size_xl,
-  },
-  password: {
-    top: 453,
-    width: 93,
-    left: 112,
-    textAlign: "left",
-    color: Color.colorGray_100,
-    fontSize: FontSize.size_xl,
-  },
-  confirmPassword: {
-    top: 536,
-    left: 108,
-    width: 156,
-    fontSize: FontSize.size_xl,
-    textAlign: "left",
-    color: Color.colorGray_100,
-  },
-  orRegisterWith: {
-    top: 711,
-    left: 154,
-    fontSize: 17,
-    width: 114,
-  },
-  alreadyHaveAn: {
-    fontFamily: FontFamily.signikaLight,
-    fontWeight: "300",
-  },
-  logIn1: {
-    fontFamily: FontFamily.signikaBold,
-    fontWeight: "700",
-  },
-  logIn: {
-    textDecoration: "underline",
-  },
-  alreadyHaveAnContainer1: {
-    width: "100%",
-  },
-  alreadyHaveAnContainer: {
-    top: 870,
-    left: 7,
-    width: 416,
-    height: 44,
-  },
-  eye4: {
-    top: 456,
-  },
-  createAccount: {
-    top: 620,
-    left: 94,
-    fontSize: FontSize.size_6xl,
-    fontWeight: "600",
-    fontFamily: FontFamily.signikaSemiBold,
-    width: 250,
-    height: 33,
+  tabButton: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    display: "flex",
+    borderRadius: Border.br_120xl_5,
+  },
+  activeTab: {
+    backgroundColor: "#D9EFFF",
+    borderColor: Color.colorWhite,
+    borderWidth: 1,
+  },
+  tabButtonText: {
+    color: Color.colorBlack,
+    fontFamily: FontFamily.signikaRegular,
+    fontSize: FontSize.size_xl,
     textAlign: "center",
-    color: Color.colorWhite,
-    position: "absolute",
   },
-  lineView: {
-    left: 39,
-    width: 105,
+  scrollView: {
+    flexGrow: 1,
+    width: "100%", // Ensure the scroll view takes full width
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
-  registerChild3: {
-    left: 278,
-    width: 107,
-  },
-  screenshot20240723At1006: {
-    left: 172,
-    borderRadius: 330,
-  },
-  screenshot20240723At1008: {
-    left: 224,
-    borderRadius: 116,
-  },
-  register: {
+  form: {
+    width: '90%', // Set form width to 80% of the screen width
+    paddingHorizontal: 16,
     flex: 1,
-    height: 932,
-    overflow: "hidden",
+    justifyContent: 'center', // Center content vertically
+  },
+  inputContainer: {
+    width: '100%', // Set input container to 100% width of the form
+    marginTop: 20,
+    borderWidth: 1,
+    marginBottom: 20,
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    borderRadius: Border.br_36xl,
+    borderColor: Color.colorGray_100,
     backgroundColor: Color.colorWhite,
-    width: "100%",
+  },
+  icon: {
+    width: 24, // Adjusted icon size
+    height: 24, // Adjusted icon size
+    marginHorizontal: 10,
+  },
+  input: {
+    flex: 1,
+    height: 55, // Increased height for better visibility
+    paddingHorizontal: 16,
+    color: Color.colorGray_100,
+    fontSize: FontSize.size_xl,
+    backgroundColor: Color.colorWhite,
+    borderRadius: Border.br_36xl,
+    width: "100%", // Ensure button takes full width of its parent container
+  },
+  createAccountButton: {
+    height: 55,
+    marginTop: 20,
+    borderRadius: 28,
+    marginBottom: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Color.colorMidnightblue,
+  },
+  createAccountText: {
+    color: Color.colorWhite,
+    fontFamily: FontFamily.signikaRegular,
+    fontSize: FontSize.size_xl,
+    textAlign: "center",
+  },
+  orText: {
+    fontSize: 17,
+    textAlign: "center",
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  socialIcons: {
+    flexDirection: "row",
+    marginBottom: 20,
+    marginTop: 20,
+    justifyContent: "center",
+  },
+  socialIcon: {
+    width: 33,
+    height: 33,
+    marginHorizontal: 8,
   },
 });
-
-
-

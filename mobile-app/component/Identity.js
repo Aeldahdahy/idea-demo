@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, Text, Image, ImageBackground, TouchableOpacity, Alert, Dimensions } from "react-native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Identity({ onNext, onBack }) {
-  let identity;
-  const [ selectIdentity, setSelectIdentity ] = useState(null);
+  const [selectIdentity, setSelectIdentity] = useState(null);
+  const { width, height } = Dimensions.get('window');
 
   const handlePress = async (identity) => {
-    console.log(identity)
+    console.log(identity);
     setSelectIdentity(identity);
     try {
       await AsyncStorage.setItem('identity', identity);
@@ -16,102 +16,125 @@ export default function Identity({ onNext, onBack }) {
     } catch (error) {
       Alert.alert('Error', error);
     }
-
-  };
-
-  const backButton = () => {
-    onBack();
   };
 
   return (
-    <View style={styles.entrepreneurInvestor2}>
-      <View
-        style={[
-          styles.entrepreneurInvestor2Child,
-          styles.icons8BackButton962Position,
-        ]}
-      />
-      <Text style={styles.getStarted}>{`Get Started `}</Text>
-      <Image
-        style={styles.entrepreneurInvestor2Item}
-        resizeMode="cover"
+    <View style={styles.container}>
+      <View style={[styles.header, { paddingVertical: height * 0.07 }]}>
+        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+          <Image source={require("../assets/image-0.22.png")} style={styles.backIcon} />
+        </TouchableOpacity>
+        <Text style={[styles.getStarted, { fontSize: width * 0.08 }]}>Get Started</Text>
+      </View>
+
+      <ImageBackground
+        style={[styles.mainImage, { width: width * 0.8, height: height * 0.35, marginVertical: height * 0.02 }]}
+        resizeMode="contain"
         source={require("../assets/image-0.29.png")}
-      />
-      
-      {/* First Button */}
-      <TouchableOpacity
-        style={[styles.entrepreneurInvestor2Inner, styles.rectangleViewShadowBox]}
-        onPress={() => {handlePress(identity = 'Entrepreneur')}}
-      />
+      >
+        <Image
+          style={[styles.footerImage, { width: width * 0.6, height: height * 0.2, bottom: 0 }]}
+          resizeMode="contain"
+          source={require("../assets/image-0.30.png")}
+        />
+      </ImageBackground>
 
-      {/* Second Button */}
-      <TouchableOpacity
-        style={[styles.rectangleView, styles.rectangleViewShadowBox]}
-        onPress={() => {handlePress(identity = 'Investor')}}
-      />
-
-      <Image
-        style={[
-          styles.screenshot20240727At429,
-          styles.screenshot20240727Layout,
-        ]}
-        resizeMode="cover"
-        source={require("../assets/image-0.31.png")}
-      />
-      <Text style={styles.chooseYourIdentity}>Choose your identity:</Text>
-      <Text style={styles.loremIpsumDolorSit}>
+      <Text style={[styles.chooseYourIdentity, { fontSize: width * 0.07 }]}>Choose your identity:</Text>
+      <Text style={[styles.description, { fontSize: width * 0.05 }]}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       </Text>
-      <Image
-        style={[
-          styles.screenshot20240727At4291,
-          styles.screenshot20240727Layout,
-        ]}
-        resizeMode="cover"
-        source={require("../assets/image-0.32.png")}
-      />
-      <Text style={[styles.entrepreneur, styles.investorTypo]}>
-        Entrepreneur
-      </Text>
-      <Text style={[styles.investor, styles.investorTypo]}>Investor</Text>
-      <Image
-        style={styles.screenshot20240727At440}
-        resizeMode="cover"
-        source={require("../assets/image-0.30.png")}
-      />
-      
-      {/* Back Button */}
-      <View style={[styles.ellipseParent, styles.ellipseParentLayout]}>
-        <Image
-          style={styles.groupChild}
-          resizeMode="cover"
-          source={require("../assets/image-0.33.png")}
-        />
+
+      <View style={[styles.identityOptions, { marginBottom: height * 0.05 }]}>
         <TouchableOpacity
-          style={[styles.icons8BackButton962, styles.ellipseParentLayout]}
-          onPress={backButton}
+          style={[styles.optionButton, selectIdentity === 'Entrepreneur' && styles.selectedOption]}
+          onPress={() => handlePress('Entrepreneur')}
         >
           <Image
-            style={styles.icons8BackButton962}
+            style={[styles.optionImage, { width: width * 0.1, height: height * 0.04 }]}
             resizeMode="cover"
-            source={require("../assets/image-0.34.png")}
+            source={require("../assets/image-0.31.png")}
           />
+          <Text style={[styles.optionText, { fontSize: width * 0.045 }]}>Entrepreneur</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.optionButton, selectIdentity === 'Investor' && styles.selectedOption]}
+          onPress={() => handlePress('Investor')}
+        >
+          <Image
+            style={[styles.optionImage, { width: width * 0.1, height: height * 0.04 }]}
+            resizeMode="cover"
+            source={require("../assets/image-0.32.png")}
+          />
+          <Text style={[styles.optionText, { fontSize: width * 0.045 }]}>Investor</Text>
         </TouchableOpacity>
       </View>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  icons8BackButton962Position: {
-    left: 0,
-    top: 0,
+  container: {
+    flex: 1,
+    backgroundColor: Color.colorWhite,
+    padding: 5,
   },
-  rectangleViewShadowBox: {
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "white",
+    borderBottomRightRadius: Border.br_36xl,
+    borderBottomLeftRadius: Border.br_36xl,
+  },
+  footerImage: {
+    alignSelf: "center",
+    flex:1,   
+  },
+  backButton: {
+    paddingLeft: 0,
+    paddingTop: 3,
+  },
+  backIcon: {
+    width: 45,
+    height: 50,
+  },
+  getStarted: {
+    fontWeight: "700",
+    fontFamily: FontFamily.bitterBold,
+    color: Color.colorWhite,
+  },
+  mainImage: {
+    alignSelf: "center",
+    position: "relative",
+  },
+  chooseYourIdentity: {
+    fontWeight: "800",
+    fontFamily: FontFamily.bitterExtraBold,
+    color: Color.colorBlack,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  description: {
+    fontWeight: "300",
+    fontFamily: FontFamily.signikaLight,
+    color: Color.colorBlack,
+    textAlign: "center",
+    marginBottom: 32,
+  },
+  identityOptions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  optionButton: {
+    flex: 1,
     height: 99,
-    width: 160,
     backgroundColor: Color.colorGainsboro,
     borderRadius: Border.br_mini,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 8,
     shadowOpacity: 1,
     elevation: 4,
     shadowRadius: 4,
@@ -120,143 +143,17 @@ const styles = StyleSheet.create({
       height: 4,
     },
     shadowColor: "rgba(0, 0, 0, 0.25)",
-    top: 691,
-    position: "absolute",
   },
-  screenshot20240727Layout: {
-    height: 31,
-    width: 33,
-    borderRadius: Border.br_lg,
-    top: 705,
-    position: "absolute",
-  },
-  investorTypo: {
-    height: 25,
-    fontFamily: FontFamily.signikaRegular,
-    fontSize: FontSize.size_xl,
-    justifyContent: "center",
-    textAlign: "center",
-    color: Color.colorBlack,
-    alignItems: "center",
-    display: "flex",
-    position: "absolute",
-  },
-  ellipseParentLayout: {
-    height: 51,
-    width: 61,
-    position: "absolute",
-  },
-  entrepreneurInvestor2Child: {
-    borderBottomRightRadius: Border.br_36xl,
-    borderBottomLeftRadius: Border.br_36xl,
+  selectedOption: {
     backgroundColor: "#163696",
-    width: 430,
-    height: 210,
-    position: "absolute",
   },
-  getStarted: {
-    top: 103,
-    fontSize: 30,
-    fontWeight: "700",
-    fontFamily: FontFamily.bitterBold,
-    color: Color.colorWhite,
-    textAlign: "left",
-    width: 177,
-    height: 50,
-    alignItems: "center",
-    display: "flex",
-    left: 59,
-    position: "absolute",
+  optionImage: {
+    marginBottom: 8,
   },
-  entrepreneurInvestor2Item: {
-    top: 250,
-    left: 89,
-    width: 253,
-    height: 245,
-    position: "absolute",
-  },
-  entrepreneurInvestor2Inner: {
-    left: 40,
-  },
-  rectangleView: {
-    left: 230,
-  },
-  screenshot20240727At429: {
-    left: 294,
-  },
-  chooseYourIdentity: {
-    top: 543,
-    left: 46,
-    fontSize: 25,
-    fontWeight: "800",
-    fontFamily: FontFamily.bitterExtraBold,
-    width: 339,
-    height: 46,
-    justifyContent: "center",
-    textAlign: "center",
-    color: Color.colorBlack,
-    alignItems: "center",
-    display: "flex",
-    position: "absolute",
-  },
-  loremIpsumDolorSit: {
-    top: 568,
-    left: 64,
-    fontWeight: "300",
-    fontFamily: FontFamily.signikaLight,
-    width: 302,
-    height: 100,
-    fontSize: FontSize.size_2xl,
-    justifyContent: "center",
-    textAlign: "center",
-    color: Color.colorBlack,
-    alignItems: "center",
-    display: "flex",
-    position: "absolute",
-  },
-  screenshot20240727At4291: {
-    left: 104,
-  },
-  entrepreneur: {
-    top: 748,
-    width: 123,
-    left: 59,
+  optionText: {
     fontFamily: FontFamily.signikaRegular,
+    color: Color.colorBlack,
+    textAlign: "center",
   },
-  investor: {
-    top: 750,
-    left: 271,
-    width: 79,
-  },
-  screenshot20240727At440: {
-    top: 320,
-    left: 125,
-    borderRadius: 11,
-    width: 171,
-    height: 111,
-    position: "absolute",
-  },
-  groupChild: {
-    top: 5,
-    left: 6,
-    width: 50,
-    height: 41,
-    position: "absolute",
-  },
-  icons8BackButton962: {
-    left: 0,
-    top: 0,
-  },
-  ellipseParent: {
-    top: 25,
-    left: 16,
-  },
-  entrepreneurInvestor2: {
-    backgroundColor: Color.colorWhite,
-    flex: 1,
-    width: "100%",
-    height: 932,
-    overflow: "hidden",
-  },
+  
 });
-

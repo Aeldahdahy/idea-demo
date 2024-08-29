@@ -1,104 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
 import { Border, FontFamily, Color } from '../GlobalStyles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OtpVerification({
-  onNext,
   onBack,
-  verifyOtp,
-  resendOtp,
-  setLoading,
-  setError,
+  handleVerifyOtp,
+  handleResendOtp,
+  emailAddress,
+  otpPurpose,
   loading,
-  error,
-  otpPurpose,  
+  otp,  // Get the OTP state from parent
+  setOtp, 
 }) {
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '']); // State for OTP inputs
-
-  useEffect(() => {
-    const getEmail = async () => {
-      try {
-        const storedEmail = await AsyncStorage.getItem('email');
-        if (storedEmail) {
-          setEmail(storedEmail);
-        }
-      } catch (error) {
-        Alert.alert("Error", "Failed to retrieve email.");
-      }
-    };
-
-    getEmail();
-  }, []);
-
-  const handleVerifyOtp = async () => {
-    // Validate email and OTP
-    if (!email || otp.some(digit => digit === '')) {
-      Alert.alert("Error", "Please enter both email and OTP.");
-      return;
-    }
-  
-    // Log the OTP and email for debugging
-    console.log("Verifying OTP with email:", email);
-    console.log("Entered OTP:", otp.join(''));
-  
-    setLoading(true);
-    setError(null);
-  
-    try {
-      const enteredOtp = otp.join('');  // Combine OTP digits into a single string
-  
-      // Call the verifyOtp function
-      await verifyOtp(email, enteredOtp, otpPurpose);
-  
-      // If successful, proceed to the next step
-      onNext();
-    } catch (error) {
-      // Check if the error has a response object with a data property
-      if (error.response && error.response.data) {
-        console.error("Verification Error Data:", error.response.data);
-      } else {
-        console.error("Verification Error:", error);
-      }
-  
-      // Set an error message in the state for UI purposes
-      setError(error.response?.data?.message || 'Failed to verify OTP');
-  
-      // Show an alert to the user with the error message
-      Alert.alert("Error", error.response?.data?.message || 'Failed to verify OTP');
-    } finally {
-      // Stop the loading indicator
-      setLoading(false);
-    }
-  };
-  
-
-  const handleResendOtp = async () => {
-    if (!email) {
-      Alert.alert("Error", "Please enter your email.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      await resendOtp(email, otpPurpose);
-      Alert.alert("Success", "OTP has been resent to your email.");
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to resend OTP');
-      Alert.alert("Error", error.response?.data?.message || 'Failed to resend OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputChange = (index, value) => {
     const newOtp = [...otp];
     newOtp[index] = value;
-    setOtp(newOtp);
-  };
+    setOtp(newOtp);  // Update OTP state
+};
+
 
   return (
     <View style={styles.verifyForgotPasswordEmai}>
@@ -113,10 +33,10 @@ export default function OtpVerification({
       <View style={[styles.verifyForgotPasswordEmaiChild, styles.childPosition]} />
 
       <Text style={[styles.verifyYourEmail, styles.verifyFlexBox]}>
-        {otpPurpose === 'signUp' ? 'Verify your email for Sign Up' : 'Verify your email for Password Reset'}
+        {otpPurpose}
       </Text>
       <Text style={[styles.pleaseEnterThe, styles.pleaseEnterTheFlexBox]}>
-        Please Enter The 4 Digit Code Sent To {email}
+        Please Enter The 4 Digit Code Sent To {emailAddress}
       </Text>
 
       <View style={styles.inputContainer}>
@@ -162,6 +82,8 @@ export default function OtpVerification({
     </View>
   );
 }
+
+
 const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',

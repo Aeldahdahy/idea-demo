@@ -1,25 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import OtpVerification from './OtpVerification';
 import EmailForget from './EmailForget';
 import ResetPasswordForm from './ResetPasswordForm';
 import Success from './Success';
 import { useFunctions } from '../useFunctions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function ForgetPassword({ onSignIn }) {
-    const [step, setStep] = useState(4);
+    const [step, setStep] = useState(1);
+    const [email, setEmail] = useState('');
+    const [otp, setOtp] = useState(['', '', '', '']);
+
   
     const {
       sendOtp,
       verifyOtpForPasswordReset,
-      resetPassword,
       resendForgetPasswordOtp,
+      resetPassword,
       setLoading,
       setError,
       loading,
       error,
     } = useFunctions();
+
+    useEffect(()=>{
+      const getEmail = async () => {
+        try {
+          const storedEmail = await AsyncStorage.getItem('email');
+          if (storedEmail !== null){
+            setEmail(storedEmail);
+          } 
+        } catch (error) {
+          console.error('Failed to fetch the email from AsyncStorage', error);
+        }
+      };
+      getEmail();
+    }, []);
   
+    const handleVerifyOtp = async () => {
+      try {
+        setLoading(true);
+        const otpCode = otp.join('');
+        const response = await verifyOtpForPasswordReset(email, otpCode);
+        if (response === 200) {
+          await AsyncStorage.removeItem('email');
+          setStep(4);
+        } else {
+          setError('Invalid OTP. Please try again.');
+        }
+      } catch (error) {
+        setError('Failed to verify OTP. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const handleResendOtp = async () => {
+      try {
+        await resendForgetPasswordOtp(email);
+      } catch (error) {
+        setError('Failed to resend OTP. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
     const renderStep = () => {
       switch (step) {
         case 1:
@@ -37,15 +85,14 @@ export default function ForgetPassword({ onSignIn }) {
         case 2:
           return (
             <OtpVerification
-              onNext={() => {setStep(3)}}
               onBack={() => {setStep(1)}}
-              verifyOtp={() => {verifyOtpForPasswordReset()}}
-              resendOtp={() => {resendForgetPasswordOtp()}}
-              setLoading={setLoading}
-              setError={setError}
+              handleVerifyOtp={handleVerifyOtp}
+              handleResendOtp={handleResendOtp}
+              emailAddress={email}
+              otpPurpose={'Verify your email for Password Reset'}
               loading={loading}
-              error={error}
-              otpPurpose="forgetPassword"
+              otp={otp}  
+              setOtp={setOtp}
             />
           );
         case 3:
@@ -57,7 +104,6 @@ export default function ForgetPassword({ onSignIn }) {
               setLoading={setLoading}
               setError={setError}
               loading={loading}
-              error={error}
             />
           );
         case 4:

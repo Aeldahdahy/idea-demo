@@ -1,56 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
 
 const { width, height } = Dimensions.get('window');
 
-export default function RegisterForm({ onNext, onBack, onSignIn, signUp }) {
+export default function RegisterForm({ 
+  onSignIn,
+  setEmail,
+  setFullName,
+  setPassword,
+  setConfirmPassword,
+  email,
+  fullName,
+  password,
+  confirmPassword,
+  handleCreateAccount,
+  setLoading,
+  setError,
+  loading,
+  error
+         }) {
 
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [identity, setIdentity] = useState('');
+  
   const [activeTab, setActiveTab] = useState('register'); // 'register' or 'login'
 
-  useEffect(() => {
-    const getIdentity = async () => {
-      try {
-        const storedIdentity = await AsyncStorage.getItem('identity');
-        if (storedIdentity) {
-          setIdentity(storedIdentity);
-        }
-      } catch (error) {
-        Alert.alert('Error', 'Failed to load identity from storage');
-      }
-    };
+  
 
-    getIdentity();
-  }, []);
-
-  const handleCreateAccount = async () => {
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
-
-    const formData = {
-      fullName,
-      email,
-      password,
-      identity,
-    };
-
-    try {
-      const userData = await signUp(formData);
-      if(userData){
-        onNext();
-      }
-    } catch (error) {
-      Alert.alert('Error', error);
-    }
-  };
+  
 
   const handleRegister = () => {
     setActiveTab('register');
@@ -150,6 +126,7 @@ export default function RegisterForm({ onNext, onBack, onSignIn, signUp }) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

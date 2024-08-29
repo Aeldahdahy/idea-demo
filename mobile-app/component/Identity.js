@@ -1,23 +1,10 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, ImageBackground, TouchableOpacity, Alert, Dimensions } from "react-native";
-import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import { StyleSheet, View, Text, Image, ImageBackground, TouchableOpacity, Dimensions } from "react-native";
+import { Color, Border, FontFamily } from "../GlobalStyles";
 
-export default function Identity({ onNext, onBack }) {
-  const [selectIdentity, setSelectIdentity] = useState(null);
-  const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-  const handlePress = async (identity) => {
-    console.log(identity);
-    setSelectIdentity(identity);
-    try {
-      await AsyncStorage.setItem('identity', identity);
-      onNext();
-    } catch (error) {
-      Alert.alert('Error', error);
-    }
-  };
-
+export default function Identity({ onBack, selectIdentity, handlePress }) {
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingVertical: height * 0.07 }]}>

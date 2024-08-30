@@ -5,7 +5,7 @@ import Identity from './Identity';
 import OtpVerification from './OtpVerification';
 import Success from './Success';
 import { useFunctions } from '../useFunctions';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Color } from '../GlobalStyles';
 
 export default function SignUp({ onSignIn }) {
     const [step, setStep] = useState(1);
@@ -14,7 +14,14 @@ export default function SignUp({ onSignIn }) {
     const [fullName, setFullName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [selectIdentity, setSelectIdentity] = useState(null);
+    const [role, setRole] = useState("");
+
+    const formData = {
+        email,
+        role,
+        fullName,
+        password,
+    };
 
     const {
         signUp,
@@ -25,14 +32,12 @@ export default function SignUp({ onSignIn }) {
         setError,
         error,
     } = useFunctions();
-
-    // Move to registration step with selected identity
-    const handlePress = (identity) => {
-        setSelectIdentity(identity);
+    
+    const handlePress = (role) => {
+        setRole(role);
         setStep(2);
     };
 
-    // Handle account creation
     const handleCreateAccount = async () => {
         if (password !== confirmPassword) {
             Alert.alert('Error', 'Passwords do not match');
@@ -42,14 +47,8 @@ export default function SignUp({ onSignIn }) {
         setLoading(true);
         setError(null);
 
-        const formData = {
-            fullName,
-            email,
-            password,
-            selectIdentity,
-        };
-
         try {
+            console.log("Email before sign up:", email);
             await signUp(formData);
             setStep(3); // Move to OTP verification step
         } catch (error) {
@@ -63,37 +62,45 @@ export default function SignUp({ onSignIn }) {
 
     // Handle OTP verification
     const handleVerifyOtp = async () => {
-        setLoading(true);
-        try {
-            const otpCode = otp.join('');
-            const response = await verifyOtp(email, otpCode);
-
-            if (response.status === 200) {
-                await AsyncStorage.removeItem('email');
-                setStep(4); // Move to success screen
-            } else {
-                const errorMessage = response.data?.message || 'Failed to verify the OTP';
+        const combinedOtp = otp.join('');
+        if (combinedOtp.length === 4) {
+            setLoading(true);
+            setError(null);
+    
+            try {
+                await verifyOtp(formData, combinedOtp);
+                setStep(4);
+            } catch (error) {
+                const errorMessage = error.response?.data?.message || 'Failed to verify OTP';
                 setError(errorMessage);
-                Alert.alert('Error', errorMessage);
+    
+                if (errorMessage.includes('Invalid OTP')) {
+                    Alert.alert("Invalid OTP", errorMessage);
+                } else {
+                    Alert.alert("Error", errorMessage);
+                }
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Failed to verify the OTP';
-            setError(errorMessage);
-            Alert.alert('Error', errorMessage);
-        } finally {
-            setLoading(false);
+        } else {
+            Alert.alert("Error", "OTP must be 4 digits long");
         }
     };
+    
 
     // Handle OTP resend
     const handleResendOtp = async () => {
         setLoading(true);
+        setError(null);
+        
+
         try {
+            console.log("Email before resending OTP:", email);
             await resendOtp(email);
         } catch (error) {
-            const errorMessage = 'Failed to resend OTP. Please try again.';
+            const errorMessage = error.message || 'Failed to resend OTP';
             setError(errorMessage);
-            Alert.alert('Error', errorMessage);
+            Alert.alert("Error", errorMessage);
         } finally {
             setLoading(false);
         }
@@ -106,7 +113,8 @@ export default function SignUp({ onSignIn }) {
                 return (
                     <Identity
                         onBack={onSignIn}
-                        selectIdentity={selectIdentity}
+                        role={role}
+                        setRole={setRole}
                         handlePress={handlePress}
                     />
                 );
@@ -158,16 +166,18 @@ export default function SignUp({ onSignIn }) {
 
     return (
         <View style={styles.container}>
-            {loading ? <ActivityIndicator size="large" color="#0000ff" /> : renderStep()}
+            {loading ? <ActivityIndicator size="large" color={Color.colorMidnightblue} /> : renderStep()}
         </View>
     );
 }
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        width:"100%",
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: Color.colorWhite,
+        justifyContent: 'center',
     },
 });

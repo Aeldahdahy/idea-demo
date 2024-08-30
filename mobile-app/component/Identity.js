@@ -4,7 +4,11 @@ import { Color, Border, FontFamily } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
-export default function Identity({ onBack, selectIdentity, handlePress }) {
+export default function Identity({ 
+  onBack,
+  handlePress,
+  setRole,
+}) {
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingVertical: height * 0.07 }]}>
@@ -33,8 +37,8 @@ export default function Identity({ onBack, selectIdentity, handlePress }) {
 
       <View style={[styles.identityOptions, { marginBottom: height * 0.05 }]}>
         <TouchableOpacity
-          style={[styles.optionButton, selectIdentity === 'Entrepreneur' && styles.selectedOption]}
-          onPress={() => handlePress('Entrepreneur')}
+          style={[styles.optionButton, setRole === 'entrepreneur' && styles.selectedOption]}
+          onPress={() => handlePress('entrepreneur')}
         >
           <Image
             style={[styles.optionImage, { width: width * 0.1, height: height * 0.04 }]}
@@ -45,8 +49,8 @@ export default function Identity({ onBack, selectIdentity, handlePress }) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.optionButton, selectIdentity === 'Investor' && styles.selectedOption]}
-          onPress={() => handlePress('Investor')}
+          style={[styles.optionButton, setRole === 'investor' && styles.selectedOption]}
+          onPress={() => handlePress('investor')}
         >
           <Image
             style={[styles.optionImage, { width: width * 0.1, height: height * 0.04 }]}
@@ -132,7 +136,7 @@ const styles = StyleSheet.create({
     shadowColor: "rgba(0, 0, 0, 0.25)",
   },
   selectedOption: {
-    backgroundColor: "#163696",
+    backgroundColor: Color.colorMidnightblue,
   },
   optionImage: {
     marginBottom: 8,

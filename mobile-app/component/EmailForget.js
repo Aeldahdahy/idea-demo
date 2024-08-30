@@ -1,31 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function EmailForget({ onNext, onBack, sendOtp, setLoading, setError, loading, error }) {
-  const [email, setEmail] = useState('');
-  
+export default function EmailForget({ onBack, loading, error, handleSendOtp, email, setEmail }) {
 
-  const handleSendOtp = async () => {
+  const onNextPress = () => {
     if (!email) {
       Alert.alert("Error", "Please enter your email.");
       return;
     }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      await sendOtp(email);
-      await AsyncStorage.setItem('email', email);
-      onNext(); 
-    } catch (error) {
-      setError(error.message || 'Failed to send OTP');
-      Alert.alert("Error", error.message || 'Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
+    handleSendOtp(email);
   };
 
   return (
@@ -51,11 +35,11 @@ export default function EmailForget({ onNext, onBack, sendOtp, setLoading, setEr
       {error && <Text style={styles.errorText}>{error}</Text>}
 
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color={Color.colorMidnightblue} />
       ) : (
         <TouchableOpacity
           style={[styles.rectangleView, styles.rectangleViewShadowBox]}
-          onPress={handleSendOtp}
+          onPress={onNextPress}
         >
           <Text style={styles.next}>Next</Text>
         </TouchableOpacity>
@@ -81,6 +65,7 @@ export default function EmailForget({ onNext, onBack, sendOtp, setLoading, setEr
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   rectangleViewShadowBox: {
     height: 55,
@@ -118,7 +103,7 @@ const styles = StyleSheet.create({
     left: 0,
     borderBottomRightRadius: Border.br_36xl,
     borderBottomLeftRadius: Border.br_36xl,
-    backgroundColor: "#163696",
+    backgroundColor: Color.colorMidnightblue,
     width: 430,
     height: 220,
     position: "absolute",

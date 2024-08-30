@@ -1,66 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from "react";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
 export default function ResetPasswordForm({ 
-    onNext,
     onBack,
-    resetPassword,
-    setLoading,
-    setError,
     loading,
-    error
+    handleResetPassword,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
 }) {
-  const [email, setEmail] = useState('');
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  // Fetch email from AsyncStorage when the component mounts
-  useEffect(() => {
-    const fetchEmail = async () => {
-      try {
-        const storedEmail = await AsyncStorage.getItem('email');
-        if (storedEmail) {
-          setEmail(storedEmail);
-        } else {
-          Alert.alert("Error", "Email not found. Please log in again.");
-          onBack(); // Navigate back if email is not found
-        }
-      } catch (error) {
-        Alert.alert("Error", "Failed to load email from storage.");
-      }
-    };
-
-    fetchEmail();
-  }, []);
-
-  const handleResetPassword = async () => {
-    if (!newPassword || !confirmPassword) {
-        Alert.alert("Error", "Please enter your new password and confirmation.");
-        return;
-    }
-
-    if (newPassword !== confirmPassword) {
-        Alert.alert("Error", "New Password and Confirm Password do not match.");
-        return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-        const data = { email, newPassword };
-        await resetPassword(data);
-        Alert.alert("Success", "Password has been reset successfully!");
-        onNext(); 
-    } catch (error) {
-        setError(error.message || 'Failed to reset password');
-        Alert.alert("Error", error.message || 'Failed to reset password');
-    } finally {
-        setLoading(false);
-    }
-  };
+ 
 
   const handleBackPress = () => {
     onBack();
@@ -89,8 +40,8 @@ export default function ResetPasswordForm({
         placeholder="New Password"
         placeholderTextColor={Color.colorGray}
         secureTextEntry
-        value={newPassword}
-        onChangeText={setNewPassword}
+        value={password}
+        onChangeText={setPassword}
       />
       <TextInput
         style={[styles.textInput, styles.confirmPasswordInput]}
@@ -185,7 +136,7 @@ const styles = StyleSheet.create({
     left: 0,
     borderBottomRightRadius: Border.br_36xl,
     borderBottomLeftRadius: Border.br_36xl,
-    backgroundColor: "#163696",
+    backgroundColor: Color.colorMidnightblue,
     width: 430,
     height: 220,
     position: "absolute",
@@ -207,7 +158,7 @@ const styles = StyleSheet.create({
   createPasswordItem: {
     top: 737,
     left: 45,
-    backgroundColor: "#0029a4",
+    backgroundColor: Color.colorGray_100,
     borderColor: Color.colorWhite,
     height: 55,
     width: 333,
@@ -230,7 +181,7 @@ const styles = StyleSheet.create({
     left: 45,
     width: 333,
     height: 55,
-    backgroundColor: "#0029a4",
+    backgroundColor: Color.colorMidnightblue,
     borderRadius: Border.br_16xl,
     justifyContent: "center",
     alignItems: "center",

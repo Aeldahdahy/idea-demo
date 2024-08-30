@@ -13,7 +13,6 @@ export const FontFamily = {
     size_16xl: 35,
     size_6xl: 25,
     size_xl: 20,
-    size_6xl: 25,
     size_11xl: 30,
   };
   /* Colors */
@@ -24,10 +23,10 @@ export const FontFamily = {
     colorGray_200: "rgba(255, 255, 255, 0.9)",
     colorNavy: "#0029a4",
     colorBlueviolet: "#9747ff",
-
     colorMidnightblue: "#163696",
-
     colorGainsboro: "#e8e5e5",
+    colorLightBlue:'#D9EFFF',
+    colorLightGray:'#f0f0f0',
 
   };
   /* border radiuses */

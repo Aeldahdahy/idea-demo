@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: Color.colorWhite,
     padding: width * 0.05,
   },
   passwordChangedChild: {
@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "center",
     marginBottom: height * 0.03,  // Increased margin for better spacing
-    color: "#000",
+    color: Color.colorBlack,
   },
   description: {
     fontSize: width * 0.05,  // Slightly larger font size for description
     textAlign: "center",
-    color: "#000",
+    color: Color.colorBlack,
     marginBottom: height * 0.05,  // More space before the button
     paddingHorizontal: width * 0.1,
   },
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   loginText: {
-    color: "#ffffff",
+    color: Color.colorWhite,
     fontSize: width * 0.05,  // Slightly larger font size for the button text
     fontWeight: "600",
   },

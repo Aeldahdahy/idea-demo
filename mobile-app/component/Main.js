@@ -4,6 +4,7 @@ import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
 import SignUp from "./SignUp";
 import { useFunctions } from "../useFunctions";
+import { Color } from "../GlobalStyles";
 
 
 
@@ -35,7 +36,7 @@ export default function Main() {
 
   return (
     <View style={styles.container}>
-        {loading ? <ActivityIndicator size="large" color="#0000ff" /> : renderStep() }
+        {loading ? <ActivityIndicator size="large" color={Color.colorMidnightblue} /> : renderStep() }
     </View>
   )
 }
@@ -45,10 +46,10 @@ const styles = StyleSheet.create({
         flex:1,
         justifyContent:'center',
         alignItems:'center',
-        backgroundColor:'#fff',
+        backgroundColor: Color.colorWhite,
     },
     containerText:{
-        color: '#000',
+        color: Color.colorBlack,
     },
     name:{
       fontWeight:'bold',

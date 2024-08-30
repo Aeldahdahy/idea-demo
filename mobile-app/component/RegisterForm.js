@@ -19,23 +19,9 @@ export default function RegisterForm({
   setError,
   loading,
   error
-         }) {
+}) {
 
-  
-  const [activeTab, setActiveTab] = useState('register'); // 'register' or 'login'
-
-  
-
-  
-
-  const handleRegister = () => {
-    setActiveTab('register');
-  };
-
-  const handleLogin = () => {
-    setActiveTab('login');
-    onSignIn();
-  };
+  const [activeTab] = useState('register'); // 'register' or 'login'
 
   return (
     <View style={styles.container}>
@@ -45,13 +31,12 @@ export default function RegisterForm({
       <View style={styles.tabContainer}>
         <TouchableOpacity 
           style={[styles.tabButton, activeTab === 'login' ? styles.activeTab : styles.inactiveTab]} 
-          onPress={handleLogin}
+          onPress={onSignIn}
         >
           <Text style={styles.tabButtonText}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tabButton, activeTab === 'register' ? styles.activeTab : styles.inactiveTab]} 
-          onPress={handleRegister}
         >
           <Text style={styles.tabButtonText}>Register</Text>
         </TouchableOpacity>
@@ -170,7 +155,7 @@ const styles = StyleSheet.create({
     borderRadius: Border.br_120xl_5,
   },
   activeTab: {
-    backgroundColor: "#D9EFFF",
+    backgroundColor: Color.colorLightBlue,
     borderColor: Color.colorWhite,
     borderWidth: 1,
   },

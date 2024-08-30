@@ -1,5 +1,6 @@
 import { View, StyleSheet, Image } from "react-native";
 import LogoImage from '../assets/favicon.png';
+import { Color } from "../GlobalStyles";
 
 
 export default function SplashScreen(){
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Color.colorWhite,
   },
   image:{
     width:80,

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
 
 const { width, height } = Dimensions.get('window');
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: Border.br_120xl_5,
   },
   activeTab: {
-    backgroundColor: "#D9EFFF",
+    backgroundColor: Color.colorLightBlue,
     borderColor: Color.colorWhite,
     borderWidth: 1,
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Border, FontFamily, Color } from '../GlobalStyles';
 
 export default function OtpVerification({
@@ -9,16 +9,15 @@ export default function OtpVerification({
   emailAddress,
   otpPurpose,
   loading,
-  otp,  // Get the OTP state from parent
-  setOtp, 
+  otp,
+  setOtp,
 }) {
 
   const handleInputChange = (index, value) => {
     const newOtp = [...otp];
     newOtp[index] = value;
-    setOtp(newOtp);  // Update OTP state
-};
-
+    setOtp(newOtp);
+  };
 
   return (
     <View style={styles.verifyForgotPasswordEmai}>
@@ -52,11 +51,15 @@ export default function OtpVerification({
         ))}
       </View>
 
-      <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyOtp} disabled={loading}>
-        <View style={styles.verifyButtonContent}>
-          <Text style={styles.verify}>Verify</Text>
-        </View>
-      </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color={Color.colorMidnightblue} />
+      ) : (
+        <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyOtp}>
+          <View style={styles.verifyButtonContent}>
+            <Text style={styles.verify}>Verify</Text>
+          </View>
+        </TouchableOpacity>
+      )}
 
       <Text style={[styles.didntReceiveOtpContainer, styles.pleaseEnterTheFlexBox]}>
         <Text style={styles.didntReceiveOtpContainer1}>
@@ -82,7 +85,6 @@ export default function OtpVerification({
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   backButton: {
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
   verifyForgotPasswordEmaiChild: {
     borderBottomRightRadius: Border.br_36xl,
     borderBottomLeftRadius: Border.br_36xl,
-    backgroundColor: '#163696',
+    backgroundColor: Color.colorMidnightblue,
     width: 430,
     height: 220,
     position: 'absolute',
@@ -169,11 +171,11 @@ const styles = StyleSheet.create({
   inputBox: {
     width: 50,
     height: 50,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: Color.colorLightGray,
     borderRadius: 10,
     textAlign: 'center',
     fontSize: 20,
-    borderColor: '#dcdcdc',
+    borderColor: Color.colorGray_100,
     borderWidth: 1,
   },
   verifyButton: {
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
     width: 333,
     height: 55,
     borderRadius: 35,
-    backgroundColor: '#0029a4',
+    backgroundColor: Color.colorMidnightblue,
     alignItems: 'center',
     justifyContent: 'center',
     shadowOpacity: 1,

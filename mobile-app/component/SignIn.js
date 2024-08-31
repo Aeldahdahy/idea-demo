@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
-import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
+import { useFunctions } from "../useFunctions";
+import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
-export default function SignInForm({ onSignIn, onSignUp, onForgetPassword, signIn }) {
-
+export default function SignInForm({ onSignIn, onSignUp, onForgetPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState('login'); // 'login' or 'register'
+  const [activeTab, setActiveTab] = useState('login'); 
+
+  const { signIn, loading, setLoading, setError } = useFunctions();
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -19,11 +21,16 @@ export default function SignInForm({ onSignIn, onSignUp, onForgetPassword, signI
     const formData = { email, password };
 
     try {
-      const userData = await signIn(formData);
-      if (userData) {
-        onSignIn(); // Navigate to the next screen if sign-in is successful
+      setLoading(true);
+      const signinData = await signIn(formData);
+      setLoading(false);
+      if (signinData) {
+        Alert.alert('Success', 'You have successfully signed in!');
+        console.log(signinData);
       }
     } catch (error) {
+      setLoading(false);
+      setError(error.message);
       Alert.alert('Error', error.message || 'Failed to sign in. Please try again.');
     }
   };
@@ -31,6 +38,10 @@ export default function SignInForm({ onSignIn, onSignUp, onForgetPassword, signI
   const handleRegister = () => {
     setActiveTab('register');
     onSignUp();
+  };
+
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
   };
 
   return (
@@ -41,7 +52,7 @@ export default function SignInForm({ onSignIn, onSignUp, onForgetPassword, signI
       <View style={styles.tabContainer}>
         <TouchableOpacity 
           style={[styles.tabButton, activeTab === 'login' ? styles.activeTab : styles.inactiveTab]} 
-          onPress={handleSignIn}
+          onPress={() => handleTabSwitch('login')}
         >
           <Text style={styles.tabButtonText}>Login</Text>
         </TouchableOpacity>
@@ -84,8 +95,14 @@ export default function SignInForm({ onSignIn, onSignUp, onForgetPassword, signI
                 onChangeText={setPassword}
               />
             </View>
-            <TouchableOpacity style={styles.loginButton} onPress={handleSignIn}>
-              <Text style={styles.loginButtonText}>Login</Text>
+            <TouchableOpacity 
+              style={styles.loginButton} 
+              onPress={handleSignIn} 
+              disabled={loading}
+            >
+              <Text style={styles.loginButtonText}>
+                {loading ? 'Signing in...' : 'Login'}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onForgetPassword}>
               <Text style={styles.forgotPassword}>Forgot your password?</Text>

@@ -8,7 +8,7 @@ import { useFunctions } from '../useFunctions';
 import { Color } from '../GlobalStyles';
 
 export default function ForgetPassword({ onSignIn }) {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '']);
   const [password, setPassword] = useState('');

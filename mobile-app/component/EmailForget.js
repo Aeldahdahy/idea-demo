@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ImageBackground, StyleSheet, ActivityIndicator, Alert, ScrollView, Dimensions } from 'react-native';
 import { Border, FontFamily, Color, FontSize } from '../GlobalStyles';
+
+const { width, height } = Dimensions.get('window');
 
 export default function EmailForget({ onBack, loading, error, handleSendOtp, email, setEmail }) {
 
@@ -14,65 +16,114 @@ export default function EmailForget({ onBack, loading, error, handleSendOtp, ema
 
   return (
     <View style={styles.forgotPassword}>
-      <View style={styles.forgotPasswordChild} />
-      <Text style={styles.forgotPassword1}>Forgot Password</Text>
-
-      <TouchableOpacity onPress={onBack}>
-        <Image
-          style={styles.forgotPasswordItem}
-          resizeMode="cover"
-          source={require("../assets/image-0.23.png")}
-        />
-      </TouchableOpacity>
-
-      <TextInput
-        style={[styles.forgotPasswordInner, styles.rectangleViewShadowBox]}
-        placeholder="Enter your email"
-        value={email}
-        onChangeText={setEmail}
-      />
-
-      {error && <Text style={styles.errorText}>{error}</Text>}
-
-      {loading ? (
-        <ActivityIndicator size="large" color={Color.colorMidnightblue} />
-      ) : (
-        <TouchableOpacity
-          style={[styles.rectangleView, styles.rectangleViewShadowBox]}
-          onPress={onNextPress}
-        >
-          <Text style={styles.next}>Next</Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={onBack}>
+          <Image
+            style={styles.backIcon}
+            resizeMode="cover"
+            source={require("../assets/image-0.23.png")}
+          />
         </TouchableOpacity>
-      )}
+        <Text style={styles.forgotPassword1}>Forgot Password</Text>
+      </View>
 
-      <Text style={[styles.backToLogin, styles.backToLoginFlexBox]} onPress={onBack}>
-        Back to Login
-      </Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.footer}>
+          <ImageBackground
+            style={styles.ellipseIcon}
+            resizeMode="cover"
+            source={require("../assets/image-0.25.png")}
+          >        
+            <Image
+              style={styles.bottomImage}
+              resizeMode="contain"
+              source={require("../assets/image-0.26.png")}
+            />
+          </ImageBackground>
+        </View>
 
-      <Image
-        style={styles.ellipseIcon}
-        resizeMode="cover"
-        source={require("../assets/image-0.25.png")}
-      />
-      <Text style={[styles.pleaseEnterEither, styles.backToLoginFlexBox]}>
-        Please Enter Either Your Email Address or Phone Number to Proceed
-      </Text>
-      <Image
-        style={styles.screenshot20240724At1012}
-        resizeMode="cover"
-        source={require("../assets/image-0.26.png")}
-      />
+        <Text style={styles.description}>
+          Please Enter Either Your Email Address or Phone Number to Proceed
+        </Text>
+
+        <View style={styles.mainContent}>
+          <TextInput
+            style={[styles.input, styles.shadowBox]}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          {error && <Text style={styles.errorText}>{error}</Text>}
+
+          {loading ? (
+            <ActivityIndicator size="large" color={Color.colorMidnightblue} />
+          ) : (
+            <TouchableOpacity
+              style={[styles.nextButton, styles.shadowBox]}
+              onPress={onNextPress}
+            >
+              <Text style={styles.nextText}>Next</Text>
+            </TouchableOpacity>
+          )}
+
+          <Text style={styles.backToLogin} onPress={onBack}>
+            Back to Login
+          </Text>
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  rectangleViewShadowBox: {
+  forgotPassword: {
+    flex: 1,
+    width: "100%",
+    overflow: "hidden",
+    backgroundColor: Color.colorWhite,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: Color.colorMidnightblue,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    height: "20%",
+    borderBottomRightRadius: Border.br_36xl,
+    borderBottomLeftRadius: Border.br_36xl,
+  },
+  backIcon: {
+    width: 44,
+    height: 41,
+  },
+  forgotPassword1: {
+    fontSize: 30,
+    fontFamily: FontFamily.bitterBold,
+    color: Color.colorWhite,
+    fontWeight: "700",
+    marginLeft: 20,
+  },
+  scrollContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  mainContent: {
+    width: width * 0.8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
     height: 55,
-    width: 333,
+    width: '100%',
+    borderColor: Color.colorBlack,
     borderWidth: 1,
-    borderStyle: "solid",
     borderRadius: Border.br_16xl,
+    backgroundColor: Color.colorWhite,
+    marginBottom: 20,
+  },
+  shadowBox: {
     shadowOpacity: 1,
     elevation: 4,
     shadowRadius: 4,
@@ -81,135 +132,53 @@ const styles = StyleSheet.create({
       height: 4,
     },
     shadowColor: "rgba(0, 0, 0, 0.25)",
-    left: 49,
-    position: "absolute",
   },
-  backToLoginTypo: {
-    fontFamily: FontFamily.signikaLight,
-    fontWeight: "300",
-  },
-  backToLoginFlexBox: {
-    height: 44,
-    color: Color.colorBlack,
-    justifyContent: "center",
-    textAlign: "center",
-    fontSize: FontSize.size_xl,
-    alignItems: "center",
-    display: "flex",
-    position: "absolute",
-  },
-  forgotPasswordChild: {
-    top: 0,
-    left: 0,
-    borderBottomRightRadius: Border.br_36xl,
-    borderBottomLeftRadius: Border.br_36xl,
-    backgroundColor: Color.colorMidnightblue,
-    width: 430,
-    height: 220,
-    position: "absolute",
-  },
-  forgotPassword1: {
-    top: 104,
-    left: 52,
-    fontSize: 30,
-    fontFamily: FontFamily.bitterBold,
-    width: 303,
-    height: 50,
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    color: Color.colorWhite,
-    fontWeight: "700",
-    position: "absolute",
-  },
-  forgotPasswordItem: {
-    top: 35,
-    left: 30,
-    width: 44,
-    height: 41,
-    position: "absolute",
-  },
-  forgotPasswordInner: {
-    top: 654,
-    borderColor: Color.colorBlack,
-    backgroundColor: Color.colorWhite,
-  },
-  screenshot20240709At451: {
-    top: 667,
-    left: 75,
-    width: 21,
-    height: 28,
-    position: "absolute",
-  },
-  emailOrPhone: {
-    top: 670,
-    left: 108,
-    color: "rgba(0, 0, 0, 0.7)",
-    width: 222,
-    height: 25,
-    fontSize: FontSize.size_xl,
-    fontWeight: "300",
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    position: "absolute",
-  },
-  rectangleView: {
-    top: 743,
+  nextButton: {
+    height: 55,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: Color.colorNavy,
-    borderColor: Color.colorWhite,
+    borderRadius: Border.br_16xl,
+    marginVertical: 10,
   },
-  next: {
+  nextText: {
     fontSize: FontSize.size_6xl,
     fontWeight: "600",
     fontFamily: FontFamily.signikaSemiBold,
-    justifyContent: "center",
-    textAlign: "center",
-    alignItems: "center",
-    display: "flex",
     color: Color.colorWhite,
   },
   backToLogin: {
-    top: 860,
-    left: 78,
-    textDecoration: "underline",
-    width: 275,
-    fontFamily: FontFamily.signikaLight,
-    fontWeight: "300",
+    fontSize: FontSize.size_xl,
+    color: Color.colorBlack,
+    textDecorationLine: 'underline',
+    marginTop: 20,
+  },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: 20,
   },
   ellipseIcon: {
-    top: 258,
-    left: 89,
-    width: 253,
-    height: 245,
-    position: "absolute",
+    width: width * 0.7,
+    height: height * 0.3,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  pleaseEnterEither: {
-    top: 562,
-    left: 37,
+  description: {
+    fontSize: FontSize.size_xl,
     fontFamily: FontFamily.signikaBold,
-    width: 357,
-    fontWeight: "700",
-    height: 44,
     color: Color.colorBlack,
+    textAlign: 'center',
+    marginVertical: 20,
+    paddingHorizontal: 20,
   },
-  screenshot20240724At1012: {
-    top: 293,
-    left: 147,
-    width: 137,
-    height: 175,
-    position: "absolute",
-  },
-  forgotPassword: {
-    flex: 1,
-    width: "100%",
-    height: 932,
-    overflow: "hidden",
-    backgroundColor: Color.colorWhite,
+  bottomImage: {
+    width: width * 0.4,
+    height: height * 0.2,
   },
   errorText: {
     color: "red",
     textAlign: "center",
-    marginTop: 10,
+    marginVertical: 10,
   },
 });

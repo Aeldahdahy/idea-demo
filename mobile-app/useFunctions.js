@@ -32,55 +32,101 @@ export const useFunctions = () => {
     try {
       const response = await axios.post('http://10.0.2.2:2000/api/signup', { email: formData.email });
       if (response.status === 200) {
-        setIsOtpSent(true);
-        return response.data;
-      } else {
-        throw new Error('Failed to send OTP');
-      }
-    } catch (err) {
-      handleError(err);
-      throw err;
-    } finally {
-      setLoading(false);
+      setIsOtpSent(true);
+      return { success: true, data: response.data };
+    } else {
+      return { success: false, message: 'Failed to send OTP' };
     }
-  };
+  } catch (err) {
+    let errorMessage = 'An unexpected error occurred. Please try again.';
+    
+    if (err.response) {
+      if (err.response.status === 400) {
+        errorMessage = err.response.data?.message || 'Invalid email address. Please check and try again.';
+      } else if (err.response.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+    } else if (err.message === 'Network Error') {
+      errorMessage = 'Network error. Please check your internet connection.';
+    }
 
-  const verifyOtp = async (formData, otp) => {
-    setLoading(true);
-    setError(null);
-    try {
+    return { success: false, message: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+};
+
+const verifyOtp = async (formData, otp) => {
+  setLoading(true);
+  setError(null);
+  
+  try {
       const response = await axios.post('http://10.0.2.2:2000/api/verify-otp', {
-        email: formData.email,
-        otp,
-        role: formData.role,
-        fullName: formData.fullName,
-        password: formData.password,
+          email: formData.email,
+          otp,
+          role: formData.role,
+          fullName: formData.fullName,
+          password: formData.password,
       });
 
       if (response.status === 201) {
-        setIsOtpVerified(true);
-        return response.data;
+          setIsOtpVerified(true);
+          return { success: true, data: response.data };
       } else {
-        throw new Error(response.data.message || 'Failed to verify OTP');
+          const errorMessage = response.data.message || 'Failed to verify OTP. Please try again.';
+          return { success: false, message: errorMessage };
       }
-    } catch (err) {
-      handleError(err);
-      throw err;
-    } finally {
+  } catch (err) {
+      let errorMessage = 'An unexpected error occurred. Please try again.';
+
+      if (err.response) {
+          if (err.response.status === 400) {
+              errorMessage = err.response.data?.message || 'Invalid OTP. Please check and try again.';
+          } else if (err.response.status === 401) {
+              errorMessage = 'Unauthorized access. Please check your credentials.';
+          } else if (err.response.status === 500) {
+              errorMessage = 'Server error. Please try again later.';
+          }
+      } else if (err.message === 'Network Error') {
+          errorMessage = 'Network error. Please check your internet connection.';
+      }
+
+      return { success: false, message: errorMessage };
+  } finally {
       setLoading(false);
-    }
-  };
+  }
+};
+
 
   const resendOtp = async (email) => {
     setLoading(true);
     setError(null);
+
     try {
-      await axios.post('http://10.0.2.2:2000/api/signup', { email });
-      setIsTimerActive(true);
-      setTimer(180);
+      const response = await axios.post('http://10.0.2.2:2000/api/signup', { email });
+      
+      if(response.status === 200){
+        setIsTimerActive(true);
+        setTimer(180);
+      }else{
+        const errorMessage = response.data.message || 'Faild to resend OTP. Please Try again.';
+        setError(errorMessage);
+      }
     } catch (err) {
-      handleError(err);
-      throw err;
+      let errorMessage = 'An unexpected error occurred. Please try again.';
+
+      if (err.response){
+        if(err.response.status === 400){
+          errorMessage = err.response.data?.message || 'Invalid email. Please check your input.';
+        }else if (err.response.status === 500){
+          errorMessage = 'Server error. Please try again later.';
+        }
+      }else if (err.message === 'Network Error'){
+        errorMessage = 'Network error. Please check your internet connection.';
+      }
+
+      setError(errorMessage);
+
     } finally {
       setLoading(false);
     }
@@ -100,88 +146,171 @@ export const useFunctions = () => {
         await AsyncStorage.setItem('authToken', token);
         const decodedToken = jwtDecode(token);
         await AsyncStorage.setItem('userFullName', decodedToken.user.fullName);
-        return response.data;
+        return { success: true, data: response.data };
       } else {
-        throw new Error('Sign-in failed');
+        return { success: false, message: 'Sign-in failed' };
       }
     } catch (err) {
-      handleError(err);
-      throw err;
+      let errorMessage = 'An unexpected error occurred. Please try again.';
+      
+      if (err.response) {
+        if (err.response.status === 400) {
+          errorMessage = err.response.data?.message || 'Invalid email or password.';
+        } else if (err.response.status === 401) {
+          errorMessage = 'Unauthorized access. Please check your credentials.';
+        } else if (err.response.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+      } else if (err.message === 'Network Error') {
+        errorMessage = 'Network error. Please check your internet connection.';
+      }
+  
+      return { success: false, message: errorMessage };
     } finally {
       setLoading(false);
     }
   };
 
-  const sendOtp = async (email) => {
+ const sendOtp = async (email) => {
     setLoading(true);
     setError(null);
-    try {
-      const response = await axios.post('http://10.0.2.2:2000/api/forgot-password', { email });
-      if (response.status === 200) {
-        setIsOtpSent(true);
-        return response.data;
-      } else {
-        throw new Error('Failed to send OTP');
-      }
-    } catch (err) {
-      handleError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const verifyOtpForPasswordReset = async (email, otp) => {
-    setLoading(true);
-    setError(null);
     try {
-      const response = await axios.post('http://10.0.2.2:2000/api/verify-otp-for-reset', { email, otp });
-      if (response.status === 200) {
-        setIsOtpVerified(true);
-        return response.data;
-      } else {
-        throw new Error('Failed to verify OTP');
-      }
-    } catch (err) {
-      handleError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+        const response = await axios.post('http://10.0.2.2:2000/api/forgot-password', { email });
 
-  const resetPassword = async (data) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post('http://10.0.2.2:2000/api/reset-password', data);
-      if (response.status === 200) {
-        return response.data;
-      } else {
-        throw new Error('Failed to reset password');
-      }
+        if (response.status === 200) {
+            setIsOtpSent(true);
+            return { success: true, data: response.data };
+        } else {
+            const errorMessage = response.data.message || 'Failed to send OTP. Please try again.';
+            setError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
     } catch (err) {
-      handleError(err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+        let errorMessage = 'An unexpected error occurred. Please try again.';
 
-  const resendForgetPasswordOtp = async (email) => {
+        if (err.response) {
+            if (err.response.status === 400) {
+                errorMessage = err.response.data?.message || 'Invalid request. Please check your input.';
+            } else if (err.response.status === 500) {
+                errorMessage = 'Server error. Please try again later.';
+            }
+        } else if (err.message === 'Network Error') {
+            errorMessage = 'Network error. Please check your internet connection.';
+        }
+
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+    } finally {
+        setLoading(false);
+    }
+};
+
+const verifyOtpForPasswordReset = async (email, otp) => {
     setLoading(true);
     setError(null);
+
     try {
-      await axios.post('http://10.0.2.2:2000/api/forgot-password', { email });
-      setIsTimerActive(true);
-      setTimer(180);
+        const response = await axios.post('http://10.0.2.2:2000/api/verify-otp-for-reset', { email, otp });
+
+        if (response.status === 200) {
+            setIsOtpVerified(true);
+            return { success: true, data: response.data };
+        } else {
+            const errorMessage = response.data.message || 'Failed to verify OTP. Please try again.';
+            setError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
     } catch (err) {
-      handleError(err);
-      throw err;
+        let errorMessage = 'An unexpected error occurred. Please try again.';
+
+        if (err.response) {
+            if (err.response.status === 400) {
+                errorMessage = err.response.data?.message || 'Invalid OTP. Please check and try again.';
+            } else if (err.response.status === 500) {
+                errorMessage = 'Server error. Please try again later.';
+            }
+        } else if (err.message === 'Network Error') {
+            errorMessage = 'Network error. Please check your internet connection.';
+        }
+
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
+const resetPassword = async (data) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+        const response = await axios.post('http://10.0.2.2:2000/api/reset-password', data);
+
+        if (response.status === 200) {
+            return { success: true, data: response.data };
+        } else {
+            const errorMessage = response.data.message || 'Failed to reset password. Please try again.';
+            setError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
+    } catch (err) {
+        let errorMessage = 'An unexpected error occurred. Please try again.';
+
+        if (err.response) {
+            if (err.response.status === 400) {
+                errorMessage = err.response.data?.message || 'Invalid request. Please check your input.';
+            } else if (err.response.status === 500) {
+                errorMessage = 'Server error. Please try again later.';
+            }
+        } else if (err.message === 'Network Error') {
+            errorMessage = 'Network error. Please check your internet connection.';
+        }
+
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+    } finally {
+        setLoading(false);
+    }
+};
+
+const resendForgetPasswordOtp = async (email) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+        const response = await axios.post('http://10.0.2.2:2000/api/forgot-password', { email });
+
+        if (response.status === 200) {
+            setIsTimerActive(true);
+            setTimer(180); // Start a 3-minute timer
+            return { success: true };
+        } else {
+            const errorMessage = response.data.message || 'Failed to resend OTP. Please try again.';
+            setError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
+    } catch (err) {
+        let errorMessage = 'An unexpected error occurred. Please try again.';
+
+        if (err.response) {
+            if (err.response.status === 400) {
+                errorMessage = err.response.data?.message || 'Invalid request. Please check your input.';
+            } else if (err.response.status === 500) {
+                errorMessage = 'Server error. Please try again later.';
+            }
+        } else if (err.message === 'Network Error') {
+            errorMessage = 'Network error. Please check your internet connection.';
+        }
+
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+    } finally {
+        setLoading(false);
+    }
+};
+
 
   const contactUs = async (contactData) => {
     setLoading(true);
@@ -189,7 +318,6 @@ export const useFunctions = () => {
     try {
       const response = await axios.post('http://10.0.2.2:2000/api/contact-us', contactData);
       if (response.status === 200) {
-        Alert.alert('Success', 'Your message has been sent.');
         return response.data;
       } else {
         throw new Error('Failed to send message');

@@ -8,7 +8,7 @@ import { useFunctions } from '../useFunctions';
 import { Color } from '../GlobalStyles';
 
 export default function ForgetPassword({ onSignIn }) {
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(2);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '']);
   const [password, setPassword] = useState('');
@@ -40,84 +40,123 @@ export default function ForgetPassword({ onSignIn }) {
 
   const handleSendOtp = async () => {
     if (!email) {
-      Alert.alert("Error", "Please enter your email.");
-      return;
+        const errorMessage = "Please enter your email.";
+        setError(errorMessage);
+        Alert.alert("Input Error", errorMessage);
+        return;
     }
 
     setLoading(true);
     setError(null);
-
-    try {
-      await sendOtp(email);
-      setStep(2);
-    } catch (error) {
-      setError(error.message || 'Failed to send OTP');
-      Alert.alert("Error", error.message || 'Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    const combinedOtp = otp.join('');
-    if (combinedOtp.length === 4) {
-      setLoading(true);
-      setError(null);
-
-      try {
-        await verifyOtpForPasswordReset(email, combinedOtp);
-        setStep(3);
-      } catch (error) {
-        setError(error.message || 'Failed to verify OTP');
-        Alert.alert("Error", error.message || 'Failed to verify OTP');
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      Alert.alert("Error", "OTP must be 4 digits long");
-    }
-  };
-
-  const handleResendOtp = async () => {
-    setLoading(true);
-    setError(null);
-    setIsTimerActive(true);
     setTimer(180);
 
+
     try {
+        await sendOtp(email);
+        setStep(2); // Move to the next step after sending OTP
+    } catch (error) {
+        // Detailed error logging
+        console.error("Send OTP Error:", error);
+
+        const errorMessage = error.message || 'Failed to send OTP. Please try again.';
+        setError(errorMessage);
+        Alert.alert("Error", errorMessage);
+    } finally {
+        setLoading(false);
+    }
+};
+
+
+const handleVerifyOtp = async () => {
+  const combinedOtp = otp.join('');
+
+  if (combinedOtp.length !== 4) {
+      Alert.alert("Error", "OTP must be 4 digits long");
+      return;
+  }
+
+  setLoading(true);
+  setError(null);
+
+  try {
+      await verifyOtpForPasswordReset(email, combinedOtp);
+      setStep(3); // Move to the next step after successful OTP verification
+  } catch (error) {
+      // Detailed error logging
+      console.error("Verify OTP Error:", error);
+
+      const errorMessage = error.message || 'Failed to verify OTP. Please try again.';
+      setError(errorMessage);
+      Alert.alert("Error", errorMessage);
+  } finally {
+      setLoading(false);
+  }
+};
+
+
+const handleResendOtp = async () => {
+  if (!email) {
+      const errorMessage = "Please enter your email.";
+      setError(errorMessage);
+      Alert.alert("Input Error", errorMessage);
+      return;
+  }
+
+  setLoading(true);
+  setError(null);
+  setIsTimerActive(true);
+  setTimer(180);
+
+  try {
       await resendForgetPasswordOtp(email);
-    } catch (error) {
-      setError(error.message || 'Failed to resend OTP');
-      Alert.alert("Error", error.message || 'Failed to resend OTP');
-    } finally {
+      // Assuming the timer is handled correctly within resendForgetPasswordOtp
+      console.log("OTP resend successful");
+  } catch (error) {
+      // Detailed error logging
+      console.error("Resend OTP Error:", error);
+
+      const errorMessage = error.message || 'Failed to resend OTP. Please try again.';
+      setError(errorMessage);
+      Alert.alert("Error", errorMessage);
+  } finally {
       setLoading(false);
-    }
-  };
+  }
+};
 
-  const handleResetPassword = async () => {
-    if (!password || !confirmPassword) {
-      Alert.alert("Error", "Please enter your new password and confirmation.");
+
+const handleResetPassword = async () => {
+  if (!password || !confirmPassword) {
+      const errorMessage = "Please enter your new password and confirmation.";
+      setError(errorMessage);
+      Alert.alert("Input Error", errorMessage);
       return;
-    }
+  }
 
-    if (password !== confirmPassword) {
-      Alert.alert("Error", "New Password and Confirm Password do not match.");
+  if (password !== confirmPassword) {
+      const errorMessage = "New Password and Confirm Password do not match.";
+      setError(errorMessage);
+      Alert.alert("Input Error", errorMessage);
       return;
-    }
+  }
 
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    try {
+  try {
       await resetPassword({ email, newPassword: password });
-      setStep(4);
-    } catch (error) {
-      setError(error.message || 'Failed to reset password');
-      Alert.alert("Error", error.message || 'Failed to reset password');
-    } finally {
+      setStep(4); // Move to the next step after successful password reset
+  } catch (error) {
+      // Detailed error logging
+      console.error("Reset Password Error:", error);
+
+      const errorMessage = error.message || 'Failed to reset password. Please try again.';
+      setError(errorMessage);
+      Alert.alert("Error", errorMessage);
+  } finally {
       setLoading(false);
-    }
-  };
+  }
+};
+
 
   const renderStep = () => {
     switch (step) {

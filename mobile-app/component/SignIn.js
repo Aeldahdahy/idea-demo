@@ -2,38 +2,59 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView, Dimensions } from "react-native";
 import { useFunctions } from "../useFunctions";
 import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get('window');
 
 export default function SignInForm({ onSignIn, onSignUp, onForgetPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState('login'); 
+  const [activeTab, setActiveTab] = useState('login');
 
   const { signIn, loading, setLoading, setError } = useFunctions();
 
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+      const errorMessage = 'Please enter both email and password.';
+      setError(errorMessage);
+      Alert.alert('Input Error', errorMessage);
       return;
     }
-
+  
     const formData = { email, password };
-
+    
+    setLoading(true);
+    setError(null);
+  
     try {
-      setLoading(true);
-      const signinData = await signIn(formData);
-      setLoading(false);
-      if (signinData) {
-        Alert.alert('Success', 'You have successfully signed in!');
-        console.log(signinData);
+      const result = await signIn(formData);
+      
+      if (result.success) {
+          const userFullName = await AsyncStorage.getItem('userFullName');
+          if (userFullName) {
+              Alert.alert('Welcome', `Welcome ${userFullName}`);
+          } else {
+              const errorMessage = 'Failed to retrieve user name. Please try again.';
+              setError(errorMessage);
+              Alert.alert('Error', errorMessage);
+          }
+      } else {
+          const errorMessage = result.message || 'Failed to sign in. Please check your credentials and try again.';
+          setError(errorMessage);
+          Alert.alert('Sign-In Error', errorMessage);
       }
-    } catch (error) {
+  } catch (error) {
+      console.error("Sign-In Error:", error);
+
+      const errorMessage = error.message || 'An unexpected error occurred. Please check your connection and try again.';
+      setError(errorMessage);
+      Alert.alert('Error', errorMessage);
+  } finally {
       setLoading(false);
-      setError(error.message);
-      Alert.alert('Error', error.message || 'Failed to sign in. Please try again.');
-    }
+  }
   };
+  
+  
 
   const handleRegister = () => {
     setActiveTab('register');
@@ -145,7 +166,7 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     height: 60,
-    width: "80%", // Set tab container width to 80% of screen width
+    width: "80%", 
     marginTop: -45,
     marginBottom: "5%",
     flexDirection: "row",
@@ -173,18 +194,18 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flexGrow: 1,
-    width: "100%", // Ensure the scroll view takes full width
+    width: "100%", 
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
   form: {
-    width: '90%', // Set form width to 90% of the screen width
+    width: '90%', 
     paddingHorizontal: 16,
     flex: 1,
-    justifyContent: 'center', // Center content vertically
+    justifyContent: 'center', 
   },
   inputContainer: {
-    width: '100%', // Set input container to 100% width of the form
+    width: '100%',
     marginTop: 20,
     borderWidth: 1,
     marginBottom: 20,
@@ -196,19 +217,19 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhite,
   },
   icon: {
-    width: 24, // Adjusted icon size
-    height: 24, // Adjusted icon size
+    width: 24, 
+    height: 24,
     marginHorizontal: 10,
   },
   input: {
     flex: 1,
-    height: 55, // Increased height for better visibility
+    height: 55, 
     paddingHorizontal: 16,
     color: Color.colorGray_100,
     fontSize: FontSize.size_xl,
     backgroundColor: Color.colorWhite,
     borderRadius: Border.br_36xl,
-    width: "100%", // Ensure button takes full width of its parent container
+    width: "100%", 
   },
   loginButton: {
     height: 55,

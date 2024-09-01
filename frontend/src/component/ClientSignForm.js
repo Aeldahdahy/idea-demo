@@ -14,7 +14,7 @@ library.add(fas);
 
 
 
-function SignOptions() {
+function ClientSignForm() {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
 
   const handleSignUpClick = () => {
@@ -63,7 +63,7 @@ function SignOptions() {
   );
 }
 
-export default SignOptions;
+export default ClientSignForm;
 
 // import React, { useRef } from 'react';
 // import SignInForm from './SignInForm';

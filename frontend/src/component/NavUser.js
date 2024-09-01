@@ -89,10 +89,10 @@ function NavUser() {
             </>
           ) : (
             <>
-              <Link to='/signup&signin' className="dropdownItem" onClick={handleSignIn}>
+              <Link to='/client-portal' className="dropdownItem" onClick={handleSignIn}>
                 <span>Sign In</span>
               </Link>
-              <Link to='/signup&signin' className="dropdownItem" onClick={handleSignUp}>
+              <Link to='/employee-portal' className="dropdownItem" onClick={handleSignUp}>
                 <span>Sign Up</span>
               </Link>
             </>

@@ -210,7 +210,7 @@ export const useFunctions = () => {
         // Decode the token to get the user details
         const decodedToken = jwtDecode(token); // Make sure to install jwt-decode if not installed
         localStorage.setItem('userFullName', decodedToken.user.fullName);
-        navigate('/');
+        navigate('/client-portal/');
         return response.data;
       } else {
         setError('Sign-in failed. Please try again.');

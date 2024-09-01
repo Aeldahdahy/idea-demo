@@ -1,6 +1,8 @@
 import React from "react";
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Dimensions, ScrollView } from "react-native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get("window");
 
 export default function ResetPasswordForm({ 
     onBack,
@@ -11,275 +13,181 @@ export default function ResetPasswordForm({
     confirmPassword,
     setConfirmPassword,
 }) {
- 
 
   const handleBackPress = () => {
     onBack();
   };
 
   return (
-    <View style={styles.createPassword}>
-      <View style={styles.createPasswordChild} />
-      <Text style={styles.createNewPassword}>Create new password</Text>
-      <View style={styles.createPasswordItem} />
-      <TouchableOpacity style={styles.doneButton} onPress={handleResetPassword} disabled={loading}>
-        <Text style={styles.doneText}>Change Password</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity onPress={handleBackPress}>
-        <Image
-          style={styles.createPasswordInner}
-          resizeMode="cover"
-          source={require("../assets/backarrow.png")}
-        />
-      </TouchableOpacity>
-      
-      <View style={[styles.rectangleView, styles.rectangleViewShadowBox]} />
-      <TextInput
-        style={[styles.textInput, styles.newPasswordInput]}
-        placeholder="New Password"
-        placeholderTextColor={Color.colorGray}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TextInput
-        style={[styles.textInput, styles.confirmPasswordInput]}
-        placeholder="Confirm New Password"
-        placeholderTextColor={Color.colorGray}
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
-      <Image
-        style={styles.eye}
-        resizeMode="cover"
-        source={require("../assets/eye.png")}
-      />
-      <Image
-        style={styles.lock}
-        resizeMode="cover"
-        source={require("../assets/lock.png")}
-      />
-      <Image
-        style={styles.eye2}
-        resizeMode="cover"
-        source={require("../assets/eye.png")}
-      />
-      <Image
-        style={styles.eye3}
-        resizeMode="cover"
-        source={require("../assets/eye.png")}
-      />
-      <Image
-        style={styles.groupIcon}
-        resizeMode="cover"
-        source={require("../assets/ellipse.png")}
-      />
-      <Image
-        style={styles.mainlock}
-        resizeMode="cover"
-        source={require("../assets/mainlock.png")}
-      />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleBackPress}>
+          <Image
+            style={styles.backIcon}
+            resizeMode="cover"
+            source={require("../assets/backarrow.png")}
+          />
+        </TouchableOpacity>
+        <Text style={styles.createNewPassword}>Create new password</Text>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <View style={styles.mainIconWrapper}>
+          <Image
+            style={styles.groupIcon}
+            resizeMode="cover"
+            source={require("../assets/ellipse.png")}
+          />
+          <Image
+            style={styles.mainlock}
+            resizeMode="cover"
+            source={require("../assets/mainlock.png")}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrapper}>
+            <Image
+              style={styles.lockIcon}
+              resizeMode="cover"
+              source={require("../assets/lock.png")}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="New Password"
+              placeholderTextColor={Color.colorGray}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+            <Image
+              style={styles.eyeIcon}
+              resizeMode="cover"
+              source={require("../assets/eye.png")}
+            />
+          </View>
+
+          <View style={styles.inputWrapper}>
+            <Image
+              style={styles.lockIcon}
+              resizeMode="cover"
+              source={require("../assets/lock.png")}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Confirm New Password"
+              placeholderTextColor={Color.colorGray}
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <Image
+              style={styles.eyeIcon}
+              resizeMode="cover"
+              source={require("../assets/eye.png")}
+            />
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.doneButton} onPress={handleResetPassword} disabled={loading}>
+          <Text style={styles.doneText}>Change Password</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
-};
-
-
-
+}
 
 const styles = StyleSheet.create({
-  rectangleViewShadowBox: {
-    borderColor: Color.colorBlack,
-    left: 46,
-    height: 55,
-    width: 333,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: Border.br_16xl,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    position: "absolute",
+  container: {
+    flex: 1,
     backgroundColor: Color.colorWhite,
+    paddingTop: height * 0.20,
+    paddingHorizontal: width * 0.05,
+    width: "100%",
+    height: "100%",
   },
-  screenshot20240709Layout1: {
-    height: 20,
-    width: 32,
-    borderRadius: Border.br_120xl_5,
-    left: 330,
-  },
-  screenshot20240709Layout: {
-    height: 27,
-    width: 21,
-    left: 69,
-    position: "absolute",
-  },
-  newTypo: {
-    height: 25,
-    color: Color.colorGray,
-    fontWeight: "300",
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.signika,
+  header: {
+    flexDirection: "row",
     alignItems: "center",
-    display: "flex",
-    textAlign: "left",
     position: "absolute",
-  },
-  createPasswordChild: {
     top: 0,
     left: 0,
+    right: 0,
+    height: height * 0.20,
+    backgroundColor: Color.colorMidnightblue,
     borderBottomRightRadius: Border.br_36xl,
     borderBottomLeftRadius: Border.br_36xl,
-    backgroundColor: Color.colorMidnightblue,
-    width: 430,
-    height: 220,
-    position: "absolute",
+    paddingHorizontal: width * 0.05,
+    zIndex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: height * 0.05,
+  },
+  backIcon: {
+    width: width * 0.1,
+    height: height * 0.05,
+    marginRight: width * 0.05,
   },
   createNewPassword: {
-    top: 108,
-    left: 42,
-    fontSize: 30,
+    fontSize: width * 0.07,
     fontWeight: "700",
     fontFamily: FontFamily.bitter,
-    width: 336,
-    height: 50,
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
     color: Color.colorWhite,
-    position: "absolute",
+    flex: 1,
   },
-  createPasswordItem: {
-    top: 737,
-    left: 45,
-    backgroundColor: Color.colorGray_100,
-    borderColor: Color.colorWhite,
-    height: 55,
-    width: 333,
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderRadius: Border.br_16xl,
-    shadowOpacity: 1,
-    elevation: 4,
-    shadowRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowColor: "rgba(0, 0, 0, 0.25)",
+  mainIconWrapper: {
+    alignItems: "center",
+    marginTop: height * 0.05,
+    marginBottom: height * 0.05,
+  },
+  groupIcon: {
+    width: width * 0.8,
+    height: height * 0.35,
+  },
+  mainlock: {
+    width: width * 0.35,
+    height: height * 0.22,
     position: "absolute",
+    top: height * 0.05,
+  },
+  inputContainer: {
+    marginBottom: height * 0.05,
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: height * 0.02,
+    borderWidth: 1,
+    borderColor: Color.colorBlack,
+    borderRadius: Border.br_16xl,
+    backgroundColor: Color.colorWhite,
+  },
+  lockIcon: {
+    width: width * 0.06,
+    height: height * 0.03,
+    marginLeft: width * 0.02,
+  },
+  textInput: {
+    flex: 1,
+    height: height * 0.07,
+    paddingHorizontal: width * 0.02,
+  },
+  eyeIcon: {
+    width: width * 0.08,
+    height: height * 0.03,
+    marginRight: width * 0.02,
   },
   doneButton: {
-    position: "absolute",
-    top: 737,
-    left: 45,
-    width: 333,
-    height: 55,
     backgroundColor: Color.colorMidnightblue,
     borderRadius: Border.br_16xl,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: height * 0.02,
   },
   doneText: {
-    fontSize: 25,
+    fontSize: width * 0.06,
     fontWeight: "600",
     color: Color.colorWhite,
     fontFamily: FontFamily.signika,
-  },
-  changePassword: {
-    top: 870,
-    left: 82,
-    textDecoration: "underline",
-    color: Color.colorBlack,
-    width: 277,
-    height: 44,
-    fontWeight: "300",
-    fontSize: FontSize.size_xl,
-    justifyContent: "center",
-    textAlign: "center",
-    fontFamily: FontFamily.signika,
-    alignItems: "center",
-    display: "flex",
-    position: "absolute",
-  },
-  createPasswordInner: {
-    top: 35,
-    left: 30,
-    width: 44,
-    height: 41,
-    position: "absolute",
-  },
-  rectangleView: {
-    top: 653,
-  },
-  createPasswordChild1: {
-    top: 569,
-  },
-  eye: {
-    top: 672,
-  },
-  lock: {
-    top: 667,
-  },
-  eye2: {
-    top: 583,
-  },
-  newPassword: {
-    top: 584,
-    left: 103,
-    width: 129,
-  },
-  confirmNewPassword: {
-    top: 669,
-    left: 102,
-    width: 211,
-  },
-  eye3: {
-    top: 587,
-  },
-  groupIcon: {
-    top: 269,
-    left: 89,
-    width: 253,
-    height: 245,
-    position: "absolute",
-  },
-  mainlock: {
-    top: 307,
-    left: 156,
-    width: 118,
-    height: 170,
-    position: "absolute",
-  },
-  createPassword: {
-    flex: 1,
-    width: "100%",
-    height: 932,
-    overflow: "hidden",
-    backgroundColor: Color.colorWhite,
-  },
-  textInput: {
-    height: 55,
-    width: 333,
-    paddingLeft: 50,
-    borderWidth: 1,
-    borderColor: Color.colorBlack,
-    borderRadius: Border.br_16xl,
-    backgroundColor: Color.colorWhite,
-    position: "absolute",
-  },
-  newPasswordInput: {
-    top: 584,
-    left: 46,
-  },
-  confirmPasswordInput: {
-    top: 669,
-    left: 46,
   },
 });

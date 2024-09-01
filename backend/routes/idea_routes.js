@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const Contact = require('../modules/contact');
 const User = require('../modules/signup');
 const Otp = require('../modules/otp');
+const Staff = require('../modules/staff'); // Import Staff model
 const { session } = require('passport');
 
 const JWT_SECRET = 'your_jwt_secret_key'; // Replace with your actual secret key
@@ -26,6 +27,17 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+
+
+// Middleware to check if the user is an Admin
+const isAdmin = (req, res, next) => {
+  if (req.user.role !== 'Admin') {
+    return res.status(403).send('Access denied. Admins only.');
+  }
+  next();
+};
+
 
 // Handle contact form submission
 router.post('/contact', async (req, res) => {
@@ -65,6 +77,53 @@ const transporter = nodemailer.createTransport({
 const generateOtp = () => {
   return Math.floor(1000 + Math.random() * 9000).toString(); // 4-character OTP
 };
+
+
+
+
+// Staff portal: Create a new staff member (Admin only)
+router.post('/staff', authenticateToken, isAdmin, async (req, res) => {
+  const { username, password, role } = req.body;
+
+  try {
+    const existingUser = await Staff.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Staff member already exists!' });
+    }
+
+    const newStaff = new Staff({ username, password, role });
+    await newStaff.save();
+
+    res.status(201).json({ message: 'Staff member created successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error!' });
+  }
+});
+
+// Staff login
+router.post('/staff/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const staff = await Staff.findOne({ username });
+    if (!staff) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, staff.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+    }
+
+    const token = jwt.sign({ id: staff._id, role: staff.role }, JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error!' });
+  }
+});
+
+
+
 
 // Initial signup route to send OTP
 router.post('/signup', async (req, res) => {

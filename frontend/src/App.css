@@ -127,7 +127,7 @@ nav.hidden-nav {
 }
 .navUser .dropdownMenu{
   right: -.9em;
-  top: -5em;
+  top: 2em;
 }
 .userNameDownIcon{
   text-align: center;
@@ -1297,6 +1297,9 @@ form.sign-in-form {
     top: -5.3em;
     right: -2.5em;
   }
+    .navUser .dropdownMenu {
+      top: -5em;
+    }
   
   .footerContainer{
     display: flex;

@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/idea-demo/static/css/main.0d668021.css",
+    "main.css": "/idea-demo/static/css/main.a09c6903.css",
     "main.js": "/idea-demo/static/js/main.b0c603b9.js",
     "static/js/453.5a1a5cc3.chunk.js": "/idea-demo/static/js/453.5a1a5cc3.chunk.js",
     "static/media/EmployeePortalBackGround.mp4": "/idea-demo/static/media/EmployeePortalBackGround.7e472743a2da5b5b4d94.mp4",
@@ -29,12 +29,12 @@
     "static/media/img-0.21.png": "/idea-demo/static/media/img-0.21.90125159901f25f42b20.png",
     "static/media/img-0.20.png": "/idea-demo/static/media/img-0.20.182c79be61f2f2707061.png",
     "index.html": "/idea-demo/index.html",
-    "main.0d668021.css.map": "/idea-demo/static/css/main.0d668021.css.map",
+    "main.a09c6903.css.map": "/idea-demo/static/css/main.a09c6903.css.map",
     "main.b0c603b9.js.map": "/idea-demo/static/js/main.b0c603b9.js.map",
     "453.5a1a5cc3.chunk.js.map": "/idea-demo/static/js/453.5a1a5cc3.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.0d668021.css",
+    "static/css/main.a09c6903.css",
     "static/js/main.b0c603b9.js"
   ]
 }

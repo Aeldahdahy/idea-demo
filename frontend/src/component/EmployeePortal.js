@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Route, Routes, useNavigate,  } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import EmployeeSignForm from './EmployeeSignForm';
 
 function EmployeePortal() {
@@ -8,19 +8,19 @@ function EmployeePortal() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/employee-portal/EmployeeSignForm', { replace: true }); 
+      navigate('/employee-portal/EmployeeSignForm', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
   return (
     isAuthenticated ? (
-    <>
-      <Routes>
-        {/* <Route path='/employee-portal/' element={<Dashboard />} */}
-      </Routes>
-    </>
+      <>
+        <Routes>
+          <Route path='/employee-portal/home' element={<h1>hello world</h1>} />
+        </Routes>
+      </>
     ) : (
-        <EmployeeSignForm />
+      <EmployeeSignForm />
     )
   );
 }

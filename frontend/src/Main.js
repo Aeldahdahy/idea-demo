@@ -1,5 +1,5 @@
-import React from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 import NavBar from './component/Navbar';
 import Footer from './component/Footer';
@@ -26,8 +26,23 @@ function AboutUs() {
 }
 
 function Main() {
-    
-  const location = useLocation();  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const hasAccessedPortal = localStorage.getItem('hasAccessedPortal');
+  const portalType = localStorage.getItem('portalType'); // Retrieve the stored portal type
+
+  useEffect(() => {
+    if (hasAccessedPortal && !location.pathname.startsWith('/client-portal') && !location.pathname.startsWith('/employee-portal')) {
+      if (portalType === 'employee') {
+        navigate('/employee-portal'); // Redirect to Employee Portal
+      } else if (portalType === 'client') {
+        navigate('/client-portal'); // Redirect to Client Portal
+      } else {
+        navigate('/'); // Default to home if portalType is not set
+      }
+    }
+  }, [hasAccessedPortal, location, navigate, portalType]);
+
   const hideNavAndFooter = location.pathname.startsWith('/client-portal') || location.pathname.startsWith('/employee-portal');
 
   return (

@@ -203,15 +203,24 @@ export const useFunctions = () => {
         password: formData.password,
       });
   
+      
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem('authToken', token);
-        
-        // Decode the token to get the user details
-        const decodedToken = jwtDecode(token); // Make sure to install jwt-decode if not installed
-        localStorage.setItem('userFullName', decodedToken.user.fullName);
-        navigate('/client-portal/');
-        return response.data;
+  
+        const decodedToken = jwtDecode(token);
+        console.log('Decoded Token:', decodedToken);
+  
+        if (decodedToken && decodedToken.user) {
+          localStorage.setItem('userFullName', decodedToken.user.fullName);
+          localStorage.setItem('hasAccessedPortal', 'true'); // Set the portal access flag
+          localStorage.setItem('portalType', 'client'); // Store the portal type
+  
+          navigate('/client-portal/');
+          return response.data;
+        } else {
+          throw new Error('Unexpected token structure');
+        }
       } else {
         setError('Sign-in failed. Please try again.');
       }
@@ -222,6 +231,45 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
+
+  const StaffSignIn = async (formData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post('http://127.0.0.1:2000/api/staff/login', {
+        username: formData.username,
+        password: formData.password,
+      });
+  
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem('authToken', token);
+  
+        const decodedToken = jwtDecode(token);
+        console.log('Decoded Token:', decodedToken);
+  
+        if (decodedToken && decodedToken.id) {
+          localStorage.setItem('userId', decodedToken.id);
+          localStorage.setItem('userRole', decodedToken.role);
+          localStorage.setItem('hasAccessedPortal', 'true');
+          localStorage.setItem('portalType', 'employee'); // Store the portal type
+  
+          navigate('/employee-portal/');
+          return response.data;
+        } else {
+          throw new Error('Unexpected token structure');
+        }
+      } else {
+        setError('Sign-in failed. Please try again.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || `An error occurred. Please try again. ${err.message}`);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   
   const sendOtp = async (email) => {
     setLoading(true);
@@ -301,8 +349,15 @@ export const useFunctions = () => {
     try {
       const response = await axios.post('http://127.0.0.1:2000/api/signout');
       console.log(response.data);
-      return response.data;
-      
+
+      // Clear local storage
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userFullName');
+      localStorage.removeItem('username');
+      localStorage.removeItem('hasAccessedPortal'); // Remove portal access flag
+
+      // Redirect the user to the main route
+      navigate('/'); // Ensure this points to the correct main route
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred. please try again later.');
     }finally{
@@ -411,12 +466,14 @@ export const useFunctions = () => {
     signUp,
     setOtp,
     sendOtp,
+    setError,
     validate,
     contactUs,
     resendOtp,
     verifyOtp,
     chunkArray,
     formatTime,
+    StaffSignIn,
     handleSearch,
     setFormError,
     resetPassword,

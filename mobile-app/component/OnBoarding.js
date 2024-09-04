@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import backButtonImage from '../assets/image-0.22.png';
+import backButtonImage from '../assets/back-button Blue.png';
 import GetStarted1 from './GetStarted1';
 import GetStarted2 from './GetStarted2';
 import GetStarted3 from './GetStarted3';

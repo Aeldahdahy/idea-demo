@@ -13,7 +13,7 @@ export default function Identity({
     <View style={styles.container}>
       <View style={[styles.header, { paddingVertical: height * 0.07 }]}>
         <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Image source={require("../assets/image-0.22.png")} style={styles.backIcon} />
+          <Image source={require("../assets/back-button Blue.png")} style={styles.backIcon} />
         </TouchableOpacity>
         <Text style={[styles.getStarted, { fontSize: width * 0.08 }]}>Get Started</Text>
       </View>
@@ -21,7 +21,7 @@ export default function Identity({
       <ImageBackground
         style={[styles.mainImage, { width: width * 0.8, height: height * 0.35, marginVertical: height * 0.02 }]}
         resizeMode="contain"
-        source={require("../assets/image-0.29.png")}
+        source={require("../assets/image-0.25.png")}
       >
         <Image
           style={[styles.footerImage, { width: width * 0.6, height: height * 0.2, bottom: 0 }]}
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     flex:1,   
   },
   backButton: {
-    paddingLeft: 0,
+    paddingLeft: 25,
     paddingTop: 3,
   },
   backIcon: {

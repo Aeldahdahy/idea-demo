@@ -21,13 +21,6 @@ export default function ResetPasswordForm({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress}>
-          <Image
-            style={styles.backIcon}
-            resizeMode="cover"
-            source={require("../assets/backarrow.png")}
-          />
-        </TouchableOpacity>
         <Text style={styles.createNewPassword}>Create new password</Text>
       </View>
 
@@ -36,7 +29,7 @@ export default function ResetPasswordForm({
           <Image
             style={styles.groupIcon}
             resizeMode="cover"
-            source={require("../assets/ellipse.png")}
+            source={require("../assets/image-0.25.png")}
           />
           <Image
             style={styles.mainlock}
@@ -133,7 +126,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: FontFamily.bitter,
     color: Color.colorWhite,
-    flex: 1,
   },
   mainIconWrapper: {
     alignItems: "center",

@@ -55,7 +55,7 @@ export default function OtpVerification({
           <ImageBackground
             style={styles.ellipseImage}
             resizeMode="cover"
-            source={require('../assets/Ellipse6.png')}
+            source={require('../assets/image-0.25.png')}
           >
             <Image
               style={styles.mobileImage}

@@ -21,7 +21,7 @@ export default function EmailForget({ onBack, loading, error, handleSendOtp, ema
           <Image
             style={styles.backIcon}
             resizeMode="cover"
-            source={require("../assets/image-0.23.png")}
+            source={require("../assets/back-button White.png")}
           />
         </TouchableOpacity>
         <Text style={styles.forgotPassword1}>Forgot Password</Text>

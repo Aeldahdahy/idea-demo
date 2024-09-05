@@ -25,7 +25,8 @@ export const Color = {
   colorBlueviolet: "#9747ff",
   colorMidnightblue: "#163696",
   colorGainsboro: "#e8e5e5",
-  colorLightBlue:'#D9EFFF',
+  colorLightBlue_100:'#D9EFFF',
+  colorLightBlue_200:'#EBF6FF',
   colorLightGray:'#f0f0f0',
 };
 /* border radiuses */

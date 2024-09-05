@@ -4,7 +4,7 @@ import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
 const { width } = Dimensions.get('window');
 
-export default function GetStarted5({ onBack, onBackImage, onComplete }) {
+export default function GetStarted5() {
     const [currentIndex, setCurrentIndex] = React.useState(0);
 
     const data = [
@@ -28,11 +28,7 @@ export default function GetStarted5({ onBack, onBackImage, onComplete }) {
 
     return (
         <View style={styles.getStartedPage2}>
-            <View style={styles.topNavigation}>
-                <Pressable style={styles.backButton} onPress={onBack}>
-                    <Image style={styles.buttonText} source={onBackImage} />
-                </Pressable>
-            </View>
+           
 
             <Text style={styles.Entrepreneur}>
                 Entrepreneur
@@ -60,29 +56,7 @@ export default function GetStarted5({ onBack, onBackImage, onComplete }) {
                 source={require("../assets/image-0.19.png")}
             />
 
-            <Pressable
-                style={styles.rectangleParent}
-                onPress={onComplete}
-            >
-                <View style={styles.groupChild} />
-                <Text style={styles.next}>Get Started</Text>
-            </Pressable>
-
-            <View style={styles.enParent}>
-                <Image
-                    style={styles.screenshot20240701At656}
-                    resizeMode="cover"
-                    source={require("../assets/image-0.21.png")}
-                />
-                <Text style={styles.en}>EN</Text>
-                <View style={styles.groupItem}>
-                    <Image
-                        style={styles.groupItemImage}
-                        resizeMode="cover"
-                        source={require("../assets/image-0.20.png")}
-                    />
-                </View>
-            </View>
+           
         </View>
     );
 }

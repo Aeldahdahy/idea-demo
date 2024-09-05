@@ -4,18 +4,11 @@ import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
 const { width } = Dimensions.get('window');
 
-export default function GetStarted2({ onNext, onBack, onSkip, onBackImage }) {
+export default function GetStarted2() {
 
     return (
         <View style={styles.getStartedPage2}>
-            <View style={styles.topNavigation}>
-                <Pressable style={styles.backButton} onPress={onBack}>
-                    <Image style={styles.buttonText} source={onBackImage} />
-                </Pressable>
-                <Pressable style={styles.skipButton} onPress={onSkip}>
-                    <Text style={styles.buttonText}>Skip</Text>
-                </Pressable>
-            </View>
+            
 
             <Text style={styles.whoAreWe}>
                 Who are We?
@@ -35,29 +28,7 @@ export default function GetStarted2({ onNext, onBack, onSkip, onBackImage }) {
                 source={require("../assets/image-0.16.png")}
             />
 
-            <Pressable
-                style={styles.rectangleParent}
-                onPress={onNext}
-            >
-                <View style={styles.groupChild} />
-                <Text style={styles.next}>Next</Text>
-            </Pressable>
 
-            <View style={styles.enParent}>
-                <Image
-                    style={styles.screenshot20240701At656}
-                    resizeMode="cover"
-                    source={require("../assets/image-0.21.png")}
-                />
-                <Text style={styles.en}>EN</Text>
-                <View style={styles.groupItem}>
-                    <Image
-                        style={styles.groupItemImage}
-                        resizeMode="cover"
-                        source={require("../assets/image-0.20.png")}
-                    />
-                </View>
-            </View>
         </View>
     );
 }
@@ -69,29 +40,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
-    },
-    topNavigation: {
-        alignItems:'center',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        width: '100%',
-        position: 'absolute',
-        top: "5%",
-    },
-    backButton: {
-        backgroundColor: 'transparent',
-        width:40,
-        height:40,
-    },
-    skipButton: {
-        backgroundColor: 'transparent',
-    },
-    buttonText: {
-        fontSize: FontSize.size_6xl,
-        color: Color.colorNavy,
-        fontFamily: FontFamily.signikaBold,
-        width:"100%",
-        height:"100%",
     },
     whoAreWe: {
         fontSize: FontSize.size_16xl,
@@ -146,37 +94,5 @@ const styles = StyleSheet.create({
         color: Color.colorGray_200,
         fontFamily: FontFamily.signikaBold,
         fontWeight: "700",
-    },
-    enParent: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    en: {
-        fontSize: FontSize.size_8xl,
-        fontFamily: FontFamily.signikaRegular,
-        marginRight: 10,
-    },
-    screenshot20240701At656: {
-        borderRadius: Border.br_195xl,
-        width: 31,
-        height: 31,
-        marginRight: 10,
-    },
-    getStartedPage2Child: {
-        width: 100,
-        height: 12,
-        marginTop: 20,
-    },
-    groupItem: {
-        position: 'relative',
-        width: 15,
-        height: 15,
-    },
-    groupItemImage: {
-        position: 'absolute',
-        width: '100%',
-        top: '50%',
     },
 });

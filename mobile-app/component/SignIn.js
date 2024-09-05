@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: Border.br_120xl_5,
   },
   activeTab: {
-    backgroundColor: Color.colorLightBlue,
+    backgroundColor: Color.colorLightBlue_100,
     borderColor: Color.colorWhite,
     borderWidth: 1,
   },

@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     textAlign: 'center',
     fontSize: 20,
-    borderColor: Color.colorGray_100,
+    borderColor: Color.colorGray_Black_800,
     borderWidth: 1,
   },
   verifyButton: {

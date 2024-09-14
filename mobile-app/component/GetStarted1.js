@@ -4,50 +4,45 @@ import { Color, FontSize, FontFamily } from "../GlobalStyles";
 
 const { width } = Dimensions.get('window');
 
-export default function GetStarted1() {
+export default function GetStarted1({
+    HeaderText,
+    HeaderName
+}) {
 
     return (
-        <View style={styles.getStartedPage1}>
+        <View style={styles.container}>
 
-            <Text style={styles.welcomeToIdeaContainer}>
-                <Text style={styles.welcomeTo}>Welcome to</Text>
-                <Text style={styles.idea}> IDEA.</Text>
+            <Text style={styles.Header}>
+                <Text style={styles.welcomeTo}>{HeaderText}</Text>
+                <Text style={styles.idea}> {HeaderName}</Text>
             </Text>
 
             <Image
-                style={styles.screenshot20240722At753}
+                style={styles.containerImage}
                 resizeMode="cover"
-                source={require("../assets/iamge-0.1.png")}
+                source={require("../assets/image-0.1.png")}
             />
 
-            <Text style={styles.ourPlatformIs}>
+            <Text style={styles.containerText}>
                 Our platform is dedicated to transforming innovative ideas into successful ventures by providing you with the tools, resources, and support needed
             </Text>
 
-            <Image
-                style={styles.getStartedPage1Child}
-                resizeMode="cover"
-                source={require("../assets/image-0.15.png")}
-            />
+            
             
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    getStartedPage1: {
+    container: {
         backgroundColor: Color.colorWhite,
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    
-   
-    welcomeToIdeaContainer: {
+    Header: {
         fontSize: FontSize.size_16xl,
         textAlign: "center",
-        marginTop:42,
     },
     welcomeTo: {
         fontFamily: FontFamily.signikaRegular,
@@ -56,7 +51,7 @@ const styles = StyleSheet.create({
         fontFamily: FontFamily.signikaBold,
         fontWeight: "700",
     },
-    ourPlatformIs: {
+    containerText: {
         fontSize: FontSize.size_2xl,
         fontWeight: "300",
         fontFamily: FontFamily.signikaLight,
@@ -64,13 +59,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingHorizontal: 20,
     },
-    screenshot20240722At753: {
+    containerImage: {
         borderRadius: 167,
         width: width * 0.8,
-        height: "40%",
+        height: "80%",
     },
-   
-    
-    
-    
 });

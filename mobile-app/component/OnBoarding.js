@@ -1,132 +1,167 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, Pressable, Image } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
+import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import backButtonImage from '../assets/back-button Blue.png';
 import GetStarted1 from './GetStarted1';
 import GetStarted2 from './GetStarted2';
 import GetStarted3 from './GetStarted3';
 import GetStarted4 from './GetStarted4';
 import GetStarted5 from './GetStarted5';
-import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
-
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default function OnBoarding({ onComplete }) {
     const [currentPage, setCurrentPage] = useState(1);
-    const translateX = useSharedValue(0);
+    const fadeOpacity = useSharedValue(1); // Start with full opacity
 
     const handleNext = () => {
         if (currentPage < 5) {
-            setCurrentPage((prev) => prev + 1);
-            translateX.value = withTiming(-width * currentPage, { duration: 300 });  // Smooth transition
+            fadeOpacity.value = withTiming(0, { duration: 300 }, () => {
+                runOnJS(setCurrentPage)(currentPage + 1); // Set page after fade out
+                fadeOpacity.value = withTiming(1, { duration: 300 }); // Fade in
+            });
+        } else {
+            onComplete();
         }
     };
 
     const handleBack = () => {
         if (currentPage > 1) {
-            setCurrentPage((prev) => prev - 1);
-            translateX.value = withTiming(-width * (currentPage - 2), { duration: 300 });  // Smooth transition
+            fadeOpacity.value = withTiming(0, { duration: 300 }, () => {
+                runOnJS(setCurrentPage)(currentPage - 1); // Set page after fade out
+                fadeOpacity.value = withTiming(1, { duration: 300 }); // Fade in
+            });
         }
     };
 
     const handleSkip = () => {
-        setCurrentPage(5);
-        translateX.value = withTiming(-width * 4, { duration: 300 });
+        fadeOpacity.value = withTiming(0, { duration: 300 }, () => {
+            runOnJS(setCurrentPage)(5); // Directly set the last page
+            fadeOpacity.value = withTiming(1, { duration: 300 }); // Fade in
+        });
         onComplete();
     };
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
-            transform: [{ translateX: translateX.value }],
+            opacity: fadeOpacity.value, // Apply animated opacity to the page container
         };
     });
+
+    const renderView = () => {
+        switch (currentPage) {
+            case 1:
+                return <GetStarted1 HeaderText={'Welcome to'} HeaderName={'IDEA.'} />;
+            case 2:
+                return <GetStarted2 HeaderText={'Who are We?'} />;
+            case 3:
+                return <GetStarted3 HeaderText={'How it works?'} />;
+            case 4:
+                return <GetStarted4 HeaderText={'Investor'} />;
+            case 5:
+                return <GetStarted5 HeaderText={'Entrepreneur'} />;
+            default:
+                return null;
+        }
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.topNavigation}>
-                <Pressable style={styles.backButton}>
-                    <Image style={styles.buttonText} source={backButtonImage} />
+                <Pressable style={styles.backButton} onPress={handleBack}>
+                    {currentPage > 1 && (
+                        <Image style={styles.buttonImage} source={backButtonImage} />
+                    )}
                 </Pressable>
-                <Pressable style={styles.skipButton} >
-                    <Text style={styles.buttonText}>Skip</Text>
+                <Pressable style={styles.skipButton} onPress={handleSkip}>
+                        <Text style={styles.buttonText}>Skip</Text>
                 </Pressable>
             </View>
 
-            <Animated.View style={[styles.animatedContainer, animatedStyle]}>
-                <GetStarted1 />
-                <GetStarted2 />
-                <GetStarted3 />
-                <GetStarted4 />
-                <GetStarted5 />
+            <Animated.View style={[styles.pageContainer, animatedStyle]}>
+                {renderView()}
             </Animated.View>
 
-            <Pressable
-                style={styles.rectangleParent}
-            >
+            <Pressable style={styles.rectangleParent} onPress={handleNext}>
                 <View style={styles.groupChild} />
-                <Text style={styles.next}>Next</Text>
+                <Text style={styles.next}>
+                    {currentPage === 5 ? 'Go to Sign In' : 'Next'}  {/* Change text on the last page */}
+                </Text>
             </Pressable>
 
             <View style={styles.enParent}>
                 <Image
                     style={styles.screenshot20240701At656}
                     resizeMode="cover"
-                    source={require("../assets/image-0.21.png")}
+                    source={require('../assets/image-0.21.png')}
                 />
                 <Text style={styles.en}>EN</Text>
                 <View style={styles.groupItem}>
-                  <Image
-                    style={styles.groupItemImage}
-                    resizeMode="cover"
-                    source={require("../assets/image-0.20.png")}
-                  />
+                    <Image
+                        style={styles.groupItemImage}
+                        resizeMode="cover"
+                        source={require('../assets/image-0.20.png')}
+                    />
                 </View>
             </View>
-
         </View>
     );
 }
 
+
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        overflow: 'hidden', 
+        flex: 1,                  // Ensures the container takes up the full space
+        width: '100%',            // 100% width of the screen
+        height: '100%',           // 100% height of the screen
+        justifyContent: 'space-evenly', // Centers content vertically
+        alignItems: 'center',     // Centers content horizontally
+        backgroundColor: Color.background, // Assuming a global background color
     },
     topNavigation: {
-        alignItems:'center',
+        alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: 'row',
         width: '100%',
-        position: 'absolute',
-        top: "5%",
+        paddingHorizontal: 20,
     },
     backButton: {
-        backgroundColor: 'transparent',
-        width:40,
-        height:40,
+        width: 50,
+        height: 50,
+    },
+    buttonImage: {
+        width: "100%",
+        height: "100%",
     },
     skipButton: {
-        backgroundColor: 'transparent',
+        backgroundColor: Color.colorLightBlue_200,
+        borderRadius: Border.br_8xs,
+        width: 70,
+        height: 40,
+        justifyContent: 'center', 
+        alignItems: 'center',     
+        position: 'relative',
     },
     buttonText: {
         fontSize: FontSize.size_6xl,
         color: Color.colorNavy,
         fontFamily: FontFamily.signikaBold,
-        width:"100%",
-        height:"100%",
+        textAlign: 'center',
+        textAlignVertical: 'center', 
     },
-    animatedContainer: {
-        flexDirection: 'row',
-        width: width * 5,  
-        flex: 1,
+    pageContainer: {
+        width: width,
+        height: height * 0.5,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     rectangleParent: {
         width: '80%',
         height: 60,
         borderRadius: Border.br_21xl,
-        backgroundColor: Color.colorNavy,
-        borderColor: Color.colorGray_100,
+        backgroundColor: Color.colorWhite,
+        borderColor: Color.colorWhite,
         borderWidth: 2,
         shadowOffset: {
             width: 0,
@@ -143,8 +178,7 @@ const styles = StyleSheet.create({
     groupChild: {
         borderRadius: Border.br_21xl,
         backgroundColor: Color.colorNavy,
-        borderStyle: "solid",
-        borderColor: Color.colorGray_100,
+        borderColor: Color.colorWhite,
         borderWidth: 2,
         height: 60,
         width: '100%',
@@ -152,12 +186,11 @@ const styles = StyleSheet.create({
     },
     next: {
         fontSize: FontSize.size_6xl,
-        color: Color.colorGray_200,
+        color: Color.colorWhite,
         fontFamily: FontFamily.signikaBold,
         fontWeight: "700",
     },
     enParent: {
-        flex:1,
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 20,
@@ -173,19 +206,12 @@ const styles = StyleSheet.create({
         height: 31,
         marginRight: 10,
     },
-    getStartedPage1Child: {
-        width: 100,
-        height: 12,
-        marginTop: 20,
-    },
     groupItem: {
-        position:'relative',
         width: 15,
         height: 15,
     },
-    groupItemImage:{
-        position: 'absolute',
+    groupItemImage: {
         width: '100%',
-        top:'50%'
+        height: '100%',
     },
 });

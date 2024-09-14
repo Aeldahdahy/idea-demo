@@ -1,11 +1,13 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Pressable, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Text, Pressable, Image, Dimensions, ScrollView, TouchableOpacity } from "react-native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-export default function GetStarted4() {
-    const [currentIndex, setCurrentIndex] = React.useState(0);
+export default function GetStarted4({HeaderText}) {
+    const [currentIndex, setCurrentIndex] = React.useState(1); // Start at 1 due to cloned slides
+    const scrollViewRef = React.useRef(null);
+    const timerRef = React.useRef(null);
 
     const data = [
         { id: 1, image: require('../assets/image-0.14.png'), text: 'Create your account as an investor and search for startups' },
@@ -14,183 +16,154 @@ export default function GetStarted4() {
         { id: 4, image: require('../assets/image-0.13.png'), text: 'Start investing on your chosen startup' },
     ];
 
-    const goToNextSlide = () => {
-        if (currentIndex < data.length - 1) {
-            setCurrentIndex(currentIndex + 1);
-        }
+    // Extended data with cloned first and last items for infinite loop
+    const extendedData = [data[data.length - 1], ...data, data[0]];
+
+    // Auto-scroll function
+    const startAutoScroll = () => {
+        timerRef.current = setInterval(() => {
+            setCurrentIndex(prevIndex => {
+                if (prevIndex === extendedData.length - 1) {
+                    return 1; // Reset to the first real slide
+                }
+                return prevIndex + 1;
+            });
+        }, 10000); // Scroll every 5 seconds
     };
 
-    const goToPreviousSlide = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(currentIndex - 1);
+    // Clear auto-scroll timer
+    const resetAutoScroll = () => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
         }
+        startAutoScroll(); // Restart auto-scroll
+    };
+
+    // Effect for handling scroll changes
+    React.useEffect(() => {
+        // Scroll to the current index
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ x: width * currentIndex, animated: true });
+        }
+
+        // Handle infinite scrolling by jumping to real slides after reaching clones
+        if (currentIndex === 0) {
+            setTimeout(() => {
+                setCurrentIndex(data.length);
+                scrollViewRef.current.scrollTo({ x: width * data.length, animated: false });
+            }, 300);
+        } else if (currentIndex === extendedData.length - 1) {
+            setTimeout(() => {
+                setCurrentIndex(1);
+                scrollViewRef.current.scrollTo({ x: width, animated: false });
+            }, 300);
+        }
+    }, [currentIndex]);
+
+    // Start auto-scroll on component mount
+    React.useEffect(() => {
+        startAutoScroll();
+        return () => clearInterval(timerRef.current); // Clean up timer on unmount
+    }, []);
+
+    // Handle manual scroll
+    const handleScrollEnd = (event) => {
+        const contentOffsetX = event.nativeEvent.contentOffset.x;
+        const newIndex = Math.round(contentOffsetX / width);
+        setCurrentIndex(newIndex);
+        resetAutoScroll(); // Reset auto-scroll on manual scroll
     };
 
     return (
-        <View style={styles.getStartedPage2}>
-            
-
-            <Text style={styles.Investor}>
-                Investor
+        <View style={styles.container}>
+            <Text style={styles.Header}>
+                {HeaderText}
             </Text>
 
-            <Image
-                style={styles.screenshot20240722At753}
-                resizeMode="cover"
-                source={data[currentIndex].image}
-            />
-            <Text style={styles.ourMissionIs}>
-                {data[currentIndex].text}
-            </Text>
-            <View style={styles.navigationButtons}>
-                <Pressable style={styles.navButton} onPress={goToPreviousSlide}>
-                    <Text style={styles.navButtonText}>{"<"}</Text>
-                </Pressable>
-                <Pressable style={styles.navButton} onPress={goToNextSlide}>
-                    <Text style={styles.navButtonText}>{">"}</Text>
-                </Pressable>
+            <ScrollView
+                ref={scrollViewRef}
+                horizontal
+                pagingEnabled
+                onMomentumScrollEnd={handleScrollEnd}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.scrollViewContent}
+            >
+                {extendedData.map((item, index) => (
+                    <View style={styles.slide} key={index}>
+                        <Image
+                            style={styles.containerImage}
+                            resizeMode="contain"
+                            source={item.image}
+                        />
+                        <Text style={styles.containerText}>
+                            {item.text}
+                        </Text>
+                    </View>
+                ))}
+            </ScrollView>
+
+            {/* Circle Navigator */}
+            <View style={styles.pagination}>
+                {data.map((_, index) => (
+                    <TouchableOpacity key={index} style={[
+                        styles.dot,
+                        currentIndex === index + 1 ? styles.activeDot : styles.inactiveDot,
+                    ]} />
+                ))}
             </View>
-
-            <Image
-                style={styles.getStartedPage2Child}
-                resizeMode="cover"
-                source={require("../assets/image-0.18.png")}
-            />
-
-            
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    getStartedPage2: {
+    container: {
         backgroundColor: Color.colorWhite,
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    topNavigation: {
-        alignItems:'center',
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-        width: '100%',
-        position: 'absolute',
-        top: "5%",
-    },
-    backButton: {
-        backgroundColor: 'transparent', 
-        width:40,
-        height:40,
-    },
-    skipButton: {
-        backgroundColor: 'transparent',
-    },
-    buttonText: {
-        fontSize: FontSize.size_6xl,
-        color: Color.colorNavy,
-        fontFamily: FontFamily.signikaBold,
-        width:"100%",
-        height:"100%",
-    },
-    Investor: {
+    Header: {
         fontSize: FontSize.size_16xl,
         fontFamily: FontFamily.signikaBold,
         textAlign: "center",
-        marginTop: 100, // Adjust for space at the top
+        marginTop: 10,
     },
-    ourMissionIs: {
+    containerImage: {
+        width: width * 0.8,
+        height: height * 0.4,
+    },
+    scrollViewContent: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    containerText: {
         fontSize: FontSize.size_2xl,
         fontWeight: "300",
         fontFamily: FontFamily.signikaLight,
         textAlign: "center",
-        marginBottom: 10,
+        marginBottom: 20,
         paddingHorizontal: 20,
     },
-    screenshot20240722At753: {
-        borderRadius: 167,
-        width: width * 0.8,
-        height: "40%",
+    slide: {
+        width: width,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    rectangleParent: {
-        width: '80%',
-        height: 60,
-        borderRadius: Border.br_21xl,
-        backgroundColor: Color.colorNavy,
-        borderColor: Color.colorGray_100,
-        borderWidth: 2,
-        shadowOffset: {
-            width: 0,
-            height: 6,
-        },
-        shadowRadius: 10,
-        elevation: 10,
-        shadowOpacity: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 30,
-        marginBottom: 20,
+    pagination: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    groupChild: {
-        borderRadius: Border.br_21xl,
-        backgroundColor: Color.colorNavy,
-        borderStyle: "solid",
-        borderColor: Color.colorGray_100,
-        borderWidth: 2,
-        height: 60,
-        width: '100%',
-        position: "absolute",
+    dot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        marginHorizontal: 5,
     },
-    next: {
-        fontSize: FontSize.size_6xl,
-        color: Color.colorGray_200,
-        fontFamily: FontFamily.signikaBold,
-        fontWeight: "700",
-        width:'auto',
+    activeDot: {
+        backgroundColor: Color.colorBlack,
     },
-    enParent: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 20,
+    inactiveDot: {
+        backgroundColor: Color.colorGray_Black_300,
     },
-    en: {
-        fontSize: FontSize.size_8xl,
-        fontFamily: FontFamily.signikaRegular,
-        marginRight: 10,
-    },
-    screenshot20240701At656: {
-        borderRadius: Border.br_195xl,
-        width: 31,
-        height: 31,
-        marginRight: 10,
-    },
-    getStartedPage2Child: {
-        width: 100,
-        height: 12,
-        marginTop: 20,
-    },
-    groupItem: {
-        position: 'relative',
-        width: 15,
-        height: 15,
-    },
-    groupItemImage: {
-        position: 'absolute',
-        width: '100%',
-        top: '50%',
-    },
-    navigationButtons:{
-        flex:1,
-        flexDirection:'row',
-        justifyContent:"space-between",
-        width:"100%",
-        alignItems:'center',
-        position:'absolute',
-        top:"45%"
-    },
-    navButtonText:{
-        fontSize: 30,
-        fontWeight:"bold",
-    }
 });

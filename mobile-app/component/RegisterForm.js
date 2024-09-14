@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 10,
     borderRadius: Border.br_36xl,
-    borderColor: Color.colorGray_100,
+    borderColor: Color.colorGray_Black_800,
     backgroundColor: Color.colorWhite,
   },
   icon: {
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 55, // Increased height for better visibility
     paddingHorizontal: 16,
-    color: Color.colorGray_100,
+    color: Color.colorGray_Black_800,
     fontSize: FontSize.size_xl,
     backgroundColor: Color.colorWhite,
     borderRadius: Border.br_36xl,

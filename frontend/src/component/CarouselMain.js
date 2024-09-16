@@ -5,6 +5,7 @@ import CarouselImg2 from '../assets/img-0.19.png';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
 library.add(fas);
 
@@ -23,7 +24,7 @@ function CarouselMain() {
             <h1 className="text-white">Welcome to IDEA</h1>
             <p className="text-white">Where Tomorrow's Innovative Ideas Meet Today's Investors.</p>
             <div className="buttons-container">
-              <Button className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Button>
+              <Link to='/client-portal/' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
             </div>
           </Carousel.Caption>
         </Carousel.Item>

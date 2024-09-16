@@ -20,9 +20,10 @@ h1,h2,h3,h4,h5,h6{
 .MainButton {
   background-color: #0029A4;
   color: #fff;
-  border: none;
+  border: 5px solid #fff;
   padding: 10px;
   border-radius: 25px;
+  text-decoration: none;
 }
 .MainButton:hover {
   background-color: #0536ca;
@@ -1275,12 +1276,14 @@ form.sign-in-form {
   background-color: #D9EFFF;
   color: #000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
 }
 
 .HowItWorksGet.MainButton {
   width: 40%;
   border: 1px solid #fff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
 }
 
 .HowItWorksRead.MainButton:hover {

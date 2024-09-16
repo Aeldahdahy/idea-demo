@@ -2,14 +2,14 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import img1 from '../assets/img-0.26.png';
-import img2 from '../assets/img-0.27.png';
-import img3 from '../assets/img-0.28.png';
-import img4 from '../assets/img-0.29.png';
-import img5 from '../assets/img-0.30.png';
+import img1 from '../assets/img-0.34.png';
+import img2 from '../assets/img-0.32.png';
+import img3 from '../assets/img-0.27.png';
+import img4 from '../assets/img-0.33.png';
+import img5 from '../assets/img-0.28.png';
 import img6 from '../assets/img-0.31.png';
-import img7 from '../assets/img-0.32.png';
-import img8 from '../assets/img-0.33.png';
+import { Link } from 'react-router-dom';
+
 
 
 function HowItWorks() {
@@ -43,19 +43,19 @@ function HowItWorks() {
 
   const entrepreneurSlides = [
     {
-      imgSrc: img5, 
+      imgSrc: img1, 
       description: 'Create your account as an entrepreneur and start your project'
     },
     {
-      imgSrc: img6, 
+      imgSrc: img2, 
       description: 'verify your account and get connected with investors'
     },
     {
-      imgSrc: img7, 
+      imgSrc: img5, 
       description: 'Step into the world of entrepreneurship and start creating your project with our comprehensive support system'
     },
     {
-      imgSrc: img8, 
+      imgSrc: img6, 
       description: 'Launch your project and unlock the potential to raise money with our dedicated platform'
     }
   ];
@@ -80,8 +80,8 @@ function HowItWorks() {
             {renderSlides(investorSlides)}
           </Slider>
           <div className="HowItWorksCarousel-buttons">
-          <button className="HowItWorksRead MainButton">Read More</button>
-          <button className="HowItWorksGet MainButton">Get Started</button>
+            <Link to='/invest' className="HowItWorksRead MainButton">Read More</Link>
+            <Link to='/client-portal/' className="HowItWorksGet MainButton">Get Started</Link>
         </div>
         </div>
 
@@ -91,8 +91,8 @@ function HowItWorks() {
             {renderSlides(entrepreneurSlides)}
           </Slider>
           <div className="HowItWorksCarousel-buttons">
-          <button className="HowItWorksRead MainButton">Read More</button>
-          <button className="HowItWorksGet MainButton">Get Started</button>
+          <Link to='/fundraising' className="HowItWorksRead MainButton">Read More</Link>
+          <Link to='/client-portal/' className="HowItWorksGet MainButton">Get Started</Link>
         </div>
         </div>
       </div>

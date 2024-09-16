@@ -1,22 +1,24 @@
 {
   "files": {
-    "main.css": "/idea-demo/static/css/main.7d02d32e.css",
-    "main.js": "/idea-demo/static/js/main.b0c603b9.js",
-    "static/js/453.5a1a5cc3.chunk.js": "/idea-demo/static/js/453.5a1a5cc3.chunk.js",
+    "main.css": "/idea-demo/static/css/main.bda4bc18.css",
+    "main.js": "/idea-demo/static/js/main.7851ef0c.js",
+    "static/js/453.1c40cb1d.chunk.js": "/idea-demo/static/js/453.1c40cb1d.chunk.js",
     "static/media/EmployeePortalBackGround.mp4": "/idea-demo/static/media/EmployeePortalBackGround.7e472743a2da5b5b4d94.mp4",
     "static/media/img-0.19.png": "/idea-demo/static/media/img-0.19.9f4739e819dd5141b9e3.png",
-    "static/media/img-0.3.png": "/idea-demo/static/media/img-0.3.7dc8b54bb4dae264776a.png",
-    "static/media/img-0.8.png": "/idea-demo/static/media/img-0.8.6f713cc02ac57a224fe6.png",
-    "static/media/img-0.4.png": "/idea-demo/static/media/img-0.4.1c4e9c7d21c6f96ab32d.png",
-    "static/media/img-0.6.png": "/idea-demo/static/media/img-0.6.9d95eb03b4e6f710573c.png",
-    "static/media/img-0.5.png": "/idea-demo/static/media/img-0.5.3999c2bc03ff9c1caaa8.png",
     "static/media/img-0.18.jpg": "/idea-demo/static/media/img-0.18.b05ee2a1e3bd05be68a0.jpg",
+    "static/media/img-0.30.png": "/idea-demo/static/media/img-0.30.6237fa0199413078309c.png",
     "static/media/img-0.9.PNG": "/idea-demo/static/media/img-0.9.15f6a1bc51e7fc8a5aac.PNG",
+    "static/media/img-0.26.png": "/idea-demo/static/media/img-0.26.8dc509f3a35ac74a5cb0.png",
     "static/media/img-0.11.PNG": "/idea-demo/static/media/img-0.11.a6440847c0a88e904f2d.PNG",
-    "static/media/img-0.7.png": "/idea-demo/static/media/img-0.7.3620a3fe0896b772ab58.png",
+    "static/media/img-0.33.png": "/idea-demo/static/media/img-0.33.ea1c3d7734ff4ae88ec1.png",
+    "static/media/img-0.32.png": "/idea-demo/static/media/img-0.32.4735e241a867fd778bfb.png",
+    "static/media/img-0.28.png": "/idea-demo/static/media/img-0.28.cfcc2436a9e4fd1df49d.png",
+    "static/media/img-0.29.png": "/idea-demo/static/media/img-0.29.6eacb6ff082997cd8c52.png",
     "static/media/img-0.17.png": "/idea-demo/static/media/img-0.17.fc254ee6519ae50953aa.png",
+    "static/media/img-0.27.png": "/idea-demo/static/media/img-0.27.7051d5de9007d9a4ef41.png",
     "static/media/img-0.16.png": "/idea-demo/static/media/img-0.16.980c017207414944cdf3.png",
     "static/media/img-0.10.PNG": "/idea-demo/static/media/img-0.10.949051b5a67781389b92.PNG",
+    "static/media/img-0.31.png": "/idea-demo/static/media/img-0.31.9675ac62c6c1aa624ec1.png",
     "static/media/idea.png": "/idea-demo/static/media/idea.9e0f77205fd4396590ac.png",
     "static/media/log.svg": "/idea-demo/static/media/log.cd046e1a495c96cce5951c2e227306cf.svg",
     "static/media/img-0.12.png": "/idea-demo/static/media/img-0.12.aacef3a7dbcdf84ffc45.png",
@@ -28,13 +30,17 @@
     "static/media/img-0.14.png": "/idea-demo/static/media/img-0.14.4a8dd0c579f75ac8a549.png",
     "static/media/img-0.21.png": "/idea-demo/static/media/img-0.21.90125159901f25f42b20.png",
     "static/media/img-0.20.png": "/idea-demo/static/media/img-0.20.182c79be61f2f2707061.png",
+    "static/media/slick.svg": "/idea-demo/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/idea-demo/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/idea-demo/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/idea-demo/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/idea-demo/index.html",
-    "main.7d02d32e.css.map": "/idea-demo/static/css/main.7d02d32e.css.map",
-    "main.b0c603b9.js.map": "/idea-demo/static/js/main.b0c603b9.js.map",
-    "453.5a1a5cc3.chunk.js.map": "/idea-demo/static/js/453.5a1a5cc3.chunk.js.map"
+    "main.bda4bc18.css.map": "/idea-demo/static/css/main.bda4bc18.css.map",
+    "main.7851ef0c.js.map": "/idea-demo/static/js/main.7851ef0c.js.map",
+    "453.1c40cb1d.chunk.js.map": "/idea-demo/static/js/453.1c40cb1d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7d02d32e.css",
-    "static/js/main.b0c603b9.js"
+    "static/css/main.bda4bc18.css",
+    "static/js/main.7851ef0c.js"
   ]
 }

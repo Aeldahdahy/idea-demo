@@ -2,8 +2,8 @@ import React from 'react';
 import CarouselMain from './CarouselMain';
 import Statistics from './Statistics';
 import WhoAreWe from './WhoAreWe';
-import Industries from './Industries';
-// import HowItWorks from './HowItWorks';
+// import Industries from './Industries';
+import HowItWorks from './HowItWorks';
 import CompaniesStories from './CompaniesStories';
 import PartnersFeatured from './PartnersFeatured';
 
@@ -17,8 +17,8 @@ function Home() {
       <div className='spacemax'></div>
       <WhoAreWe />
       <div className='space'></div>
-      <Industries />
-      {/* <HowItWorks /> */}
+      {/* <Industries /> */}
+      <HowItWorks />
       <div className='space'></div>
       <CompaniesStories />
       <div className='space'></div>

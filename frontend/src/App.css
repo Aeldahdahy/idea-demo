@@ -1214,7 +1214,86 @@ form.sign-in-form {
   color: #000;
 }
 
+/* How it works */
+.HowItWorks {
+  text-align: center;
+  margin: 40px;
+}
 
+.HowItWorksCon {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.HowItWorksCard {
+  background-color: #fff;
+  border-radius: 25px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  margin: 20px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.HowItWorksCard:hover {
+  transform: translateY(-10px);
+}
+
+.HowItWorksCarousel-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.HowItWorksCarousel-image {
+  width: 100%;
+  height: 100vh;
+  max-height: 400px;
+  max-height: 400px;
+  object-fit: cover;
+  margin: 10px 0;
+}
+
+.HowItWorksCarousel-text {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.HowItWorksCarousel-buttons {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.HowItWorksRead.MainButton {
+  width: 40%;
+  border: 1px solid #fff;
+  background-color: #D9EFFF;
+  color: #000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.HowItWorksGet.MainButton {
+  width: 40%;
+  border: 1px solid #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.HowItWorksRead.MainButton:hover {
+  background-color: #b0d5f0;
+}
+
+.HowItWorksGet.MainButton:hover {
+  background-color: #0536ca;
+}
+
+.slick-dots {
+  top: 93%;
+}
 
 
 /* pop up login  */

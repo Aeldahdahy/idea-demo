@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useFunctions } from '../useFunctions';
+import { useFunctions } from '../../useFunctions';
 import { Link } from 'react-router-dom';
-import EmployeePortalBackGround from '../assets/EmployeePortalBackGround.mp4';
-import Logo from '../assets/idea.png';
+import EmployeePortalBackGround from '../../assets/EmployeePortalBackGround.mp4';
+import Logo from '../../assets/idea.png';
 
 function EmployeeSignForm() {
   const { StaffSignIn, loading, backendError } = useFunctions();

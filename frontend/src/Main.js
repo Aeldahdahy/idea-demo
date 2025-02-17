@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-import NavBar from './component/Navbar';
-import Footer from './component/Footer';
-import CopyRight from './component/CopyRight';
-import Home from './component/Home';
-import Contact from './component/Contact';
-import EmployeePortal from './component/EmployeePortal';
-import ClientPortal from './component/ClientPortal';
+import NavBar from './component/ClientComponents/Navbar';
+import Footer from './component/ClientComponents/Footer';
+import CopyRight from './component/Common/CopyRight';
+import Home from './component/ClientComponents/Home';
+import Contact from './component/ClientComponents/Contact';
+import EmployeePortal from './component/EmployeeComponents/EmployeePortal';
+import ClientPortal from './component/ClientComponents/ClientPortal';
 
 function Invest() {
   return <h2>Invest Page</h2>;

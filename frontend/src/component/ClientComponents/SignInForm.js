@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useFunctions } from '../useFunctions';
+import { useFunctions } from '../../useFunctions';
 import SignInFormFields from './SignInFormFields';
 import OtpVerification from './OtpVerification';
 import ResetPasswordForm from './ResetPasswordForm';

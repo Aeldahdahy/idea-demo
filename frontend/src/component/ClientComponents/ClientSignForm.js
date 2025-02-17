@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import LogImage from '../assets/log.svg';
-import RegisterImage from '../assets/register.svg';
-// import Logo from '../assets/idea.png';
+import LogImage from '../../assets/log.svg';
+import RegisterImage from '../../assets/register.svg';
+// import Logo from '../../assets/idea.png';
 
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';

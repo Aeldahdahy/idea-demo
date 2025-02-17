@@ -1,8 +1,8 @@
 import React from 'react';
-import StatImg1 from '../assets/img-0.20.png';
-import StatImg2 from '../assets/img-0.21.png';
-import StatImg3 from '../assets/img-0.22.png';
-import StatImg4 from '../assets/img-0.23.png';
+import StatImg1 from '../../assets/img-0.20.png';
+import StatImg2 from '../../assets/img-0.21.png';
+import StatImg3 from '../../assets/img-0.22.png';
+import StatImg4 from '../../assets/img-0.23.png';
 
 
 

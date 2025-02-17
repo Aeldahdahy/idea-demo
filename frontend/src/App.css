@@ -1218,7 +1218,6 @@ form.sign-in-form {
 /* How it works */
 .HowItWorks {
   text-align: center;
-  margin: 40px;
 }
 
 .HowItWorksCon {
@@ -1252,7 +1251,6 @@ form.sign-in-form {
 .HowItWorksCarousel-image {
   width: 100%;
   height: 100vh;
-  max-height: 400px;
   max-height: 400px;
   object-fit: cover;
   margin: 10px 0;
@@ -1408,6 +1406,7 @@ form.sign-in-form {
     max-width: 90%;
   }
 
+                                                              
 }
 
 @media (max-width: 870px) {
@@ -1620,7 +1619,9 @@ form.sign-in-form {
   .switch-container{
     margin: 20px 0;
   }
-  
+    .HowItWorksCard {
+      max-width: 300px;
+    }
 
 
   /* .wrapper{

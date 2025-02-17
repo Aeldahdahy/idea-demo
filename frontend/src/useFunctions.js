@@ -87,7 +87,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchText = async () => {
   //     try {
-  //       const response = await axios.get("http://127.0.0.1:2000/api/whoarewe");
+  //       const response = await axios.get("http://127.0.0.1:7030/api/whoarewe");
   //       setParagraphText(response.data.mainText);
   //       setSubText(response.data.subText);
   //     } catch (error) {
@@ -101,7 +101,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchStories = async () => {
   //     try {
-  //       const response = await axios.get('http://127.0.0.1:2000/api/successstories');
+  //       const response = await axios.get('http://127.0.0.1:7030/api/successstories');
   //       setStories(response.data);
   //       setLoading(false);
   //     } catch (error) {
@@ -118,7 +118,7 @@ export const useFunctions = () => {
     setError(null);
     try {
       // Step 1: Send OTP
-      const otpResponse = await axios.post('http://127.0.0.1:2000/api/signup', { email: formData.email });
+      const otpResponse = await axios.post('http://127.0.0.1:7030/api/signup', { email: formData.email });
       
       if (otpResponse.status === 200) {
         setIsOtpSent(true); 
@@ -138,7 +138,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const verifyResponse = await axios.post('http://127.0.0.1:2000/api/verify-otp', {
+      const verifyResponse = await axios.post('http://127.0.0.1:7030/api/verify-otp', {
         email: formData.email,
         otp,
         role: formData.role,
@@ -166,7 +166,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post('http://127.0.0.1:2000/api/signup', { email });
+      await axios.post('http://127.0.0.1:7030/api/signup', { email });
       setIsTimerActive(true);
       setTimer(180);
     } catch (err) {
@@ -198,7 +198,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:2000/api/signin', {
+      const response = await axios.post('http://127.0.0.1:7030/api/signin', {
         email: formData.email,
         password: formData.password,
       });
@@ -236,7 +236,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:2000/api/staff/login', {
+      const response = await axios.post('http://127.0.0.1:7030/api/staff/login', {
         username: formData.username,
         password: formData.password,
       });
@@ -275,7 +275,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:2000/api/forgot-password', { email });
+      const response = await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
       if (response.status === 200) {
         setIsOtpSent(true);
         return response.data;
@@ -294,7 +294,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:2000/api/verify-otp-for-reset', { email, otp });
+      const response = await axios.post('http://127.0.0.1:7030/api/verify-otp-for-reset', { email, otp });
       if (response.status === 200) {
         setIsOtpVerified(true);
         return response.data;
@@ -313,7 +313,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:2000/api/reset-password', data);
+      const response = await axios.post('http://127.0.0.1:7030/api/reset-password', data);
       if (response.status === 200) {
         return response.data;
       } else {
@@ -332,7 +332,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post('http://127.0.0.1:2000/api/forgot-password', { email });
+      await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
       setIsTimerActive(true);
       setTimer(180);
     } catch (err) {
@@ -347,7 +347,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:2000/api/signout');
+      const response = await axios.post('http://127.0.0.1:7030/api/signout');
       console.log(response.data);
 
       // Clear local storage
@@ -371,7 +371,7 @@ export const useFunctions = () => {
     setError(null);
     setResponse(null);
     try {
-      const contactResponse = await axios.post('http://127.0.0.1:2000/api/contact', {
+      const contactResponse = await axios.post('http://127.0.0.1:7030/api/contact', {
         fullname: formData.fullname,
         email: formData.email,
         message: formData.message

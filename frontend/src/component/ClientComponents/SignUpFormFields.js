@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Logo from '../assets/idea.png';
+import Logo from '../../assets/idea.png';
 
 library.add(fas);
 

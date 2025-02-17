@@ -1,7 +1,7 @@
 import React from 'react';
 import { Carousel, Button } from 'react-bootstrap';
-import CarouselImg1 from '../assets/img-0.18.jpg';
-import CarouselImg2 from '../assets/img-0.19.png';
+import CarouselImg1 from '../../assets/img-0.18.jpg';
+import CarouselImg2 from '../../assets/img-0.19.png';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

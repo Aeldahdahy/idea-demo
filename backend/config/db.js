@@ -1,7 +1,7 @@
-const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const localDB_URL = 'mongodb://localhost:27017/ideaDB';
 
+require('dotenv').config();
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
 const dbHost = process.env.DB_HOST;

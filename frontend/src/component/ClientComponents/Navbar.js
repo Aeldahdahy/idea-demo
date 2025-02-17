@@ -4,8 +4,8 @@ import LanguageSelector from './LanguageSelector';
 import NavigationLinks from './NavigationLinks';
 import NavUser from './NavUser';
 import NavbarSide from './NavbarSide';
-import { useFunctions } from '../useFunctions';
-import Logo from './Logo';
+import { useFunctions } from '../../useFunctions';
+import Logo from '../Common/Logo';
 
 function NavBar({ onSignInClick }) {
   const { isFixed, isVisible, toggleSideBar, sideBarVisible } = useFunctions();

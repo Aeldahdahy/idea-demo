@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFunctions } from '../useFunctions';
+import { useFunctions } from '../../useFunctions';
 function CopyRight(){
     const {signOutDistroySession} = useFunctions();
     const handleLogout = async () => {

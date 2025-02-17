@@ -1,10 +1,10 @@
 import React from 'react';
-import company1 from '../assets/img-0.17.png';
-import company2 from '../assets/img-0.13.jpg';
-import company3 from '../assets/img-0.14.png';
-import company4 from '../assets/img-0.15.webp';
-import company5 from '../assets/img-0.16.png';
-import company6 from '../assets/img-0.12.png';
+import company1 from '../../assets/img-0.17.png';
+import company2 from '../../assets/img-0.13.jpg';
+import company3 from '../../assets/img-0.14.png';
+import company4 from '../../assets/img-0.15.webp';
+import company5 from '../../assets/img-0.16.png';
+import company6 from '../../assets/img-0.12.png';
 
 function PartnersFeatured() {
 

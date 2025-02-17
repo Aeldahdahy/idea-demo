@@ -19,7 +19,7 @@ const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${d
 db_connection(); // Ensure this is called correctly
 
 const hostname = '127.0.0.1';
-const port = 2000;
+const port = 7030;
 
 
 
@@ -42,7 +42,14 @@ app.use(session({
 
 
 
-app.use(cors());
+app.use(cors(
+  {
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }
+));
 
 app.use(express.json());
 app.use(bodyParser.json());

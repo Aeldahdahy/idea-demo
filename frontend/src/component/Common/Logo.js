@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ideaLogo from '../assets/idea.png';
+import ideaLogo from '../../assets/idea.png';
 
 function Logo() {
   

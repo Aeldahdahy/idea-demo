@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Logo from '../assets/idea.png';
+import Logo from '../../assets/idea.png';
 
 function SignInFormFields({
   formData,

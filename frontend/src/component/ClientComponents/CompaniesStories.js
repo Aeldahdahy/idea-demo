@@ -2,9 +2,9 @@ import React from 'react';
 // import { Container, Carousel, Card, Button } from 'react-bootstrap';
 // import { useFunctions } from '../useFunctions';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import image01 from '../assets/img-0.9.PNG';
-import image02 from '../assets/img-0.10.PNG';
-import image03 from '../assets/img-0.11.PNG';
+import image01 from '../../assets/img-0.9.PNG';
+import image02 from '../../assets/img-0.10.PNG';
+import image03 from '../../assets/img-0.11.PNG';
 
 function CompaniesStories() {
   // const { stories, chunkArray, loading, error } = useFunctions();

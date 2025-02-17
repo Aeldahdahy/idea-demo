@@ -2,12 +2,12 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import img1 from '../assets/img-0.34.png';
-import img2 from '../assets/img-0.32.png';
-import img3 from '../assets/img-0.27.png';
-import img4 from '../assets/img-0.33.png';
-import img5 from '../assets/img-0.28.png';
-import img6 from '../assets/img-0.31.png';
+import img1 from '../../assets/img-0.34.png';
+import img2 from '../../assets/img-0.32.png';
+import img3 from '../../assets/img-0.27.png';
+import img4 from '../../assets/img-0.33.png';
+import img5 from '../../assets/img-0.28.png';
+import img6 from '../../assets/img-0.31.png';
 import { Link } from 'react-router-dom';
 
 

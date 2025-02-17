@@ -1,6 +1,6 @@
 import React from 'react';
-import OfficeImg from '../assets/img-0.2.jpg';
-import { useFunctions } from '../useFunctions';
+import OfficeImg from '../../assets/img-0.2.jpg';
+import { useFunctions } from '../../useFunctions';
 
 function WhoAreWe() {
   const { paragraphText, subText } = useFunctions();

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import contactlogo from '../assets/idea.png';
+import contactlogo from '../../assets/idea.png';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useFunctions } from '../useFunctions';
+import { useFunctions } from '../../useFunctions';
+
 
 library.add(fas);
 

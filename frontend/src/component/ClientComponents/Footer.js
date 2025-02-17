@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from './Logo';
+import Logo from '../Common/Logo';
 import NavigationLinks from './NavigationLinks';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';

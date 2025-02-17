@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/idea-demo/static/css/main.bf409c89.css",
-    "main.js": "/idea-demo/static/js/main.add9fa72.js",
+    "main.css": "/idea-demo/static/css/main.746fd1dc.css",
+    "main.js": "/idea-demo/static/js/main.9755c55b.js",
     "static/js/453.1c40cb1d.chunk.js": "/idea-demo/static/js/453.1c40cb1d.chunk.js",
     "static/media/EmployeePortalBackGround.mp4": "/idea-demo/static/media/EmployeePortalBackGround.7e472743a2da5b5b4d94.mp4",
     "static/media/img-0.19.png": "/idea-demo/static/media/img-0.19.9f4739e819dd5141b9e3.png",
@@ -33,12 +33,12 @@
     "static/media/slick.ttf": "/idea-demo/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/idea-demo/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/idea-demo/index.html",
-    "main.bf409c89.css.map": "/idea-demo/static/css/main.bf409c89.css.map",
-    "main.add9fa72.js.map": "/idea-demo/static/js/main.add9fa72.js.map",
+    "main.746fd1dc.css.map": "/idea-demo/static/css/main.746fd1dc.css.map",
+    "main.9755c55b.js.map": "/idea-demo/static/js/main.9755c55b.js.map",
     "453.1c40cb1d.chunk.js.map": "/idea-demo/static/js/453.1c40cb1d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.bf409c89.css",
-    "static/js/main.add9fa72.js"
+    "static/css/main.746fd1dc.css",
+    "static/js/main.9755c55b.js"
   ]
 }

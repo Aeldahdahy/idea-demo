@@ -9,9 +9,9 @@ function NavigationLinks() {
         <span className="divider">|</span>
         <Link to="/invest" className="nav-link">Invest</Link>
         <span className="divider">|</span>
-        <Link to="/fundraise" className="nav-link">Fundraise</Link>
+        <Link to="/fundraising" className="nav-link">Fund raise</Link>
         <span className="divider">|</span>
-        <Link to="/stories" className="nav-link">Stories</Link>
+        <Link to="/stories" className="nav-link">Blogs</Link>
         <span className="divider">|</span>
         <Link to="/about" className="nav-link">About Us</Link>
         <span className="divider">|</span>

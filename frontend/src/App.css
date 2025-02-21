@@ -1296,47 +1296,240 @@ form.sign-in-form {
   top: 93%;
 }
 
-
-/* pop up login  */
-/* .popupOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* Dashboard */
+.DashboardContentContainer {
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.popupContainer {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  padding: 20px;
-  border-radius: 25px;
-  z-index: 100000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  height: 600px;
-  max-width: 600px; 
+/* Dashboard side-bar */
 
-.popupCloseButton {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 24px;
+.sidebarHeader a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.sidebarContainer {
+  background-color: #1e293b;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 96vh;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+  box-shadow: #000 0px -5px 5px 0px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: #fff;
+  box-shadow: #000 0px 0px 5px 0px;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #fff;
+}
+
+.toggle-btn {
+  background: none;
   border: none;
-  background: transparent;
-  cursor: pointer;
-  z-index: 1;
+  color: #00000093;
+  font-size: 1.2rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+  
+.sidebar-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: #fff;
+}
+  
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  text-decoration: none;
+  color: #024059;
+  border-radius: 0.5rem;
+  transition: background 0.3s ease-in-out;
+  position: relative;
+}
+  
+.sidebar-link.active {
+  background: #E3EDF8;
+  color: #024059;
+  font-weight: bold;
+}
+  
+.sidebar-link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+  background: #024059;
+  border-radius: 0 5px 5px 0;
+}
+    
+.sidebar-link:hover {
+  background: #F0F7FF;
+}
+    
+.sidebarLine {
+  width: 100%;
+  border: 1px solid #DBDBDB;
+  margin: 0.7rem 0;
 }
 
-.popupContent {
-  margin-top: 20px;
-} */
+.sidebarMoreTitle {
+  color: #787486;
+}
 
+.sidebar-link:hover {
+  background-color: #1895c73a;
+}
+
+.sidebar-module {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+    
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  transition: background 0.3s ease-in-out;
+}
+
+.module-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-left: 1.5rem;
+}
+
+.module-link {
+  text-decoration: none;
+  color: #94a3b8;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease-in-out;
+}
+
+.module-link:hover {
+  color: #ffffff;
+}
+
+
+/* Dashboard Navbar */
+.dashboardNavbarContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 14.5px;
+  box-shadow: #000 0px 0px 5px 0px;
+}
+
+.dashboardUser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 2%;
+}
+      
+.dashboardModuleName {
+  margin-left: 2%;
+}
+
+.userImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+  color: rgba(128, 128, 128, 0.479);
+}
+
+.userInfo {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.userName {
+  font-size: 16px;
+  font-weight: bold;
+  color: #024059;
+}
+
+.userRole {
+  font-size: 12px;
+  color: gray;
+}
+      
+      
+      
+/* Dashboard content */      
+.DashboardContent {
+  width: 98%;
+  height: 80vh; /* Set a fixed height */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin: 1px 1px 1px 1px;
+  display: flex;
+  flex-direction: column; /* Stack child elements */
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden; /* Prevents DashboardContent from scrolling */
+  margin: auto;
+}
+
+.dashboardScrollableOutlet {
+  flex: 1; /* Takes up all available space */
+  width: 100%;
+  padding: 10px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  scroll-behavior: smooth;
+}
+
+/* Customize scrollbar */
+.dashboardScrollableOutlet::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboardScrollableOutlet::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.dashboardScrollableOutlet::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
 
 
 /* responsive */

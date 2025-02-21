@@ -1,47 +1,41 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import NavBar from './component/ClientComponents/Navbar';
-import Footer from './component/ClientComponents/Footer';
-import CopyRight from './component/Common/CopyRight';
-import Home from './component/ClientComponents/Home';
-import Contact from './component/ClientComponents/Contact';
-import EmployeePortal from './component/EmployeeComponents/EmployeePortal';
-import ClientPortal from './component/ClientComponents/ClientPortal';
+// Common components
+import NavBar from './components/Common/Navbar';
+import Footer from './components/Common/Footer';
+import CopyRight from './components/Common/CopyRight';
+import Home from './components/Common/Home';
+import Contact from './components/Common/Contact';
+import AboutUs from './components/Common/AboutUs';
+import Blog from './components/Common/Blog';
+import Fundraising from './components/Common/Fundraising';
+import Invest from './components/Common/Invest';
 
-function Invest() {
-  return <h2>Invest Page</h2>;
-}
+// Employee Portal components
+import EmployeePortal from './components/EmployeeComponents/EmployeePortal';
+import EmployeeSignForm from './components/EmployeeComponents/EmployeeSignForm';
 
-function Fundraising() {
-  return <h2>Fundraising Page</h2>;
-}
-
-function Stories() {
-  return <h2>Stories Page</h2>;
-}
-
-function AboutUs() {
-  return <h2>About Us Page</h2>;
-}
+// Client Portal components
+import ClientPortal from './components/ClientComponents/ClientPortal';
+import ClientSignForm from './components/ClientComponents/ClientSignForm';
 
 function Main() {
   const location = useLocation();
   const navigate = useNavigate();
-  const hasAccessedPortal = localStorage.getItem('hasAccessedPortal');
-  const portalType = localStorage.getItem('portalType'); // Retrieve the stored portal type
+  const { isAuthenticated, role } = useSelector((state) => state.auth); // Redux state
 
   useEffect(() => {
-    if (hasAccessedPortal && !location.pathname.startsWith('/client-portal') && !location.pathname.startsWith('/employee-portal')) {
-      if (portalType === 'employee') {
-        navigate('/employee-portal'); // Redirect to Employee Portal
-      } else if (portalType === 'client') {
-        navigate('/client-portal'); // Redirect to Client Portal
-      } else {
-        navigate('/'); // Default to home if portalType is not set
+    // Redirect users based on their role after login
+    if (isAuthenticated && !location.pathname.startsWith('/client-portal') && !location.pathname.startsWith('/employee-portal')) {
+      if (role === 'employee') {
+        navigate('/employee-portal');
+      } else if (role === 'client') {
+        navigate('/client-portal');
       }
     }
-  }, [hasAccessedPortal, location, navigate, portalType]);
+  }, [isAuthenticated, role, location, navigate]);
 
   const hideNavAndFooter = location.pathname.startsWith('/client-portal') || location.pathname.startsWith('/employee-portal');
 
@@ -49,14 +43,26 @@ function Main() {
     <>
       {!hideNavAndFooter && <NavBar />}
       <Routes>
+        {/* Public Routes (Accessible by Anyone) */}
         <Route path="/" element={<Home />} />
         <Route path="/invest" element={<Invest />} />
         <Route path="/fundraising" element={<Fundraising />} />
-        <Route path="/stories" element={<Stories />} />
+        <Route path="/stories" element={<Blog />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/client-portal/*" element={<ClientPortal />} />
-        <Route path="/employee-portal/*" element={<EmployeePortal />} />
+
+        {/* Role-Based Portals */}
+        {isAuthenticated && role === 'client' ? (
+          <Route path="/client-portal/*" element={<ClientPortal />} />
+        ) : (
+          <Route path="/client-portal/*" element={<ClientSignForm />} />
+        )}
+
+        {isAuthenticated && role === 'employee' ? (
+          <Route path="/employee-portal/*" element={<EmployeePortal />} />
+        ) : (
+          <Route path="/employee-portal/*" element={<EmployeeSignForm />} />
+        )}
       </Routes>
       {!hideNavAndFooter && <Footer />}
       <CopyRight />

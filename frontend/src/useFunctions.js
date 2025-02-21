@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Correct import for jwtDecode
+import { useDispatch } from 'react-redux';
+import { login, logout } from './redux/authSlice';
 
 export const useFunctions = () => {
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
+
   const [isFixed, setIsFixed] = useState(false); // State for fixed header
   const [isVisible, setIsVisible] = useState(true); // State for header visibility
   const [sideBarVisible, setSideBarVisible] = useState(false); // State for sidebar visibility
@@ -113,6 +116,8 @@ export const useFunctions = () => {
   // }, []);
 
   // Sign Up
+  
+  
   const signUp = async (formData) => {
     setLoading(true);
     setError(null);
@@ -193,6 +198,13 @@ export const useFunctions = () => {
     }
   }, [isOtpSent, isTimerActive]);
 
+  const setTokenExpiration = () => {
+    setTimeout(() => {
+      dispatch(logout());
+      navigate('/');
+    }, 18000000); // 5 hour in milliseconds
+  };
+
   // Sign In
   const signIn = async (formData) => {
     setLoading(true);
@@ -216,6 +228,8 @@ export const useFunctions = () => {
           localStorage.setItem('hasAccessedPortal', 'true'); // Set the portal access flag
           localStorage.setItem('portalType', 'client'); // Store the portal type
   
+          dispatch(login({ token, role: 'client' }));
+          setTokenExpiration();
           navigate('/client-portal/');
           return response.data;
         } else {
@@ -250,10 +264,13 @@ export const useFunctions = () => {
   
         if (decodedToken && decodedToken.id) {
           localStorage.setItem('userId', decodedToken.id);
+          localStorage.setItem('userName', decodedToken.username);
           localStorage.setItem('userRole', decodedToken.role);
           localStorage.setItem('hasAccessedPortal', 'true');
-          localStorage.setItem('portalType', 'employee'); // Store the portal type
+          localStorage.setItem('portalType', 'employee'); 
   
+          dispatch(login({ token, role: 'employee' }));
+          setTokenExpiration();
           navigate('/employee-portal/');
           return response.data;
         } else {
@@ -355,7 +372,7 @@ export const useFunctions = () => {
       localStorage.removeItem('userFullName');
       localStorage.removeItem('username');
       localStorage.removeItem('hasAccessedPortal'); // Remove portal access flag
-
+      dispatch(logout());
       // Redirect the user to the main route
       navigate('/'); // Ensure this points to the correct main route
     } catch (error) {

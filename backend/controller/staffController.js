@@ -6,7 +6,9 @@ const { validationResult } = require('express-validator');
 // Import models
 const Staff = require('../modules/staff'); 
 
-const JWT_SECRET = 'your_jwt_secret_key'; // Replace with your actual secret key
+
+require('dotenv').config();
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const createStaff = async (req, res) => {
   const { username, password, role } = req.body;
@@ -40,7 +42,7 @@ const loginStaff = async (req, res) => {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
         
-        const token = jwt.sign({ id: staff._id, role: staff.role }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: staff._id, role: staff.role, username: staff.username }, JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token });
     } catch (error) {
       res.status(500).json({ message: 'Server error!' });

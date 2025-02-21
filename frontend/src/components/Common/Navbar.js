@@ -1,5 +1,5 @@
 import React from 'react';
-import SearchBox from './SearchBox';
+import SearchBox from '../Common/SearchBox';
 import LanguageSelector from './LanguageSelector';
 import NavigationLinks from './NavigationLinks';
 import NavUser from './NavUser';

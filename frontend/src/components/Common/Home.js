@@ -1,11 +1,11 @@
 import React from 'react';
-import CarouselMain from './CarouselMain';
+import CarouselMain from '../Common/CarouselMain';
 import Statistics from './Statistics';
 import WhoAreWe from './WhoAreWe';
 // import Industries from './Industries';
-import HowItWorks from './HowItWorks';
-import CompaniesStories from './CompaniesStories';
-import PartnersFeatured from './PartnersFeatured';
+import HowItWorks from '../Common/HowItWorks';
+import CompaniesStories from '../Common/CompaniesStories';
+import PartnersFeatured from '../Common/PartnersFeatured';
 
 
 function Home() {

@@ -69,15 +69,6 @@ function EmployeeMain() {
      <h1>EmployeeMain</h1>
      <h1>EmployeeMain</h1>
      <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
-     <h1>EmployeeMain</h1>
 
     </>
   );

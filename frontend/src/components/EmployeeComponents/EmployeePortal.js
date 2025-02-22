@@ -3,6 +3,10 @@ import { Route, Routes } from 'react-router-dom';
 import EmployeeMain from './EmployeeMain';
 import EmployeeSideBar from './EmployeeSideBar';
 import EmployeeNavbar from './EmployeeNavbar';
+import EmployeeManageStaff from './EmployeeManageStaff';
+import EmployeeManageProjects from './EmployeeManageProjects';
+import EmployeeManageMessages from './EmployeeManageMessages';
+import EmployeeManageUsers from './EmployeeManageUsers';
 
 function EmployeePortal() {
   return (
@@ -20,12 +24,12 @@ function EmployeePortal() {
           <div className='dashboardScrollableOutlet'>
             <Routes>
               <Route path="" element={<EmployeeMain />} />
-              <Route path="/manageStaff" element={<h1>Manage Staff</h1>} />
-              <Route path="/manageProject" element={<h1>Projects</h1>} />
+              <Route path="/manageStaff" element={<EmployeeManageStaff />} />
+              <Route path="/manageProject" element={<EmployeeManageProjects />} />
               <Route path="/manageMeetingRequest" element={<h1>Meeting Requests</h1>} />
               <Route path="/manageContractRequest" element={<h1>Contract Request</h1>} />
-              <Route path="/manageMessages" element={<h1>Messages</h1>} />
-              <Route path="/manageUsers" element={<h1>Manage Users</h1>} />
+              <Route path="/manageMessages" element={<EmployeeManageMessages />} />
+              <Route path="/manageUsers" element={<EmployeeManageUsers />} />
               <Route path="/manageMobileWeb" element={<h1>Mobile Web</h1>} />
               <Route path="/manageAd" element={<h1>Manage Ad</h1>} />
             </Routes>

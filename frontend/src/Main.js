@@ -12,6 +12,7 @@ import AboutUs from './components/Common/AboutUs';
 import Blog from './components/Common/Blog';
 import Fundraising from './components/Common/Fundraising';
 import Invest from './components/Common/Invest';
+import PopUpConfirmationOk from './components/Common/PopUpConfirmationOk';
 
 // Employee Portal components
 import EmployeePortal from './components/EmployeeComponents/EmployeePortal';
@@ -66,6 +67,8 @@ function Main() {
       </Routes>
       {!hideNavAndFooter && <Footer />}
       <CopyRight />
+
+      <PopUpConfirmationOk />
     </>
   );
 }

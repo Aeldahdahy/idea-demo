@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 // functions
-const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword } = require('../controller/clientController'); 
+const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers } = require('../controller/clientController'); 
 const { createStaff, loginStaff } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const { body } = require('express-validator');
@@ -49,6 +49,10 @@ router.post('/verify-otp-for-reset', verifyOtpForReset);
 
 // Reset password
 router.post('/reset-password', resetPassword);
+
+// Get all Users (Clients) (Admin only)
+router.get('/users', authenticateToken, isAdmin, getAllUsers);
+
 
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
@@ -247,6 +247,18 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Get All Users (Clients) for Admin only
+getAllUsers = async (req, res) => {
+  try {
+      const users = await User.find();
+      res.status(200).json({ success: true, data: users });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
+  }
+};
+
+
+
 module.exports = 
 { 
     createContact,
@@ -257,4 +269,5 @@ module.exports =
     forgotPassword,
     verifyOtpForReset,
     resetPassword,
+    getAllUsers,
 };

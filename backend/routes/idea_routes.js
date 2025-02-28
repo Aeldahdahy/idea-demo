@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 // functions
-const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers } = require('../controller/clientController'); 
+const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts } = require('../controller/clientController'); 
 const { createStaff, loginStaff } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const { body } = require('express-validator');
@@ -53,6 +53,10 @@ router.post('/reset-password', resetPassword);
 // Get all Users (Clients) (Admin only)
 router.get('/users', authenticateToken, isAdmin, getAllUsers);
 
+// Update user data (Admin only)
+router.put('/users/:userId', authenticateToken, isAdmin, updateUser);
 
+// Get all contact messages (Admin only)
+router.get('/contacts', authenticateToken, isAdmin, getAllContacts);
 
 module.exports = router;

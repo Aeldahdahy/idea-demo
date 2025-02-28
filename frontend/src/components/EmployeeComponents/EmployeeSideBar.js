@@ -53,9 +53,7 @@ function EmployeeSideBar() {
       animate={{ padding: isExpanded ? '1rem' : '1.5rem' }} 
       transition={{ duration: 0.5 }}
       >
-        <Link to="/employee-portal/" className="sidebar-logo">
           {isExpanded ? <Logo /> : <img src={LogoImage} alt="logo" width={50} />}
-        </Link>
         <button className="toggle-btn" onClick={toggleSidebar}>
           {isExpanded ? <ChevronsLeft /> : <ChevronsRight />}
         </button>

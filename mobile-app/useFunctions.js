@@ -30,7 +30,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://10.0.2.2:2000/api/signup', { email: formData.email });
+      const response = await axios.post('http://10.0.2.2:7030/api/signup', { email: formData.email });
       if (response.status === 200) {
       setIsOtpSent(true);
       return { success: true, data: response.data };
@@ -61,7 +61,7 @@ const verifyOtp = async (formData, otp) => {
   setError(null);
   
   try {
-      const response = await axios.post('http://10.0.2.2:2000/api/verify-otp', {
+      const response = await axios.post('http://10.0.2.2:7030/api/verify-otp', {
           email: formData.email,
           otp,
           role: formData.role,
@@ -103,7 +103,7 @@ const verifyOtp = async (formData, otp) => {
     setError(null);
 
     try {
-      const response = await axios.post('http://10.0.2.2:2000/api/signup', { email });
+      const response = await axios.post('http://10.0.2.2:7030/api/signup', { email });
       
       if(response.status === 200){
         setIsTimerActive(true);
@@ -136,7 +136,7 @@ const verifyOtp = async (formData, otp) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://10.0.2.2:2000/api/signin', {
+      const response = await axios.post('http://10.0.2.2:7030/api/signin', {
         email: formData.email,
         password: formData.password,
       });
@@ -176,7 +176,7 @@ const verifyOtp = async (formData, otp) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:2000/api/forgot-password', { email });
+        const response = await axios.post('http://10.0.2.2:7030/api/forgot-password', { email });
 
         if (response.status === 200) {
             setIsOtpSent(true);
@@ -211,7 +211,7 @@ const verifyOtpForPasswordReset = async (email, otp) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:2000/api/verify-otp-for-reset', { email, otp });
+        const response = await axios.post('http://10.0.2.2:7030/api/verify-otp-for-reset', { email, otp });
 
         if (response.status === 200) {
             setIsOtpVerified(true);
@@ -246,7 +246,7 @@ const resetPassword = async (data) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:2000/api/reset-password', data);
+        const response = await axios.post('http://10.0.2.2:7030/api/reset-password', data);
 
         if (response.status === 200) {
             return { success: true, data: response.data };
@@ -280,7 +280,7 @@ const resendForgetPasswordOtp = async (email) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:2000/api/forgot-password', { email });
+        const response = await axios.post('http://10.0.2.2:7030/api/forgot-password', { email });
 
         if (response.status === 200) {
             setIsTimerActive(true);
@@ -316,7 +316,7 @@ const resendForgetPasswordOtp = async (email) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://10.0.2.2:2000/api/contact-us', contactData);
+      const response = await axios.post('http://10.0.2.2:7030/api/contact-us', contactData);
       if (response.status === 200) {
         return response.data;
       } else {

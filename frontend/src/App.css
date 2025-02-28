@@ -53,6 +53,7 @@ nav.hidden-nav {
 .nav-link, .LogoName, .user-icon {
   font-family: 'Signika', sans-serif;
 }
+
 .logoSearchLangUserNav{
   display: flex;
   justify-content: space-between;
@@ -1491,12 +1492,10 @@ form.sign-in-form {
 /* Dashboard content */      
 .DashboardContent {
   width: 98%;
-  height: 80vh; /* Set a fixed height */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  height: 85vh; /* Set a fixed height */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); */
   box-sizing: border-box;
-  background-color: #ffffff;
-  border-radius: 8px;
-  margin: 1px 1px 1px 1px;
+  background-color: transparent;
   display: flex;
   flex-direction: column; /* Stack child elements */
   justify-content: flex-start;
@@ -1513,7 +1512,7 @@ form.sign-in-form {
   overflow-x: hidden;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   scroll-behavior: smooth;
 }
 
@@ -1530,6 +1529,230 @@ form.sign-in-form {
 .dashboardScrollableOutlet::-webkit-scrollbar-thumb:hover {
   background-color: #555;
 }
+
+/* check popup */
+/* Popup Container */
+.PopUpContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Darkened Background Overlay */
+.PopUpOverlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  -webkit-backdrop-filter: blur(4px); /* Blur effect for Safari */
+  backdrop-filter: blur(4px); /* Blur effect */
+}
+
+/* Popup Content Box */
+.PopUpContent {
+  position: relative;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+  width: 750px; /* Adjust based on design */
+}
+
+/* GIF Styling */
+.PopUpContent video {
+  width: 80px; /* Adjust based on design */
+  height: auto;
+  display: block;
+  margin: 0 auto 15px;
+}
+
+/* Message Text */
+.PopUpContent span {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Button */
+.PopUpContent button {
+  background: #024059;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  width: 20%;
+}
+
+.PopUpContent button:hover {
+  background: #0056b3;
+}
+
+/* Popup Animations */
+@keyframes fadeIn {
+  from {
+      transform: scale(0.9);
+      opacity: 0;
+  }
+  to {
+      transform: scale(1);
+      opacity: 1;
+  }
+}
+
+/* EmployeeManagerStaff */
+.employee-container {
+  width: 90%;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.employee-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1000;
+  padding: 10px 0;
+}
+
+.search-input {
+  width: 30%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.add-btn {
+  background-color: #20315C;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.employee-table th,
+.employee-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.employee-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  position: sticky;
+  top: 60px; /* Adjust based on the height of the employee-header */
+  z-index: 999;
+}
+
+.edit-btn, .delete-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background-color: #3A974C;
+  color: white;
+  margin-right: 5px;
+}
+
+.edit-btn:hover {
+  background-color: #2caa45;
+}
+
+.delete-btn {
+  background-color: #D11A2A;
+  color: white;
+  margin-right: 5px;
+}
+
+.delete-btn:hover {
+  background-color: #f33232;
+}
+
+.toggleStatusContainer {
+  display: flex;
+  align-items: center;
+  background-color: #fff; 
+  border-radius: 10px; /* Rounded corners */
+  padding: 5px;
+  width: 190px; /* Slightly wider for better spacing */
+  height: 40px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: background-color 0.3s ease;
+}
+
+.toggleStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  transition: left 0.3s ease, background-color 0.3s ease;
+  border-radius: 10px; /* Match container's rounded corners */
+}
+
+.toggleStatus.active {
+  background-color: #D11A2A; 
+  left: 0;
+}
+
+.toggleStatus:not(.active) {
+  background-color: #3A974C; 
+  left: 50%;
+}
+
+.toggleCircle {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for the circle */
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.toggleText {
+  margin-left: 8px; /* Slightly more spacing */
+  color: white;
+  font-weight: 600; /* Semi-bold for better readability */
+  font-size: 14px; /* Slightly larger font size */
+  letter-spacing: 0.5px; /* Slight letter spacing */
+}
+
 
 
 /* responsive */

@@ -50,7 +50,7 @@ const createContact = async (req, res) => {
   }
 };
 
-const signUp =  async (req, res) => {
+const signUp = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -182,7 +182,7 @@ const signOut = (req, res) => {
   });
 };
 
-const forgotPassword =  async (req, res) => {
+const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -249,12 +249,12 @@ const resetPassword = async (req, res) => {
 };
 
 // Get All Users (Clients) for Admin only
-getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
-      const users = await User.find();
-      res.status(200).json({ success: true, data: users });
+    const users = await User.find();
+    res.status(200).json({ success: true, data: users });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
+    res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
   }
 };
 
@@ -262,68 +262,68 @@ getAllUsers = async (req, res) => {
 // update User (Client) for Admin only
 const updateUser = async (req, res) => {
   try {
-      const { userId } = req.params; 
-      const updatedData = req.body; 
+    const { userId } = req.params;
+    const updatedData = req.body;
 
-      // Find and update user
-      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
+    // Find and update user
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
 
-      if (!updatedUser) {
-          return res.status(404).json({ success: false, message: 'User not found' });
-      }
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
 
-      res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
+    res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
+    res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
   }
 };
 
 // Get all contact messages
 const getAllContacts = async (req, res) => {
   try {
-      const contacts = await Contact.find();
-      res.status(200).json({ success: true, data: contacts });
+    const contacts = await Contact.find();
+    res.status(200).json({ success: true, data: contacts });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error fetching contact messages', error: error.message });
+    res.status(500).json({ success: false, message: 'Error fetching contact messages', error: error.message });
   }
 };
 
 // update contact message status
 const updateContactStatus = async (req, res) => {
   try {
-      const { contactId } = req.params; // Get contact ID from request params
-      const { status } = req.body; // Get new status from request body
+    const { contactId } = req.params; // Get contact ID from request params
+    const { status } = req.body; // Get new status from request body
 
-      if (!['Pending', 'Replied'].includes(status)) {
-          return res.status(400).json({ success: false, message: 'Invalid status value' });
-      }
+    if (!['Pending', 'Replied'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status value' });
+    }
 
-      const updatedContact = await Contact.findByIdAndUpdate(contactId, { status }, { new: true, runValidators: true });
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, { status }, { new: true, runValidators: true });
 
-      if (!updatedContact) {
-          return res.status(404).json({ success: false, message: 'Contact message not found' });
-      }
+    if (!updatedContact) {
+      return res.status(404).json({ success: false, message: 'Contact message not found' });
+    }
 
-      res.status(200).json({ success: true, message: 'Contact status updated', data: updatedContact });
+    res.status(200).json({ success: true, message: 'Contact status updated', data: updatedContact });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error updating contact status', error: error.message });
+    res.status(500).json({ success: false, message: 'Error updating contact status', error: error.message });
   }
 };
 
 
 
-module.exports = 
-{ 
-    createContact,
-    signUp,
-    signIn,
-    signOut,
-    verifyOtp,
-    forgotPassword,
-    verifyOtpForReset,
-    resetPassword,
-    getAllUsers,
-    updateUser,
-    getAllContacts,
-    updateContactStatus,
+module.exports =
+{
+  createContact,
+  signUp,
+  signIn,
+  signOut,
+  verifyOtp,
+  forgotPassword,
+  verifyOtpForReset,
+  resetPassword,
+  getAllUsers,
+  updateUser,
+  getAllContacts,
+  updateContactStatus,
 };

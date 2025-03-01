@@ -25,7 +25,7 @@ export const useFunctions = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '']);
-  const [timer, setTimer] = useState(180); 
+  const [timer, setTimer] = useState(180);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const [response, setResponse] = useState(null); // Initialize response as null
   const [loading, setLoading] = useState(false);
@@ -120,17 +120,17 @@ export const useFunctions = () => {
   // }, []);
 
   // Sign Up
-  
-  
+
+
   const signUp = async (formData) => {
     setLoading(true);
     setError(null);
     try {
       // Step 1: Send OTP
       const otpResponse = await axios.post('http://127.0.0.1:7030/api/signup', { email: formData.email });
-      
+
       if (otpResponse.status === 200) {
-        setIsOtpSent(true); 
+        setIsOtpSent(true);
         return otpResponse.data;
       } else {
         throw otpResponse.data;
@@ -218,25 +218,25 @@ export const useFunctions = () => {
         email: formData.email,
         password: formData.password,
       });
-  
+
       if (response.status === 200) {
         const { token } = response.data;
-  
-        
+
+
         localStorage.setItem('authToken', token);
-        
+
         const decodedToken = jwtDecode(token);
         if (decodedToken.user.status === 'Inactive') {
           setLoading(false);
           throw new Error('This account has been deactivated!');
         }
         console.log('Decoded Token:', decodedToken, response.data);
-  
+
         if (decodedToken && decodedToken.user) {
           localStorage.setItem('userFullName', decodedToken.user.fullName);
           localStorage.setItem('hasAccessedPortal', 'true'); // Set the portal access flag
           localStorage.setItem('portalType', 'client'); // Store the portal type
-  
+
           dispatch(login({ token, role: 'client' }));
           setTokenExpiration();
           navigate('/client-portal/');
@@ -263,21 +263,21 @@ export const useFunctions = () => {
         username: formData.username,
         password: formData.password,
       });
-  
+
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem('authToken', token);
-  
+
         const decodedToken = jwtDecode(token);
         console.log('Decoded Token:', decodedToken);
-  
+
         if (decodedToken && decodedToken.id) {
           localStorage.setItem('userId', decodedToken.id);
           localStorage.setItem('userName', decodedToken.username);
           localStorage.setItem('userRole', decodedToken.role);
           localStorage.setItem('hasAccessedPortal', 'true');
-          localStorage.setItem('portalType', 'employee'); 
-  
+          localStorage.setItem('portalType', 'employee');
+
           dispatch(login({ token, role: 'employee' }));
           setTokenExpiration();
           navigate('/employee-portal/');
@@ -295,8 +295,8 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
-  
+
+
   const sendOtp = async (email) => {
     setLoading(true);
     setError(null);
@@ -334,7 +334,7 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
+
   const resetPassword = async (data) => {
     setLoading(true);
     setError(null);
@@ -353,7 +353,7 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
+
   const resendForgetPasswordOtp = async (email) => {
     setLoading(true);
     setError(null);
@@ -369,7 +369,7 @@ export const useFunctions = () => {
   };
 
   // sign out
-  const signOutDistroySession = async () =>{
+  const signOutDistroySession = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -386,7 +386,7 @@ export const useFunctions = () => {
       navigate('/'); // Ensure this points to the correct main route
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred. please try again later.');
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -430,26 +430,26 @@ export const useFunctions = () => {
     const THIRTY_MINUTES = 30 * 60 * 1000;
     const now = Date.now();
     const token = localStorage.getItem('authToken');
-  
+
     if (!token) {
       setError('Authentication token is missing. Please sign in again.');
       return;
     }
-  
+
     if (lastUserFetched && now - lastUserFetched < THIRTY_MINUTES) {
       return;
     }
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
       const response = await axios.get('http://127.0.0.1:7030/api/users', {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       // console.log("API Response:", response.data);
-  
+
       if (Array.isArray(response.data.data)) {
         dispatch(setUsers(response.data.data));
       } else {
@@ -461,16 +461,16 @@ export const useFunctions = () => {
       setLoading(false);
     }
   }, [lastUserFetched, dispatch]);
-  
+
   const updateUsers = async (id, status) => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
     const newStatus = status === "Active" ? "Inactive" : "Active";
-  
+
     // Optimistically update the user status in the UI
     dispatch(setUsers(users.map(user => user._id === id ? { ...user, status: newStatus } : user)));
-  
+
     try {
       const response = await axios.put(
         `http://127.0.0.1:7030/api/users/${id}`,
@@ -491,7 +491,7 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
+
   // get all messages
   const getAllMessages = useCallback(async () => {
     const THIRTY_MINUTES = 30 * 60 * 1000;
@@ -526,11 +526,41 @@ export const useFunctions = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastMessageFetched, dispatch]); 
+  }, [lastMessageFetched, dispatch]);
+
+  const updateMessages = async (id, status) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    const newStatus = status === "Pending" ? "Replied" : "Pending";
+
+    // Optimistically update the message status in the UI
+    dispatch(setMessages(messages.map(message => message._id === id ? { ...message, status: newStatus } : message)));
+
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:7030/api/contacts/${id}/status`,
+        { status: newStatus },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+      if (response.status !== 200) {
+        throw new Error('Failed to update message');
+      }
+
+    } catch (err) {
+      // Revert the status change if the API call fails
+      dispatch(setMessages(messages.map(message => message._id === id ? { ...message, status } : message)));
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
-  
+
     switch (name) {
       case 'email': {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -580,17 +610,17 @@ export const useFunctions = () => {
       default:
         break;
     }
-  
+
     setFormError(errors);
   };
-  
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  return { 
+  return {
     signIn,
     signUp,
     setOtp,
@@ -609,11 +639,12 @@ export const useFunctions = () => {
     setFormError,
     resetPassword,
     toggleSideBar,
+    updateMessages,
     toggleDropdown,
     selectLanguage,
     getAllMessages,
     setBackendError,
-    handleInputChange,  
+    handleInputChange,
     signOutDistroySession,
     resendForgetPasswordOtp,
     verifyOtpForPasswordReset,

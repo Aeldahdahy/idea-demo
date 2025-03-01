@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 function EmployeeManageMessages() {
   const [search, setSearch] = useState("");
   const [selectedMessages, setSelectedMessages] = useState([]);
-  const { messages = [], users =[], loading, error, getAllMessages, getAllUsers } = useFunctions();
+  const { messages = [], users = [], loading, error, getAllMessages, getAllUsers, updateMessages } = useFunctions();
   const location = useLocation();
 
   useEffect(() => {
@@ -15,8 +15,6 @@ function EmployeeManageMessages() {
       getAllUsers();
     }
   }, [location.pathname, getAllMessages, getAllUsers]);
-
-
 
   const handleMessagesCheckbox = (id) => {
     setSelectedMessages((prev) =>
@@ -30,18 +28,18 @@ function EmployeeManageMessages() {
 
   const filteredMessages = Array.isArray(messages)
     ? messages.filter((message) => {
-        const searchTerm = search.toLowerCase();
-        return (
-          message.fullname.toLowerCase().includes(searchTerm) ||
-          message.email.toLowerCase().includes(searchTerm) ||
-          (message.message?.toString() || "").includes(searchTerm)
-        );
-      })
+      const searchTerm = search.toLowerCase();
+      return (
+        message.fullname.toLowerCase().includes(searchTerm) ||
+        message.email.toLowerCase().includes(searchTerm) ||
+        (message.message?.toString() || "").includes(searchTerm)
+      );
+    })
     : [];
 
-    const isExistingUser = (email) => {
-      return users.some(user => user.email === email);
-    };
+  const isExistingUser = (email) => {
+    return users.some(user => user.email === email);
+  };
 
   return (
     <>
@@ -54,7 +52,8 @@ function EmployeeManageMessages() {
           className="search-input"
         />
       </div>
-      {loading ? <p>Loading...</p> : error ? <p style={{ color: "red" }}>{error}</p> : null}
+      {loading && <p>Loading...</p>}
+      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
       {filteredMessages.length === 0 ? (
         <p>No Messages found.</p>
       ) : (
@@ -91,9 +90,8 @@ function EmployeeManageMessages() {
                 <td>{message.message}</td>
                 <td>{isExistingUser(message.email) ? "Yes" : "No"}</td>
                 <td>
-                  <div className="toggleStatusContainer" onClick={() => getAllMessages(message._id, message.status)}>
-                  {/* updateMessage */}
-                    <div className={`toggleStatus ${message.status === "Pending" ? "" : "Pending"}`}>
+                  <div className="toggleStatusContainer" onClick={() => updateMessages(message._id, message.status)}>
+                    <div className={`toggleStatus ${message.status === "Pending" ? "active" : ""}`}>
                       <span className="toggleCircle"></span>
                       <span className="toggleText">{message.status === "Pending" ? "Pending" : "Replied"}</span>
                     </div>

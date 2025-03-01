@@ -1,22 +1,33 @@
-*{
+* {
   margin: 0;
   padding: 0;
 }
+
 body {
   font-family: 'Bitter', sans-serif;
 }
-h1,h2,h3,h4,h5,h6{
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Signika', sans-serif;
 }
-.space{
+
+.space {
   margin: 2%;
 }
-.spacemin{
+
+.spacemin {
   margin: 1%;
 }
-.spacemax{
+
+.spacemax {
   margin: 5%;
 }
+
 .MainButton {
   background-color: #0029A4;
   color: #fff;
@@ -25,6 +36,7 @@ h1,h2,h3,h4,h5,h6{
   border-radius: 25px;
   text-decoration: none;
 }
+
 .MainButton:hover {
   background-color: #0536ca;
 }
@@ -37,6 +49,7 @@ nav {
   width: 100%;
   transition: transform 0.5s ease-in-out;
 }
+
 nav.fixed-nav {
   position: fixed;
   top: 0;
@@ -46,44 +59,54 @@ nav.fixed-nav {
   background-color: #fff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 nav.hidden-nav {
   transform: translateY(-100%);
 }
 
-.nav-link, .LogoName, .user-icon {
+.nav-link,
+.LogoName,
+.user-icon {
   font-family: 'Signika', sans-serif;
 }
-.logoSearchLangUserNav{
+
+.logoSearchLangUserNav {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.LogoMain{
+
+.LogoMain {
   display: flex;
   margin-left: 2%;
   align-items: center;
   justify-content: center;
   z-index: 100000;
 }
-.LogoMain a{
+
+.LogoMain a {
   text-decoration: none;
 }
-.LogoMain img{
+
+.LogoMain img {
   width: 70px;
 }
-.nameLogo{
+
+.nameLogo {
   color: #000;
   font-size: 35px;
   font-weight: bold;
   text-decoration: none;
 }
-.navSearchLangUser{
+
+.navSearchLangUser {
   display: flex;
   width: 85%;
   margin-right: 1%;
   align-items: center;
   justify-content: space-between;
 }
+
 .navlang {
   position: relative;
   display: flex;
@@ -91,9 +114,11 @@ nav.hidden-nav {
   align-items: center;
   justify-content: space-between;
 }
-.navlang svg{
+
+.navlang svg {
   cursor: pointer;
 }
+
 .dropdownMenu {
   position: absolute;
   background-color: white;
@@ -107,35 +132,42 @@ nav.hidden-nav {
   visibility: hidden;
   transition: visibility 0s, opacity 0.3s ease, transform 0.3s ease;
 }
+
 .dropdownMenu,
 .dropdownMenu:focus-within .dropdownMenu {
   opacity: 1;
   visibility: visible;
   animation: fadeInSlideDown 0.3s ease forwards;
 }
+
 .dropdownItem {
   padding: 8px 16px;
   cursor: pointer;
   color: #000;
   text-align: center;
 }
-.dropdownMenu a{
+
+.dropdownMenu a {
   text-decoration: none;
   padding: 8px 0px;
 }
+
 .dropdownItem:hover {
   background-color: #f1f1f1;
 }
-.navUser .dropdownMenu{
+
+.navUser .dropdownMenu {
   right: -.9em;
   top: 2em;
 }
-.userNameDownIcon{
+
+.userNameDownIcon {
   text-align: center;
   display: flex;
   font-size: 20px;
   align-items: center;
 }
+
 .navUser {
   display: flex;
   font-size: 20px;
@@ -147,14 +179,17 @@ nav.hidden-nav {
   cursor: pointer;
   max-width: 225px;
 }
+
 .userIconContainer {
   display: flex;
   align-items: center;
 }
-.userImage{
+
+.userImage {
   width: 40px;
   height: 40px;
 }
+
 .userIconSvgContainer {
   width: 40px;
   height: 40px;
@@ -162,34 +197,39 @@ nav.hidden-nav {
   border: 2px solid #000;
   position: relative;
 }
-.userIconSVG{
+
+.userIconSVG {
   width: 25px;
   height: 25px;
   position: absolute;
   bottom: 0;
   left: 5px;
 }
+
 .userName {
   margin-left: 10px;
   font-size: 16px;
   font-weight: bold;
 }
+
 .dropdownIcon {
   margin-left: 5px;
 }
 
 
 
-.Links{
+.Links {
   width: 100%;
   display: flex;
   justify-content: center;
   margin: 5px 0px;
 }
-.Links a{
+
+.Links a {
   margin: 0 5%;
 }
-.Links a:hover{
+
+.Links a:hover {
   color: #0029A4;
   text-decoration: 5px underline;
 }
@@ -203,15 +243,18 @@ nav.hidden-nav {
   width: 80%;
   padding: 0 !important;
 }
+
 .searchContainer {
   display: flex;
   align-items: center;
   border-radius: 25px;
-  width: 50px; /* Initial collapsed width */
+  width: 50px;
+  /* Initial collapsed width */
   transition: width 0.4s ease, border 0.4s ease;
   background-color: #fff;
   overflow: hidden;
 }
+
 .searchInput {
   border: none;
   flex: 1;
@@ -221,8 +264,9 @@ nav.hidden-nav {
   background-color: transparent;
   padding: 5px 10px;
   transition: padding 0.4s ease, opacity 0.4s ease;
-  opacity: 0; 
+  opacity: 0;
 }
+
 .iconButton {
   padding: 5px;
   border: none;
@@ -231,31 +275,41 @@ nav.hidden-nav {
   background: none;
   transition: transform 0.2s ease;
 }
+
 .iconButton:hover {
   transform: scale(1.1);
 }
+
 .separator {
   display: none;
   color: #ccc;
   padding: 0 10px;
 }
+
 .searchContainer:hover,
 .searchContainer:focus-within {
-  width: 100%; /* Expanded state */
+  width: 100%;
+  /* Expanded state */
   border: 2px solid #ccc;
 }
+
 .searchContainer:hover .separator,
 .searchContainer:focus-within .separator {
   display: block;
 }
+
 .searchContainer:hover .searchInput,
 .searchContainer:focus-within .searchInput {
-  padding: 0px 20px 0px 10px; /* Adjusted padding for a smooth transition */
-  opacity: 1; /* Fade in */
+  padding: 0px 20px 0px 10px;
+  /* Adjusted padding for a smooth transition */
+  opacity: 1;
+  /* Fade in */
 }
+
 .searchContainer .iconButton:first-child {
   margin-left: 10px;
 }
+
 .searchInput::-webkit-search-cancel-button {
   -webkit-appearance: none;
   height: 20px;
@@ -264,12 +318,15 @@ nav.hidden-nav {
   background-size: contain;
   cursor: pointer;
 }
+
 .searchContainer .iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1; /* Ensure it's above the input field */
+  z-index: 1;
+  /* Ensure it's above the input field */
 }
+
 .searchContainer .iconButton svg {
   width: 20px;
   height: 20px;
@@ -280,70 +337,92 @@ nav.hidden-nav {
   top: 0;
   width: 50%;
   right: -100%;
-  display: none; /* Hidden by default */
-  position: fixed; /* Fixed position to stay in place */
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Fixed position to stay in place */
   background-color: #fff;
   color: #000;
   height: 100%;
-  transition: right 0.5s ease; /* Smooth slide-in effect */
-  z-index: 100; /* Ensure it's above other content */
+  transition: right 0.5s ease;
+  /* Smooth slide-in effect */
+  z-index: 100;
+  /* Ensure it's above other content */
   flex-direction: column;
   padding: 20px;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
 }
+
 .sideBarNav.visible {
   right: 0;
   display: flex;
 }
+
 .sideBartoggleButton.fixed-nav {
   position: fixed;
 }
+
 .sideBartoggleButton.hidden-nav {
-  transform: translateY(-100%); /* Move button out of view */
+  transform: translateY(-100%);
+  /* Move button out of view */
 }
+
 .sideBarSearch {
-  flex: 0 1 auto; /* Allow it to grow */
-  margin:15% 0% 5% 0%;
+  flex: 0 1 auto;
+  /* Allow it to grow */
+  margin: 15% 0% 5% 0%;
 }
+
 .SideBarLinks {
-  flex: 1 1 auto; /* Allow it to grow and take remaining space */
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  flex: 1 1 auto;
+  /* Allow it to grow and take remaining space */
+  overflow-y: auto;
+  /* Allow scrolling if content overflows */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
   margin-bottom: 20%;
 }
+
 .SideBarLangUser {
-  flex: 0 1 auto; /* Allow it to grow */
+  flex: 0 1 auto;
+  /* Allow it to grow */
   display: flex;
   justify-content: space-evenly;
   gap: 10px;
 }
+
 .SideBarLinks .divider {
   display: none;
 }
+
 .sideBartoggleButton {
   position: fixed;
-  top: 10px; /* Adjust position as needed */
-  right: 30px; /* Adjust position as needed */
+  top: 10px;
+  /* Adjust position as needed */
+  right: 30px;
+  /* Adjust position as needed */
   background: none;
   border: none;
   color: #000;
   font-size: 24px;
   cursor: pointer;
-  z-index: 1001;  /* Ensure it's above the sidebar */
+  z-index: 1001;
+  /* Ensure it's above the sidebar */
 }
 
 /* Section Who are we */
-.rounded-bottom-custom{
+.rounded-bottom-custom {
   border-radius: 0px 0px 200px 0px;
 }
+
 .WhoAreWeHeader {
   font-size: 2rem;
   font-weight: bold;
 }
-.WhoAreWeImg{
+
+.WhoAreWeImg {
   display: flex;
   justify-content: center;
 }
@@ -351,17 +430,23 @@ nav.hidden-nav {
 /* carousel section */
 .carousel-rounded-bottom-custom {
   position: relative;
-  border-radius: 0 0 0 200px !important; /* Rounded bottom-left corner */
-  overflow: hidden; /* Ensure no overflow beyond rounded corners */
+  border-radius: 0 0 0 200px !important;
+  /* Rounded bottom-left corner */
+  overflow: hidden;
+  /* Ensure no overflow beyond rounded corners */
 }
+
 .carousel-item {
   position: relative;
 }
+
 .carousel-image {
-  height: 75vh; /* Set this according to the desired height */
+  height: 75vh;
+  /* Set this according to the desired height */
   object-fit: cover;
   width: 100%;
 }
+
 .carousel-item .overlay {
   position: absolute;
   top: 0;
@@ -369,13 +454,15 @@ nav.hidden-nav {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.399);
-  border-radius: 0 0 0 200px; /* Rounded bottom-left corner for overlay */
+  border-radius: 0 0 0 200px;
+  /* Rounded bottom-left corner for overlay */
   z-index: 1;
 }
+
 .carousel-caption {
   position: absolute;
   top: 50%;
-  left: 0%; 
+  left: 0%;
   width: 50%;
   transform: translateY(-50%);
   color: white;
@@ -384,25 +471,33 @@ nav.hidden-nav {
   align-items: center;
   flex-direction: column;
 }
+
 .buttons-container {
   margin-top: 20px;
 }
-.buttons-container .MainButton{
+
+.buttons-container .MainButton {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: solid 1px #fff;
 }
-.carousel-caption h1, .carousel-caption p {
+
+.carousel-caption h1,
+.carousel-caption p {
   margin: 0;
 }
+
 .carousel-caption .btn {
-  margin-top: 10px; /* Space between text and button */
+  margin-top: 10px;
+  /* Space between text and button */
 }
-.carousel-caption h1{
+
+.carousel-caption h1 {
   font-size: 5rem;
 }
-.carousel-caption p{
+
+.carousel-caption p {
   font-size: 1.5rem;
   max-width: 50%;
 }
@@ -413,21 +508,29 @@ nav.hidden-nav {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 20px; /* Add padding for better spacing */
+  padding: 20px;
+  /* Add padding for better spacing */
 }
+
 .Statistics-container h2 {
   font-size: 2em;
-  color: #333; /* Dark text color for the heading */
-  margin-bottom: 2%; /* Spacing between heading and boxes */
+  color: #333;
+  /* Dark text color for the heading */
+  margin-bottom: 2%;
+  /* Spacing between heading and boxes */
   max-width: 50%;
   font-weight: bold;
 }
+
 .StatisticsCon {
   display: flex;
   justify-content: space-evenly;
-  flex-wrap: wrap; /* Ensure responsiveness on smaller screens */
-  gap: 50px; /* Add space between boxes */
+  flex-wrap: wrap;
+  /* Ensure responsiveness on smaller screens */
+  gap: 50px;
+  /* Add space between boxes */
 }
+
 .box {
   display: flex;
   flex-direction: column;
@@ -435,24 +538,31 @@ nav.hidden-nav {
   border-radius: 20px;
   border: solid 1px #00000097;
   width: 200px;
-  padding: 20px; /* Increase padding for more space inside boxes */
+  padding: 20px;
+  /* Increase padding for more space inside boxes */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background: #ffffff; /* Light background for the box */
+  background: #ffffff;
+  /* Light background for the box */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .box:hover {
   transform: translateY(-10px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
+
 .box img {
   border-radius: 50%;
-  width: 80px; /* Adjust size of images */
+  width: 80px;
+  /* Adjust size of images */
   height: 80px;
   margin-bottom: 10px;
 }
+
 .box span {
   font-size: 1em;
-  color: #333; /* Dark text color for span */
+  color: #333;
+  /* Dark text color for span */
   text-align: center;
 }
 
@@ -462,15 +572,19 @@ nav.hidden-nav {
   overflow: hidden;
   border-radius: 25px;
   cursor: pointer;
-  width: 300px; /* Adjust as needed */
-  height: 150px; /* Adjust as needed */
+  width: 300px;
+  /* Adjust as needed */
+  height: 150px;
+  /* Adjust as needed */
 }
 
 .IndustriesBox img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Adjust as needed */
-  border-radius: 25px; /* Same as .IndustriesBox for rounded corners */
+  object-fit: cover;
+  /* Adjust as needed */
+  border-radius: 25px;
+  /* Same as .IndustriesBox for rounded corners */
 }
 
 .overlay {
@@ -483,9 +597,11 @@ nav.hidden-nav {
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: 1; /* Set to 1 to make the overlay always visible */
+  opacity: 1;
+  /* Set to 1 to make the overlay always visible */
   transition: opacity 0.3s ease;
-  border-radius: 25px; /* Rounded corners */
+  border-radius: 25px;
+  /* Rounded corners */
 }
 
 .IndustriesText {
@@ -496,24 +612,28 @@ nav.hidden-nav {
 
 
 /* Section Success Stories */
-.CompaniesStoriesContainer{
+.CompaniesStoriesContainer {
   background-color: #f1f1f1;
   border-radius: 200px 0px 0px 0px;
   padding: 5%;
   overflow: hidden;
 }
-.StoriresCardContainer{
+
+.StoriresCardContainer {
   border-radius: 25px;
   height: 500px;
 }
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  background-color: #000; 
+  background-color: #000;
   filter: none;
 }
+
 .carousel-control-next {
   justify-content: flex-end !important;
 }
+
 .carousel-control-prev {
   justify-content: flex-start !important;
 }
@@ -529,11 +649,15 @@ nav.hidden-nav {
 
 .logo {
   width: 100px;
-  height: auto; /* Ensures logos maintain aspect ratio */
+  height: auto;
+  /* Ensures logos maintain aspect ratio */
   /* transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, background-color 0.3s ease-in-out; */
-  border-radius: 10px; /* Adds rounded corners to logos */
-  padding: 10px; /* Adds padding around the logos */
-  background-color: white; /* Background color for padding */
+  border-radius: 10px;
+  /* Adds rounded corners to logos */
+  padding: 10px;
+  /* Adds padding around the logos */
+  background-color: white;
+  /* Background color for padding */
 }
 
 /* .logo:hover {
@@ -549,69 +673,84 @@ nav.hidden-nav {
   color: #fff;
   padding: 2% 0;
 }
+
 .footerLogo {
   display: flex;
   justify-content: flex-start;
   padding: 2%;
   z-index: 10;
 }
-.footerLogo .nameLogo{
+
+.footerLogo .nameLogo {
   color: #fff;
 }
+
 .footerContainer {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: nowrap;
 }
+
 .footerDivider {
   border-left: solid 1px #fff;
   height: 100%;
   margin: 0 1rem;
 }
+
 .footerSection {
   flex: 1;
   padding: 0 1rem;
 }
-.footerSection .divider{
+
+.footerSection .divider {
   display: none;
 }
+
 .footerSection:nth-child(2) {
   flex: 2;
 }
-.form-control{
+
+.form-control {
   width: 60% !important;
   border-radius: 25px !important;
 }
-.SubscribeButton{
+
+.SubscribeButton {
   width: 25%;
   background-color: #D9D9D9;
   color: #000;
   border-radius: 25px !important;
 }
+
 .footerHeaderSection {
   border-bottom: solid 2px #fff;
   text-align: center;
   padding-bottom: 0.5rem;
   margin-bottom: 5rem;
 }
+
 .subscribeSection {
   text-align: center;
 }
+
 .footerLinks a {
   text-decoration: none;
   color: #fff;
   display: block;
   margin-bottom: 0.5rem;
 }
+
 .footerLinks {
   margin-bottom: 1rem;
 }
+
 .footerSocialMediaIcons {
   display: flex;
   gap: 1rem;
   justify-content: center;
 }
+
 .footerSocialMediaIcons a {
   cursor: pointer;
   color: #163696;
@@ -626,7 +765,7 @@ nav.hidden-nav {
 }
 
 /* Copy Right */
-.CopyRight{
+.CopyRight {
   display: flex;
   justify-content: center;
   font-weight: bold;
@@ -634,7 +773,7 @@ nav.hidden-nav {
 }
 
 /* Sign page */
-.SignContainer{
+.SignContainer {
   position: relative;
   width: 100%;
   background-color: #fff;
@@ -755,7 +894,8 @@ form.sign-in-form {
   font-size: 18px;
   transition: box-shadow 0.3s ease-in-out;
 }
-.social-icon svg{
+
+.social-icon svg {
   color: #EB4436;
   padding-right: 5px;
 }
@@ -785,6 +925,7 @@ form.sign-in-form {
   background-color: #0536ca;
   color: #fff;
 }
+
 .panels-container {
   position: absolute;
   height: 100%;
@@ -803,7 +944,7 @@ form.sign-in-form {
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image:  linear-gradient(-45deg, #0029A4 0%, #0536ca 100%) ;
+  background-image: linear-gradient(-45deg, #0029A4 0%, #0536ca 100%);
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 6;
@@ -904,6 +1045,7 @@ form.sign-in-form {
 .SignContainer.sign-up-mode .right-panel {
   pointer-events: all;
 }
+
 .switch-container {
   display: flex;
   justify-content: space-between;
@@ -915,6 +1057,7 @@ form.sign-in-form {
   border-radius: 25px;
   overflow: hidden;
 }
+
 .switch-label {
   flex: 1;
   padding: 10px 0;
@@ -922,25 +1065,30 @@ form.sign-in-form {
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 .switch-label input {
   display: none;
 }
+
 .switch-label.active {
   background-color: #0536ca;
   color: #fff;
-} 
-.UserEmailVerification{
+}
+
+.UserEmailVerification {
   text-align: center;
   margin: 20px 0;
   font-size: 20px;
   font-weight: bold;
 }
-.otpInputs{
+
+.otpInputs {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.otpInputs input{
+
+.otpInputs input {
   max-width: 50px;
   min-height: 50px;
   margin: 20px 10px;
@@ -950,7 +1098,8 @@ form.sign-in-form {
   border: 2px solid #000;
   border-radius: 10px;
 }
-.ResendOTP{
+
+.ResendOTP {
   margin-top: 12px;
 }
 
@@ -966,11 +1115,13 @@ form.sign-in-form {
   text-align: center;
   max-width: 380px;
 }
+
 .error-message {
   margin: 0;
   padding: 2px;
   font-size: 14px;
 }
+
 .success-box {
   border: 1px solid #A3CFBB;
   background-color: #D1E7DD;
@@ -982,13 +1133,14 @@ form.sign-in-form {
   text-align: center;
   max-width: 380px;
 }
+
 .success-message {
   margin: 0;
   padding: 2px;
   font-size: 14px;
 }
 
-.inputErrorMessage{
+.inputErrorMessage {
   color: red;
   margin-left: 10px;
   font-size: 14px;
@@ -999,11 +1151,12 @@ form.sign-in-form {
   padding: 10px 5px;
   background-color: #f8d7da;
 }
+
 .input-field.error {
   border-color: red;
 }
 
-.SuccessverificationImage{
+.SuccessverificationImage {
   border: solid 1px #fff;
   border-radius: 100px;
   width: 150px;
@@ -1020,13 +1173,15 @@ form.sign-in-form {
 }
 
 /* Reset password  */
-.resetPasswordButton{
+.resetPasswordButton {
   width: 200px;
 }
-.backToSignInButton{
+
+.backToSignInButton {
   width: 200px;
 }
-.sign-in-form .btn{
+
+.sign-in-form .btn {
   margin: 10px 0px;
 }
 
@@ -1077,16 +1232,19 @@ form.sign-in-form {
   margin-bottom: 15px;
   background-color: #fff;
 }
-.contactNameEmail{
+
+.contactNameEmail {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
 }
-.textBoxTitle{
+
+.textBoxTitle {
   font-weight: bold;
   padding: 10px 0;
 }
+
 .input-container input {
   flex: 1;
   padding: 10px;
@@ -1095,10 +1253,12 @@ form.sign-in-form {
   width: 100%;
   outline: none;
 }
-.input-container svg{
+
+.input-container svg {
   padding: 0 10px;
 }
-.textBox-container{
+
+.textBox-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -1107,13 +1267,14 @@ form.sign-in-form {
   height: 25vh;
   padding: 1px;
 }
-.textBox-container textarea{
+
+.textBox-container textarea {
   height: 100%;
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 25px;
-  resize: none; 
+  resize: none;
 }
 
 .contact-form .MainButton {
@@ -1348,7 +1509,7 @@ form.sign-in-form {
   top: 0;
   right: 0;
 }
-  
+
 .sidebar-links {
   flex: 1;
   display: flex;
@@ -1357,7 +1518,7 @@ form.sign-in-form {
   padding: 1rem;
   background-color: #fff;
 }
-  
+
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -1369,13 +1530,13 @@ form.sign-in-form {
   transition: background 0.3s ease-in-out;
   position: relative;
 }
-  
+
 .sidebar-link.active {
   background: #E3EDF8;
   color: #024059;
   font-weight: bold;
 }
-  
+
 .sidebar-link.active::before {
   content: "";
   position: absolute;
@@ -1386,11 +1547,11 @@ form.sign-in-form {
   background: #024059;
   border-radius: 0 5px 5px 0;
 }
-    
+
 .sidebar-link:hover {
   background: #F0F7FF;
 }
-    
+
 .sidebarLine {
   width: 100%;
   border: 1px solid #DBDBDB;
@@ -1410,7 +1571,7 @@ form.sign-in-form {
   flex-direction: column;
   gap: 0.3rem;
 }
-    
+
 .module-header {
   display: flex;
   align-items: center;
@@ -1455,7 +1616,7 @@ form.sign-in-form {
   gap: 10px;
   margin-right: 2%;
 }
-      
+
 .dashboardModuleName {
   margin-left: 2%;
 }
@@ -1485,29 +1646,34 @@ form.sign-in-form {
   font-size: 12px;
   color: gray;
 }
-      
-      
-      
-/* Dashboard content */      
+
+
+
+/* Dashboard content */
 .DashboardContent {
   width: 98%;
-  height: 85vh; /* Set a fixed height */
+  height: 85vh;
+  /* Set a fixed height */
   /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); */
   box-sizing: border-box;
   background-color: transparent;
   display: flex;
-  flex-direction: column; /* Stack child elements */
+  flex-direction: column;
+  /* Stack child elements */
   justify-content: flex-start;
   align-items: center;
-  overflow: hidden; /* Prevents DashboardContent from scrolling */
+  overflow: hidden;
+  /* Prevents DashboardContent from scrolling */
   margin: auto;
 }
 
 .dashboardScrollableOutlet {
-  flex: 1; /* Takes up all available space */
+  flex: 1;
+  /* Takes up all available space */
   width: 100%;
   padding: 10px;
-  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
   overflow-x: hidden;
   background-color: #ffffff;
   border-radius: 8px;
@@ -1531,7 +1697,8 @@ form.sign-in-form {
 
 /* check popup */
 /* Popup Container */
-.PopUpContainer {
+.PopUpContainer,
+.yesNoPopUpContainer {
   position: fixed;
   top: 0;
   left: 0;
@@ -1548,25 +1715,33 @@ form.sign-in-form {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  backdrop-filter: blur(4px); /* Blur effect */
+  background: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent background */
+  -webkit-backdrop-filter: blur(4px);
+  /* Blur effect for Safari */
+  backdrop-filter: blur(4px);
+  /* Blur effect */
 }
 
 /* Popup Content Box */
 .PopUpContent {
+  display: flex;
   position: relative;
   background: #fff;
   padding: 20px;
   border-radius: 12px;
   text-align: center;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in-out;
-  width: 750px; /* Adjust based on design */
+  animation: fadeIn 0.3 sease-in-out;
+  width: 750px;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* GIF Styling */
 .PopUpContent video {
-  width: 80px; /* Adjust based on design */
+  width: 80px;
+  /* Adjust based on design */
   height: auto;
   display: block;
   margin: 0 auto 15px;
@@ -1598,15 +1773,81 @@ form.sign-in-form {
   background: #0056b3;
 }
 
+.yesNoBtnContainer {
+  width: 90%;
+  display: flex;
+  justify-content: space-evenly;
+  padding-bottom: 20px;
+}
+
+.yesNoBtnContainer .yes-btn {
+  background-color: #3A974C;
+}
+
+.yesNoBtnContainer .yes-btn:hover {
+  background-color: #3cbe56;
+}
+
+.yesNoBtnContainer .no-btn {
+  background-color: #D11A2A;
+}
+
+.yesNoBtnContainer .no-btn:hover {
+  background-color: #e43232;
+}
+
+.yesNoPopUpHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  background-color: #D9D9D9;
+  border-radius: 8px 8px 0px 0px;
+}
+
+.yesNoPopUpHeader span {
+  margin: 0;
+}
+
+.PopUpContent.confirmation {
+  padding: 0 !important;
+}
+
+.popupMessage {
+  padding: 15px;
+}
+
+.PopUpContent .popupMessage {
+  margin-bottom: 0;
+}
+
+.close-btn {
+  background-color: #e71d357c;
+  border-radius: 20px;
+  margin: 0;
+  width: 30px;
+  height: 30px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.close-btn svg {
+  color: #E71D36;
+}
+
 /* Popup Animations */
 @keyframes fadeIn {
   from {
-      transform: scale(0.9);
-      opacity: 0;
+    transform: scale(0.9);
+    opacity: 0;
   }
+
   to {
-      transform: scale(1);
-      opacity: 1;
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
@@ -1666,11 +1907,13 @@ form.sign-in-form {
   background-color: #f4f4f4;
   font-weight: bold;
   position: sticky;
-  top: 60px; /* Adjust based on the height of the employee-header */
+  top: 60px;
+  /* Adjust based on the height of the employee-header */
   z-index: 999;
 }
 
-.edit-btn, .delete-btn {
+.edit-btn,
+.delete-btn {
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
@@ -1701,14 +1944,17 @@ form.sign-in-form {
 .toggleStatusContainer {
   display: flex;
   align-items: center;
-  background-color: #fff; 
-  border-radius: 10px; /* Rounded corners */
+  background-color: #fff;
+  border-radius: 10px;
+  /* Rounded corners */
   padding: 5px;
-  width: 190px; /* Slightly wider for better spacing */
+  width: 190px;
+  /* Slightly wider for better spacing */
   height: 40px;
   position: relative;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow for depth */
   transition: background-color 0.3s ease;
 }
 
@@ -1721,16 +1967,17 @@ form.sign-in-form {
   position: absolute;
   top: 0;
   transition: left 0.3s ease, background-color 0.3s ease;
-  border-radius: 10px; /* Match container's rounded corners */
+  border-radius: 10px;
+  /* Match container's rounded corners */
 }
 
 .toggleStatus.active {
-  background-color: #D11A2A; 
+  background-color: #D11A2A;
   left: 0;
 }
 
 .toggleStatus:not(.active) {
-  background-color: #3A974C; 
+  background-color: #3A974C;
   left: 50%;
 }
 
@@ -1739,95 +1986,123 @@ form.sign-in-form {
   height: 10px;
   background-color: white;
   border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for the circle */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow for the circle */
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .toggleText {
-  margin-left: 8px; /* Slightly more spacing */
+  margin-left: 8px;
+  /* Slightly more spacing */
   color: white;
-  font-weight: 600; /* Semi-bold for better readability */
-  font-size: 14px; /* Slightly larger font size */
-  letter-spacing: 0.5px; /* Slight letter spacing */
+  font-weight: 600;
+  /* Semi-bold for better readability */
+  font-size: 14px;
+  /* Slightly larger font size */
+  letter-spacing: 0.5px;
+  /* Slight letter spacing */
 }
-
 
 
 /* responsive */
-@media screen and (max-width:1171px){
-  .carousel-caption h1{
+@media screen and (max-width:1171px) {
+  .carousel-caption h1 {
     font-size: 4rem;
   }
-  .carousel-caption p{
+
+  .carousel-caption p {
     font-size: 1.5rem;
     max-width: 60%;
   }
-  .Statistics-container h2{
+
+  .Statistics-container h2 {
     max-width: 70%;
   }
 }
-@media screen and (min-width:961px){
-  .sideBartoggleButton{display: none;}
-  
+
+@media screen and (min-width:961px) {
+  .sideBartoggleButton {
+    display: none;
+  }
+
 }
 
 @media screen and (max-width: 960px) {
-  .navSearchLangUser { display: none; }
-  .Links { display: none; }
-  .sideBarNav {
-    display: flex; /* Make it visible */
-    font-size: 25px;
-    width: 100%; /* Adjusted for better visibility */
+  .navSearchLangUser {
+    display: none;
   }
+
+  .Links {
+    display: none;
+  }
+
+  .sideBarNav {
+    display: flex;
+    /* Make it visible */
+    font-size: 25px;
+    width: 100%;
+    /* Adjusted for better visibility */
+  }
+
   .sideBarSearch {
     display: flex;
     justify-content: center;
-}
-.dropdownMenu {
-  top: -5em;
-  right: -1em;
-}
-  .dropdown{
+  }
+
+  .dropdownMenu {
+    top: -5em;
+    right: -1em;
+  }
+
+  .dropdown {
     top: -5.3em;
     right: -2.5em;
   }
-    .navUser .dropdownMenu {
-      top: -5em;
-    }
-  
-  .footerContainer{
+
+  .navUser .dropdownMenu {
+    top: -5em;
+  }
+
+  .footerContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  .footerLinks{
+
+  .footerLinks {
     text-align: center;
   }
-  .footerSection{
+
+  .footerSection {
     margin-bottom: 5rem;
   }
-  .footerHeaderSection{
+
+  .footerHeaderSection {
     margin-bottom: 3rem;
   }
-  .carousel-caption h1{
+
+  .carousel-caption h1 {
     font-size: 3.2rem;
   }
-  .carousel-caption p{
+
+  .carousel-caption p {
     font-size: 1.5rem;
     max-width: 70%;
   }
-  .Statistics-container h2{
+
+  .Statistics-container h2 {
     max-width: 90%;
   }
 
-                                                              
+
 }
 
 @media (max-width: 870px) {
-  .SignContainer{
+  .SignContainer {
     min-height: 800px;
     height: 96vh;
   }
+
   .signin-signup {
     width: 100%;
     top: 95%;
@@ -1928,37 +2203,48 @@ form.sign-in-form {
 
 @media screen and (max-width:768px) {
   .box {
-    width: 150px; /* Adjust width for smaller screens */
+    width: 150px;
+    /* Adjust width for smaller screens */
     padding: 15px;
   }
+
   .box img {
     width: 60px;
     height: 60px;
   }
+
   .Statistics-container h2 {
     font-size: 1.2em;
     max-width: 100%;
   }
+
   .box span {
     font-size: 0.9em;
   }
-  .carousel-caption h1{
+
+  .carousel-caption h1 {
     font-size: 2.5rem;
   }
-  .carousel-caption p{
+
+  .carousel-caption p {
     font-size: 1rem;
     max-width: 80%;
   }
+
   .input-field {
     height: 40px;
   }
-  .contactNameEmail{
+
+  .contactNameEmail {
     flex-wrap: wrap;
     justify-content: center;
   }
-  .input-container input, .textBox-container textarea{
+
+  .input-container input,
+  .textBox-container textarea {
     font-size: 12px;
   }
+
   /* .wrapper{
     width: 400px;
   }
@@ -1988,25 +2274,29 @@ form.sign-in-form {
 
 }
 
-@media screen and (max-width:580px){
-  .CompaniesStoriesContainer{
+@media screen and (max-width:580px) {
+  .CompaniesStoriesContainer {
     padding: 13% 0%;
   }
-  
-  .carousel-caption{
+
+  .carousel-caption {
     left: 3%;
     width: 70%;
   }
-  .carousel-caption h1{
+
+  .carousel-caption h1 {
     font-size: 2.2rem;
   }
-  .carousel-caption p{
+
+  .carousel-caption p {
     font-size: 1rem;
     max-width: 80%;
   }
+
   .Statistics-container h2 {
     font-size: 1em;
   }
+
   form {
     padding: 0 1.5rem;
   }
@@ -2014,10 +2304,12 @@ form.sign-in-form {
   .image {
     display: none;
   }
+
   .panel .content {
     padding: 0.5rem 1rem;
   }
-  .SignContainer{
+
+  .SignContainer {
     padding: 1.5rem;
   }
 
@@ -2030,12 +2322,14 @@ form.sign-in-form {
     bottom: 28%;
     left: 50%;
   }
-  .switch-container{
+
+  .switch-container {
     margin: 20px 0;
   }
-    .HowItWorksCard {
-      max-width: 300px;
-    }
+
+  .HowItWorksCard {
+    max-width: 300px;
+  }
 
 
   /* .wrapper{

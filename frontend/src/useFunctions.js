@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Correct import for jwtDecode
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from './redux/authSlice';
+import { setUsers } from './redux/userSlice';
+import { setMessages } from './redux/messagesSlice';
 
 export const useFunctions = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { users, lastUserFetched } = useSelector(state => state.users);
+  const { messages, lastMessageFetched } = useSelector(state => state.messages);
 
   const [isFixed, setIsFixed] = useState(false); // State for fixed header
   const [isVisible, setIsVisible] = useState(true); // State for header visibility
@@ -215,13 +219,18 @@ export const useFunctions = () => {
         password: formData.password,
       });
   
-      
       if (response.status === 200) {
         const { token } = response.data;
-        localStorage.setItem('authToken', token);
   
+        
+        localStorage.setItem('authToken', token);
+        
         const decodedToken = jwtDecode(token);
-        console.log('Decoded Token:', decodedToken);
+        if (decodedToken.user.status === 'Inactive') {
+          setLoading(false);
+          throw new Error('This account has been deactivated!');
+        }
+        console.log('Decoded Token:', decodedToken, response.data);
   
         if (decodedToken && decodedToken.user) {
           localStorage.setItem('userFullName', decodedToken.user.fullName);
@@ -415,7 +424,110 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
+
+  // get all users
+  const getAllUsers = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+    const token = localStorage.getItem('authToken');
   
+    if (!token) {
+      setError('Authentication token is missing. Please sign in again.');
+      return;
+    }
+  
+    if (lastUserFetched && now - lastUserFetched < THIRTY_MINUTES) {
+      return;
+    }
+  
+    setLoading(true);
+    setError(null);
+  
+    try {
+      const response = await axios.get('http://127.0.0.1:7030/api/users', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // console.log("API Response:", response.data);
+  
+      if (Array.isArray(response.data.data)) {
+        dispatch(setUsers(response.data.data));
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data.data');
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'An error occurred while fetching users.');
+    } finally {
+      setLoading(false);
+    }
+  }, [lastUserFetched, dispatch]);
+  
+  const updateUsers = async (id, status) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    const newStatus = status === "Active" ? "Inactive" : "Active";
+  
+    // Optimistically update the user status in the UI
+    dispatch(setUsers(users.map(user => user._id === id ? { ...user, status: newStatus } : user)));
+  
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:7030/api/users/${id}`,
+        { status: newStatus },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+      if (response.status !== 200) {
+        throw new Error('Failed to update user');
+      }
+    } catch (err) {
+      // Revert the status change if the API call fails
+      dispatch(setUsers(users.map(user => user._id === id ? { ...user, status } : user)));
+      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // get all messages
+  const getAllMessages = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+      setError('Authentication token is missing. Please sign in again.');
+      return;
+    }
+
+    if (lastMessageFetched && now - lastMessageFetched < THIRTY_MINUTES) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://127.0.0.1:7030/api/contacts', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // console.log("API Response:", response.data);
+
+      if (Array.isArray(response.data.data)) {
+        dispatch(setMessages(response.data.data)); // Dispatch setMessages action
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data.data');
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'An error occurred while fetching messages.');
+    } finally {
+      setLoading(false);
+    }
+  }, [lastMessageFetched, dispatch]); 
+
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
   
@@ -490,6 +602,8 @@ export const useFunctions = () => {
     verifyOtp,
     chunkArray,
     formatTime,
+    updateUsers,
+    getAllUsers,
     StaffSignIn,
     handleSearch,
     setFormError,
@@ -497,15 +611,18 @@ export const useFunctions = () => {
     toggleSideBar,
     toggleDropdown,
     selectLanguage,
+    getAllMessages,
     setBackendError,
-    handleInputChange,
+    handleInputChange,  
     signOutDistroySession,
     resendForgetPasswordOtp,
     verifyOtpForPasswordReset,
     otp,
     timer,
+    users,
     error,
     isFixed,
+    messages,
     isVisible,
     sideBarVisible,
     dropdownVisible,

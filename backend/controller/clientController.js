@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
@@ -144,7 +144,8 @@ const signIn = async (req, res) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        fullName: user.fullName
+        fullName: user.fullName,
+        status: user.status
       }
     };
 
@@ -247,6 +248,47 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Get All Users (Clients) for Admin only
+getAllUsers = async (req, res) => {
+  try {
+      const users = await User.find();
+      res.status(200).json({ success: true, data: users });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
+  }
+};
+
+
+// update User (Client) for Admin only
+const updateUser = async (req, res) => {
+  try {
+      const { userId } = req.params; 
+      const updatedData = req.body; 
+
+      // Find and update user
+      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
+
+      if (!updatedUser) {
+          return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
+  }
+};
+
+// Get all contact messages
+const getAllContacts = async (req, res) => {
+  try {
+      const contacts = await Contact.find();
+      res.status(200).json({ success: true, data: contacts });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error fetching contact messages', error: error.message });
+  }
+};
+
+
 module.exports = 
 { 
     createContact,
@@ -257,4 +299,7 @@ module.exports =
     forgotPassword,
     verifyOtpForReset,
     resetPassword,
+    getAllUsers,
+    updateUser,
+    getAllContacts,
 };

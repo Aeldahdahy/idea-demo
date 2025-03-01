@@ -144,7 +144,8 @@ const signIn = async (req, res) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        fullName: user.fullName
+        fullName: user.fullName,
+        status: user.status
       }
     };
 

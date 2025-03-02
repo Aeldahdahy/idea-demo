@@ -288,6 +288,29 @@ const getAllContacts = async (req, res) => {
   }
 };
 
+// update contact message status
+const updateContactStatus = async (req, res) => {
+  try {
+      const { contactId } = req.params; // Get contact ID from request params
+      const { status } = req.body; // Get new status from request body
+
+      if (!['Pending', 'Replied'].includes(status)) {
+          return res.status(400).json({ success: false, message: 'Invalid status value' });
+      }
+
+      const updatedContact = await Contact.findByIdAndUpdate(contactId, { status }, { new: true, runValidators: true });
+
+      if (!updatedContact) {
+          return res.status(404).json({ success: false, message: 'Contact message not found' });
+      }
+
+      res.status(200).json({ success: true, message: 'Contact status updated', data: updatedContact });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error updating contact status', error: error.message });
+  }
+};
+
+
 
 module.exports = 
 { 
@@ -302,4 +325,5 @@ module.exports =
     getAllUsers,
     updateUser,
     getAllContacts,
+    updateContactStatus,
 };

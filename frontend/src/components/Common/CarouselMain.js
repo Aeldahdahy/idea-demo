@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carousel, Button } from 'react-bootstrap';
+import { Carousel } from 'react-bootstrap';
 import CarouselImg1 from '../../assets/img-0.18.jpg';
 import CarouselImg2 from '../../assets/img-0.19.png';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -39,7 +39,7 @@ function CarouselMain() {
             <h1 className="text-white">Welcome to IDEA</h1>
             <p className="text-white">Where Tomorrow's Innovative Ideas Meet Today's Investors.</p>
             <div className="buttons-container">
-              <Button className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Button>
+              <Link to='/client-portal/' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
             </div>
           </Carousel.Caption>
         </Carousel.Item>
@@ -54,7 +54,7 @@ function CarouselMain() {
             <h1 className="text-white">Welcome to IDEA</h1>
             <p className="text-white">Where Tomorrow's Innovative Ideas Meet Today's Investors.</p>
             <div className="buttons-container">
-              <Button className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Button>
+              <Link to='/client-portal/' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
             </div>
           </Carousel.Caption>
         </Carousel.Item>

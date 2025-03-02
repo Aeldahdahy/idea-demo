@@ -1,125 +1,139 @@
-import React, { useState, useEffect } from "react";
-import { Eye } from "lucide-react";
-import { useFunctions } from "../../useFunctions";
-import defaultImage from "../../assets/img-0.35.png";
-import { useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import userImage from "./img-0.35.png";
+import { PenSquare, Plus, Trash } from "lucide-react";
+
+const dummyData = [
+  { id: 1, name: "Taha Elrajel", username: "Taha_Elrajel123", phone: "+218 1235 54456", role: "Auditor", email: "Tahaelrajel@gmail.com", status: true, image: userImage },
+  { id: 2, name: "Passant Essam", username: "Passant_essam123", phone: "+218 1235 54456", role: "Auditor", email: "Passant.essam@gmail.com", status: true, image: userImage },
+  { id: 3, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 4, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 5, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 6, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 7, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 8, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 9, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 10, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 11, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 12, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 13, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 14, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 15, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 16, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 17, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 18, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 19, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+  { id: 20, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
+];
 
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
+  const [users, setUsers] = useState(dummyData);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const { users = [], loading, error, updateUsers, getAllUsers } = useFunctions();
-  const location = useLocation();
 
-  useEffect(() => {
-    if (location.pathname === '/employee-portal/manageUsers') {
-      getAllUsers();
-    }
-  }, [location.pathname, getAllUsers]);
+  const handleToggle = (id) => {
+    setUsers(users.map(user => user.id === id ? { ...user, status: !user.status } : user));
+  };
 
   const handleUserCheckbox = (id) => {
-    setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((userId) => userId !== id) : [...prev, id]
-    );
+    if (selectedUsers.includes(id)) {
+      setSelectedUsers(selectedUsers.filter(userId => userId !== id));
+    } else {
+      setSelectedUsers([...selectedUsers, id]);
+    }
   };
 
   const handleSelectAll = (e) => {
-    setSelectedUsers(e.target.checked ? users.map((user) => user._id) : []);
+    if (e.target.checked) {
+      const allUserIds = filteredUsers.map(user => user.id);
+      setSelectedUsers(allUserIds);
+    } else {
+      setSelectedUsers([]);
+    }
   };
 
-  const filteredUsers = Array.isArray(users)
-    ? users.filter((user) => {
-        const searchTerm = search.toLowerCase();
-        return (
-          user.fullName.toLowerCase().includes(searchTerm) ||
-          user.email.toLowerCase().includes(searchTerm) ||
-          (user.phone?.toString() || "").includes(searchTerm) ||
-          user.role.toLowerCase().includes(searchTerm) ||
-          (user.createdAt?.toString() || "").includes(searchTerm)
-        );
-      })
-    : [];
-
-  const formatDate = (isoString) => {
-    return isoString ? isoString.split("T")[0] : "N/A"; // Extract YYYY-MM-DD
-  };
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <>
       <div className="employee-header">
-        <input
+        <input 
           type="text"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="search-input"
         />
+        <button className="add-btn"><Plus /> Add New Staff</button>
       </div>
-      {loading ? <p>Loading...</p> : error ? <p style={{ color: "red" }}>{error}</p> : null}
-      {filteredUsers.length === 0 ? (
-        <p>No users found.</p>
-      ) : (
-        <table className="employee-table">
-          <thead className="employee-table-head">
-            <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
-                  onChange={handleSelectAll}
+      <table className="employee-table">
+        <thead className="employee-table-head">
+          <tr>
+            <th>
+              <input 
+                type="checkbox" 
+                checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                onChange={handleSelectAll}
+              />
+            </th>
+            <th>Id</th>
+            <th></th>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredUsers.map(user => (
+            <tr key={user.id}>
+              <td>
+                <input 
+                  type="checkbox" 
+                  checked={selectedUsers.includes(user.id)}
+                  onChange={() => handleUserCheckbox(user.id)}
                 />
-              </th>
-              {/* <th>Id</th> */}
-              <th></th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Role</th>
-              <th>Created</th>
-              <th style={{ textAlign: "center", paddingRight: 80 }}>Status</th>
-              <th>View</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user._id}>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.includes(user._id)}
-                    onChange={() => handleUserCheckbox(user._id)}
+              </td>
+              <td>{user.id}#</td>
+              <td>
+                  <img 
+                    src={user.image} 
+                    alt={user.name} 
+                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }} 
                   />
-                </td>
-                {/* <td>{user._id}#</td> */}
-                <td>
-                  <img
-                    src={user.image || defaultImage} // Handle missing image
-                    alt={user.fullName}
-                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
-                  />
-                </td>
-                <td>{user.fullName}</td>
-                <td>{user.email}</td>
-                <td>{user.phone || "N/A"}</td>
-                <td>{user.role}</td>
-                <td>{formatDate(user.createdAt)}</td>
-                <td>
-                  <div className="toggleStatusContainer" onClick={() => updateUsers(user._id, user.status)}>
-                    <div className={`toggleStatus ${user.status === "Active" ? "" : "active"}`}>
-                      <span className="toggleCircle"></span>
-                      <span className="toggleText">{user.status === "Active" ? "Active" : "Inactive"}</span>
-                    </div>
+              </td>
+                    
+              <td>
+                  {user.name}
+              </td>
+              <td>{user.username}</td>
+              <td>{user.phone}</td>
+              <td>{user.role}</td>
+              <td>{user.email}</td>
+              <td>
+                <div className="toggleStatusContainer">
+                  <div className={`toggleStatus ${user.status ? "active" : ""}`} onClick={() => handleToggle(user.id)}>
+                    <span className="toggleCircle"></span>
+                    <span className="toggleText">{user.status ? "Active" : "Inactive"}</span>
                   </div>
-                </td>
-                <td>
-                  <button className="edit-btn">
-                    <Eye />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                </div>
+              </td>
+              <td>
+                <button className="edit-btn"><PenSquare /></button>
+              </td>
+              <td>
+                <button className="delete-btn"><Trash /></button>
+
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 }

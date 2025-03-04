@@ -5,7 +5,7 @@ const router = express.Router();
 
 // functions
 const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus } = require('../controller/clientController'); 
-const { createStaff, loginStaff } = require('../controller/staffController');
+const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const { body } = require('express-validator');
 
@@ -18,6 +18,15 @@ router.post('/staff', authenticateToken, isAdmin, createStaff);
 
 // Staff login
 router.post('/staff/login', loginStaff);
+
+// Get all staff members (Admin only)
+router.get('/staff', authenticateToken, isAdmin, getAllStaff);
+
+// Get a single staff member by ID (Admin only)
+router.get('/staff/:staffId', authenticateToken, isAdmin, getStaffById);
+
+// Update staff details (Admin only)
+router.put('/staff/:staffId', authenticateToken, isAdmin, updateStaff);
 
 // -----------------------------------------------------------------------------------> client portal <-----------------------------------------------------------------------------------
 

@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Correct import for jwtDecode
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from './redux/authSlice';
+import { setUsers } from './redux/userSlice';
 
 export const useFunctions = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { users, lastFetched } = useSelector(state => state.users);
 
   const [isFixed, setIsFixed] = useState(false); // State for fixed header
   const [isVisible, setIsVisible] = useState(true); // State for header visibility
@@ -415,6 +417,47 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
+
+  // get all users
+  const getAllUsers = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+    const token = localStorage.getItem('authToken');
+  
+    if (!token) {
+      setError('Authentication token is missing. Please sign in again.');
+      return;
+    }
+  
+    if (lastFetched && now - lastFetched < THIRTY_MINUTES) {
+      return;
+    }
+  
+    setLoading(true);
+    setError(null);
+  
+    try {
+      const response = await axios.get('http://127.0.0.1:7030/api/users', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // console.log("API Response:", response.data);
+  
+      if (Array.isArray(response.data.data)) {
+        dispatch(setUsers(response.data.data));
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data.data');
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'An error occurred while fetching users.');
+    } finally {
+      setLoading(false);
+    }
+  }, [lastFetched, dispatch]);
+  
+  useEffect(() => {
+    getAllUsers();
+  }, [getAllUsers]);
   
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
@@ -499,11 +542,13 @@ export const useFunctions = () => {
     selectLanguage,
     setBackendError,
     handleInputChange,
+    refetch: getAllUsers,
     signOutDistroySession,
     resendForgetPasswordOtp,
     verifyOtpForPasswordReset,
     otp,
     timer,
+    users,
     error,
     isFixed,
     isVisible,

@@ -53,6 +53,7 @@ nav.hidden-nav {
 .nav-link, .LogoName, .user-icon {
   font-family: 'Signika', sans-serif;
 }
+
 .logoSearchLangUserNav{
   display: flex;
   justify-content: space-between;
@@ -1491,12 +1492,10 @@ form.sign-in-form {
 /* Dashboard content */      
 .DashboardContent {
   width: 98%;
-  height: 80vh; /* Set a fixed height */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  height: 85vh; /* Set a fixed height */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); */
   box-sizing: border-box;
-  background-color: #ffffff;
-  border-radius: 8px;
-  margin: 1px 1px 1px 1px;
+  background-color: transparent;
   display: flex;
   flex-direction: column; /* Stack child elements */
   justify-content: flex-start;
@@ -1513,7 +1512,7 @@ form.sign-in-form {
   overflow-x: hidden;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   scroll-behavior: smooth;
 }
 

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from './redux/authSlice';
 import { setUsers } from './redux/userSlice';
 import { setMessages } from './redux/messagesSlice';
+import { toast } from 'react-toastify';
 
 export const useFunctions = () => {
   const navigate = useNavigate();
@@ -281,16 +282,19 @@ export const useFunctions = () => {
           dispatch(login({ token, role: 'employee' }));
           setTokenExpiration();
           navigate('/employee-portal/');
+          toast.success('Login sucssfully!');
           return response.data;
         } else {
-          throw new Error('Unexpected token structure');
+          // throw new Error('Unexpected token structure');
         }
       } else {
-        setError('Sign-in failed. Please try again.');
+        toast.error('Sign-in failed. Please try again.');
+        // setError('Sign-in failed. Please try again.');
       }
     } catch (err) {
-      setError(err.response?.data?.message || `An error occurred. Please try again. ${err.message}`);
-      throw err;
+      toast.error(err.response?.data?.message || `An error occurred. Please try again. ${err.message}`);
+      // setError(err.response?.data?.message || `An error occurred. Please try again. ${err.message}`);
+      // throw err;
     } finally {
       setLoading(false);
     }

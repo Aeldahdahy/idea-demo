@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
+const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
+
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -11,6 +13,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const Contact = require('../modules/contact');
 const User = require('../modules/signup');
 const Otp = require('../modules/otp');
+const Project = require('../modules/project');
 
 // Create a transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -50,7 +53,7 @@ const createContact = async (req, res) => {
   }
 };
 
-const signUp =  async (req, res) => {
+const signUp = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -144,7 +147,8 @@ const signIn = async (req, res) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        fullName: user.fullName
+        fullName: user.fullName,
+        status: user.status
       }
     };
 
@@ -181,7 +185,7 @@ const signOut = (req, res) => {
   });
 };
 
-const forgotPassword =  async (req, res) => {
+const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -248,12 +252,12 @@ const resetPassword = async (req, res) => {
 };
 
 // Get All Users (Clients) for Admin only
-getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
-      const users = await User.find();
-      res.status(200).json({ success: true, data: users });
+    const users = await User.find();
+    res.status(200).json({ success: true, data: users });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
+    res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
   }
 };
 
@@ -261,44 +265,199 @@ getAllUsers = async (req, res) => {
 // update User (Client) for Admin only
 const updateUser = async (req, res) => {
   try {
-      const { userId } = req.params; 
-      const updatedData = req.body; 
+    const { userId } = req.params;
+    const updatedData = req.body;
 
-      // Find and update user
-      const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
+    // Find and update user
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
 
-      if (!updatedUser) {
-          return res.status(404).json({ success: false, message: 'User not found' });
-      }
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
 
-      res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
+    res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
+    res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
   }
 };
 
 // Get all contact messages
 const getAllContacts = async (req, res) => {
   try {
-      const contacts = await Contact.find();
-      res.status(200).json({ success: true, data: contacts });
+    const contacts = await Contact.find();
+    res.status(200).json({ success: true, data: contacts });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error fetching contact messages', error: error.message });
+    res.status(500).json({ success: false, message: 'Error fetching contact messages', error: error.message });
   }
 };
 
+// update contact message status
+const updateContactStatus = async (req, res) => {
+  try {
+    const { contactId } = req.params; // Get contact ID from request params
+    const { status } = req.body; // Get new status from request body
 
-module.exports = 
-{ 
-    createContact,
-    signUp,
-    signIn,
-    signOut,
-    verifyOtp,
-    forgotPassword,
-    verifyOtpForReset,
-    resetPassword,
-    getAllUsers,
-    updateUser,
-    getAllContacts,
+    if (!['Pending', 'Replied'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status value' });
+    }
+
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, { status }, { new: true, runValidators: true });
+
+    if (!updatedContact) {
+      return res.status(404).json({ success: false, message: 'Contact message not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Contact status updated', data: updatedContact });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error updating contact status', error: error.message });
+  }
+};
+
+// Create Project Controller
+const createProject = async (req, res) => {
+  try {
+      const {
+          project_name, project_industry, max_investment, min_investment,
+          city, state, postal_code, market_description, business_objectives
+      } = req.body;
+
+      // File uploads from middleware
+      const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : null;
+      const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : null;
+      const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
+
+      // Create new project with default status "Pending"
+      const newProject = new Project({
+          project_name, project_industry, max_investment, min_investment,
+          city, state, postal_code, market_description, business_objectives,
+          business_plan, additional_document, project_images,
+          status: 'Pending' // Default status
+      });
+
+      await newProject.save();
+      res.status(201).json({ success: true, message: 'Project created successfully', data: newProject });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error creating project', error: error.message });
+  }
+};
+
+// Get All Projects Controller
+const getAllProjects = async (req, res) => {
+  try {
+      const projects = await Project.find(); // Fetch all projects from the database
+      res.status(200).json({ success: true, data: projects });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error fetching projects', error: error.message });
+  }
+};
+
+// Get Project by ID Controller
+const getProjectById = async (req, res) => {
+  try {
+      const { projectId } = req.params; // Get project ID from request params
+      const project = await Project.findById(projectId);
+
+      if (!project) {
+          return res.status(404).json({ success: false, message: 'Project not found' });
+      }
+
+      res.status(200).json({ success: true, data: project });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error fetching project', error: error.message });
+  }
+};
+
+// Update Project Controller
+const updateProject = async (req, res) => {
+  try {
+      const { projectId } = req.params;
+      let { project_name, project_industry, max_investment, min_investment,
+            city, state, postal_code, market_description, business_objectives, status } = req.body;
+
+      // Validate status
+      const validStatuses = ['Pending', 'Approved', 'Rejected'];
+      if (status && !validStatuses.includes(status)) {
+          return res.status(400).json({ success: false, message: 'Invalid status value' });
+      }
+
+      // Find the project
+      const project = await Project.findById(projectId);
+      if (!project) {
+          return res.status(404).json({ success: false, message: 'Project not found' });
+      }
+
+      // Handle file uploads (Update only if new files are provided)
+      const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : project.business_plan;
+      const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : project.additional_document;
+      const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : project.project_images;
+
+      // Update project details
+      const updatedProject = await Project.findByIdAndUpdate(
+          projectId,
+          {
+              project_name, project_industry, max_investment, min_investment,
+              city, state, postal_code, market_description, business_objectives,
+              business_plan, additional_document, project_images,
+              status: status || project.status // Keep previous status if not provided
+          },
+          { new: true, runValidators: true }
+      );
+
+      res.status(200).json({ success: true, message: 'Project updated successfully', data: updatedProject });
+  } catch (error) {
+      res.status(500).json({ success: false, message: 'Error updating project', error: error.message });
+  }
+};
+
+// Delete Project by ID Controller
+const deleteProject = async (req, res) => {
+    try {
+        const { projectId } = req.params; // Get project ID from request params
+
+        // Find the project
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ success: false, message: 'Project not found' });
+        }
+
+        // Delete associated files (business plan, additional document, images)
+        if (project.business_plan) fs.unlinkSync(project.business_plan);
+        if (project.additional_document) fs.unlinkSync(project.additional_document);
+        if (project.project_images) {
+            project.project_images.forEach(imagePath => {
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
+            });
+        }
+
+        // Delete project from database
+        await Project.findByIdAndDelete(projectId);
+
+        res.status(200).json({ success: true, message: 'Project deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error deleting project', error: error.message });
+    }
+};
+
+
+module.exports =
+{
+  createContact,
+  signUp,
+  signIn,
+  signOut,
+  verifyOtp,
+  forgotPassword,
+  verifyOtpForReset,
+  resetPassword,
+  getAllUsers,
+  updateUser,
+  getAllContacts,
+  updateContactStatus,
+  createProject,
+  getAllProjects,
+  getProjectById,
+  updateProject,
+  deleteProject
 };

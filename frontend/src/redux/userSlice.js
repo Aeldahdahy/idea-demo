@@ -4,12 +4,12 @@ const userSlice = createSlice({
   name: 'users',
   initialState: {
     users: [], 
-    lastFetched: null,
+    lastUserFetched: null,
   },
   reducers: {
     setUsers: (state, action) => {
       state.users = Array.isArray(action.payload) ? action.payload : []; 
-      state.lastFetched = Date.now();
+      state.lastUserFetched = Date.now();
     },
   },
 });

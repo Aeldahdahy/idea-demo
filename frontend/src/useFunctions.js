@@ -5,11 +5,14 @@ import { jwtDecode } from 'jwt-decode'; // Correct import for jwtDecode
 import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from './redux/authSlice';
 import { setUsers } from './redux/userSlice';
+import { setMessages } from './redux/messagesSlice';
+import { toast } from 'react-toastify';
 
 export const useFunctions = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { users, lastFetched } = useSelector(state => state.users);
+  const { users, lastUserFetched } = useSelector(state => state.users);
+  const { messages, lastMessageFetched } = useSelector(state => state.messages);
 
   const [isFixed, setIsFixed] = useState(false); // State for fixed header
   const [isVisible, setIsVisible] = useState(true); // State for header visibility
@@ -23,7 +26,7 @@ export const useFunctions = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '']);
-  const [timer, setTimer] = useState(180); 
+  const [timer, setTimer] = useState(180);
   const [isTimerActive, setIsTimerActive] = useState(true);
   const [response, setResponse] = useState(null); // Initialize response as null
   const [loading, setLoading] = useState(false);
@@ -117,24 +120,44 @@ export const useFunctions = () => {
   //   fetchStories();
   // }, []);
 
+  useEffect(() => {
+    if (isOtpSent && isTimerActive) {
+      const interval = setInterval(() => {
+        setTimer(prevTimer => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            setIsTimerActive(false);
+            return 0;
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isOtpSent, isTimerActive]);
+
+  
+  
   // Sign Up
-  
-  
   const signUp = async (formData) => {
     setLoading(true);
     setError(null);
     try {
       // Step 1: Send OTP
       const otpResponse = await axios.post('http://127.0.0.1:7030/api/signup', { email: formData.email });
-      
+  
       if (otpResponse.status === 200) {
-        setIsOtpSent(true); 
+        setIsOtpSent(true);
+        toast.success('OTP sent successfully!');
         return otpResponse.data;
       } else {
         throw otpResponse.data;
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -152,17 +175,22 @@ export const useFunctions = () => {
         fullName: formData.fullName,
         password: formData.password,
       });
-
+  
       if (verifyResponse.status === 201) {
         setIsOtpVerified(true);
+        toast.success('OTP verified successfully!');
         return verifyResponse.data;
       } else if (verifyResponse.status === 400 || verifyResponse.status === 500) {
-        setError(verifyResponse.data.message || 'An error occurred. Please try again.');
+        const errorMessage = verifyResponse.data.message || 'An error occurred. Please try again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
       } else {
         throw verifyResponse.data;
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -176,29 +204,15 @@ export const useFunctions = () => {
       await axios.post('http://127.0.0.1:7030/api/signup', { email });
       setIsTimerActive(true);
       setTimer(180);
+      toast.success('OTP resent successfully!');
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (isOtpSent && isTimerActive) {
-      const interval = setInterval(() => {
-        setTimer(prevTimer => {
-          if (prevTimer <= 1) {
-            clearInterval(interval);
-            setIsTimerActive(false);
-            return 0;
-          }
-          return prevTimer - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [isOtpSent, isTimerActive]);
 
   const setTokenExpiration = () => {
     setTimeout(() => {
@@ -217,13 +231,16 @@ export const useFunctions = () => {
         password: formData.password,
       });
   
-      
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem('authToken', token);
   
         const decodedToken = jwtDecode(token);
-        console.log('Decoded Token:', decodedToken);
+        if (decodedToken.user.status === 'Inactive') {
+          setLoading(false);
+          throw new Error('This account has been deactivated!');
+        }
+        console.log('Decoded Token:', decodedToken, response.data);
   
         if (decodedToken && decodedToken.user) {
           localStorage.setItem('userFullName', decodedToken.user.fullName);
@@ -233,20 +250,26 @@ export const useFunctions = () => {
           dispatch(login({ token, role: 'client' }));
           setTokenExpiration();
           navigate('/client-portal/');
+          toast.success('Login successfully!');
           return response.data;
         } else {
           throw new Error('Unexpected token structure');
         }
       } else {
-        setError('Sign-in failed. Please try again.');
+        const errorMessage = 'Sign-in failed. Please try again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (err) {
-      setError(err.response?.data?.message || `An error occurred. Please try again. ${err.message}`);
+      const errorMessage = err.response?.data?.message || `An error occurred. Please try again. ${err.message}`;
+      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
     }
   };
+
 
   const StaffSignIn = async (formData) => {
     setLoading(true);
@@ -269,27 +292,31 @@ export const useFunctions = () => {
           localStorage.setItem('userName', decodedToken.username);
           localStorage.setItem('userRole', decodedToken.role);
           localStorage.setItem('hasAccessedPortal', 'true');
-          localStorage.setItem('portalType', 'employee'); 
+          localStorage.setItem('portalType', 'employee');
   
           dispatch(login({ token, role: 'employee' }));
           setTokenExpiration();
           navigate('/employee-portal/');
+          toast.success('Login successfully!');
           return response.data;
         } else {
-          throw new Error('Unexpected token structure');
+          const errorMessage = 'Sign-in failed. Please try again.';
+          toast.error(errorMessage);
         }
       } else {
-        setError('Sign-in failed. Please try again.');
+        const errorMessage = 'Sign-in failed. Please try again.';
+        toast.error(errorMessage);
       }
     } catch (err) {
-      setError(err.response?.data?.message || `An error occurred. Please try again. ${err.message}`);
-      throw err;
+      const errorMessage = err.response?.data?.message || `An error occurred. Please try again. ${err.message}`;
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
   
-  
+
+
   const sendOtp = async (email) => {
     setLoading(true);
     setError(null);
@@ -297,17 +324,21 @@ export const useFunctions = () => {
       const response = await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
       if (response.status === 200) {
         setIsOtpSent(true);
+        toast.success('OTP sent successfully!');
         return response.data;
       } else {
         throw new Error('Failed to send OTP');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
     }
   };
+  
 
   const verifyOtpForPasswordReset = async (email, otp) => {
     setLoading(true);
@@ -316,37 +347,43 @@ export const useFunctions = () => {
       const response = await axios.post('http://127.0.0.1:7030/api/verify-otp-for-reset', { email, otp });
       if (response.status === 200) {
         setIsOtpVerified(true);
+        toast.success('OTP verified successfully!');
         return response.data;
       } else {
         throw new Error('Failed to verify OTP');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
     }
   };
-  
+
   const resetPassword = async (data) => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.post('http://127.0.0.1:7030/api/reset-password', data);
       if (response.status === 200) {
+        toast.success('Password reset successfully!');
         return response.data;
       } else {
         throw new Error('Failed to reset password');
       }
     } catch (err) {
       console.error('Error resetting password:', err); // Log the error for debugging
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
     }
   };
-  
+
   const resendForgetPasswordOtp = async (email) => {
     setLoading(true);
     setError(null);
@@ -354,21 +391,25 @@ export const useFunctions = () => {
       await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
       setIsTimerActive(true);
       setTimer(180);
+      toast.success('OTP resent successfully!');
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+  
 
   // sign out
-  const signOutDistroySession = async () =>{
+  const signOutDistroySession = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.post('http://127.0.0.1:7030/api/signout');
       console.log(response.data);
-
+  
       // Clear local storage
       localStorage.removeItem('authToken');
       localStorage.removeItem('userFullName');
@@ -377,9 +418,12 @@ export const useFunctions = () => {
       dispatch(logout());
       // Redirect the user to the main route
       navigate('/'); // Ensure this points to the correct main route
+      toast.success('Signed out successfully!');
     } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred. please try again later.');
-    }finally{
+      const errorMessage = error.response?.data?.message || 'An error occurred. please try again later.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
       setLoading(false);
     }
   };
@@ -395,28 +439,36 @@ export const useFunctions = () => {
         email: formData.email,
         message: formData.message
       });
-
+  
       if (contactResponse.status === 201) {
-        setResponse(contactResponse.data.message || 'Your message has been sent successfully.');
+        const successMessage = contactResponse.data.message || 'Your message has been sent successfully.';
+        setResponse(successMessage);
+        toast.success(successMessage);
       } else {
-        setResponse(contactResponse.data.message || 'There was an issue sending your message. Please try again later.');
+        const errorMessage = contactResponse.data.message || 'There was an issue sending your message. Please try again later.';
+        setResponse(errorMessage);
+        toast.error(errorMessage);
       }
-
+  
     } catch (error) {
+      let errorMessage;
       if (error.response) {
         // Server responded with a status other than 2xx
-        setError(error.response.data.message || 'There was an error sending your message. Please check your input and try again.');
+        errorMessage = error.response.data.message || 'There was an error sending your message. Please check your input and try again.';
       } else if (error.request) {
         // Request was made but no response received
-        setError('No response received from the server. Please check your internet connection and try again.');
+        errorMessage = 'No response received from the server. Please check your internet connection and try again.';
       } else {
         // Something else caused an error
-        setError(`Error: ${error.message}`);
+        errorMessage = `Error: ${error.message}`;
       }
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+  
 
   // get all users
   const getAllUsers = useCallback(async () => {
@@ -425,11 +477,13 @@ export const useFunctions = () => {
     const token = localStorage.getItem('authToken');
   
     if (!token) {
-      setError('Authentication token is missing. Please sign in again.');
+      const errorMessage = 'Authentication token is missing. Please sign in again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       return;
     }
   
-    if (lastFetched && now - lastFetched < THIRTY_MINUTES) {
+    if (lastUserFetched && now - lastUserFetched < THIRTY_MINUTES) {
       return;
     }
   
@@ -445,23 +499,128 @@ export const useFunctions = () => {
   
       if (Array.isArray(response.data.data)) {
         dispatch(setUsers(response.data.data));
+        toast.success('Users fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data.data');
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred while fetching users.');
+      const errorMessage = error.response?.data?.message || 'An error occurred while fetching users.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
-  }, [lastFetched, dispatch]);
+  }, [lastUserFetched, dispatch]);
+
+  const updateUsers = async (id, status) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    const newStatus = status === "Active" ? "Inactive" : "Active";
   
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+    // Optimistically update the user status in the UI
+    dispatch(setUsers(users.map(user => user._id === id ? { ...user, status: newStatus } : user)));
   
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:7030/api/users/${id}`,
+        { status: newStatus },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+      if (response.status !== 200) {
+        throw new Error('Failed to update user');
+      }
+      toast.success('User status updated successfully!');
+    } catch (err) {
+      // Revert the status change if the API call fails
+      dispatch(setUsers(users.map(user => user._id === id ? { ...user, status } : user)));
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // get all messages
+  const getAllMessages = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+    const token = localStorage.getItem('authToken');
+  
+    if (!token) {
+      const errorMessage = 'Authentication token is missing. Please sign in again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return;
+    }
+  
+    if (lastMessageFetched && now - lastMessageFetched < THIRTY_MINUTES) {
+      return;
+    }
+  
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://127.0.0.1:7030/api/contacts', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      // console.log("API Response:", response.data);
+  
+      if (Array.isArray(response.data.data)) {
+        dispatch(setMessages(response.data.data)); // Dispatch setMessages action
+        toast.success('Messages fetched successfully!');
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data.data');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while fetching messages.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [lastMessageFetched, dispatch]);
+  
+  const updateMessages = async (id, status) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    const newStatus = status === "Pending" ? "Replied" : "Pending";
+  
+    // Optimistically update the message status in the UI
+    dispatch(setMessages(messages.map(message => message._id === id ? { ...message, status: newStatus } : message)));
+  
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:7030/api/contacts/${id}/status`,
+        { status: newStatus },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+      if (response.status !== 200) {
+        throw new Error('Failed to update message');
+      }
+      toast.success('Message status updated successfully!');
+    } catch (err) {
+      // Revert the status change if the API call fails
+      dispatch(setMessages(messages.map(message => message._id === id ? { ...message, status } : message)));
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
-  
+
     switch (name) {
       case 'email': {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -511,17 +670,17 @@ export const useFunctions = () => {
       default:
         break;
     }
-  
+
     setFormError(errors);
   };
-  
+
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  return { 
+  return {
     signIn,
     signUp,
     setOtp,
@@ -533,16 +692,19 @@ export const useFunctions = () => {
     verifyOtp,
     chunkArray,
     formatTime,
+    updateUsers,
+    getAllUsers,
     StaffSignIn,
     handleSearch,
     setFormError,
     resetPassword,
     toggleSideBar,
+    updateMessages,
     toggleDropdown,
     selectLanguage,
+    getAllMessages,
     setBackendError,
     handleInputChange,
-    refetch: getAllUsers,
     signOutDistroySession,
     resendForgetPasswordOtp,
     verifyOtpForPasswordReset,
@@ -551,6 +713,7 @@ export const useFunctions = () => {
     users,
     error,
     isFixed,
+    messages,
     isVisible,
     sideBarVisible,
     dropdownVisible,

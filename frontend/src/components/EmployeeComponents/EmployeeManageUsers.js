@@ -1,22 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import { useFunctions } from "../../useFunctions";
 import defaultImage from "../../assets/img-0.35.png";
+import { useLocation } from "react-router-dom";
 
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const { users = [], loading, error, refetch } = useFunctions();
+  const { users = [], loading, error, updateUsers, getAllUsers } = useFunctions();
+  const location = useLocation();
 
-  const handleToggle = async (userid, currentStatus) => {
-    try {
-      console.log(userid, currentStatus);
-      await fetch(`http://127.0.0.1:7030/api/users/${userid}`, { method: "POST" });
-      refetch(); // Refresh users list after toggling
-    } catch (error) {
-      console.error("Error toggling user status:", error);
+  useEffect(() => {
+    if (location.pathname === '/employee-portal/manageUsers') {
+      getAllUsers();
     }
-  };
+  }, [location.pathname, getAllUsers]);
 
   const handleUserCheckbox = (id) => {
     setSelectedUsers((prev) =>
@@ -30,15 +28,15 @@ function EmployeeManageUsers() {
 
   const filteredUsers = Array.isArray(users)
     ? users.filter((user) => {
-        const searchTerm = search.toLowerCase();
-        return (
-          user.fullName.toLowerCase().includes(searchTerm) ||
-          user.email.toLowerCase().includes(searchTerm) ||
-          (user.phone?.toString() || "").includes(searchTerm) ||
-          user.role.toLowerCase().includes(searchTerm) ||
-          (user.createdAt?.toString() || "").includes(searchTerm)
-        );
-      })
+      const searchTerm = search.toLowerCase();
+      return (
+        user.fullName.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm) ||
+        (user.phone?.toString() || "").includes(searchTerm) ||
+        user.role.toLowerCase().includes(searchTerm) ||
+        (user.createdAt?.toString() || "").includes(searchTerm)
+      );
+    })
     : [];
 
   const formatDate = (isoString) => {
@@ -56,7 +54,8 @@ function EmployeeManageUsers() {
           className="search-input"
         />
       </div>
-      {loading ? <p>Loading...</p> : error ? <p style={{ color: "red" }}>{error}</p> : null}
+      {loading && <p>Loading...</p>}
+      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
       {filteredUsers.length === 0 ? (
         <p>No users found.</p>
       ) : (
@@ -105,7 +104,7 @@ function EmployeeManageUsers() {
                 <td>{user.role}</td>
                 <td>{formatDate(user.createdAt)}</td>
                 <td>
-                  <div className="toggleStatusContainer" onClick={() => handleToggle(user._id, user.status)}>
+                  <div className="toggleStatusContainer" onClick={() => updateUsers(user._id, user.status)}>
                     <div className={`toggleStatus ${user.status === "Active" ? "" : "active"}`}>
                       <span className="toggleCircle"></span>
                       <span className="toggleText">{user.status === "Active" ? "Active" : "Inactive"}</span>

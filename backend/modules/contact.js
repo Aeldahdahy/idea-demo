@@ -6,7 +6,6 @@ const contactSchema = new mongoose.Schema({
     fullname: {
         type: String,
         required: [true, 'Full name is required'],
-        
     },
     email: {
         type: String,
@@ -20,8 +19,13 @@ const contactSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Message is required'],
         default: null
+    },
+    status: {
+        type: String,
+        enum: ['Pending', 'Replied'],
+        default: 'Pending'
     }
-});
+}, { timestamps: true });
 
 // Pre-save hook to encrypt email
 // contactSchema.pre('save', async function (next) {

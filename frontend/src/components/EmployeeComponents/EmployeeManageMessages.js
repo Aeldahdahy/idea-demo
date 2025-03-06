@@ -1,83 +1,114 @@
-import React, { useState } from 'react';
-import eyeIcon from '../../assets/eye.png';
+import React, { useState, useEffect } from "react";
+import { Eye } from "lucide-react";
+import { useFunctions } from "../../useFunctions";
+import { useLocation } from "react-router-dom";
 
-const initialData = [
-    { id: '1#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '2#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Replied' },
-    { id: '3#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '4#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '5#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '6#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '7#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '8#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '9#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '10#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '11#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '12#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '13#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '14#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
-    { id: '15#', name: 'Taha Elrajel', email: 'Tahaelrajel8@gmail.com', phone: '+218911234556', message: 'A design is a plan or specification for the construction of an object...', status: 'Pending' },
+function EmployeeManageMessages() {
+  const [search, setSearch] = useState("");
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const { messages = [], users = [], loading, error, getAllMessages, getAllUsers, updateMessages } = useFunctions();
+  const location = useLocation();
 
+  useEffect(() => {
+    if (location.pathname === '/employee-portal/manageMessages') {
+      getAllMessages();
+      getAllUsers();
+    }
+  }, [location.pathname, getAllMessages, getAllUsers]);
 
-];
-
-const EmployeeManageMessages = () => {
-    const [data, setData] = useState(initialData);
-
-    // Function to toggle status between "Pending" and "Replied"
-    const handleToggle = (id) => {
-        setData((prevData) =>
-            prevData.map((item) =>
-                item.id === id ? { ...item, status: item.status === 'Pending' ? 'Replied' : 'Pending' } : item
-            )
-        );
-    };
-
-    return (
-        <div className="container">
-            <div className="table-container">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Full Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Message</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((item) => (
-                            <tr key={item.id}>
-                                <td>
-                                    <input type="checkbox" className="mr-2" />
-                                    {item.id}
-                                </td>
-                                <td>{item.name}</td>
-                                <td>{item.email}</td>
-                                <td>{item.phone}</td>
-                                <td>{item.message}</td>
-                                <td>
-                                    <div className="status-container">
-                                        <button 
-                                            className={`status-button ${item.status === 'Pending' ? 'pending' : 'replied'}`} 
-                                            onClick={() => handleToggle(item.id)}
-                                        >
-                                            {item.status}
-                                        </button>
-                                        <button className="view-button">
-                                            <img src={eyeIcon} alt="View" className="eye-icon" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  const handleMessagesCheckbox = (id) => {
+    setSelectedMessages((prev) =>
+      prev.includes(id) ? prev.filter((messageId) => messageId !== id) : [...prev, id]
     );
-};
+  };
+
+  const handleSelectAll = (e) => {
+    setSelectedMessages(e.target.checked ? messages.map((message) => message._id) : []);
+  };
+
+  const filteredMessages = Array.isArray(messages)
+    ? messages.filter((message) => {
+      const searchTerm = search.toLowerCase();
+      return (
+        message.fullname.toLowerCase().includes(searchTerm) ||
+        message.email.toLowerCase().includes(searchTerm) ||
+        (message.message?.toString() || "").includes(searchTerm)
+      );
+    })
+    : [];
+
+  const isExistingUser = (email) => {
+    return users.some(user => user.email === email);
+  };
+
+  return (
+    <>
+      <div className="employee-header">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="search-input"
+        />
+      </div>
+      {loading && <p>Loading...</p>}
+      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
+      {filteredMessages.length === 0 ? (
+        <p>No Messages found.</p>
+      ) : (
+        <table className="employee-table">
+          <thead className="employee-table-head">
+            <tr>
+              <th>
+                <input
+                  type="checkbox"
+                  checked={selectedMessages.length === filteredMessages.length && filteredMessages.length > 0}
+                  onChange={handleSelectAll}
+                />
+              </th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Message</th>
+              <th>Existing User</th>
+              <th>Status</th>
+              <th>View</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredMessages.map((message) => (
+              <tr key={message._id}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedMessages.includes(message._id)}
+                    onChange={() => handleMessagesCheckbox(message._id)}
+                  />
+                </td>
+                <td>{message.fullname}</td>
+                <td>{message.email}</td>
+                <td>{message.message}</td>
+                <td>{isExistingUser(message.email) ? "Yes" : "No"}</td>
+                <td>
+                  <div className="toggleStatusContainer" onClick={() => updateMessages(message._id, message.status)}>
+                    <div className={`toggleStatus ${message.status === "Pending" ? "active" : ""}`}>
+                      <span className="toggleCircle"></span>
+                      <span className="toggleText">{message.status === "Pending" ? "Pending" : "Replied"}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <button className="edit-btn">
+                    <Eye />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </>
+  );
+}
 
 export default EmployeeManageMessages;

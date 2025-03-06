@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/ReactToastify.css";
 
 // Common components
 import NavBar from './components/Common/Navbar';
@@ -71,6 +73,8 @@ function Main() {
 
       <PopUpConfirmationOk />
       <PopUpConfirmationYesNo />
+      <ToastContainer />
+      
     </>
   );
 }

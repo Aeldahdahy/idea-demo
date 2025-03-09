@@ -45,6 +45,7 @@ router.get('/projects', authenticateToken, isAdmin, getAllProjects);
 
 // Get a single project by ID (Admin only)
 router.get('/projects/:projectId', authenticateToken, isAdmin, getProjectById);
+
 // -----------------------------------------------------------------------------------> client portal <-----------------------------------------------------------------------------------
 
 // Handle contact form submission

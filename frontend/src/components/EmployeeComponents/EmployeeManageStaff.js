@@ -1,71 +1,55 @@
-import React, { useState } from "react";
-import userImage from "../../assets/img-0.35.png";
-import { PenSquare, Plus, Trash } from "lucide-react";
-
-const dummyData = [
-  { id: 1, name: "Taha Elrajel", username: "Taha_Elrajel123", phone: "+218 1235 54456", role: "Auditor", email: "Tahaelrajel@gmail.com", status: true, image: userImage },
-  { id: 2, name: "Passant Essam", username: "Passant_essam123", phone: "+218 1235 54456", role: "Auditor", email: "Passant.essam@gmail.com", status: true, image: userImage },
-  { id: 3, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 4, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 5, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 6, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 7, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 8, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 9, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 10, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 11, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 12, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 13, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 14, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 15, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 16, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 17, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 18, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 19, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-  { id: 20, name: "Lama", username: "Lama123", phone: "+218 1235 54456", role: "CS", email: "Lama@gmail.com", status: false, image: userImage },
-];
+import React, { useState, useEffect } from "react";
+import { PenSquare, Plus } from "lucide-react";
+import { useFunctions } from "../../useFunctions";
+import defaultImage from "../../assets/img-0.35.png";
+import { useLocation } from "react-router-dom";
 
 function EmployeeManageStaff() {
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState(dummyData);
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedStaff, setSelectedStaff] = useState([]);
+  const { staff = [], loading, error, updateStaff, getAllStaff } = useFunctions();
+  const location = useLocation();
 
-  const handleToggle = (id) => {
-    setUsers(users.map(user => user.id === id ? { ...user, status: !user.status } : user));
-  };
+  useEffect(() => {
+    if (location.pathname === '/employee-portal/manageStaff') {
+      getAllStaff();
+    }
+  }, [location.pathname, getAllStaff]);
 
   const handleUserCheckbox = (id) => {
-    if (selectedUsers.includes(id)) {
-      setSelectedUsers(selectedUsers.filter(userId => userId !== id));
-    } else {
-      setSelectedUsers([...selectedUsers, id]);
-    }
+    setSelectedStaff((prev) =>
+      prev.includes(id) ? prev.filter((staffId) => staffId !== id) : [...prev, id]
+    );
   };
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      const allUserIds = filteredUsers.map(user => user.id);
-      setSelectedUsers(allUserIds);
-    } else {
-      setSelectedUsers([]);
-    }
+    setSelectedStaff(e.target.checked ? staff.map((staff) => staff._id) : []);
   };
 
-  const filteredUsers = users.filter(user => {
-    const searchTerm = search.toLowerCase();
-    return (
-      user.name.toLowerCase().includes(searchTerm) ||
-      user.email.toLowerCase().includes(searchTerm) ||
-      user.phone.toLowerCase().includes(searchTerm) ||
-      user.role.toLowerCase().includes(searchTerm) ||
-      user.username.toLowerCase().includes(searchTerm)
-    );
-  });
+  const filteredStaff = Array.isArray(staff)
+    ? staff.filter((staff) => {
+      const searchTerm = search.toLowerCase();
+      return (
+        staff.username.toLowerCase().includes(searchTerm) ||
+        staff.email.toLowerCase().includes(searchTerm) ||
+        staff.role.toLowerCase().includes(searchTerm)
+        // (staff.createdAt?.toString() || "").includes(searchTerm)
+      );
+    })
+    : [];
+
+  // const formatDate = (isoString) => {
+  //   return isoString ? isoString.split("T")[0] : "N/A"; // Extract YYYY-MM-DD
+  // };
+
+  const handleUpdateStaff = (id, updatedData) => {
+    updateStaff(id, updatedData);
+  };
 
   return (
     <>
-      <div className="employee-header">
-        <input 
+      <div className="dashboard-container-header">
+        <input
           type="text"
           placeholder="Search..."
           value={search}
@@ -74,73 +58,73 @@ function EmployeeManageStaff() {
         />
         <button className="add-btn"><Plus /> Add New Staff</button>
       </div>
-      <table className="employee-table">
-        <thead className="employee-table-head">
-          <tr>
-            <th>
-              <input 
-                type="checkbox" 
-                checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
-                onChange={handleSelectAll}
-              />
-            </th>
-            <th>Id</th>
-            <th></th>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map(user => (
-            <tr key={user.id}>
-              <td>
-                <input 
-                  type="checkbox" 
-                  checked={selectedUsers.includes(user.id)}
-                  onChange={() => handleUserCheckbox(user.id)}
+      {loading && <p>Loading...</p>}
+      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
+      {filteredStaff.length === 0 ? (
+        <p>No staff found.</p>
+      ) : (
+        <table className="dashboard-table">
+          <thead className="dashboard-table-head">
+            <tr>
+              <th>
+                <input
+                  type="checkbox"
+                  checked={selectedStaff.length === filteredStaff.length && filteredStaff.length > 0}
+                  onChange={handleSelectAll}
                 />
-              </td>
-              <td>{user.id}#</td>
-              <td>
-                  <img 
-                    src={user.image} 
-                    alt={user.name} 
-                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }} 
-                  />
-              </td>
-                    
-              <td>
-                  {user.name}
-              </td>
-              <td>{user.username}</td>
-              <td>{user.phone}</td>
-              <td>{user.role}</td>
-              <td>{user.email}</td>
-              <td>
-                <div className="toggleStatusContainer">
-                  <div className={`toggleStatus ${user.status ? "active" : ""}`} onClick={() => handleToggle(user.id)}>
-                    <span className="toggleCircle"></span>
-                    <span className="toggleText">{user.status ? "Inactive" : "Active"}</span>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <button className="edit-btn"><PenSquare /></button>
-              </td>
-              <td>
-                <button className="delete-btn"><Trash /></button>
-
-              </td>
+              </th>
+              <th></th>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Phone Number</th>
+              <th>Role</th>
+              <th>Email</th>
+              <th style={{ textAlign: "center", paddingRight: 80 }}>Status</th>
+              <th>Edit</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredStaff.map((staff) => (
+              <tr key={staff._id}>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedStaff.includes(staff._id)}
+                    onChange={() => handleUserCheckbox(staff._id)}
+                  />
+                </td>
+
+                <td>
+                  <img
+                    src={staff.image || defaultImage} // Handle missing image
+                    alt={staff.fullName}
+                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
+                  />
+                </td>
+                <td>{staff.fullName || "N/A"}</td>
+                <td>{staff.username || "N/A"}</td>
+                <td>{staff.phone || "N/A"}</td>
+                <td>{staff.role || "N/A"}</td>
+                <td>{staff.email || "N/A"}</td>
+                {/* <td>{formatDate(staff.createdAt)}</td> */}
+                <td>
+                  <div className="toggleStatusContainer" onClick={() => handleUpdateStaff(staff._id, { status: staff.status === "Active" ? "Inactive" : "Active" })}>
+                    <div className={`toggleStatus ${staff.status === "Active" ? "" : "active"}`}>
+                      <span className="toggleCircle"></span>
+                      <span className="toggleText">{staff.status === "Active" ? "Active" : "Inactive"}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <button className="edit-btn">
+                    <PenSquare />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </>
   );
 }

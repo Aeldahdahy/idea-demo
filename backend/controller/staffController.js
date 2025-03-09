@@ -86,7 +86,11 @@ const loginStaff = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
-        
+
+        if (staff.status !== 'Active') {
+          return res.status(403).json({ message: 'Access denied. User is inactive.' });
+        }
+
         const token = jwt.sign({ id: staff._id, role: staff.role, username: staff.username }, JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ token });
     } catch (error) {
@@ -124,72 +128,82 @@ const getStaffById = async (req, res) => {
 // Update Staff 
 const updateStaff = async (req, res) => {
   try {
-      const { staffId } = req.params; // Get staff ID from request params
-      let { fullName, email, username, phone, password, role, permissions } = req.body; // Get updated data
+    const { staffId } = req.params; // Get staff ID from request params
+    let { fullName, email, username, phone, password, role, permissions, status } = req.body; // Get updated data
 
-      // Find staff member
-      const staff = await Staff.findById(staffId);
-      if (!staff) {
-          return res.status(404).json({ success: false, message: 'Staff member not found' });
-      }
+    // Find staff member
+    const staff = await Staff.findById(staffId);
+    if (!staff) {
+      return res.status(404).json({ success: false, message: 'Staff member not found' });
+    }
 
-      // Check if email, username, or phone already exists for another staff member
-      const existingUser = await Staff.findOne({ 
-          $or: [{ email }, { username }, { phone }], 
-          _id: { $ne: staffId } // Ensure it's not the same staff member
-      });
-      if (existingUser) {
-          return res.status(400).json({ success: false, message: 'Email, username, or phone already in use by another staff member!' });
-      }
+    // Check if email, username, or phone already exists for another staff member
+    // const existingUser = await Staff.findOne({
+    //   $or: [{ email }, { username }],
+    //   _id: { $ne: staffId } // Ensure it's not the same staff member
+    // });
+    // if (existingUser) {
+    //   return res.status(400).json({ success: false, message: 'Email, username already in use by another staff member!' });
+    // }
 
-      // Validate role
-      const validRoles = ['Admin', 'Auditor', 'Cs'];
-      if (role && !validRoles.includes(role)) {
-          return res.status(400).json({ success: false, message: 'Invalid role provided' });
-      }
+    // Validate role
+    const validRoles = ['Admin', 'Auditor', 'Cs'];
+    if (role && !validRoles.includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role provided' });
+    }
 
-      // Validate email format
-      if (email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-          return res.status(400).json({ success: false, message: 'Invalid email format' });
-      }
+    // Validate email format
+    if (email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      return res.status(400).json({ success: false, message: 'Invalid email format' });
+    }
 
-      // Validate phone number (10-15 digits)
-      if (phone && !/^[0-9]{10,15}$/.test(phone)) {
-          return res.status(400).json({ success: false, message: 'Invalid phone number format' });
-      }
+    // Validate phone number (10-15 digits)
+    if (phone && !/^[0-9]{10,15}$/.test(phone)) {
+      return res.status(400).json({ success: false, message: 'Invalid phone number format' });
+    }
 
-      // Validate permissions
-      const validPermissions = [
-          'Manage Projects',
-          'Schedule Meetings',
-          'Manage Contracts',
-          'Manage Support Requests',
-          'Manage Web & App',
-          'Manage Advertisements'
-      ];
-      if (permissions && (!Array.isArray(permissions) || permissions.some(p => !validPermissions.includes(p)))) {
-          return res.status(400).json({ success: false, message: 'Invalid permissions provided' });
-      }
+    // Validate permissions
+    const validPermissions = [
+      'Manage Projects',
+      'Schedule Meetings',
+      'Manage Contracts',
+      'Manage Support Requests',
+      'Manage Web & App',
+      'Manage Advertisements'
+    ];
+    if (permissions && (!Array.isArray(permissions) || permissions.some(p => !validPermissions.includes(p)))) {
+      return res.status(400).json({ success: false, message: 'Invalid permissions provided' });
+    }
 
-      // Hash password if provided
-      if (password) {
-          const salt = await bcrypt.genSalt(10);
-          password = await bcrypt.hash(password, salt);
-      }
+    // Hash password if provided
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      password = await bcrypt.hash(password, salt);
+    }
 
-      // Update staff member
-      const updatedStaff = await Staff.findByIdAndUpdate(
-          staffId,
-          { fullName, email, username, phone, password, role, permissions },
-          { new: true, runValidators: true }
-      );
+    // Create update object
+    const updateData = {};
+    if (fullName) updateData.fullName = fullName;
+    if (email) updateData.email = email;
+    if (username) updateData.username = username;
+    if (phone) updateData.phone = phone;
+    if (password) updateData.password = password;
+    if (role) updateData.role = role;
+    if (permissions) updateData.permissions = permissions;
+    if (status) updateData.status = status;
 
-      res.status(200).json({ success: true, message: 'Staff data updated successfully', data: updatedStaff });
+    // Update staff member
+    const updatedStaff = await Staff.findByIdAndUpdate(
+      staffId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({ success: true, message: 'Staff data updated successfully', data: updatedStaff });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error updating staff data', error: error.message });
+    res.status(500).json({ success: false, message: 'Error updating staff data', error: error.message });
   }
 };
-
 
 module.exports = 
 { 

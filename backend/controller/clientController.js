@@ -142,6 +142,11 @@ const signIn = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
+    // Check if the user status is inactive
+    if (user.status !== 'Active') {
+      return res.status(403).json({ message: 'Access denied. User is inactive.' });
+    }
+
     const payload = {
       user: {
         id: user.id,
@@ -162,10 +167,10 @@ const signIn = async (req, res) => {
           return res.status(500).json({ message: 'Failed to generate token' });
         }
         req.session.user = payload.user; // Save user info in session
-        console.log(req.session.user);
         res.status(200).json({ token });
       }
     );
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -375,7 +380,7 @@ const updateProject = async (req, res) => {
             city, state, postal_code, market_description, business_objectives, status } = req.body;
 
       // Validate status
-      const validStatuses = ['Pending', 'Approved', 'Rejected'];
+      const validStatuses = ['Approved', 'Rejected'];
       if (status && !validStatuses.includes(status)) {
           return res.status(400).json({ success: false, message: 'Invalid status value' });
       }

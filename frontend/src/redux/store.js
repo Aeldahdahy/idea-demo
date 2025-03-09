@@ -4,6 +4,8 @@ import checkPopupSlice from './checkpopupSlice';
 import userSlice from './userSlice';
 import yesNoPopupSlice from './yesNoPopupSlice';
 import messagesSlice from './messagesSlice';
+import staffSlice from './staffSlice';
+import projectSlice from './projectSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
         yesNoPopup: yesNoPopupSlice,
         users: userSlice, 
         messages: messagesSlice,
+        staff: staffSlice,
+        project: projectSlice,
     },
     devTools: process.env.NODE_ENV !== 'production', // Improved devTools setup
 });

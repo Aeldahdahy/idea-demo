@@ -45,7 +45,7 @@ function EmployeeManageUsers() {
 
   return (
     <>
-      <div className="employee-header">
+      <div className="dashboard-container-header">
         <input
           type="text"
           placeholder="Search..."
@@ -59,8 +59,8 @@ function EmployeeManageUsers() {
       {filteredUsers.length === 0 ? (
         <p>No users found.</p>
       ) : (
-        <table className="employee-table">
-          <thead className="employee-table-head">
+        <table className="dashboard-table">
+          <thead className="dashboard-table-head">
             <tr>
               <th>
                 <input

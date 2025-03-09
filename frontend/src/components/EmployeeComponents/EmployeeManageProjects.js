@@ -1,86 +1,124 @@
-import React, { useState } from 'react';
-import eyeIcon from '../../assets/eye.png';
-import '../../App.css'; 
+import React, { useState, useEffect } from "react";
+import { Eye } from "lucide-react";
+import defaultImage from "../../assets/img-0.36.png";
+import { useFunctions } from "../../useFunctions";
+import { useLocation } from "react-router-dom";
 
-const initialData = [
-    { id: '1#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '2#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '3#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '4#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '5#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '6#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '7#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '8#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '9#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '10#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '11#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '12#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '13#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '14#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-    { id: '15#', project_name: 'IDEA-Venture', industry: 'Investment', stage: 'Seed Stage', deal_type: 'Partnership', owner:'tahaelrajel@gmail.com', status: 'Pending'},
-];
+const EmployeeManageProject = () => {
+  const [search, setSearch] = useState('');
+  const [selectedProject, setSelectedProject] = useState([]);
+  const { project = [], loading, error, updateProject, getAllProjects } = useFunctions();
+  const location = useLocation();
 
-const EmployeeManageProjects = () => {
-    const [data, setData] = useState(initialData);
+  useEffect(() => {
+    if (location.pathname === '/employee-portal/manageProject') {
+      getAllProjects();
+    }
+  }, [location.pathname, getAllProjects]);
 
-    const handleApprove = (id) => {
-        setData(prevData => prevData.map(item => item.id === id ? { ...item, status: 'Approved' } : item));
-    };
-
-    const handleReject = (id) => {
-        setData(prevData => prevData.map(item => item.id === id ? { ...item, status: 'Rejected' } : item));
-    };
-
-    return (
-        <div className="projects-container">
-            <h2>Projects</h2>
-            <input type="text" placeholder="Search" className="search-bar" />
-            <div className="table-container">
-                <table className="projects-table">
-                    <thead>
-                        <tr>
-                            <th> ID </th>
-                            <th> Project Name </th>
-                            <th> Industry Type </th>
-                            <th> Project Stage </th>
-                            <th> Deal Type </th>
-                            <th> Project Owner </th>
-                            <th> Status </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map(item => (
-                            <tr key={item.id}>
-                                <td><input type="checkbox" /> {item.id}</td>
-                                <td>{item.project_name}</td>
-                                <td>{item.industry}</td>
-                                <td>{item.stage}</td>
-                                <td>{item.deal_type}</td>
-                                <td>{item.owner}</td>
-                                <td className="status-cell">
-                                    <button 
-                                        className={`status-btn ${item.status === 'Rejected' ? 'rejected' : 'pending'}`}
-                                        onClick={() => handleReject(item.id)}
-                                    >
-                                        {item.status === 'Rejected' ? 'Rejected' : 'Reject'}
-                                    </button>
-                                    <button 
-                                        className="approve-btn" 
-                                        onClick={() => handleApprove(item.id)}
-                                    >
-                                        Approve
-                                    </button>
-                                    <button className="view-btn">
-                                        <img src={eyeIcon} alt="View" className="eye-icon" />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  const handleProjectCheckbox = (id) => {
+    setSelectedProject((prev) =>
+      prev.includes(id) ? prev.filter((projectId) => projectId !== id) : [...prev, id]
     );
+  };
+
+  const handleSelectAll = (e) => {
+    setSelectedProject(e.target.checked ? project.map((project) => project._id) : []);
+  };
+
+  const filteredProject = Array.isArray(project)
+    ? project.filter((project) => {
+      const searchTerm = search.toLowerCase();
+      return (
+        project.project_name.toLowerCase().includes(searchTerm) ||
+        project.project_industry.toLowerCase().includes(searchTerm) ||
+        project.city.toLowerCase().includes(searchTerm) ||
+        project.state.toLowerCase().includes(searchTerm) ||
+        project.status.toLowerCase().includes(searchTerm)
+      );
+    })
+    : [];
+
+  const handleUpdateProject = (id, updatedData) => {
+    updateProject(id, updatedData);
+  };
+
+
+  return (
+    <>
+      <div className='dashboard-container-header'>
+        <input 
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="search-input"
+        />
+      </div>
+      {loading && <p>Loading...</p>}
+      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
+      {filteredProject.length === 0 ? (
+        <p>No project found.</p>
+      ) : (
+        <table className="dashboard-table">
+          <thead className='dashboard-table-head'>
+            <tr>
+              <th>
+                <input 
+                  type="checkbox" 
+                  checked={selectedProject.length === filteredProject.length && filteredProject.length > 0}
+                  onChange={handleSelectAll}
+                />
+              </th>
+              <th></th>
+              <th>Project Name</th>
+              <th>Industry Type</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredProject.map((project) => (
+              <tr key={project._id}>
+                <td>
+                  <input 
+                    type="checkbox" 
+                    checked={selectedProject.includes(project._id)}
+                    onChange={() => handleProjectCheckbox(project._id)}
+                  />
+                </td>
+                <td>
+                    <img
+                        src={project.project_images && project.project_images[0] ? `http://127.0.0.1:7030/${project.project_images[0]}` : defaultImage}
+                        alt={project.project_name}
+                        style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
+                    />
+                </td>
+                <td>{project.project_name || "N/A"}</td>
+                <td>{project.project_industry || "N/A"}</td>
+                <td>{project.city || "N/A"}</td>
+                <td>{project.state || "N/A"}</td>
+                <td>
+                  <div className="toggleStatusContainer" onClick={() => handleUpdateProject(project._id, { status: project.status === "Approved" ? "Rejected" : "Approved" })}>
+                    <div className={`toggleStatus ${project.status === "Approved" ? "" : "active"}`}>
+                      <span className="toggleCircle"></span>
+                      <span className="toggleText">{project.status === "Approved" ? "Approved" : "Rejected"}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <button className="edit-btn"><Eye /></button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </>
+  );
+//   'Approved', 'Rejected'
 };
 
-export default EmployeeManageProjects;
+export default EmployeeManageProject;

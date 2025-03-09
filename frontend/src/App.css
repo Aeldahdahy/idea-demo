@@ -1862,7 +1862,7 @@ form.sign-in-form {
   position: relative;
 }
 
-.employee-header {
+.dashboard-container-header {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1890,25 +1890,25 @@ form.sign-in-form {
   cursor: pointer;
 }
 
-.employee-table {
+.dashboard-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-.employee-table th,
-.employee-table td {
+.dashboard-table th,
+.dashboard-table td {
   padding: 15px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-.employee-table th {
+.dashboard-table th {
   background-color: #f4f4f4;
   font-weight: bold;
   position: sticky;
   top: 60px;
-  /* Adjust based on the height of the employee-header */
+  /* Adjust based on the height of the dashboard-container-header */
   z-index: 999;
 }
 
@@ -2003,93 +2003,6 @@ form.sign-in-form {
   /* Slight letter spacing */
 }
 
-
-/* LAMA'S MANAGE PROJECTS DASHBOARD VIEW */
-.projects-container {
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 15px;
-}
-
-h2 {
-  font-size: 25px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.search-bar {
-  width: 40%;
-  padding: 5px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.table-container {
-  overflow-x: auto;
-}
-
-.projects-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.projects-table th, .projects-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.status-cell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.status-btn {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.pending {
-  background-color: #f8f9fa;
-  color: #6c757d;
-  border: 1px solid #6c757d;
-}
-
-.rejected {
-  background-color: #dc3545;
-  color: white;
-}
-
-.approve-btn {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.view-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.eye-icon {
-  width: 20px;
-  fill: white;
-  background-color:#e3e2e2;
-}
 
 /* responsive */
 @media screen and (max-width:1171px) {

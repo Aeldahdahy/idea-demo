@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from './redux/authSlice';
 import { setUsers } from './redux/userSlice';
 import { setMessages } from './redux/messagesSlice';
+import { setStaff } from './redux/staffSlice';
+import { setProject } from './redux/projectSlice';
 import { toast } from 'react-toastify';
 
 export const useFunctions = () => {
@@ -13,6 +15,8 @@ export const useFunctions = () => {
   const dispatch = useDispatch();
   const { users, lastUserFetched } = useSelector(state => state.users);
   const { messages, lastMessageFetched } = useSelector(state => state.messages);
+  const { staff, lastStaffFetched } = useSelector(state => state.staff);
+  const { project, lastProjectFetched } = useSelector(state => state.project);
 
   const [isFixed, setIsFixed] = useState(false); // State for fixed header
   const [isVisible, setIsVisible] = useState(true); // State for header visibility
@@ -512,6 +516,7 @@ export const useFunctions = () => {
     }
   }, [lastUserFetched, dispatch]);
 
+  // update users
   const updateUsers = async (id, status) => {
     setLoading(true);
     setError(null);
@@ -618,6 +623,143 @@ export const useFunctions = () => {
     }
   };
 
+  // get all staff
+  const getAllStaff = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+    const token = localStorage.getItem('authToken');
+  
+    if (!token) {
+      const errorMessage = 'Authentication token is missing. Please sign in again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return;
+    }
+  
+    if (lastStaffFetched && now - lastStaffFetched < THIRTY_MINUTES) {
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://127.0.0.1:7030/api/staff', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data.data);
+      
+      if (Array.isArray(response.data.data)) {
+        dispatch(setStaff(response.data.data));
+        toast.success('Staff fetched successfully!');
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data');
+      }
+  
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while fetching staff.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [lastStaffFetched, dispatch]);
+
+  // update staff
+  const updateStaff = async (id, updatedData) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+  
+    // Optimistically update the staff status in the UI
+    dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
+  
+    try {
+      const response = await axios.put(`http://127.0.0.1:7030/api/staff/${id}`, updatedData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to update staff');
+      }
+      toast.success('Staff data updated successfully!');
+    } catch (err) {
+      // Revert the status change if the API call fails
+      dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+// get all projects
+const getAllProjects = useCallback(async () => {
+  const THIRTY_MINUTES = 30 * 60 * 1000;
+  const now = Date.now();
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    const errorMessage = 'Authentication token is missing. Please sign in again.';
+    setError(errorMessage);
+    toast.error(errorMessage);
+    return;
+  }
+
+  if (lastProjectFetched && now - lastProjectFetched < THIRTY_MINUTES) {
+    return;
+  }
+
+  setLoading(true);
+  setError(null);
+  try {
+    const response = await axios.get('http://127.0.0.1:7030/api/projects', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log(response.data.data);
+
+    if (Array.isArray(response.data.data)) {
+      dispatch(setProject(response.data.data));
+      toast.success('Projects fetched successfully!');
+    } else {
+      throw new Error('Invalid data format: Expected an array in response.data');
+    }
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || 'An error occurred while fetching projects.';
+    setError(errorMessage);
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+}, [lastProjectFetched, dispatch]);
+
+// update project
+const updateProject = async (id, updatedData) => {
+  setLoading(true);
+  setError(null);
+  const authToken = localStorage.getItem('authToken');
+
+  dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
+
+  try {
+    const response = await axios.put(`http://127.0.0.1:7030/api/projects/${id}`, updatedData, {
+      headers: { Authorization: `Bearer ${authToken}` },
+    });
+    if (response.status !== 200) {
+      throw new Error('Failed to update project');
+    }
+    toast.success('Project data updated successfully!');
+  } catch (err) {
+    dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
+    const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+    setError(errorMessage);
+    toast.error(errorMessage);
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+};
+
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
 
@@ -694,11 +836,15 @@ export const useFunctions = () => {
     formatTime,
     updateUsers,
     getAllUsers,
+    getAllStaff,
+    updateStaff,
     StaffSignIn,
     handleSearch,
     setFormError,
     resetPassword,
+    updateProject,
     toggleSideBar,
+    getAllProjects,
     updateMessages,
     toggleDropdown,
     selectLanguage,
@@ -711,9 +857,11 @@ export const useFunctions = () => {
     otp,
     timer,
     users,
+    staff,
     error,
     isFixed,
     messages,
+    project,
     isVisible,
     sideBarVisible,
     dropdownVisible,

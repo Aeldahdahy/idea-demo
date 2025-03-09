@@ -38,7 +38,8 @@ const userSchema = new mongoose.Schema({
     status: {
         type: String, 
         enum: ['Active', 'Inactive'], 
-        default: 'Active' },
+        default: 'Active' 
+    },
 }, { timestamps: true });
 
 // Pre-save hook to encrypt password

@@ -2363,3 +2363,134 @@ form.sign-in-form {
     margin: 15px 0;
   } */
 }
+
+/*LAMA'S {MANAGE MEETING REQUEST CSS CODES}*/
+
+.meeting-container {
+  padding: 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 30%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-slots-btn {
+  background-color: #024059;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-slots-btn:hover {
+  background-color: #022c3d;
+}
+
+.table-container {
+  margin-bottom: 30px;
+}
+
+.meeting-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.meeting-table th, .meeting-table td {
+  border: 1px solid #ececec;
+  padding: 10px;
+  text-align: center;
+}
+
+.meeting-table th {
+  background: #f1f1f1;
+  position: sticky;
+}
+
+.status {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status.done {
+  color: green;
+}
+
+.status.rejected {
+  color: #D11A2A;
+}
+
+.status.pending {
+  color: #F2B949;
+}
+
+.status.scheduled {
+  color: #1212cd;
+}
+
+.responses-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.response-box {
+  width: 49%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.check-btn {
+  background: #024059;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.check-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.check-btn:hover {
+  background: #022c3d;
+}
+
+.edit-btn {
+  background: green;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.edit-btn:hover {
+  color: #022c3d;
+}

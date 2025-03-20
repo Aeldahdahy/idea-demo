@@ -147,7 +147,7 @@ const updateStaff = async (req, res) => {
     // }
 
     // Validate role
-    const validRoles = ['Admin', 'Auditor', 'Cs'];
+    const validRoles = ['Admin', 'Auditor', 'Cs', 'Employee'];
     if (role && !validRoles.includes(role)) {
       return res.status(400).json({ success: false, message: 'Invalid role provided' });
     }
@@ -164,12 +164,14 @@ const updateStaff = async (req, res) => {
 
     // Validate permissions
     const validPermissions = [
+      'Manage Staff',
       'Manage Projects',
       'Schedule Meetings',
       'Manage Contracts',
       'Manage Support Requests',
+      'Manage Users',
       'Manage Web & App',
-      'Manage Advertisements'
+      'Manage Advertisements',
     ];
     if (permissions && (!Array.isArray(permissions) || permissions.some(p => !validPermissions.includes(p)))) {
       return res.status(400).json({ success: false, message: 'Invalid permissions provided' });

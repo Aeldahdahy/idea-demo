@@ -693,6 +693,30 @@ export const useFunctions = () => {
     }
   };
 
+  const createStaff = async (formData) => {
+    setLoading(true);
+    setError(null);
+    try{
+      const response = await axios.post('http://127.0.0.1:7030/api/staff', formData,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        }
+      );
+
+      if(response.status === 201){
+        toast.success('Staff created successfully!');
+        return response.data;
+      }
+
+    }catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 // get all projects
 const getAllProjects = useCallback(async () => {
   const THIRTY_MINUTES = 30 * 60 * 1000;
@@ -834,6 +858,7 @@ const updateProject = async (id, updatedData) => {
     verifyOtp,
     chunkArray,
     formatTime,
+    createStaff,
     updateUsers,
     getAllUsers,
     getAllStaff,

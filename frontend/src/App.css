@@ -2002,8 +2002,231 @@ form.sign-in-form {
   letter-spacing: 0.5px;
   /* Slight letter spacing */
 }
+.employee-popup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
 
+.employee-popup.closing {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
+.employee-popup-body {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 1000px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.employee-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #D9D9D9;
+  color: #000;
+}
+
+.employee-popup-content {
+  display: flex;
+  width: 100%;
+}
+
+.employee-popup-left, .employee-popup-right {
+  padding: 20px;
+}
+
+.employee-popup-left {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
+}
+
+.employee-popup-left .toggleStatusContainer{
+  margin: 20px 0px;
+}
+
+.employee-popup-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #ccc;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.employee-popup-avatar-edit {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #024059;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.employee-popup-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.employee-popup-status button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.employee-popup-inactive {
+  background: #6c757d !important;
+  color: white !important;
+}
+
+.employee-popup-right {
+  flex: 1;
+}
+
+.employee-popup form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.employee-popup label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: bold;
+}
+
+.employee-popup input[type="text"],
+.employee-popup input[type="email"],
+.employee-popup input[type="tel"],
+.employee-popup input[type="password"],
+.employee-popup select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  width: 100%; /* Optional: ensures it matches input width */
+  box-sizing: border-box; /* Optional: consistent sizing */
+}
+
+.employee-popup select {
+  appearance: none; /* Remove default arrow */
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="#000" d="M0 0l5 5 5-5z"/></svg>') no-repeat right 10px center; /* Custom arrow */
+  padding-right: 30px; /* Space for arrow */
+}
+
+.employee-popup input[type="text"]:focus,
+.employee-popup input[type="email"]:focus,
+.employee-popup input[type="tel"]:focus,
+.employee-popup input[type="password"]:focus {
+  border-color: #3A974C;
+  outline: none;
+}
+
+.employee-popup .permissions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.employee-popup .permission-item {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.employee-popup .permission-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-popup .permission-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #024059;
+}
+
+.employee-popup .permission-item label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #024059;
+}
+
+.employee-popup .btn {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.employee-popup .btn-primary {
+  background: #024059;
+  color: white;
+}
+
+.employee-popup .btn-primary:hover {
+  background: #1078a1;
+}
+
+.employee-popup .btn-secondary {
+  background: #dc3545;
+  color: white;
+}
+
+.employee-popup .btn-secondary:hover {
+  background: #c82333;
+}
+
+.employee-popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
+}
 /* responsive */
 @media screen and (max-width:1171px) {
   .carousel-caption h1 {

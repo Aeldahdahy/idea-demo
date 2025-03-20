@@ -41,18 +41,20 @@ const staffSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['Admin', 'Auditor', 'Cs'],
+    enum: ['Admin', 'Auditor', 'Cs', 'Employee'],
     default: 'Employee'
   },
   permissions: {
     type: [String], 
     enum: [
+      'Manage Staff',
       'Manage Projects',
       'Schedule Meetings',
       'Manage Contracts',
       'Manage Support Requests',
+      'Manage Users',
       'Manage Web & App',
-      'Manage Advertisements'
+      'Manage Advertisements',
     ],
     default: [] // Empty array if no permissions assigned
   },

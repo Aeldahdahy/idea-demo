@@ -2227,6 +2227,7 @@ form.sign-in-form {
   gap: 15px;
   width: 100%;
 }
+
 /* responsive */
 @media screen and (max-width:1171px) {
   .carousel-caption h1 {
@@ -2705,15 +2706,4 @@ form.sign-in-form {
 
 .check-btn:hover {
   background: #022c3d;
-}
-
-.edit-btn {
-  background: green;
-  border: none;
-  cursor: pointer;
-  color: white;
-}
-
-.edit-btn:hover {
-  color: #022c3d;
 }

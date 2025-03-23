@@ -9,10 +9,12 @@ import { openStaffData } from "../../redux/staffDataSlice";
 function EmployeeManageStaff() {
   const [search, setSearch] = useState("");
   const [selectedStaff, setSelectedStaff] = useState([]);
-  const { loading, error, updateStaff, getAllStaff } = useFunctions();
+  const { loading, error, updateStaff, getAllStaff, API_BASE_URL } = useFunctions();
   const { staff } = useSelector((state) => state.staff); // Get staff from Redux
   const location = useLocation();
   const dispatch = useDispatch();
+  console.log(API_BASE_URL);
+  
 
   const handleStaffDataPopup = (typeStaff, staffData = {}) => {
     if (typeStaff === "Add") {
@@ -131,7 +133,7 @@ function EmployeeManageStaff() {
                 </td>
                 <td>
                   <img
-                    src={staff.image || defaultImage}
+                    src={staff.image ? `${API_BASE_URL}/${staff.image}`: defaultImage}
                     alt={staff.fullName}
                     style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
                   />

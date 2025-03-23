@@ -101,7 +101,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchText = async () => {
   //     try {
-  //       const response = await axios.get(`${API_BASE_URL}/whoarewe`);
+  //       const response = await axios.get(`${API_BASE_URL}/api/whoarewe`);
   //       setParagraphText(response.data.mainText);
   //       setSubText(response.data.subText);
   //     } catch (error) {
@@ -115,7 +115,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchStories = async () => {
   //     try {
-  //       const response = await axios.get(`${API_BASE_URL}/successstories`);
+  //       const response = await axios.get(`${API_BASE_URL}/api/successstories`);
   //       setStories(response.data);
   //       setLoading(false);
   //     } catch (error) {
@@ -151,7 +151,7 @@ export const useFunctions = () => {
     setError(null);
     try {
       // Step 1: Send OTP
-      const otpResponse = await axios.post(`${API_BASE_URL}/signup`, { email: formData.email });
+      const otpResponse = await axios.post(`${API_BASE_URL}/api/signup`, { email: formData.email });
   
       if (otpResponse.status === 200) {
         setIsOtpSent(true);
@@ -174,7 +174,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const verifyResponse = await axios.post(`${API_BASE_URL}/verify-otp`, {
+      const verifyResponse = await axios.post(`${API_BASE_URL}/api/verify-otp`, {
         email: formData.email,
         otp,
         role: formData.role,
@@ -207,7 +207,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post(`${API_BASE_URL}/signup`, { email });
+      await axios.post(`${API_BASE_URL}/api/signup`, { email });
       setIsTimerActive(true);
       setTimer(180);
       toast.success('OTP resent successfully!');
@@ -232,7 +232,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_BASE_URL}/signin`, {
+      const response = await axios.post(`${API_BASE_URL}/api/signin`, {
         email: formData.email,
         password: formData.password,
       });
@@ -281,7 +281,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_BASE_URL}/staff/login`, {
+      const response = await axios.post(`${API_BASE_URL}/api/staff/login`, {
         username: formData.username,
         password: formData.password,
       });
@@ -327,7 +327,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_BASE_URL}/forgot-password`, { email });
+      const response = await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
       if (response.status === 200) {
         setIsOtpSent(true);
         toast.success('OTP sent successfully!');
@@ -350,7 +350,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_BASE_URL}/verify-otp-for-reset`, { email, otp });
+      const response = await axios.post(`${API_BASE_URL}/api/verify-otp-for-reset`, { email, otp });
       if (response.status === 200) {
         setIsOtpVerified(true);
         toast.success('OTP verified successfully!');
@@ -372,7 +372,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_BASE_URL}/reset-password`, data);
+      const response = await axios.post(`${API_BASE_URL}/api/reset-password`, data);
       if (response.status === 200) {
         toast.success('Password reset successfully!');
         return response.data;
@@ -394,7 +394,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post(`${API_BASE_URL}/forgot-password`, { email });
+      await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
       setIsTimerActive(true);
       setTimer(180);
       toast.success('OTP resent successfully!');
@@ -413,7 +413,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_BASE_URL}/signout`);
+      const response = await axios.post(`${API_BASE_URL}/api/signout`);
       console.log(response.data);
   
       // Clear local storage
@@ -440,7 +440,7 @@ export const useFunctions = () => {
     setError(null);
     setResponse(null);
     try {
-      const contactResponse = await axios.post(`${API_BASE_URL}/contact`, {
+      const contactResponse = await axios.post(`${API_BASE_URL}/api/contact`, {
         fullname: formData.fullname,
         email: formData.email,
         message: formData.message
@@ -497,7 +497,7 @@ export const useFunctions = () => {
     setError(null);
   
     try {
-      const response = await axios.get(`${API_BASE_URL}/users`, {
+      const response = await axios.get(`${API_BASE_URL}/api/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -530,7 +530,7 @@ export const useFunctions = () => {
   
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/users/${id}`,
+        `${API_BASE_URL}/api/users/${id}`,
         { status: newStatus },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -572,7 +572,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/contacts`, {
+      const response = await axios.get(`${API_BASE_URL}/api/contacts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -604,7 +604,7 @@ export const useFunctions = () => {
   
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/contacts/${id}/status`,
+        `${API_BASE_URL}/api/contacts/${id}/status`,
         { status: newStatus },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -645,7 +645,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/staff`, {
+      const response = await axios.get(`${API_BASE_URL}/api/staff`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(response.data.data);
@@ -676,7 +676,7 @@ export const useFunctions = () => {
     dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
   
     try {
-      const response = await axios.put(`${API_BASE_URL}/staff/${id}`, updatedData, {
+      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, updatedData, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.status !== 200) {
@@ -699,7 +699,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try{
-      const response = await axios.post(`${API_BASE_URL}/staff`, formData,
+      const response = await axios.post(`${API_BASE_URL}/api/staff`, formData,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
         }
@@ -739,7 +739,7 @@ const getAllProjects = useCallback(async () => {
   setLoading(true);
   setError(null);
   try {
-    const response = await axios.get(`${API_BASE_URL}/projects`, {
+    const response = await axios.get(`${API_BASE_URL}/api/projects`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log(response.data.data);
@@ -768,7 +768,7 @@ const updateProject = async (id, updatedData) => {
   dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
 
   try {
-    const response = await axios.put(`${API_BASE_URL}/projects/${id}`, updatedData, {
+    const response = await axios.put(`${API_BASE_URL}/api/projects/${id}`, updatedData, {
       headers: { Authorization: `Bearer ${authToken}` },
     });
     if (response.status !== 200) {
@@ -903,5 +903,6 @@ const updateProject = async (id, updatedData) => {
     isTimerActive,
     formError,
     backendError,
+    API_BASE_URL,
   };
 };

@@ -1,25 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Gauge,
-  Users,
-  Diagram,
-  Calendar,
-  FileText,
-  Mail,
-  User,
-  LogOut,
-  Smartphone,
-  Ad,
-  Bell,
   Download,
   Edit,
 } from 'lucide-react'; // Import Lucid Icons
 import { jsPDF } from 'jspdf';
 
 function EmployeeManageContract() {
-  const [investor, setInvestor] = useState('Taha');
-  const [entrepreneur, setEntrepreneur] = useState('BOB');
-  const [projectName, setProjectName] = useState('IDEA-Venture');
+  const [investor, setInvestor] = useState('');
+  const [entrepreneur, setEntrepreneur] = useState('');
+  const [projectName, setProjectName] = useState('');
 
   const contracts = [
     { id: '1#', projectName: 'IDEA-Venture', entrepreneur: 'BOB', investor: 'Taha', details: 'IDEA-Venture.docx' },
@@ -51,14 +40,7 @@ function EmployeeManageContract() {
         {/* Header */}
         <header className="header">
           <div className="header-left">
-            <h3 className="contract-header">Contract</h3>
             <input type="text" placeholder="Search" className="search-bar" />
-          </div>
-          <div className="header-right">
-            <Bell className="notification-icon" />
-            <span className="user-name">Nada Zafer</span>
-            <span className="user-role">Admin</span>
-            <div className="user-avatar"></div>
           </div>
         </header>
 
@@ -86,16 +68,18 @@ function EmployeeManageContract() {
             <div className="contract-details">
               <div className="details-row">
                 <div className="details-item">
-                  <label>Investor</label>
+                  <label htmlFor="investor">Investor</label>
                   <input
+                    id="investor"
                     type="text"
                     value={investor}
                     onChange={(e) => setInvestor(e.target.value)}
                   />
                 </div>
                 <div className="details-item">
-                  <label>Entrepreneur</label>
+                  <label htmlFor="entrepreneur">Entrepreneur</label>
                   <input
+                    id="entrepreneur"
                     type="text"
                     value={entrepreneur}
                     onChange={(e) => setEntrepreneur(e.target.value)}
@@ -104,15 +88,16 @@ function EmployeeManageContract() {
               </div>
               <div className="details-row">
                 <div className="details-item">
-                  <label>Project Name</label>
+                  <label htmlFor="projectName">Project Name</label>
                   <input
+                    id="projectName"
                     type="text"
                     value={projectName}
                     onChange={(e) => setProjectName(e.target.value)}
                   />
                 </div>
                 <div className="details-item">
-                  <label>Project Name</label>
+                  <label htmlFor="projectName">Project Name</label>
                   <div className="doc-info">
                     <span>IDEA-Venture.docx (1.56Mb)</span>
                     <button className="download-btn" onClick={handleDownload}>
@@ -157,7 +142,7 @@ function EmployeeManageContract() {
       </div>
 
       {/* CSS */}
-      <style jsx>{`
+      <style>{`
         .employee-manage-contract {
           display: flex;
         }

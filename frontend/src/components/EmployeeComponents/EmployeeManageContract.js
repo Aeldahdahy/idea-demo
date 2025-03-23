@@ -229,7 +229,7 @@ function EmployeeManageContract() {
         }
 
         .contract-header {
-          background-color: #ffc107;
+          
           padding: 5px 10px;
           border-radius: 5px;
         }
@@ -277,7 +277,7 @@ function EmployeeManageContract() {
         }
 
         .contract-details-header {
-          background-color: #ffc107;
+         
           padding: 5px 10px;
           border-radius: 5px;
         }

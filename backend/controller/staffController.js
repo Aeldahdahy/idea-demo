@@ -28,17 +28,10 @@ const createStaff = async (req, res) => {
           return res.status(400).json({ success: false, message: 'Invalid role provided' });
       }
 
-<<<<<<< HEAD
       // Validate email format
       if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
           return res.status(400).json({ success: false, message: 'Invalid email format' });
       }
-=======
-    // Validate email format
-    if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-      return res.status(400).json({ success: false, message: 'Invalid email format' });
-    }
->>>>>>> f9f60bee36b10f0bfece6cdffac663cb83b4e463
 
       // Validate phone number
       if (!/^[0-9]{10,15}$/.test(phone)) {
@@ -155,17 +148,10 @@ const updateStaff = async (req, res) => {
           return res.status(400).json({ success: false, message: 'Invalid role provided' });
       }
 
-<<<<<<< HEAD
       // Validate email format
       if (email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
           return res.status(400).json({ success: false, message: 'Invalid email format' });
       }
-=======
-    // Validate email format
-    if (email && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-      return res.status(400).json({ success: false, message: 'Invalid email format' });
-    }
->>>>>>> f9f60bee36b10f0bfece6cdffac663cb83b4e463
 
       // Validate phone number
       if (phone && !/^[0-9]{10,15}$/.test(phone)) {

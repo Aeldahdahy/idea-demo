@@ -2698,3 +2698,263 @@ form.sign-in-form {
   } */
 }
 
+/*LAMA'S {MANAGE MEETING REQUEST CSS CODES}*/
+
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 30%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-slots-btn {
+  background-color: #024059;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-slots-btn:hover {
+  background-color: #022c3d;
+}
+
+.table-container {
+  margin-bottom: 30px;
+}
+
+.meeting-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.meeting-table th, .meeting-table td {
+  border: 1px solid #ececec;
+  padding: 10px;
+  text-align: center;
+}
+
+.meeting-table th {
+  background: #f1f1f1;
+  position: sticky;
+}
+
+.status {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status.done {
+  color: green;
+}
+
+.status.rejected {
+  color: #D11A2A;
+}
+
+.status.pending {
+  color: #F2B949;
+}
+
+.status.scheduled {
+  color: #1212cd;
+}
+
+.responses-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.response-box {
+  width: 49%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.check-btn {
+  background: #024059;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.check-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.check-btn:hover {
+  background: #022c3d;
+}
+
+/* mobile app *//* EmployeeMobileWebContent.css *//* EmployeeMobileWebContent.css */
+.emwc-dashboard-container {
+  padding: 30px;
+  min-height: 100vh;
+}
+
+.emwc-dashboard-container form {
+  padding: 0;
+  width: 100%;
+}
+
+.emwc-section {
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.emwc-section h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+}
+
+.emwc-section-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  width: 100%;
+  margin-bottom: 15px; /* Space between content and slide select */
+}
+
+.emwc-description,
+.emwc-upload {
+  display: flex;
+  flex-direction: column;
+}
+
+.emwc-description label,
+.emwc-upload label {
+  font-size: 14px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.emwc-description textarea {
+  height: 150px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  resize: none;
+  font-size: 14px;
+  color: #888;
+}
+
+.emwc-description textarea::placeholder {
+  color: #c4c4c4;
+}
+
+.emwc-upload-box {
+  border: 2px dashed #d3d3d3;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.emwc-upload-box p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Hide the default file input */
+.emwc-upload-input {
+  display: none;
+}
+
+/* Style the upload icon label to act as a button */
+.emwc-upload-icon-label {
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Style the upload icon */
+.emwc-upload-icon {
+  width: 55px; /* Adjust size as needed */
+  height: 45px;
+}
+
+.emwc-subsection {
+  margin-bottom: 30px;
+  position: relative; /* To position the slide-select */
+}
+
+.emwc-subsection h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  display: inline-block; /* Align with slide-select */
+  margin-bottom: 15px;
+}
+
+/* Position the slide-select to the right of the h3 */
+.emwc-subsection .emwc-slide-select {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.emwc-slide-select select {
+  width: 150px;
+  padding: 8px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #888;
+  background-color: #fff;
+}
+
+.emwc-save-button {
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  display: block;
+  margin: 0 auto;
+  transition: background-color 0.2s;
+}
+
+.emwc-save-button:hover {
+  background-color: #34495e;
+}

@@ -7,14 +7,16 @@ const upload = require('../middleWare/projectMiddleware'); // Import multer midd
 const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject } = require('../controller/clientController'); 
 const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
+const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
 const { body } = require('express-validator');
 
 // const { session } = require('passport');
 
 // -----------------------------------------------------------------------------------> staff portal <-----------------------------------------------------------------------------------
 
+
 // Staff portal: Create a new staff member (Admin only)
-router.post('/staff', authenticateToken, isAdmin, createStaff);
+router.post('/staff', authenticateToken, isAdmin, staffImageUploads, createStaff);
 
 // Staff login
 router.post('/staff/login', loginStaff);
@@ -26,7 +28,7 @@ router.get('/staff', authenticateToken, isAdmin, getAllStaff);
 router.get('/staff/:staffId', authenticateToken, isAdmin, getStaffById);
 
 // Update staff details (Admin only)
-router.put('/staff/:staffId', authenticateToken, isAdmin, updateStaff);
+router.put('/staff/:staffId', authenticateToken, isAdmin, staffImageUploads, updateStaff);
 
 // Get all Users (Clients) (Admin only)
 router.get('/users', authenticateToken, isAdmin, getAllUsers);

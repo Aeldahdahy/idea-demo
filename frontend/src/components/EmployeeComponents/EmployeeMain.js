@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { openPopup } from '../../redux/checkpopupSlice';
 import { openYesNoPopup } from '../../redux/yesNoPopupSlice';
 import { openStaffData } from '../../redux/staffDataSlice';
+import { openProjectData } from '../../redux/projectDataSlice';
 
 function EmployeeMain() {
   const dispatch = useDispatch();
@@ -32,6 +33,14 @@ function EmployeeMain() {
     }));
   };
 
+  const handleOpenProjectPopup = () => {
+    dispatch(openProjectData({
+      header: 'Add New Project',
+      buttonText: 'Add',
+      type: 'Add',
+    }));
+  }
+
   return (
     <>
       <h1>EmployeeMain</h1>
@@ -49,6 +58,9 @@ function EmployeeMain() {
       </button>
       <button onClick={handleOpenStaffPopup} className="test-popup-button">
         Add New Staff
+      </button>
+      <button onClick={handleOpenProjectPopup} className="test-popup-button">
+        Add New Project
       </button>
     </>
   );

@@ -7,6 +7,7 @@ import messagesSlice from './messagesSlice';
 import staffSlice from './staffSlice';
 import projectSlice from './projectSlice';
 import staffDataSlice from './staffDataSlice';
+import ProjectDataSlice from './projectDataSlice';
 
 export const store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
         staff: staffSlice,
         project: projectSlice,
         staffData: staffDataSlice,
+        projectData: ProjectDataSlice,
     },
-    devTools: process.env.NODE_ENV !== 'production', // Improved devTools setup
+    devTools: process.env.NODE_ENV !== 'production',
 });

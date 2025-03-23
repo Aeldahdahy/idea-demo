@@ -13,10 +13,13 @@ import EmployeeManageContract from './EmployeeManageContract';
 import EmployeeMobileWebContent from './EmployeeMobileWebContent';
 import EmployeeManageMeeting from './EmployeeManageMeeting';
 import EmployeeDataPopUp from './EmployeeDataPopUp';
+import EmployeeProjectPopUp from './EmployeeProjectPopUp';
 
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
-  const { isOpen, type, initialData } = staffData;
+  const projectData = useSelector((state) => state.projectData);
+  const { isOpenStaff, typeStaff, initialStaffData } = staffData;
+  const { isOpenProject, typeProject, initialProjectData } = projectData;
 
   return (
     <div style={{ display: "flex" }}>
@@ -39,7 +42,8 @@ function EmployeePortal() {
           </div>
         </div>
       </div>
-      {isOpen && <EmployeeDataPopUp mode={type} initialData={initialData} />}
+      {isOpenStaff && <EmployeeDataPopUp typeStaff={typeStaff} initialStaffData={initialStaffData} />}
+      {isOpenProject && <EmployeeProjectPopUp mode={typeProject} initialProjectData={initialProjectData} />}
     </div>
   );
 }

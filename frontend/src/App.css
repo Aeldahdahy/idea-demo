@@ -185,10 +185,6 @@ nav.hidden-nav {
   align-items: center;
 }
 
-.userImage {
-  width: 40px;
-  height: 40px;
-}
 
 .userIconSvgContainer {
   width: 40px;
@@ -206,11 +202,7 @@ nav.hidden-nav {
   left: 5px;
 }
 
-.userName {
-  margin-left: 10px;
-  font-size: 16px;
-  font-weight: bold;
-}
+
 
 .dropdownIcon {
   margin-left: 5px;
@@ -1548,10 +1540,6 @@ form.sign-in-form {
   border-radius: 0 5px 5px 0;
 }
 
-.sidebar-link:hover {
-  background: #F0F7FF;
-}
-
 .sidebarLine {
   width: 100%;
   border: 1px solid #DBDBDB;
@@ -1637,6 +1625,7 @@ form.sign-in-form {
 }
 
 .userName {
+  margin-left: 10px;
   font-size: 16px;
   font-weight: bold;
   color: #024059;
@@ -1873,13 +1862,13 @@ form.sign-in-form {
   padding: 10px 0;
 }
 
-.search-input {
+/* .search-input {
   width: 30%;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 16px;
-}
+} */
 
 .add-btn {
   background-color: #20315C;
@@ -2226,6 +2215,127 @@ form.sign-in-form {
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   width: 100%;
+}
+
+
+/*LAMA'S {MANAGE MEETING REQUEST CSS CODES}*/
+
+.meeting-container {
+  padding: 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-input{
+  width: 30%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-slots-btn {
+  background-color: #024059;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-slots-btn:hover {
+  background-color: #022c3d;
+}
+
+.table-container {
+  margin-bottom: 30px;
+}
+
+.meeting-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.meeting-table th, .meeting-table td {
+  border: 1px solid #ececec;
+  padding: 10px;
+  text-align: center;
+}
+
+.meeting-table th {
+  background: #f1f1f1;
+  position: sticky;
+}
+
+.status {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status.done {
+  color: green;
+}
+
+.status.rejected {
+  color: #D11A2A;
+}
+
+.status.pending {
+  color: #F2B949;
+}
+
+.status.scheduled {
+  color: #1212cd;
+}
+
+.responses-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.response-box {
+  width: 49%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.check-btn {
+  background: #024059;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.check-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.check-btn:hover {
+  background: #022c3d;
 }
 
 /* responsive */
@@ -2588,122 +2698,3 @@ form.sign-in-form {
   } */
 }
 
-/*LAMA'S {MANAGE MEETING REQUEST CSS CODES}*/
-
-.meeting-container {
-  padding: 20px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.meeting-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.search-input {
-  width: 30%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.add-slots-btn {
-  background-color: #024059;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.add-slots-btn:hover {
-  background-color: #022c3d;
-}
-
-.table-container {
-  margin-bottom: 30px;
-}
-
-.meeting-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.meeting-table th, .meeting-table td {
-  border: 1px solid #ececec;
-  padding: 10px;
-  text-align: center;
-}
-
-.meeting-table th {
-  background: #f1f1f1;
-  position: sticky;
-}
-
-.status {
-  font-weight: bold;
-  text-transform: capitalize;
-}
-
-.status.done {
-  color: green;
-}
-
-.status.rejected {
-  color: #D11A2A;
-}
-
-.status.pending {
-  color: #F2B949;
-}
-
-.status.scheduled {
-  color: #1212cd;
-}
-
-.responses-container {
-  display: flex;
-  justify-content: space-between;
-}
-
-.response-box {
-  width: 49%;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-}
-
-.response-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.check-btn {
-  background: #024059;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-}
-
-.check-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-.check-btn:hover {
-  background: #022c3d;
-}

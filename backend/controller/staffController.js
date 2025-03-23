@@ -28,7 +28,7 @@ const createStaff = async (req, res) => {
     }
 
     // Validate email format
-    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+    if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       return res.status(400).json({ success: false, message: 'Invalid email format' });
     }
 
@@ -153,7 +153,7 @@ const updateStaff = async (req, res) => {
     }
 
     // Validate email format
-    if (email && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+    if (email && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       return res.status(400).json({ success: false, message: 'Invalid email format' });
     }
 

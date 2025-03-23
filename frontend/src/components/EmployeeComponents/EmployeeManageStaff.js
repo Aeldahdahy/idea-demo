@@ -14,30 +14,30 @@ function EmployeeManageStaff() {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const handleStaffDataPopup = (type, staffData = {}) => {
-    if (type === "Add") {
+  const handleStaffDataPopup = (typeStaff, staffData = {}) => {
+    if (typeStaff === "Add") {
       dispatch(
         openStaffData({
           header: "Add New Staff",
           buttonText: "Add",
-          type: "Add",
+          typeStaff: "Add",
         })
       );
-    } else if (type === "Edit" && staffData._id) {
+    } else if (typeStaff === "Edit" && staffData._id) {
       dispatch(
         openStaffData({
           header: "Edit Staff",
           buttonText: "Edit",
-          type: "Edit",
-          initialData: {
+          typeStaff: "Edit",
+          initialStaffData: {
             _id: staffData._id,
-            fullName: staffData.fullName || '',
-            userName: staffData.username || '', // Map to userName
-            email: staffData.email || '',
-            phone: staffData.phone || '',
-            role: staffData.role || 'Employee',
+            fullName: staffData.fullName || "",
+            userName: staffData.username || "", // Map to userName
+            email: staffData.email || "",
+            phone: staffData.phone || "",
+            role: staffData.role || "Employee",
             permissions: staffData.permissions || [],
-            status: staffData.status || 'Inactive',
+            status: staffData.status || "Inactive",
           },
         })
       );
@@ -60,13 +60,16 @@ function EmployeeManageStaff() {
     setSelectedStaff(e.target.checked ? staff.map((staff) => staff._id) : []);
   };
 
+  // Updated filtering with defensive checks
   const filteredStaff = Array.isArray(staff)
     ? staff.filter((staff) => {
         const searchTerm = search.toLowerCase();
         return (
-          staff.username.toLowerCase().includes(searchTerm) ||
-          staff.email.toLowerCase().includes(searchTerm) ||
-          staff.role.toLowerCase().includes(searchTerm)
+          (staff.username?.toLowerCase() || "").includes(searchTerm) ||
+          (staff.email?.toLowerCase() || "").includes(searchTerm) ||
+          (staff.role?.toLowerCase() || "").includes(searchTerm) ||
+          (staff.role?.toLowerCase() || "").includes(searchTerm) || 
+          (staff.phone?.toLowerCase() || "").includes(searchTerm)
         );
       })
     : [];
@@ -74,6 +77,10 @@ function EmployeeManageStaff() {
   const handleUpdateStaff = (id, updatedData) => {
     updateStaff(id, updatedData);
   };
+
+  // Add loading/error checks before rendering
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <>
@@ -89,8 +96,6 @@ function EmployeeManageStaff() {
           <Plus /> Add New Staff
         </button>
       </div>
-      {loading && <p>Loading...</p>}
-      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
       {filteredStaff.length === 0 ? (
         <p>No staff found.</p>
       ) : (

@@ -5,7 +5,7 @@ import { closeStaffData } from '../../redux/staffDataSlice';
 import { useFunctions } from '../../useFunctions';
 import { toast } from 'react-toastify';
 
-function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
+function EmployeeDataPopUp({ typeStaff = 'Add', initialStaffData = {} }) {
   const dispatch = useDispatch();
   const { createStaff, updateStaff } = useFunctions();
 
@@ -23,34 +23,34 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
   const roleOptions = ['Admin', 'Auditor', 'Cs', 'Employee'];
 
   const [formData, setFormData] = useState({
-    fullName: initialData.fullName || '',
-    userName: initialData.userName || '',
-    email: initialData.email || '',
-    phone: initialData.phone || '',
-    role: initialData.role || 'Employee',
+    fullName: initialStaffData.fullName || '',
+    userName: initialStaffData.userName || '',
+    email: initialStaffData.email || '',
+    phone: initialStaffData.phone || '',
+    role: initialStaffData.role || 'Employee',
     password: '',
     confirmPassword: '',
-    permissions: initialData.permissions || [],
+    permissions: initialStaffData.permissions || [],
   });
-  const [status, setStatus] = useState(initialData.status || 'Inactive');
+  const [status, setStatus] = useState(initialStaffData.status || 'Inactive');
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    console.log('initialData received:', initialData); // Debug log
-    if (mode === 'Edit' && initialData._id) {
+    console.log('initialStaffData received:', initialStaffData); // Debug log
+    if (typeStaff === 'Edit' && initialStaffData._id) {
       setFormData({
-        fullName: initialData.fullName || '',
-        userName: initialData.userName || '',
-        email: initialData.email || '',
-        phone: initialData.phone || '',
-        role: initialData.role || 'Employee',
+        fullName: initialStaffData.fullName || '',
+        userName: initialStaffData.userName || '',
+        email: initialStaffData.email || '',
+        phone: initialStaffData.phone || '',
+        role: initialStaffData.role || 'Employee',
         password: '',
         confirmPassword: '',
-        permissions: Array.isArray(initialData.permissions) ? initialData.permissions : [],
+        permissions: Array.isArray(initialStaffData.permissions) ? initialStaffData.permissions : [],
       });
-      setStatus(initialData.status || 'Inactive');
+      setStatus(initialStaffData.status || 'Inactive');
     }
-  }, [mode, initialData]);
+  }, [typeStaff, initialStaffData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -98,8 +98,8 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
     };
 
     try {
-      if (mode === 'Edit' && initialData._id) {
-        await updateStaff(initialData._id, updatedData);
+      if (typeStaff === 'Edit' && initialStaffData._id) {
+        await updateStaff(initialStaffData._id, updatedData);
       } else {
         await createStaff(updatedData);
       }
@@ -154,7 +154,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
       <form onSubmit={handleSubmit} onClick={(e) => e.stopPropagation()}>
         <div className="employee-popup-body">
           <div className="employee-popup-header">
-            <h2>{mode === 'Add' ? 'Add user' : 'Edit user'}</h2>
+            <h2>{typeStaff === 'Add' ? 'Add user' : 'Edit user'}</h2>
             <span className="close-btn" onClick={handleClose}>
               <X size={18} />
             </span>
@@ -220,7 +220,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    required={mode === 'Add'}
+                    required={typeStaff === 'Add'}
                   />
                 </label>
                 <label>
@@ -230,7 +230,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    required={mode === 'Add'}
+                    required={typeStaff === 'Add'}
                   />
                 </label>
                 <label>
@@ -251,7 +251,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
               </div>
               <div className="employee-popup-actions">
                 <button type="submit" className="btn btn-primary">
-                  {mode === 'Add' ? 'Add' : 'Edit'}
+                  {typeStaff === 'Add' ? 'Add' : 'Edit'}
                 </button>
               </div>
             </div>

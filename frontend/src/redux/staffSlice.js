@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const staffSlice = createSlice({
     name: 'staff',
     initialState: {
-        staff: [],
+        staff: [],           
         lastStaffFetched: null,
     },
     reducers: {

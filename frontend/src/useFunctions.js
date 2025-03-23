@@ -667,25 +667,25 @@ export const useFunctions = () => {
   }, [API_BASE_URL, lastStaffFetched, dispatch]);
 
   // update staff
-  const updateStaff = async (id, updatedData) => {
+  const createStaff = async (updatedData) => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-  
-    // Optimistically update the staff status in the UI
-    dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
-  
+
     try {
-      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${authToken}` },
+      const response = await axios.post(`${API_BASE_URL}/api/staff`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      if (response.status !== 200) {
-        throw new Error('Failed to update staff');
+      if (response.status !== 201) {
+        throw new Error('Failed to create staff');
       }
-      toast.success('Staff data updated successfully!');
+      dispatch(setStaff([...staff, response.data.data]));
+      toast.success('Staff created successfully!');
+      return response.data;
     } catch (err) {
-      // Revert the status change if the API call fails
-      dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
       const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -695,25 +695,65 @@ export const useFunctions = () => {
     }
   };
 
-  const createStaff = async (formData) => {
+  const updateStaff = async (id, updatedData) => {
     setLoading(true);
     setError(null);
-    try{
-      const response = await axios.post(`${API_BASE_URL}/api/staff`, formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+    const authToken = localStorage.getItem('authToken');
+
+    // Optimistically update the staff status in the UI
+    const updatedDataObject = {};
+    updatedData.forEach((value, key) => {
+      if (key === 'permissions') {
+        try {
+          updatedDataObject[key] = JSON.parse(value);
+        } catch (error) {
+          console.error('Error parsing permissions in optimistic update:', error);
+          updatedDataObject[key] = [];
         }
-      );
-
-      if(response.status === 201){
-        toast.success('Staff created successfully!');
-        return response.data;
+      } else {
+        updatedDataObject[key] = value;
       }
+    });
 
-    }catch (error) {
-      const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+    dispatch(
+      setStaff(
+        staff.map((s) =>
+          s._id === id ? { ...s, ...updatedDataObject, image: s.image } : s
+        )
+      )
+    );
+
+    try {
+      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to update staff');
+      }
+      dispatch(
+        setStaff(
+          staff.map((s) =>
+            s._id === id ? { ...s, ...response.data.data } : s
+          )
+        )
+      );
+      toast.success('Staff data updated successfully!');
+      return response.data;
+    } catch (err) {
+      dispatch(
+        setStaff(
+          staff.map((s) =>
+            s._id === id ? { ...s, ...updatedDataObject, image: s.image } : s
+          )
+        )
+      );
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);
+      throw err;
     } finally {
       setLoading(false);
     }

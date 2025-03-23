@@ -4,11 +4,14 @@ import { useDispatch } from 'react-redux';
 import { closeStaffData } from '../../redux/staffDataSlice';
 import { useFunctions } from '../../useFunctions';
 import { toast } from 'react-toastify';
-import defaultImage from '../../assets/img-0.35.png';
+
+// Default image if no image is provided
+const defaultImage = '/path/to/default-image.png'; // Replace with your default image path
+const API_BASE_URL = 'your-api-base-url'; // Replace with your actual API base URL
 
 function EmployeeDataPopUp({ typeStaff = 'Add', initialStaffData = {} }) {
   const dispatch = useDispatch();
-  const { createStaff, updateStaff, API_BASE_URL } = useFunctions();
+  const { createStaff, updateStaff } = useFunctions();
 
   const allPermissions = [
     'Manage Staff',
@@ -33,14 +36,15 @@ function EmployeeDataPopUp({ typeStaff = 'Add', initialStaffData = {} }) {
     confirmPassword: '',
     permissions: initialStaffData.permissions || [],
   });
+
   const [status, setStatus] = useState(initialStaffData.status || 'Inactive');
   const [isClosing, setIsClosing] = useState(false);
+  const [image, setImage] = useState(null); // For the new image file
   const [imagePreview, setImagePreview] = useState(
     initialStaffData.image ? `${API_BASE_URL}/${initialStaffData.image}` : defaultImage
-  );
-  const [image, setImage] = useState(null); // Define image state
+  ); // For displaying the image
 
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null); // Ref for the hidden file input
 
   useEffect(() => {
     if (typeStaff === 'Edit' && initialStaffData._id) {
@@ -59,7 +63,7 @@ function EmployeeDataPopUp({ typeStaff = 'Add', initialStaffData = {} }) {
         initialStaffData.image ? `${API_BASE_URL}/${initialStaffData.image}` : defaultImage
       );
     }
-  }, [typeStaff, initialStaffData, API_BASE_URL]);
+  }, [typeStaff, initialStaffData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -110,35 +114,22 @@ function EmployeeDataPopUp({ typeStaff = 'Add', initialStaffData = {} }) {
       toast.error('Passwords do not match');
       return;
     }
-  
-    // Create the updatedData object as a plain object
-    const updatedDataObject = {
-      fullName: formData.fullName,
-      username: formData.userName,
-      email: formData.email,
-      phone: formData.phone,
-      role: formData.role,
-      ...(formData.password && { password: formData.password }),
-      permissions: formData.permissions,
-      status,
-      image,
-    };
-  
-    // Log the permissions to debug
-    console.log('Permissions being sent:', formData.permissions);
-  
-    // Convert updatedDataObject to FormData for submission
-    const updatedData = new FormData();
-    Object.keys(updatedDataObject).forEach((key) => {
-      if (key === 'permissions') {
-        updatedData.append(key, JSON.stringify(updatedDataObject[key]));
-      } else if (key === 'image' && updatedDataObject[key]) {
-        updatedData.append(key, updatedDataObject[key]);
-      } else if (updatedDataObject[key] !== undefined && updatedDataObject[key] !== null) {
-        updatedData.append(key, updatedDataObject[key]);
-      }
-    });
-  
+
+    const updatedData = new FormData(); // Use FormData to handle file uploads
+    updatedData.append('fullName', formData.fullName);
+    updatedData.append('username', formData.userName);
+    updatedData.append('email', formData.email);
+    updatedData.append('phone', formData.phone);
+    updatedData.append('role', formData.role);
+    if (formData.password) {
+      updatedData.append('password', formData.password);
+    }
+    updatedData.append('permissions', JSON.stringify(formData.permissions));
+    updatedData.append('status', status);
+    if (image) {
+      updatedData.append('image', image); // Add the image file to the FormData
+    }
+
     try {
       if (typeStaff === 'Edit' && initialStaffData._id) {
         await updateStaff(initialStaffData._id, updatedData);
@@ -174,8 +165,8 @@ function EmployeeDataPopUp({ typeStaff = 'Add', initialStaffData = {} }) {
         permissions: [],
       });
       setStatus('Inactive');
-      setImage(null); // Reset image state
-      setImagePreview(defaultImage); // Reset image preview
+      setImage(null);
+      setImagePreview(defaultImage);
       dispatch(closeStaffData());
       setIsClosing(false);
     }, 300);

@@ -40,6 +40,7 @@ function EmployeeManageStaff() {
             role: staffData.role || "Employee",
             permissions: staffData.permissions || [],
             status: staffData.status || "Inactive",
+            image: staffData.image || null,
           },
         })
       );

@@ -1468,6 +1468,12 @@ form.sign-in-form {
 .employee-app-container {
   padding: 2rem;
 }
+.employee-manage-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
 
 /* Form Container */
 .employee-form-container {
@@ -1478,6 +1484,7 @@ form.sign-in-form {
   max-width: 800px;
   width: 100%;
   margin-bottom: 2rem;
+  
 }
 
 .employee-form-grid {

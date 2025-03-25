@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Eye } from "lucide-react";
 
-
 function EmployeeManageAd() {
     const initialData = [
         { id: '1#', title: 'Taha Elrajel', subtitle: 'Redbull', image: 'Redbull.jpg', website: 'https://www.Redbull.com', status: 'remove' },
@@ -21,6 +20,13 @@ function EmployeeManageAd() {
 
     return (
         <div className="employee-manage-container">
+            <div className="dashboard-container-header">
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    className="search-input"
+                />
+            </div>
             <div className="employee-form-container">
                 <div className="employee-form-grid">
                     <div>
@@ -58,8 +64,8 @@ function EmployeeManageAd() {
             </div>
 
             <div className="employee-table-container">
-                <table className="employee-table">
-                    <thead>
+                <table className="dashboard-table">
+                    <thead className="dashboard-table-head">
                         <tr>
                             <th>Id</th>
                             <th>Event Title</th>
@@ -82,15 +88,15 @@ function EmployeeManageAd() {
                                 <td>{item.image}</td>
                                 <td>{item.website}</td>
                                 <td>
-                                    <div className="employee-toggle-status-container" onClick={() => handleToggle(item.id)}>
-                                        <div className={`employee-toggle-status ${item.status === "remove" ? "active" : ""}`}>
-                                            <span className="employee-toggle-circle"></span>
-                                            <span className="employee-toggle-text">{item.status === "remove" ? "Remove" : "Display"}</span>
+                                    <div className="toggleStatusContainer" onClick={() => handleToggle(item.id)}>
+                                        <div className={`toggleStatus ${item.status === "remove" ? "active" : ""}`}>
+                                            <span className="toggleCircle"></span>
+                                            <span className="toggleText">{item.status === "remove" ? "Remove" : "Display"}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <button className="employee-edit-btn">
+                                    <button className="edit-btn">
                                         <Eye />
                                     </button>
                                 </td>
@@ -102,7 +108,5 @@ function EmployeeManageAd() {
         </div>
     );
 }
-
-
 
 export default EmployeeManageAd;

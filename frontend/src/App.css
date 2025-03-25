@@ -185,10 +185,6 @@ nav.hidden-nav {
   align-items: center;
 }
 
-.userImage {
-  width: 40px;
-  height: 40px;
-}
 
 .userIconSvgContainer {
   width: 40px;
@@ -206,11 +202,7 @@ nav.hidden-nav {
   left: 5px;
 }
 
-.userName {
-  margin-left: 10px;
-  font-size: 16px;
-  font-weight: bold;
-}
+
 
 .dropdownIcon {
   margin-left: 5px;
@@ -1723,10 +1715,6 @@ th {
   border-radius: 0 5px 5px 0;
 }
 
-.sidebar-link:hover {
-  background: #F0F7FF;
-}
-
 .sidebarLine {
   width: 100%;
   border: 1px solid #DBDBDB;
@@ -1812,6 +1800,7 @@ th {
 }
 
 .userName {
+  margin-left: 10px;
   font-size: 16px;
   font-weight: bold;
   color: #024059;
@@ -2048,13 +2037,13 @@ th {
   padding: 10px 0;
 }
 
-.search-input {
+/* .search-input {
   width: 30%;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 16px;
-}
+} */
 
 .add-btn {
   background-color: #20315C;
@@ -2176,6 +2165,498 @@ th {
   /* Slightly larger font size */
   letter-spacing: 0.5px;
   /* Slight letter spacing */
+}
+.employee-popup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.employee-popup.closing {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.employee-popup-body {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 1000px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.employee-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: #D9D9D9;
+  color: #000;
+}
+
+.employee-popup-content {
+  display: flex;
+  width: 100%;
+}
+
+.employee-popup-left, .employee-popup-right {
+  padding: 20px;
+}
+
+.employee-popup-left {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
+}
+
+.employee-popup-left .toggleStatusContainer{
+  margin: 20px 0px;
+}
+
+.employee-popup-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #ccc;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.employee-popup-avatar-edit {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #024059;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.employee-popup-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.employee-popup-status button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.employee-popup-inactive {
+  background: #6c757d !important;
+  color: white !important;
+}
+
+.employee-popup-right {
+  flex: 1;
+}
+
+.employee-popup form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.employee-popup label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: bold;
+}
+
+.employee-popup input[type="text"],
+.employee-popup input[type="email"],
+.employee-popup input[type="tel"],
+.employee-popup input[type="password"],
+.employee-popup select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  width: 100%; /* Optional: ensures it matches input width */
+  box-sizing: border-box; /* Optional: consistent sizing */
+}
+
+.employee-popup select {
+  appearance: none; /* Remove default arrow */
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="#000" d="M0 0l5 5 5-5z"/></svg>') no-repeat right 10px center; /* Custom arrow */
+  padding-right: 30px; /* Space for arrow */
+}
+
+.employee-popup input[type="text"]:focus,
+.employee-popup input[type="email"]:focus,
+.employee-popup input[type="tel"]:focus,
+.employee-popup input[type="password"]:focus {
+  border-color: #3A974C;
+  outline: none;
+}
+
+.employee-popup .permissions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.employee-popup .permission-item {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.employee-popup .permission-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-popup .permission-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #024059;
+}
+
+.employee-popup .permission-item label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #024059;
+}
+
+.employee-popup .btn {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.employee-popup .btn-primary {
+  background: #024059;
+  color: white;
+}
+
+.employee-popup .btn-primary:hover {
+  background: #1078a1;
+}
+
+.employee-popup .btn-secondary {
+  background: #dc3545;
+  color: white;
+}
+
+.employee-popup .btn-secondary:hover {
+  background: #c82333;
+}
+
+.employee-popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
+}
+
+
+/*LAMA'S {MANAGE MEETING REQUEST CSS CODES}*/
+
+.meeting-container {
+  padding: 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-input{
+  width: 30%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-slots-btn {
+  background-color: #024059;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-slots-btn:hover {
+  background-color: #022c3d;
+}
+
+.table-container {
+  margin-bottom: 30px;
+}
+
+.meeting-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.meeting-table th, .meeting-table td {
+  border: 1px solid #ececec;
+  padding: 10px;
+  text-align: center;
+}
+
+.meeting-table th {
+  background: #f1f1f1;
+  position: sticky;
+}
+
+.status {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status.done {
+  color: green;
+}
+
+.status.rejected {
+  color: #D11A2A;
+}
+
+.status.pending {
+  color: #F2B949;
+}
+
+.status.scheduled {
+  color: #1212cd;
+}
+
+.responses-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.response-box {
+  width: 49%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.check-btn {
+  background: #024059;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.check-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.check-btn:hover {
+  background: #022c3d;
+}
+
+
+/* mobile app *//* EmployeeMobileWebContent.css *//* EmployeeMobileWebContent.css */
+.emwc-dashboard-container {
+  padding: 30px;
+  min-height: 100vh;
+}
+
+.emwc-dashboard-container form {
+  padding: 0;
+  width: 100%;
+}
+
+.emwc-section {
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.emwc-section h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+}
+
+.emwc-section-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  width: 100%;
+  margin-bottom: 15px; /* Space between content and slide select */
+}
+
+.emwc-description,
+.emwc-upload {
+  display: flex;
+  flex-direction: column;
+}
+
+.emwc-description label,
+.emwc-upload label {
+  font-size: 14px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.emwc-description textarea {
+  height: 150px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  resize: none;
+  font-size: 14px;
+  color: #888;
+}
+
+.emwc-description textarea::placeholder {
+  color: #c4c4c4;
+}
+
+.emwc-upload-box {
+  border: 2px dashed #d3d3d3;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.emwc-upload-box p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Hide the default file input */
+.emwc-upload-input {
+  display: none;
+}
+
+/* Style the upload icon label to act as a button */
+.emwc-upload-icon-label {
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Style the upload icon */
+.emwc-upload-icon {
+  width: 55px; /* Adjust size as needed */
+  height: 45px;
+}
+
+.emwc-subsection {
+  margin-bottom: 30px;
+  position: relative; /* To position the slide-select */
+}
+
+.emwc-subsection h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  display: inline-block; /* Align with slide-select */
+  margin-bottom: 15px;
+}
+
+/* Position the slide-select to the right of the h3 */
+.emwc-subsection .emwc-slide-select {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.emwc-slide-select select {
+  width: 150px;
+  padding: 8px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #888;
+  background-color: #fff;
+}
+
+.emwc-save-button {
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  display: block;
+  margin: 0 auto;
+  transition: background-color 0.2s;
+}
+
+.emwc-save-button:hover {
+  background-color: #34495e;
 }
 
 

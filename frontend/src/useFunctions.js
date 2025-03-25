@@ -10,7 +10,9 @@ import { setStaff } from './redux/staffSlice';
 import { setProject } from './redux/projectSlice';
 import { toast } from 'react-toastify';
 
+
 export const useFunctions = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { users, lastUserFetched } = useSelector(state => state.users);
@@ -99,7 +101,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchText = async () => {
   //     try {
-  //       const response = await axios.get("http://127.0.0.1:7030/api/whoarewe");
+  //       const response = await axios.get(`${API_BASE_URL}/api/whoarewe`);
   //       setParagraphText(response.data.mainText);
   //       setSubText(response.data.subText);
   //     } catch (error) {
@@ -113,7 +115,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchStories = async () => {
   //     try {
-  //       const response = await axios.get('http://127.0.0.1:7030/api/successstories');
+  //       const response = await axios.get(`${API_BASE_URL}/api/successstories`);
   //       setStories(response.data);
   //       setLoading(false);
   //     } catch (error) {
@@ -149,7 +151,7 @@ export const useFunctions = () => {
     setError(null);
     try {
       // Step 1: Send OTP
-      const otpResponse = await axios.post('http://127.0.0.1:7030/api/signup', { email: formData.email });
+      const otpResponse = await axios.post(`${API_BASE_URL}/api/signup`, { email: formData.email });
   
       if (otpResponse.status === 200) {
         setIsOtpSent(true);
@@ -172,7 +174,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const verifyResponse = await axios.post('http://127.0.0.1:7030/api/verify-otp', {
+      const verifyResponse = await axios.post(`${API_BASE_URL}/api/verify-otp`, {
         email: formData.email,
         otp,
         role: formData.role,
@@ -205,7 +207,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post('http://127.0.0.1:7030/api/signup', { email });
+      await axios.post(`${API_BASE_URL}/api/signup`, { email });
       setIsTimerActive(true);
       setTimer(180);
       toast.success('OTP resent successfully!');
@@ -230,7 +232,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/signin', {
+      const response = await axios.post(`${API_BASE_URL}/api/signin`, {
         email: formData.email,
         password: formData.password,
       });
@@ -279,7 +281,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/staff/login', {
+      const response = await axios.post(`${API_BASE_URL}/api/staff/login`, {
         username: formData.username,
         password: formData.password,
       });
@@ -325,7 +327,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
+      const response = await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
       if (response.status === 200) {
         setIsOtpSent(true);
         toast.success('OTP sent successfully!');
@@ -348,7 +350,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/verify-otp-for-reset', { email, otp });
+      const response = await axios.post(`${API_BASE_URL}/api/verify-otp-for-reset`, { email, otp });
       if (response.status === 200) {
         setIsOtpVerified(true);
         toast.success('OTP verified successfully!');
@@ -370,7 +372,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/reset-password', data);
+      const response = await axios.post(`${API_BASE_URL}/api/reset-password`, data);
       if (response.status === 200) {
         toast.success('Password reset successfully!');
         return response.data;
@@ -392,7 +394,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
+      await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
       setIsTimerActive(true);
       setTimer(180);
       toast.success('OTP resent successfully!');
@@ -411,7 +413,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/signout');
+      const response = await axios.post(`${API_BASE_URL}/api/signout`);
       console.log(response.data);
   
       // Clear local storage
@@ -438,7 +440,7 @@ export const useFunctions = () => {
     setError(null);
     setResponse(null);
     try {
-      const contactResponse = await axios.post('http://127.0.0.1:7030/api/contact', {
+      const contactResponse = await axios.post(`${API_BASE_URL}/api/contact`, {
         fullname: formData.fullname,
         email: formData.email,
         message: formData.message
@@ -495,7 +497,7 @@ export const useFunctions = () => {
     setError(null);
   
     try {
-      const response = await axios.get('http://127.0.0.1:7030/api/users', {
+      const response = await axios.get(`${API_BASE_URL}/api/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -514,7 +516,7 @@ export const useFunctions = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastUserFetched, dispatch]);
+  }, [API_BASE_URL, lastUserFetched, dispatch]);
 
   // update users
   const updateUsers = async (id, status) => {
@@ -528,7 +530,7 @@ export const useFunctions = () => {
   
     try {
       const response = await axios.put(
-        `http://127.0.0.1:7030/api/users/${id}`,
+        `${API_BASE_URL}/api/users/${id}`,
         { status: newStatus },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -570,7 +572,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://127.0.0.1:7030/api/contacts', {
+      const response = await axios.get(`${API_BASE_URL}/api/contacts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -589,7 +591,7 @@ export const useFunctions = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastMessageFetched, dispatch]);
+  }, [API_BASE_URL, lastMessageFetched, dispatch]);
   
   const updateMessages = async (id, status) => {
     setLoading(true);
@@ -602,7 +604,7 @@ export const useFunctions = () => {
   
     try {
       const response = await axios.put(
-        `http://127.0.0.1:7030/api/contacts/${id}/status`,
+        `${API_BASE_URL}/api/contacts/${id}/status`,
         { status: newStatus },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -643,7 +645,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://127.0.0.1:7030/api/staff', {
+      const response = await axios.get(`${API_BASE_URL}/api/staff`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(response.data.data);
@@ -662,28 +664,92 @@ export const useFunctions = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastStaffFetched, dispatch]);
+  }, [API_BASE_URL, lastStaffFetched, dispatch]);
 
   // update staff
+  const createStaff = async (updatedData) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/staff`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status !== 201) {
+        throw new Error('Failed to create staff');
+      }
+      dispatch(setStaff([...staff, response.data.data]));
+      toast.success('Staff created successfully!');
+      return response.data;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateStaff = async (id, updatedData) => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-  
+
     // Optimistically update the staff status in the UI
-    dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
-  
+    const updatedDataObject = {};
+    updatedData.forEach((value, key) => {
+      if (key === 'permissions') {
+        try {
+          updatedDataObject[key] = JSON.parse(value);
+        } catch (error) {
+          console.error('Error parsing permissions in optimistic update:', error);
+          updatedDataObject[key] = [];
+        }
+      } else {
+        updatedDataObject[key] = value;
+      }
+    });
+
+    dispatch(
+      setStaff(
+        staff.map((s) =>
+          s._id === id ? { ...s, ...updatedDataObject, image: s.image } : s
+        )
+      )
+    );
+
     try {
-      const response = await axios.put(`http://127.0.0.1:7030/api/staff/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${authToken}` },
+      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
       });
       if (response.status !== 200) {
         throw new Error('Failed to update staff');
       }
+      dispatch(
+        setStaff(
+          staff.map((s) =>
+            s._id === id ? { ...s, ...response.data.data } : s
+          )
+        )
+      );
       toast.success('Staff data updated successfully!');
+      return response.data;
     } catch (err) {
-      // Revert the status change if the API call fails
-      dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
+      dispatch(
+        setStaff(
+          staff.map((s) =>
+            s._id === id ? { ...s, ...updatedDataObject, image: s.image } : s
+          )
+        )
+      );
       const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -713,7 +779,7 @@ const getAllProjects = useCallback(async () => {
   setLoading(true);
   setError(null);
   try {
-    const response = await axios.get('http://127.0.0.1:7030/api/projects', {
+    const response = await axios.get(`${API_BASE_URL}/api/projects`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log(response.data.data);
@@ -731,7 +797,7 @@ const getAllProjects = useCallback(async () => {
   } finally {
     setLoading(false);
   }
-}, [lastProjectFetched, dispatch]);
+}, [API_BASE_URL, lastProjectFetched, dispatch]);
 
 // update project
 const updateProject = async (id, updatedData) => {
@@ -742,7 +808,7 @@ const updateProject = async (id, updatedData) => {
   dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
 
   try {
-    const response = await axios.put(`http://127.0.0.1:7030/api/projects/${id}`, updatedData, {
+    const response = await axios.put(`${API_BASE_URL}/api/projects/${id}`, updatedData, {
       headers: { Authorization: `Bearer ${authToken}` },
     });
     if (response.status !== 200) {
@@ -834,6 +900,7 @@ const updateProject = async (id, updatedData) => {
     verifyOtp,
     chunkArray,
     formatTime,
+    createStaff,
     updateUsers,
     getAllUsers,
     getAllStaff,
@@ -876,5 +943,6 @@ const updateProject = async (id, updatedData) => {
     isTimerActive,
     formError,
     backendError,
+    API_BASE_URL,
   };
 };

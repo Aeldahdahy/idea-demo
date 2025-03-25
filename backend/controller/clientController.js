@@ -425,7 +425,7 @@ const deleteProject = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Project not found' });
         }
 
-        // Delete associated files (business plan, additional document, images)
+        // Delete files (business plan, additional document, images)
         if (project.business_plan) fs.unlinkSync(project.business_plan);
         if (project.additional_document) fs.unlinkSync(project.additional_document);
         if (project.project_images) {
@@ -444,6 +444,7 @@ const deleteProject = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error deleting project', error: error.message });
     }
 };
+
 
 
 module.exports =

@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 const EmployeeManageProject = () => {
   const [search, setSearch] = useState('');
   const [selectedProject, setSelectedProject] = useState([]);
-  const { project = [], loading, error, updateProject, getAllProjects } = useFunctions();
+  const { project = [], loading, error, updateProject, getAllProjects, API_BASE_URL } = useFunctions();
   const location = useLocation();
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const EmployeeManageProject = () => {
                 </td>
                 <td>
                     <img
-                        src={project.project_images && project.project_images[0] ? `http://127.0.0.1:7030/${project.project_images[0]}` : defaultImage}
+                        src={project.project_images && project.project_images[0] ? `${API_BASE_URL}/${project.project_images[0]}` : defaultImage}
                         alt={project.project_name}
                         style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
                     />

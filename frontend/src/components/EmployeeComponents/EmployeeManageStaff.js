@@ -3,15 +3,52 @@ import { PenSquare, Plus } from "lucide-react";
 import { useFunctions } from "../../useFunctions";
 import defaultImage from "../../assets/img-0.35.png";
 import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { openStaffData } from "../../redux/staffDataSlice";
 
 function EmployeeManageStaff() {
   const [search, setSearch] = useState("");
   const [selectedStaff, setSelectedStaff] = useState([]);
-  const { staff = [], loading, error, updateStaff, getAllStaff } = useFunctions();
+  const { loading, error, updateStaff, getAllStaff, API_BASE_URL } = useFunctions();
+  const { staff } = useSelector((state) => state.staff); // Get staff from Redux
   const location = useLocation();
+  const dispatch = useDispatch();
+  console.log(API_BASE_URL);
+  
+
+  const handleStaffDataPopup = (typeStaff, staffData = {}) => {
+    if (typeStaff === "Add") {
+      dispatch(
+        openStaffData({
+          header: "Add New Staff",
+          buttonText: "Add",
+          typeStaff: "Add",
+        })
+      );
+    } else if (typeStaff === "Edit" && staffData._id) {
+      dispatch(
+        openStaffData({
+          header: "Edit Staff",
+          buttonText: "Edit",
+          typeStaff: "Edit",
+          initialStaffData: {
+            _id: staffData._id,
+            fullName: staffData.fullName || "",
+            userName: staffData.username || "", // Map to userName
+            email: staffData.email || "",
+            phone: staffData.phone || "",
+            role: staffData.role || "Employee",
+            permissions: staffData.permissions || [],
+            status: staffData.status || "Inactive",
+            image: staffData.image || null,
+          },
+        })
+      );
+    }
+  };
 
   useEffect(() => {
-    if (location.pathname === '/employee-portal/manageStaff') {
+    if (location.pathname === "/employee-portal/manageStaff") {
       getAllStaff();
     }
   }, [location.pathname, getAllStaff]);
@@ -26,25 +63,27 @@ function EmployeeManageStaff() {
     setSelectedStaff(e.target.checked ? staff.map((staff) => staff._id) : []);
   };
 
+  // Updated filtering with defensive checks
   const filteredStaff = Array.isArray(staff)
     ? staff.filter((staff) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        staff.username.toLowerCase().includes(searchTerm) ||
-        staff.email.toLowerCase().includes(searchTerm) ||
-        staff.role.toLowerCase().includes(searchTerm)
-        // (staff.createdAt?.toString() || "").includes(searchTerm)
-      );
-    })
+        const searchTerm = search.toLowerCase();
+        return (
+          (staff.username?.toLowerCase() || "").includes(searchTerm) ||
+          (staff.email?.toLowerCase() || "").includes(searchTerm) ||
+          (staff.role?.toLowerCase() || "").includes(searchTerm) ||
+          (staff.role?.toLowerCase() || "").includes(searchTerm) || 
+          (staff.phone?.toLowerCase() || "").includes(searchTerm)
+        );
+      })
     : [];
-
-  // const formatDate = (isoString) => {
-  //   return isoString ? isoString.split("T")[0] : "N/A"; // Extract YYYY-MM-DD
-  // };
 
   const handleUpdateStaff = (id, updatedData) => {
     updateStaff(id, updatedData);
   };
+
+  // Add loading/error checks before rendering
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <>
@@ -56,10 +95,10 @@ function EmployeeManageStaff() {
           onChange={(e) => setSearch(e.target.value)}
           className="search-input"
         />
-        <button className="add-btn"><Plus /> Add New Staff</button>
+        <button className="add-btn" onClick={() => handleStaffDataPopup("Add")}>
+          <Plus /> Add New Staff
+        </button>
       </div>
-      {loading && <p>Loading...</p>}
-      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
       {filteredStaff.length === 0 ? (
         <p>No staff found.</p>
       ) : (
@@ -93,10 +132,9 @@ function EmployeeManageStaff() {
                     onChange={() => handleUserCheckbox(staff._id)}
                   />
                 </td>
-
                 <td>
                   <img
-                    src={staff.image || defaultImage} // Handle missing image
+                    src={staff.image ? `${API_BASE_URL}/${staff.image}`: defaultImage}
                     alt={staff.fullName}
                     style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
                   />
@@ -106,17 +144,28 @@ function EmployeeManageStaff() {
                 <td>{staff.phone || "N/A"}</td>
                 <td>{staff.role || "N/A"}</td>
                 <td>{staff.email || "N/A"}</td>
-                {/* <td>{formatDate(staff.createdAt)}</td> */}
                 <td>
-                  <div className="toggleStatusContainer" onClick={() => handleUpdateStaff(staff._id, { status: staff.status === "Active" ? "Inactive" : "Active" })}>
+                  <div
+                    className="toggleStatusContainer"
+                    onClick={() =>
+                      handleUpdateStaff(staff._id, {
+                        status: staff.status === "Active" ? "Inactive" : "Active",
+                      })
+                    }
+                  >
                     <div className={`toggleStatus ${staff.status === "Active" ? "" : "active"}`}>
                       <span className="toggleCircle"></span>
-                      <span className="toggleText">{staff.status === "Active" ? "Active" : "Inactive"}</span>
+                      <span className="toggleText">
+                        {staff.status === "Active" ? "Active" : "Inactive"}
+                      </span>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <button className="edit-btn">
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleStaffDataPopup("Edit", staff)}
+                  >
                     <PenSquare />
                   </button>
                 </td>

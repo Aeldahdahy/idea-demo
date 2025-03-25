@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import EmployeeMain from './EmployeeMain';
 import EmployeeSideBar from './EmployeeSideBar';
 import EmployeeNavbar from './EmployeeNavbar';
@@ -11,19 +12,20 @@ import EmployeeManageAd from './EmployeeManageAd';
 import EmployeeManageContract from './EmployeeManageContract';
 import EmployeeMobileWebContent from './EmployeeMobileWebContent';
 import EmployeeManageMeeting from './EmployeeManageMeeting';
+import EmployeeDataPopUp from './EmployeeDataPopUp';
+import EmployeeProjectPopUp from './EmployeeProjectPopUp';
 
 function EmployeePortal() {
+  const staffData = useSelector((state) => state.staffData);
+  const projectData = useSelector((state) => state.projectData);
+  const { isOpenStaff, typeStaff, initialStaffData } = staffData;
+  const { isOpenProject, typeProject, initialProjectData } = projectData;
+
   return (
     <div style={{ display: "flex" }}>
-      {/* Static Sidebar for All Modules */}
       <EmployeeSideBar />
-
-    <div className="DashboardContentContainer">
-
-        {/* Static Navbar for All Modules */}
+      <div className="DashboardContentContainer">
         <EmployeeNavbar />
-
-        {/* Dynamic Content */}
         <div className="DashboardContent">
           <div className='dashboardScrollableOutlet'>
             <Routes>
@@ -40,6 +42,8 @@ function EmployeePortal() {
           </div>
         </div>
       </div>
+      {isOpenStaff && <EmployeeDataPopUp typeStaff={typeStaff} initialStaffData={initialStaffData} />}
+      {isOpenProject && <EmployeeProjectPopUp mode={typeProject} initialProjectData={initialProjectData} />}
     </div>
   );
 }

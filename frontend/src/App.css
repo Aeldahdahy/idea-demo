@@ -1505,20 +1505,6 @@ label {
   margin-bottom: 0.5rem;
 }
 
-input[type="text"] {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  color: #4a5568;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-input[type="text"]:focus {
-  border-color: #4299e1;
-}
 
 .employee-upload-area {
   border: 2px dashed #cbd5e0;
@@ -1551,20 +1537,7 @@ input[type="text"]:focus {
   color: #a0aec0;
 }
 
-button {
-  background-color: #2b6cb0;
-  color: #ffffff;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
 
-button:hover {
-  background-color: #2c5282;
-}
 
 /* Table Container */
 .employee-table-container {
@@ -2487,8 +2460,6 @@ th {
 .response-box {
   width: 49%;
   padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
   background: #fff;
 }
 
@@ -2519,6 +2490,36 @@ th {
 .check-btn:hover {
   background: #022c3d;
 }
+
+.scrollable-table {
+  max-height: 265px; 
+  overflow-y: auto;
+  position: relative;
+}
+
+.scrollable-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.scrollable-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.scrollable-table th, .scrollable-table td {
+  text-align: left;
+}
+
+.scrollable-table th {
+  font-weight: bold;
+}
+
+.table-separetor{
+  border: 1px solid #DBDBDB;
+}
+
 
 
 /* mobile app *//* EmployeeMobileWebContent.css *//* EmployeeMobileWebContent.css */

@@ -35,9 +35,9 @@ function EmployeeMain() {
 
   const handleOpenProjectPopup = () => {
     dispatch(openProjectData({
-      header: 'Add New Project',
-      buttonText: 'Add',
-      type: 'Add',
+      header: 'View Project',
+      buttonText: 'View',
+      type: 'View',
     }));
   }
 

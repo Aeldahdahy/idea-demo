@@ -1,20 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const projectDateSlice = createSlice({
+const projectDataSlice = createSlice({
     name: "projectData",
     initialState: {
         isOpen: false,
         header: "",
         buttonText: "",
         type: "",
-        initialData: {},
+        initialData: {}, 
     },
     reducers: {
         openProjectData: (state, action) => {
             state.isOpen = true;
-            state.header = action.payload.header;
-            state.buttonText = action.payload.buttonText;
-            state.type = action.payload.type;
+            state.header = action.payload.header || "";
+            state.buttonText = action.payload.buttonText || "";
+            state.type = action.payload.type || "";
             state.initialData = action.payload.initialData || {};
         },
         closeProjectData: (state) => {
@@ -27,5 +27,5 @@ const projectDateSlice = createSlice({
     },
 });
 
-export const { openProjectData, closeProjectData } = projectDateSlice.actions;
-export default projectDateSlice.reducer;
+export const { openProjectData, closeProjectData } = projectDataSlice.actions;
+export default projectDataSlice.reducer;

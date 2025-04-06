@@ -18,8 +18,8 @@ import EmployeeProjectPopUp from './EmployeeProjectPopUp';
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
   const projectData = useSelector((state) => state.projectData);
-  const { isOpenStaff, typeStaff, initialStaffData } = staffData;
-  const { isOpenProject, typeProject, initialProjectData } = projectData;
+  const { isOpen: isOpenStaff, type: typeStaff, initialData: initialStaffData } = staffData;
+  const { isOpen: isOpenProject, type: typeProject, initialData: initialProjectData } = projectData;
 
   return (
     <div style={{ display: "flex" }}>
@@ -43,7 +43,7 @@ function EmployeePortal() {
         </div>
       </div>
       {isOpenStaff && <EmployeeDataPopUp typeStaff={typeStaff} initialStaffData={initialStaffData} />}
-      {isOpenProject && <EmployeeProjectPopUp mode={typeProject} initialProjectData={initialProjectData} />}
+      {isOpenProject && <EmployeeProjectPopUp typeProject={typeProject} initialProjectData={initialProjectData} />}
     </div>
   );
 }

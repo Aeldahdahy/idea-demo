@@ -276,7 +276,6 @@ export const useFunctions = () => {
     }
   };
 
-
   const StaffSignIn = async (formData) => {
     setLoading(true);
     setError(null);
@@ -320,8 +319,6 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
-
 
   const sendOtp = async (email) => {
     setLoading(true);
@@ -345,7 +342,6 @@ export const useFunctions = () => {
     }
   };
   
-
   const verifyOtpForPasswordReset = async (email, otp) => {
     setLoading(true);
     setError(null);
@@ -407,7 +403,6 @@ export const useFunctions = () => {
     }
   };
   
-
   // sign out
   const signOutDistroySession = async () => {
     setLoading(true);
@@ -474,7 +469,6 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
 
   // get all users
   const getAllUsers = useCallback(async () => {
@@ -666,7 +660,7 @@ export const useFunctions = () => {
     }
   }, [API_BASE_URL, lastStaffFetched, dispatch]);
 
-  // update staff
+  //create staff
   const createStaff = async (updatedData) => {
     setLoading(true);
     setError(null);
@@ -695,6 +689,7 @@ export const useFunctions = () => {
     }
   };
 
+  // update staff
   const updateStaff = async (id, updatedData) => {
     setLoading(true);
     setError(null);
@@ -759,72 +754,72 @@ export const useFunctions = () => {
     }
   };
 
-// get all projects
-const getAllProjects = useCallback(async () => {
-  const THIRTY_MINUTES = 30 * 60 * 1000;
-  const now = Date.now();
-  const token = localStorage.getItem('authToken');
+  // get all projects
+  const getAllProjects = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+    const token = localStorage.getItem('authToken');
 
-  if (!token) {
-    const errorMessage = 'Authentication token is missing. Please sign in again.';
-    setError(errorMessage);
-    toast.error(errorMessage);
-    return;
-  }
-
-  if (lastProjectFetched && now - lastProjectFetched < THIRTY_MINUTES) {
-    return;
-  }
-
-  setLoading(true);
-  setError(null);
-  try {
-    const response = await axios.get(`${API_BASE_URL}/api/projects`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(response.data.data);
-
-    if (Array.isArray(response.data.data)) {
-      dispatch(setProject(response.data.data));
-      toast.success('Projects fetched successfully!');
-    } else {
-      throw new Error('Invalid data format: Expected an array in response.data');
+    if (!token) {
+      const errorMessage = 'Authentication token is missing. Please sign in again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return;
     }
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || 'An error occurred while fetching projects.';
-    setError(errorMessage);
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-}, [API_BASE_URL, lastProjectFetched, dispatch]);
 
-// update project
-const updateProject = async (id, updatedData) => {
-  setLoading(true);
-  setError(null);
-  const authToken = localStorage.getItem('authToken');
-
-  dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
-
-  try {
-    const response = await axios.put(`${API_BASE_URL}/api/projects/${id}`, updatedData, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-    if (response.status !== 200) {
-      throw new Error('Failed to update project');
+    if (lastProjectFetched && now - lastProjectFetched < THIRTY_MINUTES) {
+      return;
     }
-    toast.success('Project data updated successfully!');
-  } catch (err) {
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/projects`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data.data);
+
+      if (Array.isArray(response.data.data)) {
+        dispatch(setProject(response.data.data));
+        toast.success('Projects fetched successfully!');
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while fetching projects.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, lastProjectFetched, dispatch]);
+
+  // update project
+  const updateProject = async (id, updatedData) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+
     dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
-    const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
-    setError(errorMessage);
-    toast.error(errorMessage);
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-};
+
+    try {
+      const response = await axios.put(`${API_BASE_URL}/api/projects/${id}`, updatedData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to update project');
+      }
+      toast.success('Project data updated successfully!');
+    } catch (err) {
+      dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };

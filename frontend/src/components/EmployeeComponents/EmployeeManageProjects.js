@@ -3,12 +3,15 @@ import { Eye } from "lucide-react";
 import defaultImage from "../../assets/img-0.36.png";
 import { useFunctions } from "../../useFunctions";
 import { useLocation } from "react-router-dom";
+import { openProjectData } from '../../redux/projectDataSlice';
+import { useDispatch } from "react-redux";
 
 const EmployeeManageProject = () => {
   const [search, setSearch] = useState('');
   const [selectedProject, setSelectedProject] = useState([]);
   const { project = [], loading, error, updateProject, getAllProjects, API_BASE_URL } = useFunctions();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (location.pathname === '/employee-portal/manageProject') {
@@ -28,21 +31,80 @@ const EmployeeManageProject = () => {
 
   const filteredProject = Array.isArray(project)
     ? project.filter((project) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        project.project_name.toLowerCase().includes(searchTerm) ||
-        project.project_industry.toLowerCase().includes(searchTerm) ||
-        project.city.toLowerCase().includes(searchTerm) ||
-        project.state.toLowerCase().includes(searchTerm) ||
-        project.status.toLowerCase().includes(searchTerm)
-      );
-    })
+        const searchTerm = search.toLowerCase();
+        return (
+          project.project_name.toLowerCase().includes(searchTerm) ||
+          project.project_industry.toLowerCase().includes(searchTerm) ||
+          project.city.toLowerCase().includes(searchTerm) ||
+          project.state.toLowerCase().includes(searchTerm) ||
+          project.status.toLowerCase().includes(searchTerm)
+        );
+      })
     : [];
 
   const handleUpdateProject = (id, updatedData) => {
     updateProject(id, updatedData);
   };
 
+  const handleOpenProjectPopup = (project) => {
+    console.log(project.additional_document);
+    const transformedProjectData = {
+      images: project.project_images.map(img => `${API_BASE_URL}/${img}`) || [], // Full URL for images
+      details: {
+        step1: {
+          projectIndustry: project.project_industry || "N/A",
+          projectStage: "N/A", // Not in backend response
+          minimumInvestment: project.min_investment || "N/A",
+          maximumInvestment: project.max_investment || "N/A",
+          netWorth: "N/A", // Not in backend response
+          dealType: "N/A", // Not in backend response
+          projectLocation: `${project.city || "N/A"}, ${project.state || "N/A"}`,
+          website: "N/A", // Not in backend response
+        },
+        step2: {
+          description: {
+            marketDescription: project.market_description || "N/A",
+            businessHighlights: "N/A", // Not in backend response
+            financialStatus: "N/A", // Not in backend response
+            businessObjectives: project.business_objectives || "N/A",
+            businessDescription: "N/A", // Not in backend response
+          },
+        },
+        step3: {
+          documents: [
+            ...(project.business_plan
+              ? [{
+                  name: "Business Plan",
+                  size: "N/A",
+                  color: "#4CAF50",
+                  path: project.business_plan
+                }]
+              : []),
+            ...(project.additional_document
+              ? [{
+                  name: "Additional Document",
+                  size: "N/A",
+                  color: "#FFCA28",
+                  path: project.additional_document
+                }]
+              : [])
+          ],
+        },
+        step4: {
+          id: project._id,
+          state: project.status,
+        },
+        title: project.project_name || "N/A",
+      },
+    };
+  
+    dispatch(openProjectData({
+      header: 'View Project',
+      buttonText: 'View',
+      type: 'View',
+      initialData: transformedProjectData,
+    }));
+  };
 
   return (
     <>
@@ -90,11 +152,11 @@ const EmployeeManageProject = () => {
                   />
                 </td>
                 <td>
-                    <img
-                        src={project.project_images && project.project_images[0] ? `${API_BASE_URL}/${project.project_images[0]}` : defaultImage}
-                        alt={project.project_name}
-                        style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
-                    />
+                  <img
+                    src={project.project_images && project.project_images[0] ? `${API_BASE_URL}/${project.project_images[0]}` : defaultImage}
+                    alt={project.project_name}
+                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
+                  />
                 </td>
                 <td>{project.project_name || "N/A"}</td>
                 <td>{project.project_industry || "N/A"}</td>
@@ -109,7 +171,10 @@ const EmployeeManageProject = () => {
                   </div>
                 </td>
                 <td>
-                  <button className="edit-btn"><Eye /></button>
+                  {/* Pass the full project object instead of just the ID */}
+                  <button className="edit-btn" onClick={() => handleOpenProjectPopup(project)}>
+                    <Eye />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -118,7 +183,6 @@ const EmployeeManageProject = () => {
       )}
     </>
   );
-//   'Approved', 'Rejected'
 };
 
 export default EmployeeManageProject;

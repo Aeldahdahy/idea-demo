@@ -1,33 +1,35 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { X } from 'lucide-react'; // Importing the X icon from lucide-react
+import { X } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { closeProjectData } from '../../redux/projectDataSlice';
 import { toast } from 'react-toastify';
+import { useFunctions } from '../../useFunctions';
 
 function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} }) {
+  const projectData = initialProjectData;
   const dispatch = useDispatch();
-
+  const { API_BASE_URL, updateProject} = useFunctions();
   const [isClosing, setIsClosing] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isVisible, setIsVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [comment, setComment] = useState('');
-  const [status, setStatus] = useState('Rejected'); // Initialize status for toggle
+  const [status, setStatus] = useState(projectData.details.step4.state || 'Rejected');
 
-  // Use initialProjectData from Redux instead of hardcoded data
-  const projectData = initialProjectData;
 
-  // If projectData is empty or invalid, return null to avoid rendering issues
   if (!projectData || !projectData.details) {
     return null;
   }
 
-  // Handler for closing the popup
+  const handleUpdateProject = (id, updatedData) => {
+    updateProject(id, updatedData);
+  };
+
   const handleClose = () => {
     setIsClosing(true);
     setTimeout(() => {
       setIsVisible(false);
-      dispatch(closeProjectData()); // Dispatch the close action after the animation
+      dispatch(closeProjectData());
     }, 300);
   };
 
@@ -35,26 +37,22 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
     return null;
   }
 
-  // Handler for Next button
   const handleNext = () => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     }
   };
 
-  // Handler for Back button
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
 
-  // Handler for clicking a step number
   const handleStepClick = (step) => {
     setCurrentStep(step);
   };
 
-  // Handlers for carousel navigation
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) =>
       prev === 0 ? projectData.images.length - 1 : prev - 1
@@ -67,25 +65,23 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
     );
   };
 
-  // Handler for comment input
   const handleCommentChange = (e) => {
     setComment(e.target.value);
   };
 
-  // Handler for status toggle
   const handleStatusToggle = () => {
     const newStatus = status === 'Approved' ? 'Rejected' : 'Approved';
-    setStatus(newStatus);
-    console.log('Status updated to:', newStatus); // For demo purposes; replace with actual API call
+    setStatus(newStatus); // UI update
+    handleUpdateProject(projectData.details.step4.id, { status: newStatus }); // Backend update
+    toast.success(`Project status updated to ${newStatus}`);
   };
+  
 
-  // Handler for Submit button (for demo purposes, just logs the action)
   const handleSubmit = () => {
     console.log('Submitted:', { status, comment });
     handleClose();
   };
 
-  // Render content based on the current step
   const renderContent = () => {
     switch (currentStep) {
       case 1:
@@ -161,19 +157,31 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
       case 3:
         return (
           <div className="projectPopUpContent documentContent">
-            <div className="contentRow">
-              {projectData.details.step3.documents.map((doc, index) => (
-                <div key={index} className="documentItem">
-                  <div className="documentIcon" style={{ backgroundColor: doc.color }}>
-                    <span>📄</span>
+            {projectData.details.step3.documents.length === 0 ? (
+              <p>No documents available.</p>
+            ) : (
+              <div className="contentRow">
+                {projectData.details.step3.documents.map((doc, index) => (
+                  <div key={index} className="documentItem">
+                    <div className="documentIcon" style={{ backgroundColor: doc.color }}>
+                      <span>📄</span>
+                    </div>
+                    <div className="documentInfo">
+                      <p>{doc.name}</p>
+                      <span>{doc.size}</span>
+                      <a
+                        href={`${API_BASE_URL}/${doc.path}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#007bff', textDecoration: 'underline' }}
+                      >
+                        View/Download
+                      </a>
+                    </div>
                   </div>
-                  <div className="documentInfo">
-                    <p>{doc.name}</p>
-                    <span>{doc.size}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         );
       case 4:
@@ -187,7 +195,6 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
                 </div>
               </div>
             </div>
-
             <div className="contentField">
               <label>Comment:</label>
               <textarea
@@ -206,17 +213,13 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
   return (
     <div className={`projectPopUp ${isClosing ? 'closing' : ''}`}>
       <div className="projectPopUpBody">
-        {/* Header Section */}
         <div className="projectPopUpHeader">
           <h2></h2>
           <span className="close-btn" onClick={handleClose}>
             <X size={18} />
           </span>
         </div>
-
-        {/* Main Content (Carousel and Wizard) */}
         <div className="projectPopUpMain">
-          {/* Carousel Section */}
           <div className="projectPopUpCarousel">
             <div className="carouselWrapper">
               <img
@@ -232,25 +235,20 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
                   <button className="carouselButton next" onClick={handleNextImage}>
                     ›
                   </button>
+                  <div className="carouselDots">
+                    {projectData.images.map((_, index) => (
+                      <span
+                        key={index}
+                        className={`dot ${currentImageIndex === index ? 'active' : ''}`}
+                      />
+                    ))}
+                  </div>
                 </>
-              )}
-              {projectData.images.length > 1 && (
-                <div className="carouselDots">
-                  {projectData.images.map((_, index) => (
-                    <span
-                      key={index}
-                      className={`dot ${currentImageIndex === index ? 'active' : ''}`}
-                    />
-                  ))}
-                </div>
               )}
             </div>
           </div>
-
-          {/* Content Section with Wizard */}
           <div className="projectPopUpContentWrapper">
             <h2>{projectData.details.title}</h2>
-            {/* Progress Indicator */}
             <div className="progressIndicator">
               {[1, 2, 3, 4].map((step) => (
                 <div key={step} className="stepContainer">
@@ -264,18 +262,12 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
                     {step}
                   </div>
                   {step < 4 && (
-                    <div
-                      className={`stepLine ${step < currentStep ? 'passed' : ''}`}
-                    ></div>
+                    <div className={`stepLine ${step < currentStep ? 'passed' : ''}`}></div>
                   )}
                 </div>
               ))}
             </div>
-
-            {/* Dynamic Content */}
             {renderContent()}
-
-            {/* Navigation Buttons */}
             <div className="navigationButtons">
               <button
                 className="backButton"

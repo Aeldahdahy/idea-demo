@@ -1,3 +1,0 @@
-import img1 from '../../assets/img-0.39.png';
-import img2 from '../../assets/img-0.40.png';
-import img3 from '../../assets/img-0.41.png';

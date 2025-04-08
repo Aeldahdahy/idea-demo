@@ -40,22 +40,56 @@ const projectSchema = new mongoose.Schema({
     required: [true, 'Business objectives are required']
   },
   business_plan: {
-    type: String, // Stores the file path or URL
+    type: String, // File path or URL
     required: false
   },
   additional_document: {
-    type: String, // Stores the file path or URL
+    type: String, // File path or URL
+    required: false
+  },
+  financial_statement: {
+    type: String, // File path or URL
+    required: false
+  },
+  exective_sunnary: {
+    type: String, // File path or URL
     required: false
   },
   project_images: {
-    type: [String], // Array of image file paths or URLs
+    type: [String],
     required: false,
     default: []
   },
-  status: { type: String,
-   enum: ['Approved', 'Rejected'], 
-   default: 'Rejected'
-   },
+  project_stage: {
+    type: String
+  },
+  networth: {
+    type: String
+  },
+  deal_type: {
+    type: String
+  },
+  website_link: {
+    type: String
+  },
+  bussiness_highlights: {
+    type: String
+  },
+  financial_status: {
+    type: String
+  },
+  business_description: {
+    type: String
+  },
+  comment: {
+    type: String,
+    default: 'N/A'
+  },
+  status: {
+    type: String,
+    enum: ['Approved', 'Rejected'],
+    default: 'Rejected'
+  },
   createdAt: {
     type: Date,
     default: Date.now

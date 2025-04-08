@@ -80,7 +80,7 @@ router.post('/verify-otp-for-reset', verifyOtpForReset);
 router.post('/reset-password', resetPassword);
 
 // Create a new project (Authenticated users only)
-router.post('/projects', authenticateToken, upload, createProject);
+router.post('/projects',  upload, createProject);
 
 // Update project (Authenticated users only)
 router.put('/projects/:projectId', authenticateToken, upload, updateProject);

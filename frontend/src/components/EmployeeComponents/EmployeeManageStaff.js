@@ -8,15 +8,18 @@ import { openStaffData } from "../../redux/staffDataSlice";
 
 function EmployeeManageStaff() {
   const [search, setSearch] = useState("");
-  const [selectedStaff, setSelectedStaff] = useState([]);
-  const { loading, error, updateStaff, getAllStaff, API_BASE_URL } = useFunctions();
-  const { staff } = useSelector((state) => state.staff); // Get staff from Redux
+  // const [selectedStaff, setSelectedStaff] = useState([]);
+  const { 
+    // loading,
+    error, updateStaff, getAllStaff, API_BASE_URL } = useFunctions();
+  const { staff } = useSelector((state) => state.staff);
   const location = useLocation();
   const dispatch = useDispatch();
-  console.log(API_BASE_URL);
+  // console.log(API_BASE_URL);
   
 
   const handleStaffDataPopup = (typeStaff, staffData = {}) => {
+    console.log('handleStaffDataPopup:', { typeStaff, staffData }); // Debug
     if (typeStaff === "Add") {
       dispatch(
         openStaffData({
@@ -34,7 +37,7 @@ function EmployeeManageStaff() {
           initialStaffData: {
             _id: staffData._id,
             fullName: staffData.fullName || "",
-            userName: staffData.username || "", // Map to userName
+            userName: staffData.username || "",
             email: staffData.email || "",
             phone: staffData.phone || "",
             role: staffData.role || "Employee",
@@ -53,36 +56,39 @@ function EmployeeManageStaff() {
     }
   }, [location.pathname, getAllStaff]);
 
-  const handleUserCheckbox = (id) => {
-    setSelectedStaff((prev) =>
-      prev.includes(id) ? prev.filter((staffId) => staffId !== id) : [...prev, id]
-    );
-  };
+  // const handleUserCheckbox = (id) => {
+  //   setSelectedStaff((prev) =>
+  //     prev.includes(id) ? prev.filter((staffId) => staffId !== id) : [...prev, id]
+  //   );
+  // };
 
-  const handleSelectAll = (e) => {
-    setSelectedStaff(e.target.checked ? staff.map((staff) => staff._id) : []);
-  };
+  // const handleSelectAll = (e) => {
+  //   setSelectedStaff(e.target.checked ? staff.map((staff) => staff._id) : []);
+  // };
 
   // Updated filtering with defensive checks
   const filteredStaff = Array.isArray(staff)
-    ? staff.filter((staff) => {
-        const searchTerm = search.toLowerCase();
-        return (
-          (staff.username?.toLowerCase() || "").includes(searchTerm) ||
-          (staff.email?.toLowerCase() || "").includes(searchTerm) ||
-          (staff.role?.toLowerCase() || "").includes(searchTerm) ||
-          (staff.role?.toLowerCase() || "").includes(searchTerm) || 
-          (staff.phone?.toLowerCase() || "").includes(searchTerm)
-        );
-      })
-    : [];
+  ? staff.filter((staff) => {
+      const searchTerm = search.toLowerCase();
+      return (
+        (staff.username?.toLowerCase() || "").includes(searchTerm) ||
+        (staff.email?.toLowerCase() || "").includes(searchTerm) ||
+        (staff.role?.toLowerCase() || "").includes(searchTerm) ||
+        (staff.phone?.toLowerCase() || "").includes(searchTerm)
+      );
+    })
+  : [];
 
-  const handleUpdateStaff = (id, updatedData) => {
-    updateStaff(id, updatedData);
-  };
+const handleUpdateStaff = (id, updatedData) => {
+  console.log('handleUpdateStaff:', { id, updatedData });
+  const formData = new FormData();
+  Object.entries(updatedData).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  updateStaff(id, formData);
+};
 
-  // Add loading/error checks before rendering
-  if (loading) return <p>Loading...</p>;
+  // if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
@@ -105,14 +111,14 @@ function EmployeeManageStaff() {
         <table className="dashboard-table">
           <thead className="dashboard-table-head">
             <tr>
-              <th>
+              {/* <th>
                 <input
                   type="checkbox"
                   checked={selectedStaff.length === filteredStaff.length && filteredStaff.length > 0}
                   onChange={handleSelectAll}
                 />
-              </th>
-              <th></th>
+              </th> */}
+              <th>Avatar</th>
               <th>Name</th>
               <th>Username</th>
               <th>Phone Number</th>
@@ -125,13 +131,13 @@ function EmployeeManageStaff() {
           <tbody>
             {filteredStaff.map((staff) => (
               <tr key={staff._id}>
-                <td>
+                {/* <td>
                   <input
                     type="checkbox"
                     checked={selectedStaff.includes(staff._id)}
                     onChange={() => handleUserCheckbox(staff._id)}
                   />
-                </td>
+                </td> */}
                 <td>
                   <img
                     src={staff.image ? `${API_BASE_URL}/${staff.image}`: defaultImage}

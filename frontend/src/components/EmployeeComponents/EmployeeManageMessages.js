@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 
 function EmployeeManageMessages() {
   const [search, setSearch] = useState("");
-  const [selectedMessages, setSelectedMessages] = useState([]);
+  // const [selectedMessages, setSelectedMessages] = useState([]);
   const { messages = [], users = [], loading, error, getAllMessages, getAllUsers, updateMessages } = useFunctions();
   const location = useLocation();
 
@@ -16,15 +16,15 @@ function EmployeeManageMessages() {
     }
   }, [location.pathname, getAllMessages, getAllUsers]);
 
-  const handleMessagesCheckbox = (id) => {
-    setSelectedMessages((prev) =>
-      prev.includes(id) ? prev.filter((messageId) => messageId !== id) : [...prev, id]
-    );
-  };
+  // const handleMessagesCheckbox = (id) => {
+  //   setSelectedMessages((prev) =>
+  //     prev.includes(id) ? prev.filter((messageId) => messageId !== id) : [...prev, id]
+  //   );
+  // };
 
-  const handleSelectAll = (e) => {
-    setSelectedMessages(e.target.checked ? messages.map((message) => message._id) : []);
-  };
+  // const handleSelectAll = (e) => {
+  //   setSelectedMessages(e.target.checked ? messages.map((message) => message._id) : []);
+  // };
 
   const filteredMessages = Array.isArray(messages)
     ? messages.filter((message) => {
@@ -60,13 +60,13 @@ function EmployeeManageMessages() {
         <table className="dashboard-table">
           <thead className="dashboard-table-head">
             <tr>
-              <th>
+              {/* <th>
                 <input
                   type="checkbox"
                   checked={selectedMessages.length === filteredMessages.length && filteredMessages.length > 0}
                   onChange={handleSelectAll}
                 />
-              </th>
+              </th> */}
               <th>Name</th>
               <th>Email</th>
               <th>Message</th>
@@ -78,13 +78,13 @@ function EmployeeManageMessages() {
           <tbody>
             {filteredMessages.map((message) => (
               <tr key={message._id}>
-                <td>
+                {/* <td>
                   <input
                     type="checkbox"
                     checked={selectedMessages.includes(message._id)}
                     onChange={() => handleMessagesCheckbox(message._id)}
                   />
-                </td>
+                </td> */}
                 <td>{message.fullname}</td>
                 <td>{message.email}</td>
                 <td>{message.message}</td>

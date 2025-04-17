@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  // const [selectedUsers, setSelectedUsers] = useState([]);
   const { users = [], loading, error, updateUsers, getAllUsers } = useFunctions();
   const location = useLocation();
 
@@ -16,15 +16,15 @@ function EmployeeManageUsers() {
     }
   }, [location.pathname, getAllUsers]);
 
-  const handleUserCheckbox = (id) => {
-    setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((userId) => userId !== id) : [...prev, id]
-    );
-  };
+  // const handleUserCheckbox = (id) => {
+  //   setSelectedUsers((prev) =>
+  //     prev.includes(id) ? prev.filter((userId) => userId !== id) : [...prev, id]
+  //   );
+  // };
 
-  const handleSelectAll = (e) => {
-    setSelectedUsers(e.target.checked ? users.map((user) => user._id) : []);
-  };
+  // const handleSelectAll = (e) => {
+  //   setSelectedUsers(e.target.checked ? users.map((user) => user._id) : []);
+  // };
 
   const filteredUsers = Array.isArray(users)
     ? users.filter((user) => {
@@ -62,15 +62,15 @@ function EmployeeManageUsers() {
         <table className="dashboard-table">
           <thead className="dashboard-table-head">
             <tr>
-              <th>
+              {/* <th>
                 <input
                   type="checkbox"
                   checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
                   onChange={handleSelectAll}
                 />
-              </th>
+              </th> */}
               {/* <th>Id</th> */}
-              <th></th>
+              <th>Avatar</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -83,13 +83,13 @@ function EmployeeManageUsers() {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user._id}>
-                <td>
+                {/* <td>
                   <input
                     type="checkbox"
                     checked={selectedUsers.includes(user._id)}
                     onChange={() => handleUserCheckbox(user._id)}
                   />
-                </td>
+                </td> */}
                 {/* <td>{user._id}#</td> */}
                 <td>
                   <img

@@ -1797,31 +1797,24 @@ th {
 .DashboardContent {
   width: 98%;
   height: 85vh;
-  /* Set a fixed height */
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); */
   box-sizing: border-box;
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  /* Stack child elements */
   justify-content: flex-start;
   align-items: center;
   overflow: hidden;
-  /* Prevents DashboardContent from scrolling */
   margin: auto;
 }
 
 .dashboardScrollableOutlet {
   flex: 1;
-  /* Takes up all available space */
   width: 100%;
   padding: 10px;
   overflow-y: auto;
-  /* Enable vertical scrolling */
-  overflow-x: hidden;
+  overflow-x: auto;
   background-color: #ffffff;
   border-radius: 8px;
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   scroll-behavior: smooth;
 }
 
@@ -3069,6 +3062,214 @@ th {
   justify-content: center;
 }
 
+.documentInfo{
+  position: relative;
+}
+.documentInfomation{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.employeeContractContainer {
+  width: 100%;
+}
+
+.employeeContractMainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.employeeContractContentContainer{
+  display: flex;
+  height: 74vh;
+}
+
+.employeeContractSearchInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.employeeContractContent {
+  display: flex;
+  width: 50%;
+  /* height: 30%; */
+}
+
+.employeeContractPreview {
+  flex: 1;
+  background-color: #e8ecef;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.employeeContractDetailsHeader {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.employeeContractPreviewContent {
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+}
+
+.employeeContractPreviewContent h5 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.employeeContractPreviewContent p {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.employeeContractPreviewContent ol {
+  font-size: 14px;
+  padding-left: 20px;
+}
+
+.employeeContractDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.employeeContractDetailsRow {
+  display: flex;
+  gap: 20px;
+}
+
+.employeeContractDetailsItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+}
+
+.employeeContractDetailsItem label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.employeeContractDetailsItem input {
+  padding: 10px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.employeeContractEditIcon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.employeeContractDocInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.employeeContractDocInfo span {
+  font-size: 14px;
+}
+
+.employeeContractEditBtn {
+  background-color: #28a745;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.employeeContractTableContainer {
+  width: 50%;
+  display: flex;
+  padding: 30px;
+  overflow-x: auto;
+  flex-direction: column;
+}
+
+.employeeContractTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.employeeContractTable th,
+.employeeContractTable td {
+  padding: 10px;
+  border: 1px solid #d3d3d3;
+  text-align: left;
+  font-size: 14px;
+}
+
+.employeeContractTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.employeeContractTable td {
+  background-color: #fff;
+}
+
+.employeeContractSaveButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.employeeContractSaveBtn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.employeeContractActions{
+  height: 50%;
+  overflow-y: scroll;
+}
+
+.employeeContractTable thead{
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.employeeContractPreviewContent {
+  overflow-y: auto;
+  max-height: 600px; /* Adjust as needed */
+}
+
+.pdf-document {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.react-pdf__Page {
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 /* responsive */
 @media screen and (max-width:1171px) {

@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 
 const EmployeeManageProject = () => {
   const [search, setSearch] = useState('');
-  const [selectedProject, setSelectedProject] = useState([]);
+  // const [selectedProject, setSelectedProject] = useState([]);
   const { project = [], loading, error, updateProject, getAllProjects, API_BASE_URL } = useFunctions();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -19,15 +19,15 @@ const EmployeeManageProject = () => {
     }
   }, [location.pathname, getAllProjects]);
 
-  const handleProjectCheckbox = (id) => {
-    setSelectedProject((prev) =>
-      prev.includes(id) ? prev.filter((projectId) => projectId !== id) : [...prev, id]
-    );
-  };
+  // const handleProjectCheckbox = (id) => {
+  //   setSelectedProject((prev) =>
+  //     prev.includes(id) ? prev.filter((projectId) => projectId !== id) : [...prev, id]
+  //   );
+  // };
 
-  const handleSelectAll = (e) => {
-    setSelectedProject(e.target.checked ? project.map((project) => project._id) : []);
-  };
+  // const handleSelectAll = (e) => {
+  //   setSelectedProject(e.target.checked ? project.map((project) => project._id) : []);
+  // };
 
   const filteredProject = Array.isArray(project)
     ? project.filter((project) => {
@@ -53,21 +53,21 @@ const EmployeeManageProject = () => {
       details: {
         step1: {
           projectIndustry: project.project_industry || "N/A",
-          projectStage: "N/A", // Not in backend response
+          projectStage: project.project_stage || "N/A", // Not in backend response
           minimumInvestment: project.min_investment || "N/A",
           maximumInvestment: project.max_investment || "N/A",
-          netWorth: "N/A", // Not in backend response
-          dealType: "N/A", // Not in backend response
+          netWorth: project.networth || "N/A", // Not in backend response
+          dealType: project.deal_type || "N/A", // Not in backend response
           projectLocation: `${project.city || "N/A"}, ${project.state || "N/A"}`,
-          website: "N/A", // Not in backend response
+          website: project.website_link || "N/A", // Not in backend response
         },
         step2: {
           description: {
             marketDescription: project.market_description || "N/A",
-            businessHighlights: "N/A", // Not in backend response
-            financialStatus: "N/A", // Not in backend response
+            businessHighlights: project.bussiness_highlights || "N/A", // Not in backend response
+            financialStatus: project.financial_status || "N/A", // Not in backend response
             businessObjectives: project.business_objectives || "N/A",
-            businessDescription: "N/A", // Not in backend response
+            businessDescription: project.business_description || "N/A", // Not in backend response
           },
         },
         step3: {
@@ -76,8 +76,8 @@ const EmployeeManageProject = () => {
               ? [{
                   name: "Business Plan",
                   size: "N/A",
-                  color: "#4CAF50",
-                  path: project.business_plan
+                  color: "#00D0FF",
+                  path: project.business_plan,
                 }]
               : []),
             ...(project.additional_document
@@ -85,9 +85,25 @@ const EmployeeManageProject = () => {
                   name: "Additional Document",
                   size: "N/A",
                   color: "#FFCA28",
-                  path: project.additional_document
+                  path: project.additional_document,
                 }]
-              : [])
+              : []),
+            ...(project.exective_sunnary
+              ? [{
+                name: "Exective Summary",
+                size: "N/A",
+                color: "#3A974C",
+                path: project.exective_sunnary,
+              }]
+              : []),
+            ...(project.financial_statement 
+              ?[{
+                name: "Financial Statement",
+                size: "N/A",
+                color: "#E71D36",
+                path: project.financial_statement,
+              }]
+              :[]),
           ],
         },
         step4: {
@@ -125,14 +141,14 @@ const EmployeeManageProject = () => {
         <table className="dashboard-table">
           <thead className='dashboard-table-head'>
             <tr>
-              <th>
+              {/* <th>
                 <input 
                   type="checkbox" 
                   checked={selectedProject.length === filteredProject.length && filteredProject.length > 0}
                   onChange={handleSelectAll}
                 />
-              </th>
-              <th></th>
+              </th> */}
+              <th>Logo</th>
               <th>Project Name</th>
               <th>Industry Type</th>
               <th>City</th>
@@ -144,13 +160,13 @@ const EmployeeManageProject = () => {
           <tbody>
             {filteredProject.map((project) => (
               <tr key={project._id}>
-                <td>
+                {/* <td>
                   <input 
                     type="checkbox" 
                     checked={selectedProject.includes(project._id)}
                     onChange={() => handleProjectCheckbox(project._id)}
                   />
-                </td>
+                </td> */}
                 <td>
                   <img
                     src={project.project_images && project.project_images[0] ? `${API_BASE_URL}/${project.project_images[0]}` : defaultImage}

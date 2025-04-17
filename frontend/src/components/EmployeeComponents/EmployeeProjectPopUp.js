@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState,
+  //  useEffect, useCallback 
+  } from 'react';
 import { X } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { closeProjectData } from '../../redux/projectDataSlice';
@@ -124,7 +126,18 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
               </div>
               <div className="contentField">
                 <label>Website</label>
-                <p>{projectData.details.step1.website}</p>
+                <a
+                  href={
+                    projectData.details.step1.website.startsWith('http')
+                      ? projectData.details.step1.website
+                      : `https://${projectData.details.step1.website}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#007bff', textDecoration: 'underline' }}
+                >
+                  {projectData.details.step1.website}
+                </a>
               </div>
             </div>
           </div>
@@ -168,15 +181,17 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
                     </div>
                     <div className="documentInfo">
                       <p>{doc.name}</p>
-                      <span>{doc.size}</span>
-                      <a
-                        href={`${API_BASE_URL}/${doc.path}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#007bff', textDecoration: 'underline' }}
-                      >
-                        View/Download
-                      </a>
+                      <div className='documentInfomation'> 
+                        <span>{doc.size}</span>
+                        <a
+                          href={`${API_BASE_URL}/${doc.path}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#007bff', textDecoration: 'underline' }}
+                          >
+                          View
+                        </a>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -214,7 +229,7 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
     <div className={`projectPopUp ${isClosing ? 'closing' : ''}`}>
       <div className="projectPopUpBody">
         <div className="projectPopUpHeader">
-          <h2></h2>
+          <h2> </h2>
           <span className="close-btn" onClick={handleClose}>
             <X size={18} />
           </span>
@@ -222,9 +237,9 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
         <div className="projectPopUpMain">
           <div className="projectPopUpCarousel">
             <div className="carouselWrapper">
-              <img
-                src={projectData.images[currentImageIndex]}
-                alt={`Project Image ${currentImageIndex + 1}`}
+              <img 
+                src={projectData.images[currentImageIndex]} 
+                alt={`Project ${currentImageIndex + 1}`} 
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
               {projectData.images.length > 1 && (

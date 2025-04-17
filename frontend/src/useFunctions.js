@@ -444,7 +444,7 @@ export const useFunctions = () => {
       if (contactResponse.status === 201) {
         const successMessage = contactResponse.data.message || 'Your message has been sent successfully.';
         setResponse(successMessage);
-        toast.success(successMessage);
+        // toast.success(successMessage);
       } else {
         const errorMessage = contactResponse.data.message || 'There was an issue sending your message. Please try again later.';
         setResponse(errorMessage);
@@ -499,7 +499,7 @@ export const useFunctions = () => {
   
       if (Array.isArray(response.data.data)) {
         dispatch(setUsers(response.data.data));
-        toast.success('Users fetched successfully!');
+        // toast.success('Users fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data.data');
       }
@@ -574,7 +574,7 @@ export const useFunctions = () => {
   
       if (Array.isArray(response.data.data)) {
         dispatch(setMessages(response.data.data)); // Dispatch setMessages action
-        toast.success('Messages fetched successfully!');
+        // toast.success('Messages fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data.data');
       }
@@ -646,7 +646,7 @@ export const useFunctions = () => {
       
       if (Array.isArray(response.data.data)) {
         dispatch(setStaff(response.data.data));
-        toast.success('Staff fetched successfully!');
+        // toast.success('Staff fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data');
       }
@@ -781,7 +781,7 @@ export const useFunctions = () => {
 
       if (Array.isArray(response.data.data)) {
         dispatch(setProject(response.data.data));
-        toast.success('Projects fetched successfully!');
+        // toast.success('Projects fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data');
       }

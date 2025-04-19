@@ -20,7 +20,7 @@ function EmployeePortal() {
   const projectData = useSelector((state) => state.projectData);
   // console.log('EmployeePortal staffData:', staffData); // Debug
   const { isOpenStaff, typeStaff, initialStaffData } = staffData; // Fixed
-  const { isOpenProject, typeProject, initialProjectData } = projectData;
+  const { isOpen: isOpenProject, type: typeProject, initialData: initialProjectData } = projectData;
 
   return (
     <div style={{ display: "flex" }}>

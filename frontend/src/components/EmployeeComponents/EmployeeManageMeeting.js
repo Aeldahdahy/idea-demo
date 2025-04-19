@@ -61,9 +61,9 @@ const EmployeeManageMeeting = () => {
     );
   };
 
-  const handleSelectAllRequests = (e) => {
-    setSelectedRequests(e.target.checked ? requestsData.map((request) => request.id) : []);
-  };
+  // const handleSelectAllRequests = (e) => {
+  //   setSelectedRequests(e.target.checked ? requestsData.map((request) => request.id) : []);
+  // };
 
   const handleInvestorCheckbox = (id) => {
     setSelectedInvestorResponses((prev) =>
@@ -128,17 +128,13 @@ const EmployeeManageMeeting = () => {
           <table className="meeting-table">
             <thead>
               <tr>
-                <th>
-                  <input type="checkbox" checked={selectedRequests.length === requestsData.length} onChange={handleSelectAllRequests} />
-                </th>
-                <th>Id</th>
+                <th>Select</th>
                 <th>Project Name</th>
                 <th>Investor</th>
                 <th>Entrepreneur</th>
                 <th>Auditor</th>
                 <th>Data/Time</th>
                 <th>Status</th>
-                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -147,16 +143,13 @@ const EmployeeManageMeeting = () => {
                   <td>
                     <input type="checkbox" checked={selectedRequests.includes(request.id)} onChange={() => handleRequestCheckbox(request.id)} />
                   </td>
-                  <td>#{request.id}</td>
                   <td className="highlight">{request.projectName}</td>
                   <td>{request.investor}</td>
                   <td>{request.entrepreneur}</td>
                   <td>{request.auditor}</td>
                   <td>{request.email}</td>
                   <td className={`status ${request.status.toLowerCase()}`}>{request.status}</td>
-                  <td>
-                    <button className="edit-btn"><Eye /></button>
-                  </td>
+                 
                 </tr>
               ))}
             </tbody>
@@ -181,7 +174,6 @@ const EmployeeManageMeeting = () => {
               <thead>
                 <tr>
                   <th><input type="checkbox" checked={selectedInvestorResponses.length === investorResponsesData.length} onChange={handleSelectAllInvestor} /></th>
-                  <th>Id</th>
                   <th>Project Name</th>
                   <th>Investor</th>
                   <th>Selected Slots</th>
@@ -191,7 +183,6 @@ const EmployeeManageMeeting = () => {
                 {filteredInvestorResponses.map((response) => (
                   <tr key={response.id}>
                     <td><input type="checkbox" checked={selectedInvestorResponses.includes(response.id)} onChange={() => handleInvestorCheckbox(response.id)} /></td>
-                    <td>#{response.id}</td>
                     <td>{response.projectName}</td>
                     <td>{response.investor}</td>
                     <td>{response.slots}</td>
@@ -217,7 +208,6 @@ const EmployeeManageMeeting = () => {
               <thead>
                 <tr>
                   <th><input type="checkbox" checked={selectedEntrepreneurResponses.length === entrepreneurResponsesData.length} onChange={handleSelectAllEntrepreneur} /></th>
-                  <th>Id</th>
                   <th>Project Name</th>
                   <th>Entrepreneur</th>
                   <th>Selected Slots</th>
@@ -227,7 +217,6 @@ const EmployeeManageMeeting = () => {
                 {filteredEntrepreneurResponses.map((response) => (
                   <tr key={response.id}>
                     <td><input type="checkbox" checked={selectedEntrepreneurResponses.includes(response.id)} onChange={() => handleEntrepreneurCheckbox(response.id)} /></td>
-                    <td>#{response.id}</td>
                     <td>{response.projectName}</td>
                     <td>{response.entrepreneur}</td>
                     <td>{response.slots}</td>

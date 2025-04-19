@@ -1,23 +1,19 @@
-import React, { useState,
-  //  useEffect, useCallback 
-  } from 'react';
+import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { closeProjectData } from '../../redux/projectDataSlice';
-import { toast } from 'react-toastify';
 import { useFunctions } from '../../useFunctions';
 
 function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} }) {
   const projectData = initialProjectData;
   const dispatch = useDispatch();
-  const { API_BASE_URL, updateProject} = useFunctions();
+  const { API_BASE_URL, updateProject } = useFunctions();
   const [isClosing, setIsClosing] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isVisible, setIsVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState(projectData.details?.step4?.comment || ''); // Initialize with existing comment
   const [status, setStatus] = useState(projectData.details.step4.state || 'Rejected');
-
 
   if (!projectData || !projectData.details) {
     return null;
@@ -73,15 +69,27 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
 
   const handleStatusToggle = () => {
     const newStatus = status === 'Approved' ? 'Rejected' : 'Approved';
-    setStatus(newStatus); // UI update
-    handleUpdateProject(projectData.details.step4.id, { status: newStatus }); // Backend update
-    toast.success(`Project status updated to ${newStatus}`);
+    setStatus(newStatus);
+    handleUpdateProject(projectData.details.step4.id, { status: newStatus });
   };
-  
 
-  const handleSubmit = () => {
-    console.log('Submitted:', { status, comment });
-    handleClose();
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!comment.trim()) {
+      return;
+    }
+
+    const updatedData = {
+      comment,
+      status
+    };
+
+    try {
+      await handleUpdateProject(projectData.details.step4.id, updatedData);
+      handleClose();
+    } catch (err) {
+      console.error('Failed to submit comment:', err);
+    }
   };
 
   const renderContent = () => {
@@ -188,7 +196,7 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{ color: '#007bff', textDecoration: 'underline' }}
-                          >
+                        >
                           View
                         </a>
                       </div>
@@ -210,15 +218,18 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
                 </div>
               </div>
             </div>
-            <div className="contentField">
               <label>Comment:</label>
-              <textarea
-                placeholder="Message..."
-                value={comment}
-                onChange={handleCommentChange}
-              />
+              <form className="contentField" onSubmit={handleSubmitComment}>
+                <textarea
+                  placeholder="Message..."
+                  value={comment}
+                  onChange={handleCommentChange}
+                  required
+                  rows={4}
+                  style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+                />
+              </form>
             </div>
-          </div>
         );
       default:
         return null;
@@ -300,7 +311,7 @@ function EmployeeProjectPopUp({ typeProject = "View", initialProjectData = {} })
                   Next step
                 </button>
               ) : (
-                <button className="nextButton" onClick={handleSubmit}>
+                <button className="nextButton" onClick={handleSubmitComment}>
                   Submit
                 </button>
               )}

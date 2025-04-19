@@ -47,7 +47,7 @@ const EmployeeManageProject = () => {
   };
 
   const handleOpenProjectPopup = (project) => {
-    console.log(project.additional_document);
+    // console.log(project.additional_document);
     const transformedProjectData = {
       images: project.project_images.map(img => `${API_BASE_URL}/${img}`) || [], // Full URL for images
       details: {
@@ -109,6 +109,7 @@ const EmployeeManageProject = () => {
         step4: {
           id: project._id,
           state: project.status,
+          comment: project.comment || "N/A",
         },
         title: project.project_name || "N/A",
       },
@@ -121,6 +122,8 @@ const EmployeeManageProject = () => {
       initialData: transformedProjectData,
     }));
   };
+
+  console.log("Filtered Projects:", filteredProject); // Debugging line
 
   return (
     <>
@@ -150,6 +153,7 @@ const EmployeeManageProject = () => {
               </th> */}
               <th>Logo</th>
               <th>Project Name</th>
+              <th>Entrepreneur Name</th>
               <th>Industry Type</th>
               <th>City</th>
               <th>State</th>
@@ -175,6 +179,7 @@ const EmployeeManageProject = () => {
                   />
                 </td>
                 <td>{project.project_name || "N/A"}</td>
+                <td>{project.user_name || "N/A"}</td>
                 <td>{project.project_industry || "N/A"}</td>
                 <td>{project.city || "N/A"}</td>
                 <td>{project.state || "N/A"}</td>

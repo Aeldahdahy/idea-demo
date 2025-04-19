@@ -5,6 +5,10 @@ const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
 // Import models
 const Staff = require('../modules/staff'); 
+const Meeting = require('../modules/meeting');
+const Project = require('../modules/project');
+const User = require('../modules/signup');
+
 
 
 require('dotenv').config();
@@ -216,11 +220,156 @@ const updateStaff = async (req, res) => {
   };
 
 
+// Step 1: Investor requests a meeting
+const createMeeting = async (req, res) => {
+  try {
+    const { project_id, entrepreneur_id } = req.body;
+    const investor_id = req.user.user.id;
+    console.log(investor_id);
+    console.log(project_id);
+    console.log(entrepreneur_id);
+
+    const newMeeting = new Meeting({
+      project_id,
+      investor_id,
+      entrepreneur_id,
+    });
+
+    await newMeeting.save();
+    res.status(201).json({ success: true, data: newMeeting });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error creating meeting', error: err.message });
+  }
+};
+
+// Step 2: Assign auditor and generate 3 random slots
+const assignAuditor = async (req, res) => {
+  try {
+    const { meetingId } = req.params;
+    const { auditor_id, slots } = req.body;
+
+    const meeting = await Meeting.findById(meetingId);
+    if (!meeting) return res.status(404).json({ success: false, message: 'Meeting not found' });
+
+    meeting.auditor_id = auditor_id;
+    meeting.available_slots = slots;
+    meeting.status = 'SlotsSentToInvestor';
+
+    await meeting.save();
+    res.status(200).json({ success: true, data: meeting });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error assigning auditor', error: err.message });
+  }
+};
+
+// Step 3: Investor selects 2 preferred slots
+const investorSelectSlots = async (req, res) => {
+  try {
+    const { meetingId } = req.params;
+    const { slots } = req.body; // slots contain day, time, and _id of the available slots
+
+    // Ensure the slots array contains exactly two slots
+    if (slots.length !== 2) {
+      return res.status(400).json({ success: false, message: 'You must select exactly two slots' });
+    }
+
+    const meeting = await Meeting.findById(meetingId);
+    if (!meeting) {
+      return res.status(404).json({ success: false, message: 'Meeting not found' });
+    }
+
+    // Ensure the slots sent in the request are part of the available slots
+    const isValidSlots = slots.every(slot =>
+      meeting.available_slots.some(
+        availableSlot =>
+          availableSlot._id.toString() === slot._id.toString() &&  // Ensure _id matches
+          availableSlot.day === slot.day &&  // Ensure day matches
+          availableSlot.time === slot.time // Ensure time matches
+      )
+    );
+
+    // if (!isValidSlots) {
+    //   return res.status(400).json({ success: false, message: 'One or more slots are invalid' });
+    // }
+
+    // Update the investor_selected_slots with the selected slots
+    meeting.investor_selected_slots = slots;
+    meeting.status = 'SlotsSelectedByInvestor';
+
+    await meeting.save();
+    res.status(200).json({ success: true, data: meeting });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error saving investor slots', error: err.message });
+  }
+};
+
+
+
+
+// Step 4: Entrepreneur confirms final slot
+const entrepreneurConfirmSlot = async (req, res) => {
+  try {
+    const { meetingId } = req.params;
+    const { slot } = req.body; // slot contains day, _id, and time of the selected slot
+
+    const meeting = await Meeting.findById(meetingId);
+    if (!meeting) return res.status(404).json({ success: false, message: 'Meeting not found' });
+
+    // Validate that the selected slot is part of the investor's selected slots
+    const isValidSlot = meeting.investor_selected_slots.some(
+      s =>
+        s._id.toString() === slot._id.toString() &&
+        s.day === slot.day &&          // Validate day
+        s.time === slot.time // Validate time
+    );
+
+    if (!isValidSlot) {
+      return res.status(400).json({ success: false, message: 'Selected slot is not valid' });
+    }
+
+    // Set the final slot
+    meeting.entrepreneur_final_slot = slot;
+
+    // Calculate the scheduled_at date based on the selected day and time
+    const dayMap = {
+      'Monday': 1,
+      'Tuesday': 2,
+      'Wednesday': 3
+    };
+    const timeMap = {
+      '09:00-11:00': '09:00',
+      '12:00-14:00': '12:00'
+    };
+
+    const date = new Date();
+    date.setDate(date.getDate() + (dayMap[slot.day] - date.getDay() + 7) % 7); // Get the correct upcoming day (Monday, Tuesday, or Wednesday)
+    date.setHours(parseInt(timeMap[slot.time].split(':')[0]));
+    date.setMinutes(parseInt(timeMap[slot.time].split(':')[1]));
+
+    meeting.scheduled_at = date;
+    meeting.status = 'Scheduled';
+
+    await meeting.save();
+    res.status(200).json({ success: true, data: meeting });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error saving final slot', error: err.message });
+  }
+};
+
+
+
+
+
+
 module.exports = 
 { 
     createStaff,
     loginStaff,
     getAllStaff,
     getStaffById,
-    updateStaff 
+    updateStaff,
+    createMeeting,
+    assignAuditor,
+    investorSelectSlots,
+    entrepreneurConfirmSlot 
 };

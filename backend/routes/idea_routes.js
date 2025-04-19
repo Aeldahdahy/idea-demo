@@ -5,10 +5,11 @@ const upload = require('../middleWare/projectMiddleware'); // Import multer midd
 
 // functions
 const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject } = require('../controller/clientController'); 
-const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff } = require('../controller/staffController');
+const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff,  createMeeting, assignAuditor, investorSelectSlots, entrepreneurConfirmSlot } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
 const { body } = require('express-validator');
+const { validateMeetingSlots } = require('../middleWare/slotValidation');
 
 // const { session } = require('passport');
 
@@ -47,6 +48,18 @@ router.get('/projects', authenticateToken, isAdmin, getAllProjects);
 
 // Get a single project by ID (Admin only)
 router.get('/projects/:projectId', authenticateToken, isAdmin, getProjectById);
+
+// Step 1: Investor requests a meeting
+router.post('/create-meeting', authenticateToken, createMeeting);
+
+// Step 2: Admin assigns an auditor and generates 3 slots
+router.put('/assign-auditor/:meetingId', authenticateToken, isAdmin, assignAuditor);
+
+// Step 3: Investor selects 2 slots
+router.put('/investor-select/:meetingId', authenticateToken, validateMeetingSlots, investorSelectSlots);
+
+// Step 4: Entrepreneur confirms final slot
+router.put('/entrepreneur-confirm/:meetingId', authenticateToken, validateMeetingSlots, entrepreneurConfirmSlot);
 
 // -----------------------------------------------------------------------------------> client portal <-----------------------------------------------------------------------------------
 

@@ -318,7 +318,6 @@ const updateContactStatus = async (req, res) => {
   }
 };
 
-// Create Project Controller
 const createProject = async (req, res) => {
   try {
     const {
@@ -335,8 +334,15 @@ const createProject = async (req, res) => {
     const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : null;
     const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
 
+    // Get user data from token
+    const user_id = req.user.user.id;
+    const user_name = req.user.user.fullName;
+// console.log(user_id);
+// console.log(user_name);
     // Create new project
     const newProject = new Project({
+      user_id,
+      user_name,
       project_name,
       project_industry,
       max_investment,
@@ -358,7 +364,7 @@ const createProject = async (req, res) => {
       bussiness_highlights,
       financial_status,
       business_description,
-      status: 'Rejected' // Default status override
+      status: 'Rejected' 
     });
 
     await newProject.save();
@@ -375,6 +381,7 @@ const createProject = async (req, res) => {
     });
   }
 };
+
 
 // Get All Projects Controller
 const getAllProjects = async (req, res) => {

@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
 
 const projectSchema = new mongoose.Schema({
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'User ID is required']
+  },
+  user_name: {
+    type: String,
+    required: [true, 'User name is required'],
+    trim: true
+  },
   project_name: {
     type: String,
     required: [true, 'Project name is required'],

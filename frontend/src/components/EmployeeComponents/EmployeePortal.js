@@ -14,6 +14,7 @@ import EmployeeMobileWebContent from './EmployeeMobileWebContent';
 import EmployeeManageMeeting from './EmployeeManageMeeting';
 import EmployeeDataPopUp from './EmployeeDataPopUp';
 import EmployeeProjectPopUp from './EmployeeProjectPopUp';
+import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
 
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
@@ -30,7 +31,7 @@ function EmployeePortal() {
         <div className="DashboardContent">
           <div className='dashboardScrollableOutlet'>
             <Routes>
-              <Route path="" element={<EmployeeMain />} />
+              <Route path="" element={<EmployeeMeetingPopUp />} />
               <Route path="/manageStaff" element={<EmployeeManageStaff />} />
               <Route path="/manageProject" element={<EmployeeManageProjects />} />
               <Route path="/manageMeetingRequest" element={<EmployeeManageMeeting />} />

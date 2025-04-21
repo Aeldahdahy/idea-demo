@@ -8,6 +8,8 @@ import staffSlice from './staffSlice';
 import projectSlice from './projectSlice';
 import staffDataSlice from './staffDataSlice';
 import ProjectDataSlice from './projectDataSlice';
+import meetingDataReducer from './meetingDataSlice'; // Import the new reducer
+
 
 export const store = configureStore({
     reducer: {
@@ -20,6 +22,7 @@ export const store = configureStore({
         project: projectSlice,
         staffData: staffDataSlice,
         projectData: ProjectDataSlice,
+        meetingData: meetingDataReducer,
     },
     devTools: process.env.NODE_ENV !== 'production',
 });

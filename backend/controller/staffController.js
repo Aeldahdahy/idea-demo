@@ -303,9 +303,6 @@ const investorSelectSlots = async (req, res) => {
   }
 };
 
-
-
-
 // Step 4: Entrepreneur confirms final slot
 const entrepreneurConfirmSlot = async (req, res) => {
   try {
@@ -355,9 +352,6 @@ const entrepreneurConfirmSlot = async (req, res) => {
     res.status(500).json({ success: false, message: 'Error saving final slot', error: err.message });
   }
 };
-
-
-
 
 
 

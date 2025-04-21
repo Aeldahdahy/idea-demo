@@ -4,9 +4,10 @@ const router = express.Router();
 const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
 
 // functions
-const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject } = require('../controller/clientController'); 
+const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject, updateUserById } = require('../controller/clientController'); 
 const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff,  createMeeting, assignAuditor, investorSelectSlots, entrepreneurConfirmSlot } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
+const userImageUploads = require('../middleWare/userImageUploads');
 const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
 const { body } = require('express-validator');
 const { validateMeetingSlots } = require('../middleWare/slotValidation');
@@ -33,9 +34,6 @@ router.put('/staff/:staffId', authenticateToken, isAdmin, staffImageUploads, upd
 
 // Get all Users (Clients) (Admin only)
 router.get('/users', authenticateToken, isAdmin, getAllUsers);
-
-// Update user data (Admin only)
-router.put('/users/:userId', authenticateToken, isAdmin, updateUser);
 
 // Get all contact messages (Admin only)
 router.get('/contacts', authenticateToken, isAdmin, getAllContacts);
@@ -68,6 +66,9 @@ router.post('/contact', createContact);
 
 // Initial signup route to send OTP
 router.post('/signup', signUp);
+
+// Update user data
+router.put('/users/:id', authenticateToken, userImageUploads.single('image'), updateUserById);
 
 // Verify OTP and complete signup route
 router.post('/verify-otp', verifyOtp);

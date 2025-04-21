@@ -1963,6 +1963,7 @@ th {
 
 .close-btn {
   background-color: #e71d357c;
+  color: red;
   border-radius: 20px;
   margin: 0;
   width: 30px;
@@ -3271,6 +3272,172 @@ th {
   margin-bottom: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* EmployeeClientDataPopUp */
+/* Custom CSS for the User Profile Pop-up */
+
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050; /* Standard modal z-index */
+}
+
+.custom-modal-content {
+  background-color: white;
+  border-radius: 8px; /* Slight border radius on the modal itself */
+  width: 95%; /* Adjusted width */
+  max-width: 1200px; /* Increased max-width to make it bigger */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-modal-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.custom-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.custom-modal-body {
+  padding: 30px; /* Increased padding */
+  display: flex; /* Use flexbox for the two main columns */
+  gap: 30px; /* Increased space between avatar and form sections */
+}
+
+.avatar-section-custom {
+  flex: 0 0 220px; /* Adjusted width for avatar section */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-container-custom {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px; /* Increased margin */
+}
+
+.avatar-image-custom {
+  width: 180px; /* Adjusted size to match image proportions better */
+  height: 180px; /* Adjusted size to match image proportions better */
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-edit-icon-custom {
+  position: absolute;
+  bottom: 8px;
+  right: 8px; 
+  background-color: #024059; 
+  color: white;
+  border-radius: 50%;
+  width: 35px; 
+  height: 35px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+ .avatar-edit-icon-custom input[type="file"] {
+  display: none; /* Hide the actual file input */
+}
+
+.form-section-custom {
+  flex-grow: 1; /* Take remaining space */
+  display: grid; /* Use grid for form fields */
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 20px; /* Increased space between grid items */
+}
+
+.form-group-custom {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label-custom {
+  margin-bottom: 8px; /* Increased margin */
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.form-control-custom {
+  padding: 10px 12px; /* Adjusted padding */
+  border: 1px solid #ced4da;
+  border-radius: 10px; /* Added border-radius */
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.form-control-custom:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+ .form-select-custom {
+  padding: 10px 12px; /* Adjusted padding */
+  border: 1px solid #ced4da;
+  border-radius: 10px; /* Added border-radius */
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none; /* Remove default select arrow */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 12px;
+ }
+
+.form-select-custom:focus {
+   outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+textarea.form-control-custom {
+  resize: vertical; /* Allow vertical resizing */
+}
+
+.custom-modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end; /* Align items to the right */
+}
+
+.save-button-custom {
+  background-color: #024059; /* Green color from Bootstrap success */
+  color: white;
+  border: none;
+  border-radius: 10px; /* Slight border-radius on the button */
+  padding: 10px 50px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+ .save-button-custom:hover {
+   background-color: #053447; /* Darker green on hover */
+ }
+
+
+
 
 /* responsive */
 @media screen and (max-width:1171px) {

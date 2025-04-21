@@ -88,6 +88,40 @@ const signUp = async (req, res) => {
   }
 };
 
+const updateUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updates = {
+      role: req.body.role,
+      fullName: req.body.fullName,
+      email: req.body.email,
+      status: req.body.status,
+      phone: req.body.phone,
+      address: req.body.address,
+      date_of_birth: req.body.date_of_birth,
+      national_id: req.body.national_id,
+      education: req.body.education,
+      experience: req.body.experience,
+      biography: req.body.biography
+    };
+
+    if (req.file) {
+      updates.image = req.file.filename;
+    }
+
+    const user = await User.findByIdAndUpdate(id, updates, { new: true });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
+  }
+};
+
 const verifyOtp = async (req, res) => {
   const { email, otp, role, fullName, password } = req.body;
 
@@ -263,26 +297,6 @@ const getAllUsers = async (req, res) => {
     res.status(200).json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
-  }
-};
-
-
-// update User (Client) for Admin only
-const updateUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const updatedData = req.body;
-
-    // Find and update user
-    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
-
-    if (!updatedUser) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
   }
 };
 
@@ -529,12 +543,12 @@ module.exports =
   verifyOtpForReset,
   resetPassword,
   getAllUsers,
-  updateUser,
   getAllContacts,
   updateContactStatus,
   createProject,
   getAllProjects,
   getProjectById,
   updateProject,
-  deleteProject
+  deleteProject,
+  updateUserById
 };

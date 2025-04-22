@@ -8,35 +8,51 @@ import defaultImage from "../../assets/img-0.35.png"; // Default image path
 function EmployeeClientDataPopUp() {
   const dispatch = useDispatch();
   const { isOpenClient, typeClient, initialClientData } = useSelector((state) => state.clientData);
-  console.log("Popup Redux state:", { isOpenClient, typeClient, initialClientData });
   const { updateUsers, API_BASE_URL } = useFunctions();
+  
 
   // Initialize state with Redux data
   const imagePath = initialClientData?.image;
-const [avatarImage, setAvatarImage] = useState(
-  imagePath ? `${API_BASE_URL}/uploads/user_images/${imagePath}` : defaultImage );
+  const [avatarImage, setAvatarImage] = useState(
+    imagePath ? `${API_BASE_URL}/uploads/user_images/${imagePath}` : defaultImage
+  );
 
+  const formatDateForInput = (isoDate) => {
+    if (!isoDate) return "";
+    try {
+      const date = new Date(isoDate);
+      if (isNaN(date.getTime())) return ""; // Invalid date
+      return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD
+    } catch {
+      return "";
+    }
+  };
+
+  const [imageFile, setImageFile] = useState(null); // Store the file for upload
   const [status, setStatus] = useState(initialClientData.status || "Inactive");
   const [formData, setFormData] = useState({
     fullName: initialClientData.fullName || "",
     email: initialClientData.email || "",
     phone: initialClientData.phone || "",
     address: initialClientData.address || "",
-    dob: initialClientData.dob || "",
+    date_of_birth: formatDateForInput(initialClientData.date_of_birth || initialClientData.dob),
     role: initialClientData.role || "",
-    nationalId: initialClientData.nationalId || "",
+    national_id: initialClientData.national_id || "",
     education: initialClientData.education || "",
     experience: initialClientData.experience || "",
     biography: initialClientData.biography || "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Handle file upload
+  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setImageFile(file); // Store file for FormData
       const reader = new FileReader();
       reader.onload = (e) => {
-        setAvatarImage(e.target.result);
+        setAvatarImage(e.target.result); // Preview image
       };
       reader.readAsDataURL(file);
     }
@@ -58,17 +74,35 @@ const [avatarImage, setAvatarImage] = useState(
 
   // Handle save
   const handleSave = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const updatedData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        date_of_birth: formData.date_of_birth,
+        role: formData.role,
+        national_id: formData.national_id,
+        education: formData.education,
+        experience: formData.experience,
+        biography: formData.biography,
         status,
-        image: avatarImage,
-        ...formData,
       };
 
-      await updateUsers(initialClientData._id, status, updatedData);
+      // Call updateUsers with user ID, updated data, and image file
+      await updateUsers(initialClientData._id, updatedData, imageFile);
+
+      // Close popup on success
       dispatch(closeClientData());
     } catch (err) {
+      const errorMessage = err.response?.data?.message || "An error occurred. Please try again.";
+      setError(errorMessage);
       console.error("Failed to update user:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,6 +125,7 @@ const [avatarImage, setAvatarImage] = useState(
           </span>
         </div>
         <div className="custom-modal-body">
+          {error && <p className="error-text" style={{ color: "red" }}>{error}</p>}
           <div className="avatar-section-custom">
             <div className="avatar-container-custom">
               <img src={avatarImage} alt="User Avatar" className="avatar-image-custom" />
@@ -114,11 +149,11 @@ const [avatarImage, setAvatarImage] = useState(
           </div>
           <div className="form-section-custom">
             <div className="form-group-custom">
-              <label htmlFor="nameCustom" className="form-label-custom">Name</label>
+              <label htmlFor="fullNameCustom" className="form-label-custom">Name</label>
               <input
                 type="text"
                 className="form-control-custom"
-                id="nameCustom"
+                id="fullNameCustom"
                 value={formData.fullName}
                 onChange={handleInputChange}
               />
@@ -154,36 +189,32 @@ const [avatarImage, setAvatarImage] = useState(
               />
             </div>
             <div className="form-group-custom">
-              <label htmlFor="dobCustom" className="form-label-custom">Date of Birth</label>
+              <label htmlFor="date_of_birthCustom" className="form-label-custom">Date of Birth</label>
               <input
                 type="date"
                 className="form-control-custom"
-                id="dobCustom"
-                value={formData.dob}
+                id="date_of_birthCustom"
+                value={formData.date_of_birth}
                 onChange={handleInputChange}
               />
             </div>
             <div className="form-group-custom">
               <label htmlFor="roleCustom" className="form-label-custom">Role</label>
-              <select
-                className="form-select-custom"
-                id="roleCustom"
-                value={formData.role}
-                onChange={handleInputChange}
-              >
-                <option value="Investor">Investor</option>
-                <option value="Admin">Admin</option>
-                <option value="User">User</option>
-                <option value="Manager">Manager</option>
-              </select>
-            </div>
-            <div className="form-group-custom">
-              <label htmlFor="nationalIdCustom" className="form-label-custom">National ID</label>
               <input
                 type="text"
                 className="form-control-custom"
-                id="nationalIdCustom"
-                value={formData.nationalId}
+                id="roleCustom"
+                value={formData.role}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group-custom">
+              <label htmlFor="national_idCustom" className="form-label-custom">National ID</label>
+              <input
+                type="text"
+                className="form-control-custom"
+                id="national_idCustom"
+                value={formData.national_id}
                 onChange={handleInputChange}
               />
             </div>
@@ -205,7 +236,7 @@ const [avatarImage, setAvatarImage] = useState(
                 id="experienceCustom"
                 value={formData.experience}
                 onChange={handleInputChange}
-              />
+               />
             </div>
             <div className="form-group-custom">
               <label htmlFor="biographyCustom" className="form-label-custom">Biography</label>
@@ -220,13 +251,18 @@ const [avatarImage, setAvatarImage] = useState(
           </div>
         </div>
         <div className="custom-modal-footer">
-          <button type="button" className="save-button-custom" onClick={handleSave}>
-            Save
+          <button
+            type="button"
+            className="save-button-custom"
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default EmployeeClientDataPopUp;

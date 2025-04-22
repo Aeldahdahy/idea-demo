@@ -3,18 +3,19 @@ import { Eye } from "lucide-react";
 import { useFunctions } from "../../useFunctions";
 import defaultImage from "../../assets/img-0.35.png";
 import { useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux"; // Add useDispatch
-import { openClientData } from "../../redux/ClientDataSlice"; // Import openClientData
+import { useDispatch, useSelector } from "react-redux"; // Add useSelector
+import { openClientData } from "../../redux/ClientDataSlice";
 
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
-  const { users = [], loading, error, updateUsers, getAllUsers, API_BASE_URL } = useFunctions();
+  const { loading, error, getAllUsers, updateUsers, API_BASE_URL } = useFunctions();
+  const users = useSelector((state) => state.users.users || []); // Get users from Redux
   const location = useLocation();
-  const dispatch = useDispatch(); // Initialize dispatch
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (location.pathname === "/employee-portal/manageUsers") {
-      getAllUsers();
+      getAllUsers(); // Fetch users to update Redux store
     }
   }, [location.pathname, getAllUsers]);
 
@@ -35,9 +36,32 @@ function EmployeeManageUsers() {
     return isoString ? isoString.split("T")[0] : "N/A";
   };
 
+  // Handle status toggle
+  const handleStatusToggle = async (user) => {
+    const newStatus = user.status === "Active" ? "Inactive" : "Active";
+    const updatedData = {
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone || "",
+      address: user.address || "",
+      date_of_birth: user.date_of_birth || "",
+      role: user.role,
+      national_id: user.national_id || "",
+      education: user.education || "",
+      experience: user.experience || "",
+      biography: user.biography || "",
+      status: newStatus,
+    };
+
+    try {
+      await updateUsers(user._id, updatedData, null); // No image change
+    } catch (err) {
+      console.error("Failed to toggle user status:", err);
+    }
+  };
+
   // Handle View button click
   const handleViewUser = (user) => {
-    console.log("Dispatching openClientData for user:", user); // Debug log
     dispatch(
       openClientData({
         typeClient: "View",
@@ -48,10 +72,10 @@ function EmployeeManageUsers() {
           phone: user.phone || "",
           role: user.role,
           status: user.status,
-          image: user.image || defaultImage,
+          image: user.image || "",
           address: user.address || "",
           date_of_birth: user.date_of_birth || "",
-          nationalId: user.nationalId || "",
+          national_id: user.national_id || "",
           education: user.education || "",
           experience: user.experience || "",
           biography: user.biography || "",
@@ -59,8 +83,6 @@ function EmployeeManageUsers() {
       })
     );
   };
-   // Debug log
-
 
   return (
     <>
@@ -95,11 +117,11 @@ function EmployeeManageUsers() {
             {filteredUsers.map((user) => (
               <tr key={user._id}>
                 <td>
-                <img
-                  src={user.image ? `${API_BASE_URL}/uploads/user_images/${user.image}` : defaultImage}
-                  alt={user.fullName}
-                  style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
-                />
+                  <img
+                    src={user.image ? `${API_BASE_URL}/uploads/user_images/${user.image}` : defaultImage}
+                    alt={user.fullName}
+                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
+                  />
                 </td>
                 <td>{user.fullName}</td>
                 <td>{user.email}</td>
@@ -107,7 +129,7 @@ function EmployeeManageUsers() {
                 <td>{user.role}</td>
                 <td>{formatDate(user.createdAt)}</td>
                 <td>
-                  <div className="toggleStatusContainer" onClick={() => updateUsers(user._id, user.status)}>
+                  <div className="toggleStatusContainer" onClick={() => handleStatusToggle(user)}>
                     <div className={`toggleStatus ${user.status === "Active" ? "" : "active"}`}>
                       <span className="toggleCircle"></span>
                       <span className="toggleText">{user.status === "Active" ? "Active" : "Inactive"}</span>

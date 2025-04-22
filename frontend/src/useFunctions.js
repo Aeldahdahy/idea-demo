@@ -513,31 +513,63 @@ export const useFunctions = () => {
   }, [API_BASE_URL, lastUserFetched, dispatch]);
 
   // update users
-  const updateUsers = async (id, status) => {
+  const updateUsers = async (id, updatedData, imageFile) => {
     setLoading(true);
     setError(null);
-    const authToken = localStorage.getItem('authToken');
-    const newStatus = status === "Active" ? "Inactive" : "Active";
-  
-    // Optimistically update the user status in the UI
-    dispatch(setUsers(users.map(user => user._id === id ? { ...user, status: newStatus } : user)));
-  
+    const authToken = localStorage.getItem("authToken");
+
+    // Optimistically update the user in the UI
+    dispatch(
+      setUsers(
+        users.map((user) =>
+          user._id === id ? { ...user, ...updatedData, image: imageFile ? URL.createObjectURL(imageFile) : user.image } : user
+        )
+      )
+    );
+
     try {
-      const response = await axios.put(
-        `${API_BASE_URL}/api/users/${id}`,
-        { status: newStatus },
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
-      if (response.status !== 200) {
-        throw new Error('Failed to update user');
+      const formData = new FormData();
+      // Append all text fields
+      formData.append("fullName", updatedData.fullName);
+      formData.append("email", updatedData.email);
+      formData.append("phone", updatedData.phone);
+      formData.append("address", updatedData.address);
+      formData.append("date_of_birth", updatedData.date_of_birth);
+      formData.append("role", updatedData.role);
+      formData.append("national_id", updatedData.national_id);
+      formData.append("education", updatedData.education);
+      formData.append("experience", updatedData.experience);
+      formData.append("biography", updatedData.biography);
+      formData.append("status", updatedData.status);
+
+      // Append image file if present
+      if (imageFile) {
+        formData.append("image", imageFile);
       }
-      toast.success('User status updated successfully!');
+
+      const response = await axios.put(`${API_BASE_URL}/api/users/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update user");
+      }
+
+      // Update Redux with the server response
+      dispatch(
+        setUsers(
+          users.map((user) => (user._id === id ? response.data.data : user))
+        )
+      );
+      toast.success("User updated successfully!");
+      return response.data;
     } catch (err) {
-      // Revert the status change if the API call fails
-      dispatch(setUsers(users.map(user => user._id === id ? { ...user, status } : user)));
-      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      // Revert the user data if the API call fails
+      dispatch(setUsers(users)); // Revert to original users state
+      const errorMessage = err.response?.data?.message || "An error occurred. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;

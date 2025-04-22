@@ -7,75 +7,8 @@ function Invest() {
       className="flex overflow-hidden flex-col pt-9 bg-white"
     >
       <div className="flex flex-col items-start pl-3.5 w-full max-md:max-w-full">
-        <div className="flex flex-wrap gap-5 justify-between ml-5 w-full text-3xl text-center text-black whitespace-nowrap max-w-[1641px] max-md:max-w-full">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/f0a9233ef3b0a2fc60634eddf8ab5bfde7bd3ed3?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-            className="object-contain shrink-0 max-w-full aspect-[2.74] rounded-[85px] w-[274px]"
-          />
-          <div className="flex gap-6 my-auto">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/2f71b6665b9ad32c1d519159d3acc13f706866a3?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-              className="object-contain shrink-0 self-start mt-2.5 aspect-square w-[30px]"
-            />
-            <div className="flex gap-1 items-center">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/8703cd5c6942611e13c573b9d12e607a6ee5452c?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-                className="object-contain shrink-0 self-stretch my-auto aspect-[1.11] rounded-[214px] w-[31px]"
-              />
-              <div className="self-stretch my-auto">
-                EN
-              </div>
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/7a68131993137e11660de01a239f61b78d4e9954?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-                className="object-contain shrink-0 self-stretch w-24 aspect-[1.48]"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-10 self-center mt-3 w-full text-3xl text-center text-black whitespace-nowrap max-w-[1398px] max-md:max-w-full">
-          <div className="my-auto">
-            Home
-          </div>
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/6078dfaa4995d3c62a0c9f27c399c30528fc97e4?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-            className="object-contain shrink-0 self-start w-0.5 aspect-[0.06]"
-          />
-          <div className="my-auto">
-            Invest
-          </div>
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/6078dfaa4995d3c62a0c9f27c399c30528fc97e4?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-            className="object-contain shrink-0 self-start w-0.5 aspect-[0.06]"
-          />
-          <div
-            className="grow shrink my-auto w-[122px]"
-          >
-            Fundraise
-          </div>
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/6078dfaa4995d3c62a0c9f27c399c30528fc97e4?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-            className="object-contain shrink-0 self-start w-0.5 aspect-[0.06]"
-          />
-          <div>Blogs</div>
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/6078dfaa4995d3c62a0c9f27c399c30528fc97e4?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-            className="object-contain shrink-0 self-start w-0.5 aspect-[0.06]"
-          />
-          <div
-            className="grow shrink my-auto w-[118px]"
-          >
-            About-Us
-          </div>
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/6078dfaa4995d3c62a0c9f27c399c30528fc97e4?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-            className="object-contain shrink-0 self-start w-0.5 aspect-[0.06]"
-          />
-          <div
-            className="grow shrink my-auto w-[140px]"
-          >
-            Contact-Us
-          </div>
-        </div>
+        
+        
         <div
           className="mt-60 ml-10 text-6xl text-black bg-blend-normal w-[708px] max-md:mt-10 max-md:max-w-full max-md:text-4xl"
         >

@@ -3,44 +3,60 @@ import { Eye } from "lucide-react";
 import { useFunctions } from "../../useFunctions";
 import defaultImage from "../../assets/img-0.35.png";
 import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux"; // Add useDispatch
+import { openClientData } from "../../redux/ClientDataSlice"; // Import openClientData
 
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
-  // const [selectedUsers, setSelectedUsers] = useState([]);
   const { users = [], loading, error, updateUsers, getAllUsers } = useFunctions();
   const location = useLocation();
+  const dispatch = useDispatch(); // Initialize dispatch
 
   useEffect(() => {
-    if (location.pathname === '/employee-portal/manageUsers') {
+    if (location.pathname === "/employee-portal/manageUsers") {
       getAllUsers();
     }
   }, [location.pathname, getAllUsers]);
 
-  // const handleUserCheckbox = (id) => {
-  //   setSelectedUsers((prev) =>
-  //     prev.includes(id) ? prev.filter((userId) => userId !== id) : [...prev, id]
-  //   );
-  // };
-
-  // const handleSelectAll = (e) => {
-  //   setSelectedUsers(e.target.checked ? users.map((user) => user._id) : []);
-  // };
-
   const filteredUsers = Array.isArray(users)
     ? users.filter((user) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        user.fullName.toLowerCase().includes(searchTerm) ||
-        user.email.toLowerCase().includes(searchTerm) ||
-        (user.phone?.toString() || "").includes(searchTerm) ||
-        user.role.toLowerCase().includes(searchTerm) ||
-        (user.createdAt?.toString() || "").includes(searchTerm)
-      );
-    })
+        const searchTerm = search.toLowerCase();
+        return (
+          user.fullName.toLowerCase().includes(searchTerm) ||
+          user.email.toLowerCase().includes(searchTerm) ||
+          (user.phone?.toString() || "").includes(searchTerm) ||
+          user.role.toLowerCase().includes(searchTerm) ||
+          (user.createdAt?.toString() || "").includes(searchTerm)
+        );
+      })
     : [];
 
   const formatDate = (isoString) => {
-    return isoString ? isoString.split("T")[0] : "N/A"; // Extract YYYY-MM-DD
+    return isoString ? isoString.split("T")[0] : "N/A";
+  };
+
+  // Handle View button click
+  const handleViewUser = (user) => {
+    dispatch(
+      openClientData({
+        typeClient: "View",
+        initialClientData: {
+          _id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          phone: user.phone || "",
+          role: user.role,
+          status: user.status,
+          image: user.image || defaultImage,
+          address: user.address || "",
+          dob: user.dob || "",
+          nationalId: user.nationalId || "",
+          education: user.education || "",
+          experience: user.experience || "",
+          biography: user.biography || "",
+        },
+      })
+    );
   };
 
   return (
@@ -62,14 +78,6 @@ function EmployeeManageUsers() {
         <table className="dashboard-table">
           <thead className="dashboard-table-head">
             <tr>
-              {/* <th>
-                <input
-                  type="checkbox"
-                  checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
-                  onChange={handleSelectAll}
-                />
-              </th> */}
-              {/* <th>Id</th> */}
               <th>Avatar</th>
               <th>Name</th>
               <th>Email</th>
@@ -83,17 +91,9 @@ function EmployeeManageUsers() {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user._id}>
-                {/* <td>
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.includes(user._id)}
-                    onChange={() => handleUserCheckbox(user._id)}
-                  />
-                </td> */}
-                {/* <td>{user._id}#</td> */}
                 <td>
                   <img
-                    src={user.image || defaultImage} // Handle missing image
+                    src={user.image || defaultImage}
                     alt={user.fullName}
                     style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
                   />
@@ -112,7 +112,7 @@ function EmployeeManageUsers() {
                   </div>
                 </td>
                 <td>
-                  <button className="edit-btn">
+                  <button className="edit-btn" onClick={() => handleViewUser(user)}>
                     <Eye />
                   </button>
                 </td>

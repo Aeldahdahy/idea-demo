@@ -1648,6 +1648,7 @@ th {
   color: #fff;
 }
 
+  
 .toggle-btn {
   background: none;
   border: none;
@@ -3655,6 +3656,8 @@ th {
 
 /* EmployeeClientDataPopUp */
 /* Custom CSS for the User Profile Pop-up */
+
+
 
 .custom-modal-overlay {
   position: fixed;

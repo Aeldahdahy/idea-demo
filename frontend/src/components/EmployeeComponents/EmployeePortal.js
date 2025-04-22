@@ -14,18 +14,16 @@ import EmployeeMobileWebContent from './EmployeeMobileWebContent';
 import EmployeeManageMeeting from './EmployeeManageMeeting';
 import EmployeeDataPopUp from './EmployeeDataPopUp';
 import EmployeeProjectPopUp from './EmployeeProjectPopUp';
-<<<<<<< HEAD
-import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
-=======
 import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
->>>>>>> 02c91a9abb9dafa8ca3d606123b47102539f75d4
+import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
 
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
   const projectData = useSelector((state) => state.projectData);
-  // console.log('EmployeePortal staffData:', staffData); // Debug
-  const { isOpenStaff, typeStaff, initialStaffData } = staffData; // Fixed
+  const clientData = useSelector((state) => state.clientData);
+  const { isOpenStaff, typeStaff, initialStaffData } = staffData; 
   const { isOpen: isOpenProject, type: typeProject, initialData: initialProjectData } = projectData;
+  const { isOpen: isOpenClient, type: typeClient, initialData: initialClientData } = clientData;
 
   return (
     <div style={{ display: "flex" }}>
@@ -35,11 +33,7 @@ function EmployeePortal() {
         <div className="DashboardContent">
           <div className='dashboardScrollableOutlet'>
             <Routes>
-<<<<<<< HEAD
-              <Route path="" element={<EmployeeClientDataPopUp />} />
-=======
-              <Route path="" element={<EmployeeMeetingPopUp />} />
->>>>>>> 02c91a9abb9dafa8ca3d606123b47102539f75d4
+              <Route path="" element={<EmployeeMain />} />
               <Route path="/manageStaff" element={<EmployeeManageStaff />} />
               <Route path="/manageProject" element={<EmployeeManageProjects />} />
               <Route path="/manageMeetingRequest" element={<EmployeeManageMeeting />} />
@@ -54,6 +48,7 @@ function EmployeePortal() {
       </div>
       {isOpenStaff && <EmployeeDataPopUp typeStaff={typeStaff} initialStaffData={initialStaffData} />}
       {isOpenProject && <EmployeeProjectPopUp typeProject={typeProject} initialProjectData={initialProjectData} />}
+      {isOpenClient && <EmployeeClientDataPopUp typeClient={typeClient} initialClientData={initialClientData} />}
     </div>
   );
 }

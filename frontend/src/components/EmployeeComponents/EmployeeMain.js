@@ -4,6 +4,7 @@ import { openPopup } from '../../redux/checkpopupSlice';
 import { openYesNoPopup } from '../../redux/yesNoPopupSlice';
 import { openStaffData } from '../../redux/staffDataSlice';
 import { openProjectData } from '../../redux/projectDataSlice';
+import { openClientData } from '../../redux/ClientDataSlice';
 
 // Dummy images (you can import these as in EmployeeProjectPopUp)
 import img1 from '../../assets/img-0.39.png';
@@ -88,6 +89,13 @@ function EmployeeMain() {
     }));
   };
 
+  const handleOpenClientPopup = () => {
+    dispatch(openClientData({
+      type: 'View',
+      initialClientData: {},
+    }));
+  };
+
   return (
     <>
       <h1>EmployeeMain</h1>
@@ -108,6 +116,9 @@ function EmployeeMain() {
       </button>
       <button onClick={handleOpenProjectPopup} className="test-popup-button">
         View Project
+      </button>
+      <button onClick={handleOpenClientPopup} className="test-popup-button">
+        View Client
       </button>
     </>
   );

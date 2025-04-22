@@ -8,7 +8,7 @@ import { openClientData } from "../../redux/ClientDataSlice"; // Import openClie
 
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
-  const { users = [], loading, error, updateUsers, getAllUsers } = useFunctions();
+  const { users = [], loading, error, updateUsers, getAllUsers, API_BASE_URL } = useFunctions();
   const location = useLocation();
   const dispatch = useDispatch(); // Initialize dispatch
 
@@ -37,6 +37,7 @@ function EmployeeManageUsers() {
 
   // Handle View button click
   const handleViewUser = (user) => {
+    console.log("Dispatching openClientData for user:", user); // Debug log
     dispatch(
       openClientData({
         typeClient: "View",
@@ -49,7 +50,7 @@ function EmployeeManageUsers() {
           status: user.status,
           image: user.image || defaultImage,
           address: user.address || "",
-          dob: user.dob || "",
+          date_of_birth: user.date_of_birth || "",
           nationalId: user.nationalId || "",
           education: user.education || "",
           experience: user.experience || "",
@@ -58,6 +59,8 @@ function EmployeeManageUsers() {
       })
     );
   };
+   // Debug log
+
 
   return (
     <>
@@ -92,11 +95,11 @@ function EmployeeManageUsers() {
             {filteredUsers.map((user) => (
               <tr key={user._id}>
                 <td>
-                  <img
-                    src={user.image || defaultImage}
-                    alt={user.fullName}
-                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
-                  />
+                <img
+                  src={user.image ? `${API_BASE_URL}/uploads/user_images/${user.image}` : defaultImage}
+                  alt={user.fullName}
+                  style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
+                />
                 </td>
                 <td>{user.fullName}</td>
                 <td>{user.email}</td>

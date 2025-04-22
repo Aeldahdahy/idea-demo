@@ -3,14 +3,19 @@ import { X, Pencil } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { closeClientData } from "../../redux/ClientDataSlice";
 import { useFunctions } from "../../useFunctions";
+import defaultImage from "../../assets/img-0.35.png"; // Default image path
 
-const EmployeeClientDataPopUp = () => {
+function EmployeeClientDataPopUp() {
   const dispatch = useDispatch();
   const { isOpenClient, typeClient, initialClientData } = useSelector((state) => state.clientData);
-  const { updateUsers } = useFunctions();
+  console.log("Popup Redux state:", { isOpenClient, typeClient, initialClientData });
+  const { updateUsers, API_BASE_URL } = useFunctions();
 
   // Initialize state with Redux data
-  const [avatarImage, setAvatarImage] = useState(initialClientData.image || "https://i.imgur.com/YDSdE8x.png");
+  const imagePath = initialClientData?.image;
+const [avatarImage, setAvatarImage] = useState(
+  imagePath ? `${API_BASE_URL}/uploads/user_images/${imagePath}` : defaultImage );
+
   const [status, setStatus] = useState(initialClientData.status || "Inactive");
   const [formData, setFormData] = useState({
     fullName: initialClientData.fullName || "",
@@ -18,7 +23,7 @@ const EmployeeClientDataPopUp = () => {
     phone: initialClientData.phone || "",
     address: initialClientData.address || "",
     dob: initialClientData.dob || "",
-    role: initialClientData.role || "Investor",
+    role: initialClientData.role || "",
     nationalId: initialClientData.nationalId || "",
     education: initialClientData.education || "",
     experience: initialClientData.experience || "",

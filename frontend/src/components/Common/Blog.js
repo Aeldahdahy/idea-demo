@@ -1,5 +1,7 @@
 import React from 'react';
 import { FaFacebook, FaTwitter, FaLinkedin, FaSearch } from 'react-icons/fa';
+import BlogSeparator from './BlogSeparator';
+import { Link } from 'react-router-dom';
 import image1 from "../../assets/img-0.42.png";
 import image2 from "../../assets/img-0.43.png";
 import image3 from "../../assets/img-0.44.png";
@@ -9,7 +11,7 @@ function Blog() {
       <main className="main-content">
         <div className="container">
           <section className="latest-event">
-            <h2 className="section-title">Our Latest Event</h2>
+            <h1 className="section-title">Our Latest Event</h1>
             <div className="event-container">
               <div className="event-description">
                 <div className="event-image">
@@ -24,6 +26,8 @@ function Blog() {
               </div>
             </div>
           </section>
+
+          <BlogSeparator />
 
           <section className="featured-articles">
             <article className="article">
@@ -46,6 +50,9 @@ function Blog() {
             </article>
           </section>
 
+          <BlogSeparator />
+
+
           <section className="social-share">
             <p>Share:</p>
             <div className="share-buttons">
@@ -56,7 +63,7 @@ function Blog() {
           </section>
 
           <section className="tags">
-            <p>Tag: <a href="#" className="tag-link">Finance</a>, <a href="#" className="tag-link">Career</a>, <a href="#" className="tag-link">Banking</a></p>
+            <p>Tag: <Link to="#" className="tag-link">Finance</Link>, <Link to="#" className="tag-link">Career</Link>, <Link to="#" className="tag-link">Banking</Link></p>
           </section>
 
           <section className="comments-section">
@@ -100,22 +107,22 @@ function Blog() {
           <div className="category-widget">
             <h3>Category</h3>
             <ul>
-              <li><a href="#">projects (3)</a></li>
-              <li><a href="#">Events (4)</a></li>
-              <li><a href="#">Investments (8)</a></li>
-              <li><a href="#">Partnerships (5)</a></li>
-              <li><a href="#">Entrepreneurship (7)</a></li>
+              <li><Link to="#">projects (3)</Link></li>
+              <li><Link to="#">Events (4)</Link></li>
+              <li><Link to="#">Investments (8)</Link></li>
+              <li><Link to="#">Partnerships (5)</Link></li>
+              <li><Link to="#">Entrepreneurship (7)</Link></li>
             </ul>
           </div>
 
           <div className="keywords-widget">
             <h3>Keywords</h3>
             <div className="keyword-tags">
-              <a href="#" className="keyword-tag">projects</a>
-              <a href="#" className="keyword-tag">events</a>
-              <a href="#" className="keyword-tag">investment</a>
-              <a href="#" className="keyword-tag keyword-tag-blue">partnerships</a>
-              <a href="#" className="keyword-tag">entrepreneurship</a>
+              <Link to="#" className="keyword-tag">projects</Link>
+              <Link to="#" className="keyword-tag">events</Link>
+              <Link to="#" className="keyword-tag">investment</Link>
+              <Link to="#" className="keyword-tag keyword-tag-blue">partnerships</Link>
+              <Link to="#" className="keyword-tag">entrepreneurship</Link>
             </div>
           </div>
         </div>

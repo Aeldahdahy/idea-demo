@@ -9,7 +9,8 @@ import { openClientData } from "../../redux/ClientDataSlice";
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
   const { loading, error, getAllUsers, updateUsers, API_BASE_URL } = useFunctions();
-  const users = useSelector((state) => state.users.users || []); // Get users from Redux
+  const users = useSelector((state) => state.users.users || []);
+  // console.log("Users from Redux:", users); // Log the users from Redux store
   const location = useLocation();
   const dispatch = useDispatch();
 

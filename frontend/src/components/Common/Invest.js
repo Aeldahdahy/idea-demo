@@ -37,7 +37,7 @@ function Invest() {
                   Follow Us
                 </div>
                 <div className="flex gap-3 items-start mt-7">
-                  <img
+                  {/* <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/5af065c5520ae218cda23d2494f00a15430cab52?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                     className="object-contain shrink-0 aspect-[1.02] w-[51px]"
                   />
@@ -56,7 +56,7 @@ function Invest() {
                   <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/0ed0b013dd8bcdf2dc854fc2ec5ec7ce0f861456?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                     className="object-contain shrink-0 aspect-square w-[50px]"
-                  />
+                  /> */}
                 </div>
               </div>
             </div>
@@ -64,10 +64,10 @@ function Invest() {
               className="ml-5 w-6/12 max-md:ml-0 max-md:w-full"
             >
               <div className="flex relative flex-col items-center self-stretch px-20 pt-32 pb-96 my-auto rounded-none min-h-[806px] max-md:px-5 max-md:py-24 max-md:-mt-20 max-md:max-w-full">
-                <img
+                {/* <img
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/d11bd8b663851db6a3d75e21352ea0c8fbee94df?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                   className="object-cover absolute inset-0 size-full"
-                />
+                /> */}
                 <div className="relative max-w-full w-[526px]">
                   <div
                     className="pt-1.5 pr-8 pb-5 pl-3.5 w-full bg-blue-900 rounded-[40px] max-md:pr-5 max-md:max-w-full"
@@ -78,10 +78,10 @@ function Invest() {
                         className="w-9/12 max-md:ml-0 max-md:w-full"
                       >
                         <div className="flex grow gap-3.5 text-xl leading-loose text-white max-md:mt-10">
-                          <img
+                          {/* <img
                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/b45c590850af54ec1ea5a845137c9a2eda78b1d8?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                             className="object-contain shrink-0 self-start mt-3.5 w-20 aspect-[0.98] rounded-[30px]"
-                          />
+                          /> */}
                           <div className="flex flex-col">
                             <div
                               className="text-3xl font-bold leading-none"
@@ -131,10 +131,10 @@ function Invest() {
                         className="w-9/12 max-md:ml-0 max-md:w-full"
                       >
                         <div className="flex grow gap-3.5 text-xl leading-loose text-black max-md:mt-10">
-                          <img
+                          {/* <img
                             src="https://cdn.builder.io/api/v1/image/assets/TEMP/b45c590850af54ec1ea5a845137c9a2eda78b1d8?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                             className="object-contain shrink-0 self-start mt-3.5 w-20 aspect-[0.98] rounded-[30px]"
-                          />
+                          /> */}
                           <div className="flex flex-col">
                             <div
                               className="text-3xl font-bold leading-none"
@@ -188,10 +188,10 @@ function Invest() {
             <div
               className="w-[58%] max-md:ml-0 max-md:w-full"
             >
-              <img
+              {/* <img
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/a0e2ef40b67c649e8c470d8e700d29d9848bb50d?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                 className="object-contain grow w-full aspect-[1.15] rounded-[40px] max-md:mt-10 max-md:max-w-full"
-              />
+              /> */}
             </div>
             <div
               className="ml-5 w-[42%] max-md:ml-0 max-md:w-full"
@@ -231,7 +231,7 @@ function Invest() {
                 <div className="flex z-10 flex-col self-stretch pl-5 w-full max-md:max-w-full">
                   <div className="flex flex-wrap gap-3.5">
                     <div className="my-auto">
-                      <img
+                      {/* <img
                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/a39aa70844f377d8877c85e557b86f96dfb96900?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                         className="object-contain aspect-[1.02] w-[61px]"
                       />
@@ -242,7 +242,7 @@ function Invest() {
                       <img
                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/68e65d213653dede69c85cd5a84748327c655ba9?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                         className="object-contain mt-7 aspect-[1.02] w-[61px]"
-                      />
+                      /> */}
                     </div>
                     <div
                       className="flex-auto text-3xl tracking-tighter text-white leading-[86px] w-[781px] max-md:max-w-full"
@@ -260,10 +260,10 @@ function Invest() {
                     Download the app
                   </div>
                 </div>
-                <img
+                {/* <img
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/34f41d287b76cd6ddf44a546860a7cac4325cee0?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                   className="object-contain -mt-1 max-w-full aspect-[7.63] w-[343px]"
-                />
+                /> */}
                 <div
                   className="ml-10 text-xl tracking-tighter text-white leading-[86px] max-md:ml-2.5"
                 >
@@ -274,10 +274,10 @@ function Invest() {
             <div
               className="ml-5 w-[35%] max-md:ml-0 max-md:w-full"
             >
-              <img
+              {/* <img
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/a93abb4711467a15340e6046acdd9b712df4c797?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                 className="object-contain grow w-full rounded-3xl aspect-[0.63] max-md:mt-10 max-md:max-w-full"
-              />
+              /> */}
             </div>
           </div>
         </div>
@@ -285,10 +285,10 @@ function Invest() {
       <div
         className="flex gap-2.5 items-center self-end px-5 py-4 mt-44 mr-9 min-h-[62px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)] w-[62px] max-md:mt-10 max-md:mr-2.5"
       >
-        <img
+        {/* <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2eea0565481af2cb1df24eb0e680dcde96c1516?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
           className="object-contain self-stretch my-auto aspect-[0.87] w-[26px]"
-        />
+        /> */}
       </div>
       <div
         className="px-20 py-14 mt-16 w-full bg-blue-900 max-md:px-5 max-md:mt-10 max-md:max-w-full"
@@ -297,20 +297,20 @@ function Invest() {
         <div className="flex gap-5 max-md:flex-col max-md:">
           <div className="w-[21%] max-md:ml-0 max-md:w-full">
             <div className="text-3xl font-light text-white whitespace-nowrap max-md:mt-10">
-              <img
+              {/* <img
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/6497a9607e924869e5c05d9db19cf462ca305ce6?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                 className="object-contain aspect-[3.15] w-[300px]"
-              />
+              /> */}
               <div className="flex flex-col items-center px-16 mt-12 w-full max-md:px-5 max-md:mt-10">
                 <div
                   className="text-4xl font-semibold text-center"
                 >
                   Navigation
                 </div>
-                <img
+                {/* <img
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/fc8278037484f7488908c2784555bd185a9d9dd4?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                   className="object-contain mt-2.5 max-w-full aspect-[71.43] w-[147px]"
-                />
+                /> */}
                 <div
                   className="mt-14 text-center max-md:mt-10"
                 >
@@ -318,19 +318,19 @@ function Invest() {
                 </div>
                 <div className="flex gap-4 mt-8 max-w-full text-center w-[105px]">
                   <div>Invest</div>
-                  <img
+                  {/* <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/fdf5fe0fa70003f5860d20f6671c7f029b099d5e?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                     className="object-contain shrink-0 my-auto aspect-[1.8] w-[18px]"
-                  />
+                  /> */}
                 </div>
                 <div className="flex gap-6 self-end mt-8 text-center">
                   <div className="basis-auto">
                     Fundraise
                   </div>
-                  <img
+                  {/* <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/fdf5fe0fa70003f5860d20f6671c7f029b099d5e?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                     className="object-contain shrink-0 self-start mt-3 aspect-[1.8] w-[18px]"
-                  />
+                  /> */}
                 </div>
                 <div className="mt-8">
                   Blogs
@@ -348,20 +348,20 @@ function Invest() {
             className="ml-5 w-[79%] max-md:ml-0 max-md:w-full"
           >
             <div className="flex flex-wrap grow gap-5 justify-between items-start mt-36 max-md:mt-10 max-md:max-w-full">
-              <img
+              {/* <img
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/d5229e2e7be26a786a2e1c5313244989bc3bd239?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                 className="object-contain shrink-0 mt-3.5 w-0.5 aspect-[0]"
-              />
+              /> */}
               <div className="flex flex-col items-center text-center max-md:max-w-full">
                 <div
                   className="text-4xl font-semibold text-white"
                 >
                   Our Newsletter
                 </div>
-                <img
+                {/* <img
                   src="https://cdn.builder.io/api/v1/image/assets/TEMP/6dc9414155ae63de77d095f9b718c36cc7d95bfa?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                   className="object-contain mt-4 max-w-full aspect-[83.33] w-[172px]"
-                />
+                /> */}
                 <div
                   className="mt-16 text-4xl font-semibold text-white max-md:mt-10 max-md:max-w-full"
                 >
@@ -386,10 +386,10 @@ function Invest() {
                   </div>
                 </div>
               </div>
-              <img
+              {/* <img
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/f131180d8b8b96c1a9c0f539bb563e2306ff02b1?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                 className="object-contain shrink-0 mt-3.5 w-0.5 aspect-[0]"
-              />
+              /> */}
               <div>
                 <div className="flex flex-col items-start pr-12 pl-4 text-3xl font-light text-center text-white max-md:pr-5">
                   <div
@@ -397,10 +397,10 @@ function Invest() {
                   >
                     Important Links
                   </div>
-                  <img
+                  {/* <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/6dc9414155ae63de77d095f9b718c36cc7d95bfa?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                     className="object-contain self-center mt-2.5 max-w-full aspect-[83.33] w-[172px]"
-                  />
+                  /> */}
                   <div
                     className="mt-14 ml-12 max-md:mt-10 max-md:ml-2.5"
                   >
@@ -414,7 +414,7 @@ function Invest() {
                   </div>
                 </div>
                 <div className="flex gap-3 items-start mt-24 max-md:mt-10">
-                  <img
+                  {/* <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/5af065c5520ae218cda23d2494f00a15430cab52?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                     className="object-contain shrink-0 aspect-[1.02] w-[51px]"
                   />
@@ -433,7 +433,7 @@ function Invest() {
                   <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/0ed0b013dd8bcdf2dc854fc2ec5ec7ce0f861456?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
                     className="object-contain shrink-0 aspect-square w-[50px]"
-                  />
+                  /> */}
                 </div>
               </div>
             </div>

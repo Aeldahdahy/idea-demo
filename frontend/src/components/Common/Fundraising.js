@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Container, Row, Col, Navbar, Nav, Button, Form, InputGroup } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Fundraise() {
@@ -8,46 +8,6 @@ function Fundraise() {
     <div className="bg-white mx-auto" style={{ maxWidth: "1440px" }}>
       {/* Header Section */}
       <Container fluid className="py-5 px-4">
-        {/* <Row className="align-items-center">
-          <Col xs={12} md={2} className="text-center">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/09e14f471a30daedeb9b0e0608eb4c8a1a1ac68b?placeholderIfAbsent=true"
-              className="img-fluid rounded-circle"
-              alt="Company logo"
-              style={{ maxWidth: "100px" }}
-            />
-            <Nav className="justify-content-center mt-3">
-              <Nav.Item>
-                <Nav.Link className="text-dark fs-4">Home</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Col>
-          <Col xs={12} md={10} className="text-center mt-4 mt-md-0">
-            <div className="d-flex justify-content-end align-items-center mb-4">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/2f71b6665b9ad32c1d519159d3acc13f706866a3?placeholderIfAbsent=true"
-                className="img-fluid me-3"
-                alt="Search icon"
-                style={{ width: "30px" }}
-              />
-              <div className="d-flex align-items-center">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/31f7ddc563edd9f0c60b858b5a2b15a083ad73cc?placeholderIfAbsent=true"
-                  className="img-fluid rounded-circle me-2"
-                  alt="Language selector"
-                  style={{ width: "31px" }}
-                />
-                <span className="fs-4 me-2">EN</span>
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/be52b0c845eb9fa11db7c6bcdc8000df5eaeebae?placeholderIfAbsent=true"
-                  className="img-fluid"
-                  alt="Dropdown arrow"
-                  style={{ width: "24px" }}
-                />
-              </div>
-            </div>
-          </Col>
-        </Row> */}
         <h1 className="mt-5 text-dark fw-bold display-4 text-start ms-3">
           We make it easy to start your project.
         </h1>
@@ -208,102 +168,9 @@ function Fundraise() {
         />
       </Button>
 
-      {/* Footer Section */}
-      {/* <footer className="bg-dark text-white py-5 px-4">
-        <Container>
-          <Row>
-            <Col xs={12} md={3} className="text-center">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/84ddd82970a0be61541da15899b22678dfd0cbe1?placeholderIfAbsent=true"
-                className="img-fluid"
-                alt="Footer logo"
-                style={{ maxWidth: "200px" }}
-              />
-              <h3 className="fs-3 mt-4">Navigation</h3>
-              <Nav className="flex-column align-items-center mt-3">
-                {["Home", "Invest", "Fundraise", "Blogs", "About-Us", "Contact-Us"].map((item, index) => (
-                  <Nav.Item key={index} className="d-flex align-items-center">
-                    <Nav.Link className="text-white fs-5">{item}</Nav.Link>
-                    {index < 5 && (
-                      <img
-                        src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/fdf5fe0fa70003f5860d20f6671c7f029b099d5e?placeholderIfAbsent=true"
-                        className="img-fluid ms-2"
-                        alt="Navigation arrow"
-                        style={{ width: "18px" }}
-                      />
-                    )}
-                  </Nav.Item>
-                ))}
-              </Nav>
-            </Col>
-            <Col xs={12} md={9} className="mt-5 mt-md-0">
-              <Row>
-                <Col xs={12} md={6} className="text-center">
-                  <h3 className="fs-3">Our Newsletter</h3>
-                  <img
-                    src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/6dc9414155ae63de77d095f9b718c36cc7d95bfa?placeholderIfAbsent=true"
-                    className="img-fluid my-3"
-                    alt="Newsletter decoration"
-                    style={{ maxWidth: "150px" }}
-                  />
-                  <p className="fs-5">
-                    Subscribe to our newsletter<br />
-                    Don't miss out! Be the first to know about exciting new developments.
-                  </p>
-                  <Form className="d-flex gap-2 mt-3">
-                    <Form.Control
-                      type="email"
-                      placeholder="Enter your email address..."
-                      className="rounded-3 fs-5"
-                    />
-                    <Button variant="light" className="rounded-3 fs-5" type="submit">
-                      Submit
-                    </Button>
-                  </Form>
-                </Col>
-                <Col xs={12} md={6} className="text-center mt-4 mt-md-0">
-                  <h3 className="fs-3">Important Links</h3>
-                  <img
-                    src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/6dc9414155ae63de77d095f9b718c36cc7d95bfa?placeholderIfAbsent=true"
-                    className="img-fluid my-3"
-                    alt="Links decoration"
-                    style={{ maxWidth: "150px" }}
-                  />
-                  <Nav className="flex-column align-items-center">
-                    {["FAQs", "Privacy Policy", "Support"].map((item, index) => (
-                      <Nav.Link key={index} href={`#${item.toLowerCase().replace(" ", "-")}`} className="text-white fs-5">
-                        {item}
-                      </Nav.Link>
-                    ))}
-                  </Nav>
-                  <div className="d-flex gap-2 justify-content-center mt-4">
-                    {[
-                      "d08d1c7b17113ec12bafd97d86d046d5ba1d3de6",
-                      "b5cc48022ac760096a5de64a9a40d75e86140e38",
-                      "c48db060c22cbbdbfcda78e79607ef525048b50c",
-                      "150c0b317a34eac146955992419d4495b7397420",
-                      "e3fa4663eede982f7acd0e9a172c8b1674ac6fb7"
-                    ].map((id, index) => (
-                      <img
-                        key={index}
-                        src={`https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/${id}?placeholderIfAbsent=true`}
-                        className="img-fluid"
-                        alt="Social media icon"
-                        style={{ width: "50px" }}
-                      />
-                    ))}
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Container>
-      </footer> */}
+     
 
-      {/* Copyright Section */}
-      {/* <div className="bg-light text-dark text-center py-3 fs-5">
-        Copyright © 2024 Designed by IDEA.
-      </div> */}
+
     </div>
   );
 }

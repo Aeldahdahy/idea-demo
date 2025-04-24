@@ -14,7 +14,7 @@ import EmployeeMobileWebContent from './EmployeeMobileWebContent';
 import EmployeeManageMeeting from './EmployeeManageMeeting';
 import EmployeeDataPopUp from './EmployeeDataPopUp';
 import EmployeeProjectPopUp from './EmployeeProjectPopUp';
-import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
+// import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
 import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
 
 function EmployeePortal() {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setMeetingData, setSelectedAuditor, setSlot1State, setSlot2State, resetSlots, openPopup, closePopup } from '../../redux/meetingDataSlice';
+import { setMeetingData, setSelectedAuditor, setSlot1State, setSlot2State, resetSlots, 
+  // openPopup,
+  closePopup } from '../../redux/meetingDataSlice';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';

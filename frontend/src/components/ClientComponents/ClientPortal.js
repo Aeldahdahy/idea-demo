@@ -1,13 +1,13 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import ClientInvestorHome from './ClientInvestorHome';
-import ClientEntreHome from './ClientEntreHome';
+import ClientInvestorHome from './Investor/ClientInvestorHome';
+import ClientEntreHome from './Entrepreneur/ClientEntreHome';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole);
-  console.log(`ProtectedRoute - Client Role: ${clientRole}, Authenticated: ${isAuthenticated}`);
+  // console.log(`ProtectedRoute - Client Role: ${clientRole}, Authenticated: ${isAuthenticated}`);
 
   if (!isAuthenticated) {
     console.log('ProtectedRoute: Redirecting to /login due to unauthenticated user');

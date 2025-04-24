@@ -1,3 +1,4 @@
+// Navbar.js
 import React from 'react';
 import SearchBox from '../Common/SearchBox';
 import LanguageSelector from './LanguageSelector';
@@ -7,7 +8,7 @@ import NavbarSide from './NavbarSide';
 import { useFunctions } from '../../useFunctions';
 import Logo from '../Common/Logo';
 
-function NavBar({ onSignInClick }) {
+function NavBar({ isAuthenticated, role, clientRole, onSignInClick }) {
   const { isFixed, isVisible, toggleSideBar, sideBarVisible } = useFunctions();
 
   return (
@@ -19,16 +20,34 @@ function NavBar({ onSignInClick }) {
           <div className='navSearchLangUser'>
             <SearchBox />
             <LanguageSelector />
-            <NavUser onSignInClick={onSignInClick} />
+            <NavUser
+              isAuthenticated={isAuthenticated}
+              role={role}
+              clientRole={clientRole}
+              onSignInClick={onSignInClick}
+            />
           </div>
         </div>
-          <div className='spacemin'></div>
+        <div className='spacemin'></div>
 
         <div className='Links'>
-          <NavigationLinks />
+          <NavigationLinks
+            isAuthenticated={isAuthenticated}
+            role={role}
+            clientRole={clientRole}
+          />
         </div>
       </nav>
-      <NavbarSide toggleSideBar={toggleSideBar} sideBarVisible={sideBarVisible} isFixed={isFixed} isVisible={isVisible} onSignInClick={onSignInClick} />
+      <NavbarSide
+        toggleSideBar={toggleSideBar}
+        sideBarVisible={sideBarVisible}
+        isFixed={isFixed}
+        isVisible={isVisible}
+        isAuthenticated={isAuthenticated}
+        role={role}
+        clientRole={clientRole}
+        onSignInClick={onSignInClick}
+      />
     </>
   );
 }

@@ -22,7 +22,7 @@ function NavUser() {
       </div>
       {isDropdownOpen && (
         <div className="dropdownMenu">
-          <Link to='/client-portal' className="dropdownItem" onClick={toggleDropdown}>
+          <Link to='/client-portal/clientSignForm' className="dropdownItem" onClick={toggleDropdown}>
             <span>Client</span>
           </Link>
           <Link to='/employee-portal' className="dropdownItem" onClick={toggleDropdown}>

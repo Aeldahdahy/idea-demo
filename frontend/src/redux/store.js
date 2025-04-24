@@ -10,6 +10,7 @@ import staffDataSlice from './staffDataSlice';
 import ProjectDataSlice from './projectDataSlice';
 import meetingDataReducer from './meetingDataSlice';
 import clientDataSlice from './ClientDataSlice';
+import clientAuthSlice  from './clientAuthSlice';
 
 export const store = configureStore({
     reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
         projectData: ProjectDataSlice,
         meetingData: meetingDataReducer,
         clientData: clientDataSlice,
+        clientAuth: clientAuthSlice, 
     },
     devTools: process.env.NODE_ENV !== 'production',
 });

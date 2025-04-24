@@ -3819,7 +3819,41 @@ textarea.form-control-custom {
    background-color: #053447; /* Darker green on hover */
  }
 
+/* BlogSeparator.css */
+.blog-separator {
+  margin: 2.5rem 0;
+  max-width: 72rem; /* Equivalent to max-w-4xl */
+}
 
+.separator-line {
+  border-top: 1px solid #d1d5db; /* border-gray-300 */
+  width: 100%;
+}
+
+.separator-icon {
+  background-color: #2563eb; /* bg-blue-600 */
+  border-radius: 9999px; /* rounded-full */
+  padding: 0.5rem; /* p-2 */
+  margin: 0 1rem; /* mx-4 */
+  display: flex;
+}
+
+.icon-line {
+  width: 0.125rem; /* w-0.5 */
+  height: 1rem; /* h-4 */
+  background-color: white;
+  border-radius: 9999px; /* rounded-full */
+  margin: 0 0.125rem; /* space-x-1 */
+}
+
+.separator-text {
+  margin-top: 1.25rem; /* mt-5 */
+  text-align: center;
+  color: black;
+  font-size: 1.25rem; /* text-xl */
+  max-width: 72rem; /* max-w-4xl */
+  line-height: 1.625; /* leading-relaxed */
+}
 
 
 /* responsive */
@@ -4199,7 +4233,7 @@ textarea.form-control-custom {
 }
 
 .section-title {
-  font-size: 2.5em;
+  font-size: 3.5em;
   font-weight: bold;
   margin-bottom: 20px;
 }

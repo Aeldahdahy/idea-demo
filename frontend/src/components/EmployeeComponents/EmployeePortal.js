@@ -20,10 +20,9 @@ import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
   const projectData = useSelector((state) => state.projectData);
-  const clientData = useSelector((state) => state.clientData);
   const { isOpenStaff, typeStaff, initialStaffData } = staffData; 
   const { isOpen: isOpenProject, type: typeProject, initialData: initialProjectData } = projectData;
-  const { isOpen: isOpenClient, type: typeClient, initialData: initialClientData } = clientData;
+  const { isOpenClient, typeClient, initialClientData } = useSelector((state) => state.clientData);
 
   return (
     <div style={{ display: "flex" }}>

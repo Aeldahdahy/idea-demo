@@ -28,6 +28,7 @@
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.5.0",
     "react-modal": "^3.16.3",
     "react-pdf": "^9.2.1",
     "react-redux": "^9.2.0",
@@ -70,8 +71,11 @@
     "@babel/core": "^7.24.9",
     "@babel/preset-env": "^7.24.8",
     "@babel/preset-react": "^7.24.7",
+    "autoprefixer": "^10.4.21",
     "babel-jest": "^29.7.0",
-    "gh-pages": "^6.1.1"
+    "gh-pages": "^6.1.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.4"
   },
   "jest": {
     "transform": {

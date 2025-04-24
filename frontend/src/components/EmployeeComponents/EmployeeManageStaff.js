@@ -8,36 +8,42 @@ import { openStaffData } from "../../redux/staffDataSlice";
 
 function EmployeeManageStaff() {
   const [search, setSearch] = useState("");
-  const [selectedStaff, setSelectedStaff] = useState([]);
-  const { loading, error, updateStaff, getAllStaff } = useFunctions();
-  const { staff } = useSelector((state) => state.staff); // Get staff from Redux
+  // const [selectedStaff, setSelectedStaff] = useState([]);
+  const { 
+    // loading,
+    error, updateStaff, getAllStaff, API_BASE_URL } = useFunctions();
+  const { staff } = useSelector((state) => state.staff);
   const location = useLocation();
   const dispatch = useDispatch();
+  // console.log(API_BASE_URL);
+  
 
-  const handleStaffDataPopup = (type, staffData = {}) => {
-    if (type === "Add") {
+  const handleStaffDataPopup = (typeStaff, staffData = {}) => {
+    console.log('handleStaffDataPopup:', { typeStaff, staffData }); // Debug
+    if (typeStaff === "Add") {
       dispatch(
         openStaffData({
           header: "Add New Staff",
           buttonText: "Add",
-          type: "Add",
+          typeStaff: "Add",
         })
       );
-    } else if (type === "Edit" && staffData._id) {
+    } else if (typeStaff === "Edit" && staffData._id) {
       dispatch(
         openStaffData({
           header: "Edit Staff",
           buttonText: "Edit",
-          type: "Edit",
-          initialData: {
+          typeStaff: "Edit",
+          initialStaffData: {
             _id: staffData._id,
-            fullName: staffData.fullName || '',
-            userName: staffData.username || '', // Map to userName
-            email: staffData.email || '',
-            phone: staffData.phone || '',
-            role: staffData.role || 'Employee',
+            fullName: staffData.fullName || "",
+            userName: staffData.username || "",
+            email: staffData.email || "",
+            phone: staffData.phone || "",
+            role: staffData.role || "Employee",
             permissions: staffData.permissions || [],
-            status: staffData.status || 'Inactive',
+            status: staffData.status || "Inactive",
+            image: staffData.image || null,
           },
         })
       );
@@ -50,30 +56,40 @@ function EmployeeManageStaff() {
     }
   }, [location.pathname, getAllStaff]);
 
-  const handleUserCheckbox = (id) => {
-    setSelectedStaff((prev) =>
-      prev.includes(id) ? prev.filter((staffId) => staffId !== id) : [...prev, id]
-    );
-  };
+  // const handleUserCheckbox = (id) => {
+  //   setSelectedStaff((prev) =>
+  //     prev.includes(id) ? prev.filter((staffId) => staffId !== id) : [...prev, id]
+  //   );
+  // };
 
-  const handleSelectAll = (e) => {
-    setSelectedStaff(e.target.checked ? staff.map((staff) => staff._id) : []);
-  };
+  // const handleSelectAll = (e) => {
+  //   setSelectedStaff(e.target.checked ? staff.map((staff) => staff._id) : []);
+  // };
 
+  // Updated filtering with defensive checks
   const filteredStaff = Array.isArray(staff)
-    ? staff.filter((staff) => {
-        const searchTerm = search.toLowerCase();
-        return (
-          staff.username.toLowerCase().includes(searchTerm) ||
-          staff.email.toLowerCase().includes(searchTerm) ||
-          staff.role.toLowerCase().includes(searchTerm)
-        );
-      })
-    : [];
+  ? staff.filter((staff) => {
+      const searchTerm = search.toLowerCase();
+      return (
+        (staff.username?.toLowerCase() || "").includes(searchTerm) ||
+        (staff.email?.toLowerCase() || "").includes(searchTerm) ||
+        (staff.role?.toLowerCase() || "").includes(searchTerm) ||
+        (staff.phone?.toLowerCase() || "").includes(searchTerm)
+      );
+    })
+  : [];
 
-  const handleUpdateStaff = (id, updatedData) => {
-    updateStaff(id, updatedData);
-  };
+const handleUpdateStaff = (id, updatedData) => {
+  console.log('handleUpdateStaff:', { id, updatedData });
+  const formData = new FormData();
+  Object.entries(updatedData).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  updateStaff(id, formData);
+};
+
+  // if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <>
@@ -89,22 +105,20 @@ function EmployeeManageStaff() {
           <Plus /> Add New Staff
         </button>
       </div>
-      {loading && <p>Loading...</p>}
-      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
       {filteredStaff.length === 0 ? (
         <p>No staff found.</p>
       ) : (
         <table className="dashboard-table">
           <thead className="dashboard-table-head">
             <tr>
-              <th>
+              {/* <th>
                 <input
                   type="checkbox"
                   checked={selectedStaff.length === filteredStaff.length && filteredStaff.length > 0}
                   onChange={handleSelectAll}
                 />
-              </th>
-              <th></th>
+              </th> */}
+              <th>Avatar</th>
               <th>Name</th>
               <th>Username</th>
               <th>Phone Number</th>
@@ -117,16 +131,16 @@ function EmployeeManageStaff() {
           <tbody>
             {filteredStaff.map((staff) => (
               <tr key={staff._id}>
-                <td>
+                {/* <td>
                   <input
                     type="checkbox"
                     checked={selectedStaff.includes(staff._id)}
                     onChange={() => handleUserCheckbox(staff._id)}
                   />
-                </td>
+                </td> */}
                 <td>
                   <img
-                    src={staff.image || defaultImage}
+                    src={staff.image ? `${API_BASE_URL}/${staff.image}`: defaultImage}
                     alt={staff.fullName}
                     style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
                   />

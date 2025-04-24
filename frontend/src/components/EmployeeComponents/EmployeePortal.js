@@ -13,10 +13,16 @@ import EmployeeManageContract from './EmployeeManageContract';
 import EmployeeMobileWebContent from './EmployeeMobileWebContent';
 import EmployeeManageMeeting from './EmployeeManageMeeting';
 import EmployeeDataPopUp from './EmployeeDataPopUp';
+import EmployeeProjectPopUp from './EmployeeProjectPopUp';
+// import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
+import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
 
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
-  const { isOpen, type, initialData } = staffData;
+  const projectData = useSelector((state) => state.projectData);
+  const { isOpenStaff, typeStaff, initialStaffData } = staffData; 
+  const { isOpen: isOpenProject, type: typeProject, initialData: initialProjectData } = projectData;
+  const { isOpenClient, typeClient, initialClientData } = useSelector((state) => state.clientData);
 
   return (
     <div style={{ display: "flex" }}>
@@ -39,7 +45,9 @@ function EmployeePortal() {
           </div>
         </div>
       </div>
-      {isOpen && <EmployeeDataPopUp mode={type} initialData={initialData} />}
+      {isOpenStaff && <EmployeeDataPopUp typeStaff={typeStaff} initialStaffData={initialStaffData} />}
+      {isOpenProject && <EmployeeProjectPopUp typeProject={typeProject} initialProjectData={initialProjectData} />}
+      {isOpenClient && <EmployeeClientDataPopUp typeClient={typeClient} initialClientData={initialClientData} />}
     </div>
   );
 }

@@ -40,17 +40,48 @@ const userSchema = new mongoose.Schema({
         enum: ['Active', 'Inactive'], 
         default: 'Active' 
     },
+    phone: {
+        type: String,
+        default: null
+    },
+    address: {
+        type: String,
+        default: null
+    },
+    date_of_birth: {
+        type: Date,
+        default: null
+    },
+    national_id: {
+        type: String,
+        default: null
+    },
+    education: {
+        type: String,
+        default: null
+    },
+    experience: {
+        type: String,
+        default: null
+    },
+    biography: {
+        type: String,
+        default: null
+    },
+    image: {
+        type: String,
+        default: null
+    }
+
 }, { timestamps: true });
 
 // Pre-save hook to encrypt password
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
         const salt = await bcrypt.genSalt(10);
-        // this.email = await bcrypt.hash(this.email, salt);
         this.password = await bcrypt.hash(this.password, salt);
     }
     next();
 });
 
 module.exports = mongoose.model('User', userSchema);
-

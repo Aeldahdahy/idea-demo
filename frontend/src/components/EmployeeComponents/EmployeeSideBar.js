@@ -44,7 +44,7 @@ function EmployeeSideBar() {
     <motion.div
       className={`sidebarContainer ${isExpanded ? "expanded" : "collapsed"}`}
       initial={{ width: isExpanded ? 320 : 100 }}
-      animate={{ width: isExpanded ? "320px" : "100px" }}
+      animate={{ width: isExpanded ? "18%" : "5%" }}
       transition={{ duration: 0.5 }}
     >
       <motion.div 

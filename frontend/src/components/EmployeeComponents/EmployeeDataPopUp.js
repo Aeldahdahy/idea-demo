@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { X, Pen } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { closeStaffData } from '../../redux/staffDataSlice';
 import { useFunctions } from '../../useFunctions';
 import { toast } from 'react-toastify';
+import defaultImage from '../../assets/img-0.35.png';
 
-function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
+function EmployeeDataPopUp({ typeStaff = 'Add', initialStaffData = {} }) {
   const dispatch = useDispatch();
-  const { createStaff, updateStaff } = useFunctions();
+  const { createStaff, updateStaff, API_BASE_URL } = useFunctions();
 
   const allPermissions = [
     'Manage Staff',
@@ -23,34 +24,42 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
   const roleOptions = ['Admin', 'Auditor', 'Cs', 'Employee'];
 
   const [formData, setFormData] = useState({
-    fullName: initialData.fullName || '',
-    userName: initialData.userName || '',
-    email: initialData.email || '',
-    phone: initialData.phone || '',
-    role: initialData.role || 'Employee',
+    fullName: initialStaffData.fullName || '',
+    userName: initialStaffData.userName || '',
+    email: initialStaffData.email || '',
+    phone: initialStaffData.phone || '',
+    role: initialStaffData.role || 'Employee',
     password: '',
     confirmPassword: '',
-    permissions: initialData.permissions || [],
+    permissions: initialStaffData.permissions || [],
   });
-  const [status, setStatus] = useState(initialData.status || 'Inactive');
+  const [status, setStatus] = useState(initialStaffData.status || 'Inactive');
   const [isClosing, setIsClosing] = useState(false);
+  const [imagePreview, setImagePreview] = useState(
+    initialStaffData.image ? `${API_BASE_URL}/${initialStaffData.image}` : defaultImage
+  );
+  const [image, setImage] = useState(null); // Define image state
+
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    console.log('initialData received:', initialData); // Debug log
-    if (mode === 'Edit' && initialData._id) {
+    if (typeStaff === 'Edit' && initialStaffData._id) {
       setFormData({
-        fullName: initialData.fullName || '',
-        userName: initialData.userName || '',
-        email: initialData.email || '',
-        phone: initialData.phone || '',
-        role: initialData.role || 'Employee',
+        fullName: initialStaffData.fullName || '',
+        userName: initialStaffData.userName || '',
+        email: initialStaffData.email || '',
+        phone: initialStaffData.phone || '',
+        role: initialStaffData.role || 'Employee',
         password: '',
         confirmPassword: '',
-        permissions: Array.isArray(initialData.permissions) ? initialData.permissions : [],
+        permissions: Array.isArray(initialStaffData.permissions) ? initialStaffData.permissions : [],
       });
-      setStatus(initialData.status || 'Inactive');
+      setStatus(initialStaffData.status || 'Inactive');
+      setImagePreview(
+        initialStaffData.image ? `${API_BASE_URL}/${initialStaffData.image}` : defaultImage
+      );
     }
-  }, [mode, initialData]);
+  }, [typeStaff, initialStaffData, API_BASE_URL]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -79,27 +88,60 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result); // Preview the selected image
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click(); // Trigger the file input click
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
-
-    const updatedData = {
+  
+    // Create the updatedData object as a plain object
+    const updatedDataObject = {
       fullName: formData.fullName,
-      username: formData.userName, // Map to backend field
+      username: formData.userName,
       email: formData.email,
       phone: formData.phone,
       role: formData.role,
       ...(formData.password && { password: formData.password }),
       permissions: formData.permissions,
       status,
+      image,
     };
-
+  
+    // Log the permissions to debug
+    console.log('Permissions being sent:', formData.permissions);
+  
+    // Convert updatedDataObject to FormData for submission
+    const updatedData = new FormData();
+    Object.keys(updatedDataObject).forEach((key) => {
+      if (key === 'permissions') {
+        updatedData.append(key, JSON.stringify(updatedDataObject[key]));
+      } else if (key === 'image' && updatedDataObject[key]) {
+        updatedData.append(key, updatedDataObject[key]);
+      } else if (updatedDataObject[key] !== undefined && updatedDataObject[key] !== null) {
+        updatedData.append(key, updatedDataObject[key]);
+      }
+    });
+  
     try {
-      if (mode === 'Edit' && initialData._id) {
-        await updateStaff(initialData._id, updatedData);
+      if (typeStaff === 'Edit' && initialStaffData._id) {
+        await updateStaff(initialStaffData._id, updatedData);
       } else {
         await createStaff(updatedData);
       }
@@ -132,6 +174,8 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
         permissions: [],
       });
       setStatus('Inactive');
+      setImage(null); // Reset image state
+      setImagePreview(defaultImage); // Reset image preview
       dispatch(closeStaffData());
       setIsClosing(false);
     }, 300);
@@ -154,7 +198,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
       <form onSubmit={handleSubmit} onClick={(e) => e.stopPropagation()}>
         <div className="employee-popup-body">
           <div className="employee-popup-header">
-            <h2>{mode === 'Add' ? 'Add user' : 'Edit user'}</h2>
+            <h2>{typeStaff === 'Add' ? 'Add user' : 'Edit user'}</h2>
             <span className="close-btn" onClick={handleClose}>
               <X size={18} />
             </span>
@@ -162,9 +206,25 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
           <div className="employee-popup-content">
             <div className="employee-popup-left">
               <div className="employee-popup-avatar">
-                <button className="employee-popup-avatar-edit">
+                <img
+                  src={imagePreview}
+                  alt={formData.fullName || 'User Avatar'}
+                  style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+                />
+                <button
+                  type="button"
+                  className="employee-popup-avatar-edit"
+                  onClick={handleImageClick}
+                >
                   <Pen size={15} />
                 </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={handleImageChange}
+                />
               </div>
               <div className="toggleStatusContainer" onClick={handleStatusToggle}>
                 <div className={`toggleStatus ${status === 'Active' ? '' : 'active'}`}>
@@ -220,7 +280,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    required={mode === 'Add'}
+                    required={typeStaff === 'Add'}
                   />
                 </label>
                 <label>
@@ -230,7 +290,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    required={mode === 'Add'}
+                    required={typeStaff === 'Add'}
                   />
                 </label>
                 <label>
@@ -251,7 +311,7 @@ function EmployeeDataPopUp({ mode = 'Add', initialData = {} }) {
               </div>
               <div className="employee-popup-actions">
                 <button type="submit" className="btn btn-primary">
-                  {mode === 'Add' ? 'Add' : 'Edit'}
+                  {typeStaff === 'Add' ? 'Add' : 'Edit'}
                 </button>
               </div>
             </div>

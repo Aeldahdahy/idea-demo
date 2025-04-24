@@ -7,6 +7,10 @@ import messagesSlice from './messagesSlice';
 import staffSlice from './staffSlice';
 import projectSlice from './projectSlice';
 import staffDataSlice from './staffDataSlice';
+import ProjectDataSlice from './projectDataSlice';
+import meetingDataReducer from './meetingDataSlice';
+import clientDataSlice from './ClientDataSlice';
+import clientAuthSlice  from './clientAuthSlice';
 
 export const store = configureStore({
     reducer: {
@@ -18,6 +22,10 @@ export const store = configureStore({
         staff: staffSlice,
         project: projectSlice,
         staffData: staffDataSlice,
+        projectData: ProjectDataSlice,
+        meetingData: meetingDataReducer,
+        clientData: clientDataSlice,
+        clientAuth: clientAuthSlice, 
     },
-    devTools: process.env.NODE_ENV !== 'production', // Improved devTools setup
+    devTools: process.env.NODE_ENV !== 'production',
 });

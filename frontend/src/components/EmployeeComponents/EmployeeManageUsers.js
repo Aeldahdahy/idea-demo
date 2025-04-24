@@ -3,44 +3,86 @@ import { Eye } from "lucide-react";
 import { useFunctions } from "../../useFunctions";
 import defaultImage from "../../assets/img-0.35.png";
 import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"; // Add useSelector
+import { openClientData } from "../../redux/ClientDataSlice";
 
 function EmployeeManageUsers() {
   const [search, setSearch] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const { users = [], loading, error, updateUsers, getAllUsers } = useFunctions();
+  const { loading, error, getAllUsers, updateUsers, API_BASE_URL } = useFunctions();
+  const users = useSelector((state) => state.users.users || []);
+  // console.log("Users from Redux:", users); // Log the users from Redux store
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (location.pathname === '/employee-portal/manageUsers') {
-      getAllUsers();
+    if (location.pathname === "/employee-portal/manageUsers") {
+      getAllUsers(); // Fetch users to update Redux store
     }
   }, [location.pathname, getAllUsers]);
 
-  const handleUserCheckbox = (id) => {
-    setSelectedUsers((prev) =>
-      prev.includes(id) ? prev.filter((userId) => userId !== id) : [...prev, id]
-    );
-  };
-
-  const handleSelectAll = (e) => {
-    setSelectedUsers(e.target.checked ? users.map((user) => user._id) : []);
-  };
-
   const filteredUsers = Array.isArray(users)
     ? users.filter((user) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        user.fullName.toLowerCase().includes(searchTerm) ||
-        user.email.toLowerCase().includes(searchTerm) ||
-        (user.phone?.toString() || "").includes(searchTerm) ||
-        user.role.toLowerCase().includes(searchTerm) ||
-        (user.createdAt?.toString() || "").includes(searchTerm)
-      );
-    })
+        const searchTerm = search.toLowerCase();
+        return (
+          user.fullName.toLowerCase().includes(searchTerm) ||
+          user.email.toLowerCase().includes(searchTerm) ||
+          (user.phone?.toString() || "").includes(searchTerm) ||
+          user.role.toLowerCase().includes(searchTerm) ||
+          (user.createdAt?.toString() || "").includes(searchTerm)
+        );
+      })
     : [];
 
   const formatDate = (isoString) => {
-    return isoString ? isoString.split("T")[0] : "N/A"; // Extract YYYY-MM-DD
+    return isoString ? isoString.split("T")[0] : "N/A";
+  };
+
+  // Handle status toggle
+  const handleStatusToggle = async (user) => {
+    const newStatus = user.status === "Active" ? "Inactive" : "Active";
+    const updatedData = {
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone || "",
+      address: user.address || "",
+      date_of_birth: user.date_of_birth || "",
+      role: user.role,
+      national_id: user.national_id || "",
+      education: user.education || "",
+      experience: user.experience || "",
+      biography: user.biography || "",
+      status: newStatus,
+    };
+
+    try {
+      await updateUsers(user._id, updatedData, null); // No image change
+    } catch (err) {
+      console.error("Failed to toggle user status:", err);
+    }
+  };
+
+  // Handle View button click
+  const handleViewUser = (user) => {
+    dispatch(
+      openClientData({
+        typeClient: "View",
+        initialClientData: {
+          _id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          phone: user.phone || "",
+          role: user.role,
+          status: user.status,
+          image: user.image || "",
+          address: user.address || "",
+          date_of_birth: user.date_of_birth || "",
+          national_id: user.national_id || "",
+          education: user.education || "",
+          experience: user.experience || "",
+          biography: user.biography || "",
+        },
+      })
+    );
   };
 
   return (
@@ -62,15 +104,7 @@ function EmployeeManageUsers() {
         <table className="dashboard-table">
           <thead className="dashboard-table-head">
             <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
-                  onChange={handleSelectAll}
-                />
-              </th>
-              {/* <th>Id</th> */}
-              <th></th>
+              <th>Avatar</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -84,16 +118,8 @@ function EmployeeManageUsers() {
             {filteredUsers.map((user) => (
               <tr key={user._id}>
                 <td>
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.includes(user._id)}
-                    onChange={() => handleUserCheckbox(user._id)}
-                  />
-                </td>
-                {/* <td>{user._id}#</td> */}
-                <td>
                   <img
-                    src={user.image || defaultImage} // Handle missing image
+                    src={user.image ? `${API_BASE_URL}/uploads/user_images/${user.image}` : defaultImage}
                     alt={user.fullName}
                     style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
                   />
@@ -104,7 +130,7 @@ function EmployeeManageUsers() {
                 <td>{user.role}</td>
                 <td>{formatDate(user.createdAt)}</td>
                 <td>
-                  <div className="toggleStatusContainer" onClick={() => updateUsers(user._id, user.status)}>
+                  <div className="toggleStatusContainer" onClick={() => handleStatusToggle(user)}>
                     <div className={`toggleStatus ${user.status === "Active" ? "" : "active"}`}>
                       <span className="toggleCircle"></span>
                       <span className="toggleText">{user.status === "Active" ? "Active" : "Inactive"}</span>
@@ -112,7 +138,7 @@ function EmployeeManageUsers() {
                   </div>
                 </td>
                 <td>
-                  <button className="edit-btn">
+                  <button className="edit-btn" onClick={() => handleViewUser(user)}>
                     <Eye />
                   </button>
                 </td>

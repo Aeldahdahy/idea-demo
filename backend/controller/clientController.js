@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'tahaelrajel8@gmail.com',
-    pass: 'bwdj iofo hirn vqmx'
+    pass: 'aaxv kuyj hayf flth'
   }
 });
 
@@ -85,6 +85,40 @@ const signUp = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error!' });
+  }
+};
+
+const updateUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updates = {
+      role: req.body.role,
+      fullName: req.body.fullName,
+      email: req.body.email,
+      status: req.body.status,
+      phone: req.body.phone,
+      address: req.body.address,
+      date_of_birth: req.body.date_of_birth,
+      national_id: req.body.national_id,
+      education: req.body.education,
+      experience: req.body.experience,
+      biography: req.body.biography
+    };
+
+    if (req.file) {
+      updates.image = req.file.filename;
+    }
+
+    const user = await User.findByIdAndUpdate(id, updates, { new: true });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
   }
 };
 
@@ -266,26 +300,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-
-// update User (Client) for Admin only
-const updateUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const updatedData = req.body;
-
-    // Find and update user
-    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true, runValidators: true });
-
-    if (!updatedUser) {
-      return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    res.status(200).json({ success: true, message: 'User updated successfully', data: updatedUser });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
-  }
-};
-
 // Get all contact messages
 const getAllContacts = async (req, res) => {
   try {
@@ -318,33 +332,70 @@ const updateContactStatus = async (req, res) => {
   }
 };
 
-// Create Project Controller
 const createProject = async (req, res) => {
   try {
-      const {
-          project_name, project_industry, max_investment, min_investment,
-          city, state, postal_code, market_description, business_objectives
-      } = req.body;
+    const {
+      project_name, project_industry, max_investment, min_investment,
+      city, state, postal_code, market_description, business_objectives,
+      project_stage, networth, deal_type, website_link,
+      bussiness_highlights, financial_status, business_description
+    } = req.body;
 
-      // File uploads from middleware
-      const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : null;
-      const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : null;
-      const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
+    // File uploads from middleware
+    const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : null;
+    const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : null;
+    const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : null;
+    const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : null;
+    const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
 
-      // Create new project with default status "Pending"
-      const newProject = new Project({
-          project_name, project_industry, max_investment, min_investment,
-          city, state, postal_code, market_description, business_objectives,
-          business_plan, additional_document, project_images,
-          status: 'Pending' // Default status
-      });
+    // Get user data from token
+    const user_id = req.user.user.id;
+    const user_name = req.user.user.fullName;
+// console.log(user_id);
+// console.log(user_name);
+    // Create new project
+    const newProject = new Project({
+      user_id,
+      user_name,
+      project_name,
+      project_industry,
+      max_investment,
+      min_investment,
+      city,
+      state,
+      postal_code,
+      market_description,
+      business_objectives,
+      business_plan,
+      additional_document,
+      financial_statement,
+      exective_sunnary,
+      project_images,
+      project_stage,
+      networth,
+      deal_type,
+      website_link,
+      bussiness_highlights,
+      financial_status,
+      business_description,
+      status: 'Rejected' 
+    });
 
-      await newProject.save();
-      res.status(201).json({ success: true, message: 'Project created successfully', data: newProject });
+    await newProject.save();
+    res.status(201).json({
+      success: true,
+      message: 'Project created successfully',
+      data: newProject
+    });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error creating project', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Error creating project',
+      error: error.message
+    });
   }
 };
+
 
 // Get All Projects Controller
 const getAllProjects = async (req, res) => {
@@ -375,42 +426,76 @@ const getProjectById = async (req, res) => {
 // Update Project Controller
 const updateProject = async (req, res) => {
   try {
-      const { projectId } = req.params;
-      let { project_name, project_industry, max_investment, min_investment,
-            city, state, postal_code, market_description, business_objectives, status } = req.body;
+    const { projectId } = req.params;
 
-      // Validate status
-      const validStatuses = ['Approved', 'Rejected'];
-      if (status && !validStatuses.includes(status)) {
-          return res.status(400).json({ success: false, message: 'Invalid status value' });
-      }
+    let {
+      project_name, project_industry, max_investment, min_investment,
+      city, state, postal_code, market_description, business_objectives,
+      status, project_stage, networth, deal_type, website_link,
+      bussiness_highlights, financial_status, business_description, comment
+    } = req.body;
 
-      // Find the project
-      const project = await Project.findById(projectId);
-      if (!project) {
-          return res.status(404).json({ success: false, message: 'Project not found' });
-      }
+    // Validate status
+    const validStatuses = ['Approved', 'Rejected'];
+    if (status && !validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status value' });
+    }
 
-      // Handle file uploads (Update only if new files are provided)
-      const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : project.business_plan;
-      const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : project.additional_document;
-      const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : project.project_images;
+    // Find the project
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
 
-      // Update project details
-      const updatedProject = await Project.findByIdAndUpdate(
-          projectId,
-          {
-              project_name, project_industry, max_investment, min_investment,
-              city, state, postal_code, market_description, business_objectives,
-              business_plan, additional_document, project_images,
-              status: status || project.status // Keep previous status if not provided
-          },
-          { new: true, runValidators: true }
-      );
+    // Handle file uploads
+    const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : project.business_plan;
+    const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : project.additional_document;
+    const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : project.financial_statement;
+    const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : project.exective_sunnary;
+    const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : project.project_images;
 
-      res.status(200).json({ success: true, message: 'Project updated successfully', data: updatedProject });
+    // Update the project
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        project_name,
+        project_industry,
+        max_investment,
+        min_investment,
+        city,
+        state,
+        postal_code,
+        market_description,
+        business_objectives,
+        business_plan,
+        additional_document,
+        financial_statement,
+        exective_sunnary,
+        project_images,
+        project_stage,
+        networth,
+        deal_type,
+        website_link,
+        bussiness_highlights,
+        financial_status,
+        business_description,
+        comment, // Added comment field
+        status: status || project.status
+      },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Project updated successfully',
+      data: updatedProject
+    });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error updating project', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Error updating project',
+      error: error.message
+    });
   }
 };
 
@@ -425,7 +510,7 @@ const deleteProject = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Project not found' });
         }
 
-        // Delete associated files (business plan, additional document, images)
+        // Delete files (business plan, additional document, images)
         if (project.business_plan) fs.unlinkSync(project.business_plan);
         if (project.additional_document) fs.unlinkSync(project.additional_document);
         if (project.project_images) {
@@ -446,6 +531,7 @@ const deleteProject = async (req, res) => {
 };
 
 
+
 module.exports =
 {
   createContact,
@@ -457,12 +543,12 @@ module.exports =
   verifyOtpForReset,
   resetPassword,
   getAllUsers,
-  updateUser,
   getAllContacts,
   updateContactStatus,
   createProject,
   getAllProjects,
   getProjectById,
   updateProject,
-  deleteProject
+  deleteProject,
+  updateUserById
 };

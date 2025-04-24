@@ -3,26 +3,26 @@ import { createSlice } from "@reduxjs/toolkit";
 const staffDataSlice = createSlice({
   name: "staffData",
   initialState: {
-    isOpen: false,
+    isOpenStaff: false,
     header: "",
     buttonText: "",
-    type: "",
-    initialData: {},
+    typeStaff: "",
+    initialStaffData: {},
   },
   reducers: {
     openStaffData: (state, action) => {
-      state.isOpen = true;
+      state.isOpenStaff = true;
       state.header = action.payload.header;
       state.buttonText = action.payload.buttonText;
-      state.type = action.payload.type;
-      state.initialData = action.payload.initialData || {};
+      state.typeStaff = action.payload.typeStaff;
+      state.initialStaffData = action.payload.initialStaffData || {};
     },
     closeStaffData: (state) => {
-      state.isOpen = false;
+      state.isOpenStaff = false;
       state.header = "";
       state.buttonText = "";
-      state.type = "";
-      state.initialData = {};
+      state.typeStaff = "";
+      state.initialStaffData = {};
     },
   },
 });

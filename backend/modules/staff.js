@@ -39,6 +39,10 @@ const staffSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  image: {
+    type: String,  // Stores image URL or file path
+    default: null // Default profile image
+  },
   role: {
     type: String,
     enum: ['Admin', 'Auditor', 'Cs', 'Employee'],

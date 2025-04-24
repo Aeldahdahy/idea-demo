@@ -8,9 +8,12 @@ import { setUsers } from './redux/userSlice';
 import { setMessages } from './redux/messagesSlice';
 import { setStaff } from './redux/staffSlice';
 import { setProject } from './redux/projectSlice';
+import { setClientAuth } from './redux/clientAuthSlice'; // Import the action to set client auth data
 import { toast } from 'react-toastify';
 
+
 export const useFunctions = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { users, lastUserFetched } = useSelector(state => state.users);
@@ -99,7 +102,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchText = async () => {
   //     try {
-  //       const response = await axios.get("http://127.0.0.1:7030/api/whoarewe");
+  //       const response = await axios.get(`${API_BASE_URL}/api/whoarewe`);
   //       setParagraphText(response.data.mainText);
   //       setSubText(response.data.subText);
   //     } catch (error) {
@@ -113,7 +116,7 @@ export const useFunctions = () => {
   // useEffect(() => {
   //   const fetchStories = async () => {
   //     try {
-  //       const response = await axios.get('http://127.0.0.1:7030/api/successstories');
+  //       const response = await axios.get(`${API_BASE_URL}/api/successstories`);
   //       setStories(response.data);
   //       setLoading(false);
   //     } catch (error) {
@@ -149,7 +152,7 @@ export const useFunctions = () => {
     setError(null);
     try {
       // Step 1: Send OTP
-      const otpResponse = await axios.post('http://127.0.0.1:7030/api/signup', { email: formData.email });
+      const otpResponse = await axios.post(`${API_BASE_URL}/api/signup`, { email: formData.email });
   
       if (otpResponse.status === 200) {
         setIsOtpSent(true);
@@ -172,7 +175,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const verifyResponse = await axios.post('http://127.0.0.1:7030/api/verify-otp', {
+      const verifyResponse = await axios.post(`${API_BASE_URL}/api/verify-otp`, {
         email: formData.email,
         otp,
         role: formData.role,
@@ -205,7 +208,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post('http://127.0.0.1:7030/api/signup', { email });
+      await axios.post(`${API_BASE_URL}/api/signup`, { email });
       setIsTimerActive(true);
       setTimer(180);
       toast.success('OTP resent successfully!');
@@ -225,47 +228,82 @@ export const useFunctions = () => {
     }, 18000000); // 5 hour in milliseconds
   };
 
-  // Sign In
   const signIn = async (formData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/signin', {
+      const response = await axios.post(`${API_BASE_URL}/api/signin`, {
         email: formData.email,
         password: formData.password,
       });
   
       if (response.status === 200) {
         const { token } = response.data;
+        if (!token) {
+          throw new Error('Invalid API response: Missing token');
+        }
+  
         localStorage.setItem('authToken', token);
   
         const decodedToken = jwtDecode(token);
+        if (!decodedToken?.user?.status) {
+          throw new Error('Invalid token structure: Missing user or status');
+        }
         if (decodedToken.user.status === 'Inactive') {
           setLoading(false);
           throw new Error('This account has been deactivated!');
         }
-        console.log('Decoded Token:', decodedToken, response.data);
+        console.log('API Response:', response.data, 'Decoded Token:', decodedToken);
   
-        if (decodedToken && decodedToken.user) {
-          localStorage.setItem('userFullName', decodedToken.user.fullName);
-          localStorage.setItem('hasAccessedPortal', 'true'); // Set the portal access flag
-          localStorage.setItem('portalType', 'client'); // Store the portal type
-  
-          dispatch(login({ token, role: 'client' }));
-          setTokenExpiration();
-          navigate('/client-portal/');
-          toast.success('Login successfully!');
-          return response.data;
-        } else {
-          throw new Error('Unexpected token structure');
+        // Normalize clientRole (e.g., 'investor' -> 'Investor')
+        const clientRole = decodedToken.user.role.charAt(0).toUpperCase() + decodedToken.user.role.slice(1).toLowerCase();
+        if (clientRole !== 'Investor' && clientRole !== 'Entrepreneur') {
+          throw new Error(`Invalid client role: ${clientRole}`);
         }
+  
+        localStorage.setItem('username', decodedToken.user.fullName || 'Unknown User');
+        localStorage.setItem('hasAccessedPortal', 'true');
+        localStorage.setItem('portalType', 'client'); // Set portalType to 'client'
+  
+        dispatch(login({
+          token,
+          role: 'client', // Set authSlice role to 'client'
+          username: decodedToken.user.fullName || 'Unknown User',
+        }));
+  
+        dispatch(setClientAuth({
+          clientData: {
+            _id: decodedToken.user.id, // Map 'id' to '_id'
+            fullName: decodedToken.user.fullName || null,
+            clientRole, // Use normalized clientRole
+            email: decodedToken.user.email || null,
+            phone: null,
+            address: null,
+            biography: null,
+            date_of_birth: null,
+            education: null,
+            experience: null,
+            national_id: null,
+            image: null,
+            createdAt: null,
+            updatedAt: null,
+            status: decodedToken.user.status || null,
+          },
+        }));
+  
+        setTokenExpiration();
+        const redirectPath = clientRole === 'Investor' ? '/client-portal/investor' : '/client-portal/entrepreneur';
+        navigate(redirectPath);
+        toast.success('Login successfully!');
+        return response.data;
       } else {
         const errorMessage = 'Sign-in failed. Please try again.';
         setError(errorMessage);
         toast.error(errorMessage);
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || `An error occurred. Please try again. ${err.message}`;
+      console.error('Sign-in error:', err);
+      const errorMessage = err.response?.data?.message || `An error occurred: ${err.message}`;
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -274,12 +312,11 @@ export const useFunctions = () => {
     }
   };
 
-
   const StaffSignIn = async (formData) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/staff/login', {
+      const response = await axios.post(`${API_BASE_URL}/api/staff/login`, {
         username: formData.username,
         password: formData.password,
       });
@@ -318,14 +355,12 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
-
 
   const sendOtp = async (email) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
+      const response = await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
       if (response.status === 200) {
         setIsOtpSent(true);
         toast.success('OTP sent successfully!');
@@ -343,12 +378,11 @@ export const useFunctions = () => {
     }
   };
   
-
   const verifyOtpForPasswordReset = async (email, otp) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/verify-otp-for-reset', { email, otp });
+      const response = await axios.post(`${API_BASE_URL}/api/verify-otp-for-reset`, { email, otp });
       if (response.status === 200) {
         setIsOtpVerified(true);
         toast.success('OTP verified successfully!');
@@ -370,7 +404,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/reset-password', data);
+      const response = await axios.post(`${API_BASE_URL}/api/reset-password`, data);
       if (response.status === 200) {
         toast.success('Password reset successfully!');
         return response.data;
@@ -392,7 +426,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.post('http://127.0.0.1:7030/api/forgot-password', { email });
+      await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
       setIsTimerActive(true);
       setTimer(180);
       toast.success('OTP resent successfully!');
@@ -405,13 +439,12 @@ export const useFunctions = () => {
     }
   };
   
-
   // sign out
   const signOutDistroySession = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://127.0.0.1:7030/api/signout');
+      const response = await axios.post(`${API_BASE_URL}/api/signout`);
       console.log(response.data);
   
       // Clear local storage
@@ -438,7 +471,7 @@ export const useFunctions = () => {
     setError(null);
     setResponse(null);
     try {
-      const contactResponse = await axios.post('http://127.0.0.1:7030/api/contact', {
+      const contactResponse = await axios.post(`${API_BASE_URL}/api/contact`, {
         fullname: formData.fullname,
         email: formData.email,
         message: formData.message
@@ -447,7 +480,7 @@ export const useFunctions = () => {
       if (contactResponse.status === 201) {
         const successMessage = contactResponse.data.message || 'Your message has been sent successfully.';
         setResponse(successMessage);
-        toast.success(successMessage);
+        // toast.success(successMessage);
       } else {
         const errorMessage = contactResponse.data.message || 'There was an issue sending your message. Please try again later.';
         setResponse(errorMessage);
@@ -472,7 +505,6 @@ export const useFunctions = () => {
       setLoading(false);
     }
   };
-  
 
   // get all users
   const getAllUsers = useCallback(async () => {
@@ -495,7 +527,7 @@ export const useFunctions = () => {
     setError(null);
   
     try {
-      const response = await axios.get('http://127.0.0.1:7030/api/users', {
+      const response = await axios.get(`${API_BASE_URL}/api/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -503,7 +535,7 @@ export const useFunctions = () => {
   
       if (Array.isArray(response.data.data)) {
         dispatch(setUsers(response.data.data));
-        toast.success('Users fetched successfully!');
+        // toast.success('Users fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data.data');
       }
@@ -514,34 +546,66 @@ export const useFunctions = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastUserFetched, dispatch]);
+  }, [API_BASE_URL, lastUserFetched, dispatch]);
 
   // update users
-  const updateUsers = async (id, status) => {
+  const updateUsers = async (id, updatedData, imageFile) => {
     setLoading(true);
     setError(null);
-    const authToken = localStorage.getItem('authToken');
-    const newStatus = status === "Active" ? "Inactive" : "Active";
-  
-    // Optimistically update the user status in the UI
-    dispatch(setUsers(users.map(user => user._id === id ? { ...user, status: newStatus } : user)));
-  
+    const authToken = localStorage.getItem("authToken");
+
+    // Optimistically update the user in the UI
+    dispatch(
+      setUsers(
+        users.map((user) =>
+          user._id === id ? { ...user, ...updatedData, image: imageFile ? URL.createObjectURL(imageFile) : user.image } : user
+        )
+      )
+    );
+
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:7030/api/users/${id}`,
-        { status: newStatus },
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
-      if (response.status !== 200) {
-        throw new Error('Failed to update user');
+      const formData = new FormData();
+      // Append all text fields
+      formData.append("fullName", updatedData.fullName);
+      formData.append("email", updatedData.email);
+      formData.append("phone", updatedData.phone);
+      formData.append("address", updatedData.address);
+      formData.append("date_of_birth", updatedData.date_of_birth);
+      formData.append("role", updatedData.role);
+      formData.append("national_id", updatedData.national_id);
+      formData.append("education", updatedData.education);
+      formData.append("experience", updatedData.experience);
+      formData.append("biography", updatedData.biography);
+      formData.append("status", updatedData.status);
+
+      // Append image file if present
+      if (imageFile) {
+        formData.append("image", imageFile);
       }
-      toast.success('User status updated successfully!');
+
+      const response = await axios.put(`${API_BASE_URL}/api/users/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status !== 200) {
+        throw new Error("Failed to update user");
+      }
+
+      // Update Redux with the server response
+      dispatch(
+        setUsers(
+          users.map((user) => (user._id === id ? response.data.data : user))
+        )
+      );
+      toast.success("User updated successfully!");
+      return response.data;
     } catch (err) {
-      // Revert the status change if the API call fails
-      dispatch(setUsers(users.map(user => user._id === id ? { ...user, status } : user)));
-      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      // Revert the user data if the API call fails
+      dispatch(setUsers(users)); // Revert to original users state
+      const errorMessage = err.response?.data?.message || "An error occurred. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -570,7 +634,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://127.0.0.1:7030/api/contacts', {
+      const response = await axios.get(`${API_BASE_URL}/api/contacts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
   
@@ -578,7 +642,7 @@ export const useFunctions = () => {
   
       if (Array.isArray(response.data.data)) {
         dispatch(setMessages(response.data.data)); // Dispatch setMessages action
-        toast.success('Messages fetched successfully!');
+        // toast.success('Messages fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data.data');
       }
@@ -589,7 +653,7 @@ export const useFunctions = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastMessageFetched, dispatch]);
+  }, [API_BASE_URL, lastMessageFetched, dispatch]);
   
   const updateMessages = async (id, status) => {
     setLoading(true);
@@ -602,7 +666,7 @@ export const useFunctions = () => {
   
     try {
       const response = await axios.put(
-        `http://127.0.0.1:7030/api/contacts/${id}/status`,
+        `${API_BASE_URL}/api/contacts/${id}/status`,
         { status: newStatus },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -643,14 +707,14 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://127.0.0.1:7030/api/staff', {
+      const response = await axios.get(`${API_BASE_URL}/api/staff`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(response.data.data);
       
       if (Array.isArray(response.data.data)) {
         dispatch(setStaff(response.data.data));
-        toast.success('Staff fetched successfully!');
+        // toast.success('Staff fetched successfully!');
       } else {
         throw new Error('Invalid data format: Expected an array in response.data');
       }
@@ -662,28 +726,28 @@ export const useFunctions = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastStaffFetched, dispatch]);
+  }, [API_BASE_URL, lastStaffFetched, dispatch]);
 
-  // update staff
-  const updateStaff = async (id, updatedData) => {
+  //create staff
+  const createStaff = async (updatedData) => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-  
-    // Optimistically update the staff status in the UI
-    dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
-  
+
     try {
-      const response = await axios.put(`http://127.0.0.1:7030/api/staff/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${authToken}` },
+      const response = await axios.post(`${API_BASE_URL}/api/staff`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      if (response.status !== 200) {
-        throw new Error('Failed to update staff');
+      if (response.status !== 201) {
+        throw new Error('Failed to create staff');
       }
-      toast.success('Staff data updated successfully!');
+      dispatch(setStaff([...staff, response.data.data]));
+      toast.success('Staff created successfully!');
+      return response.data;
     } catch (err) {
-      // Revert the status change if the API call fails
-      dispatch(setStaff(staff.map(staff => staff._id === id ? { ...staff, ...updatedData } : staff)));
       const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -693,96 +757,137 @@ export const useFunctions = () => {
     }
   };
 
-  const createStaff = async (formData) => {
+  // update staff
+  const updateStaff = async (id, updatedData) => {
     setLoading(true);
     setError(null);
-    try{
-      const response = await axios.post('http://127.0.0.1:7030/api/staff', formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+    const authToken = localStorage.getItem('authToken');
+
+    // Optimistically update the staff status in the UI
+    const updatedDataObject = {};
+    updatedData.forEach((value, key) => {
+      if (key === 'permissions') {
+        try {
+          updatedDataObject[key] = JSON.parse(value);
+        } catch (error) {
+          console.error('Error parsing permissions in optimistic update:', error);
+          updatedDataObject[key] = [];
         }
-      );
-
-      if(response.status === 201){
-        toast.success('Staff created successfully!');
-        return response.data;
+      } else {
+        updatedDataObject[key] = value;
       }
+    });
 
-    }catch (error) {
-      const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+    dispatch(
+      setStaff(
+        staff.map((s) =>
+          s._id === id ? { ...s, ...updatedDataObject, image: s.image } : s
+        )
+      )
+    );
+
+    try {
+      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to update staff');
+      }
+      dispatch(
+        setStaff(
+          staff.map((s) =>
+            s._id === id ? { ...s, ...response.data.data } : s
+          )
+        )
+      );
+      toast.success('Staff data updated successfully!');
+      return response.data;
+    } catch (err) {
+      dispatch(
+        setStaff(
+          staff.map((s) =>
+            s._id === id ? { ...s, ...updatedDataObject, image: s.image } : s
+          )
+        )
+      );
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-// get all projects
-const getAllProjects = useCallback(async () => {
-  const THIRTY_MINUTES = 30 * 60 * 1000;
-  const now = Date.now();
-  const token = localStorage.getItem('authToken');
+  // get all projects
+  const getAllProjects = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+    const token = localStorage.getItem('authToken');
 
-  if (!token) {
-    const errorMessage = 'Authentication token is missing. Please sign in again.';
-    setError(errorMessage);
-    toast.error(errorMessage);
-    return;
-  }
-
-  if (lastProjectFetched && now - lastProjectFetched < THIRTY_MINUTES) {
-    return;
-  }
-
-  setLoading(true);
-  setError(null);
-  try {
-    const response = await axios.get('http://127.0.0.1:7030/api/projects', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(response.data.data);
-
-    if (Array.isArray(response.data.data)) {
-      dispatch(setProject(response.data.data));
-      toast.success('Projects fetched successfully!');
-    } else {
-      throw new Error('Invalid data format: Expected an array in response.data');
+    if (!token) {
+      const errorMessage = 'Authentication token is missing. Please sign in again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return;
     }
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || 'An error occurred while fetching projects.';
-    setError(errorMessage);
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-}, [lastProjectFetched, dispatch]);
 
-// update project
-const updateProject = async (id, updatedData) => {
-  setLoading(true);
-  setError(null);
-  const authToken = localStorage.getItem('authToken');
-
-  dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
-
-  try {
-    const response = await axios.put(`http://127.0.0.1:7030/api/projects/${id}`, updatedData, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-    if (response.status !== 200) {
-      throw new Error('Failed to update project');
+    if (lastProjectFetched && now - lastProjectFetched < THIRTY_MINUTES) {
+      return;
     }
-    toast.success('Project data updated successfully!');
-  } catch (err) {
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/projects`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data.data);
+
+      if (Array.isArray(response.data.data)) {
+        dispatch(setProject(response.data.data));
+        // toast.success('Projects fetched successfully!');
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while fetching projects.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, lastProjectFetched, dispatch]);
+
+  // update project
+  const updateProject = async (id, updatedData) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+
     dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
-    const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
-    setError(errorMessage);
-    toast.error(errorMessage);
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-};
+
+    try {
+      const response = await axios.put(`${API_BASE_URL}/api/projects/${id}`, updatedData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to update project');
+      }
+      toast.success('Project data updated successfully!');
+    } catch (err) {
+      dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
@@ -901,5 +1006,6 @@ const updateProject = async (id, updatedData) => {
     isTimerActive,
     formError,
     backendError,
+    API_BASE_URL,
   };
 };

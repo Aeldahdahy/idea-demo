@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ClientInvestorProjects() {
+function ClientEnyreProjects() {
   return (
     <div>
       
@@ -8,4 +8,4 @@ function ClientInvestorProjects() {
   );
 }
 
-export default ClientInvestorProjects;
+export default ClientEnyreProjects;

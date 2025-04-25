@@ -4,13 +4,9 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ClientInvestorHome from './Investor/ClientInvestorHome';
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
-// import InvestorOpportunities from './Investor/InvestorOpportunities';
-// import InvestorPortfolio from './Investor/InvestorPortfolio';
-// import EntrepreneurMyProjects from './Entrepreneur/EntrepreneurMyProjects'; // New component
-// import EntrepreneurMessages from './Entrepreneur/EntrepreneurMessages'; // New component
-import Blog from '../Common/Blog'; // Reused from public routes
-import AboutUs from '../Common/AboutUs'; // Reused from public routes
-import Contact from '../Common/Contact'; // Reused from public routes
+import Blog from '../Common/Blog'; 
+import AboutUs from '../Common/AboutUs'; 
+import Contact from '../Common/Contact'; 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);

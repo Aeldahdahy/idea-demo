@@ -61,7 +61,7 @@ function Main() {
         <Route path="/contact" element={<Contact />} />
 
         {/* Client Portal Routes */}
-        <Route path="/client-portal/clientSignForm" element={<ClientSignForm />} />
+        {/* <Route path="/client-portal/clientSignForm" element={<ClientSignForm />} /> */}
         <Route
           path="/client-portal/*"
           element={

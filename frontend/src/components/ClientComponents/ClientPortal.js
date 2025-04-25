@@ -94,7 +94,7 @@ function ClientPortal() {
         path="investor/about"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
-            <AboutUs />
+            <ClientInvestorPreferences />
           </ProtectedRoute>
         }
       />

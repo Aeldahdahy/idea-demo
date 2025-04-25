@@ -354,6 +354,7 @@ const createProject = async (req, res) => {
     const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : null;
     const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : null;
     const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : null;
+    const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : null;
     const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
 
     // Get user data from token
@@ -379,6 +380,7 @@ const createProject = async (req, res) => {
       financial_statement,
       exective_sunnary,
       project_images,
+      project_logo,
       project_stage,
       networth,
       deal_type,
@@ -461,6 +463,7 @@ const updateProject = async (req, res) => {
     const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : project.financial_statement;
     const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : project.exective_sunnary;
     const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : project.project_images;
+    const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : project.project_logo;
 
     // Update the project
     const updatedProject = await Project.findByIdAndUpdate(
@@ -480,6 +483,7 @@ const updateProject = async (req, res) => {
         financial_statement,
         exective_sunnary,
         project_images,
+        project_logo,
         project_stage,
         networth,
         deal_type,

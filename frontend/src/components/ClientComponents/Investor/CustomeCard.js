@@ -13,6 +13,11 @@ function CustomCard({ project }) {
     ? `${API_BASE_URL}/${project.project_images[0]}`
     : defaultImage;
 
+  // Construct the project logo URL or fallback to defaultLogo
+  const projectLogo = project.project_logo
+    ? `${API_BASE_URL}/${project.project_logo}`
+    : defaultLogo;
+
   const projectLocation = `${project.city || "N/A"}, ${project.state || "N/A"}`;
 
   return (
@@ -33,7 +38,7 @@ function CustomCard({ project }) {
             style={{ flexShrink: 0 }}
           >
             <img
-              src={defaultLogo} // Assuming no logo field in project data; use default
+              src={projectLogo} // Use projectLogo instead of defaultLogo
               alt={`Logo for ${project.project_name || "project"}`}
               style={{ width: "3.5rem", height: "3.5rem", objectFit: "contain" }}
             />

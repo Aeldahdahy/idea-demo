@@ -70,6 +70,10 @@ const projectSchema = new mongoose.Schema({
     required: false,
     default: []
   },
+  project_logo:{
+    type: String, 
+    required: false
+  },
   project_stage: {
     type: String
   },

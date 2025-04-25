@@ -24,7 +24,7 @@ function CarouselMain() {
             <h1 className="text-white">Welcome to IDEA</h1>
             <p className="text-white">Where Tomorrow's Innovative Ideas Meet Today's Investors.</p>
             <div className="buttons-container">
-              <Link to='/client-portal/' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
+              <Link to='/client-portal/clientSignForm' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
             </div>
           </Carousel.Caption>
         </Carousel.Item>
@@ -39,7 +39,7 @@ function CarouselMain() {
             <h1 className="text-white">Welcome to IDEA</h1>
             <p className="text-white">Where Tomorrow's Innovative Ideas Meet Today's Investors.</p>
             <div className="buttons-container">
-              <Link to='/client-portal/' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
+              <Link to='/client-portal/clientSignForm' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
             </div>
           </Carousel.Caption>
         </Carousel.Item>
@@ -54,7 +54,7 @@ function CarouselMain() {
             <h1 className="text-white">Welcome to IDEA</h1>
             <p className="text-white">Where Tomorrow's Innovative Ideas Meet Today's Investors.</p>
             <div className="buttons-container">
-              <Link to='/client-portal/' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
+              <Link to='/client-portal/clientSignForm' className='MainButton' variant="primary">Get started <FontAwesomeIcon icon="fa-solid fa-arrow-right" /></Link>
             </div>
           </Carousel.Caption>
         </Carousel.Item>

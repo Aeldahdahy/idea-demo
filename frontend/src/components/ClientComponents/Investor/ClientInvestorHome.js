@@ -1,10 +1,25 @@
-import React from 'react';
+import React from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import CustomCard from "./CustomeCard"; // Assuming you have a CustomCard component
 
 function ClientInvestorHome() {
   return (
-    <div>
-      <h1>Welcome to Investor Portal</h1>
-    </div>
+    <Container fluid className="py-5" style={{ maxWidth: "1280px", backgroundColor: "white", color: "black" }}>
+      <Row xs={1} sm={2} className="g-4">
+        <Col>
+          <CustomCard />
+        </Col>
+        <Col>
+          <CustomCard />
+        </Col>
+        <Col>
+          <CustomCard />
+        </Col>
+        <Col>
+          <CustomCard />
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

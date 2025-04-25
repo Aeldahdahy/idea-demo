@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ClientEntreProjectData() {
+function ClientEnyreProjects() {
   return (
     <div>
       
@@ -8,4 +8,4 @@ function ClientEntreProjectData() {
   );
 }
 
-export default ClientEntreProjectData;
+export default ClientEnyreProjects;

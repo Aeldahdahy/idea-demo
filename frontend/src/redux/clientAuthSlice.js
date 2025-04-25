@@ -9,19 +9,40 @@ const clientAuthSlice = createSlice({
     reducers: {
         setClientAuth: (state, action) => {
             const { clientData } = action.payload;
-            state.isAuthenticated = true;
-            state.clientData = clientData;
+            
+            // Add null checks and default values
+            const normalizedClientData = clientData ? {
+              ...clientData,
+            } : null; // Handle case where clientData is undefined
 
-            localStorage.setItem('clientData', JSON.stringify(clientData));
-        },
+        
+            state.isAuthenticated = !!normalizedClientData;
+            state.clientData = normalizedClientData;
+        
+            if (normalizedClientData) {
+              localStorage.setItem('clientData', JSON.stringify(normalizedClientData));
+            } else {
+              localStorage.removeItem('clientData');
+            }
+          },
         clearClientAuth: (state) => {
             state.isAuthenticated = false;
             state.clientData = null;
 
+            localStorage.removeItem('authToken');
             localStorage.removeItem('clientData');
         },
+        updateClientData: (state, action) => {
+            const updatedClientData = {
+                ...state.clientData,
+                ...action.payload,
+            };
+
+            state.clientData = updatedClientData;
+            localStorage.setItem('clientData', JSON.stringify(updatedClientData));
+        }
     },
 });
 
-export const { setClientAuth, clearClientAuth } = clientAuthSlice.actions;
+export const { setClientAuth, clearClientAuth, updateClientData } = clientAuthSlice.actions;
 export default clientAuthSlice.reducer;

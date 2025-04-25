@@ -11,6 +11,7 @@ import ProjectDataSlice from './projectDataSlice';
 import meetingDataReducer from './meetingDataSlice';
 import clientDataSlice from './ClientDataSlice';
 import clientAuthSlice  from './clientAuthSlice';
+import ClientInvestorPreferences from './clientInvestorPreferencesSlice';
 
 export const store = configureStore({
     reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
         meetingData: meetingDataReducer,
         clientData: clientDataSlice,
         clientAuth: clientAuthSlice, 
+        clientInvestorPreferences: ClientInvestorPreferences,
     },
     devTools: process.env.NODE_ENV !== 'production',
 });

@@ -46,6 +46,7 @@ function Main() {
   // Hide NavBar and Footer for /client-portal/clientSignForm and /employee-portal/*
   const hideNavAndFooter =
     location.pathname === '/client-portal/clientSignForm' ||
+    location.pathname === '/client-portal/investor/investorPreferences' ||
     location.pathname.startsWith('/employee-portal');
 
   return (

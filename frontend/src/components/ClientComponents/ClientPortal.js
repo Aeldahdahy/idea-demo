@@ -1,46 +1,68 @@
-// ClientPortal.js
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 // public components
-import Blog from '../Common/Blog'; 
-import AboutUs from '../Common/AboutUs'; 
-import Contact from '../Common/Contact'; 
+import Blog from '../Common/Blog';
+import AboutUs from '../Common/AboutUs';
+import Contact from '../Common/Contact';
 
 // Entrepreneur components
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
 
-// investor components
+// Investor components
 import ClientInvestorHome from './Investor/ClientInvestorHome';
 import ClientInvestorMyInvestment from './Investor/ClientInvestorMyInvestment';
 import ClientInvestorViewProject from './Investor/ClientInvestorViewProject';
 import ClientInvestorMessages from './Investor/ClientInvestorMessages';
+import ClientInvestorPreferences from './Investor/ClientInvestorPreferences';
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
+const ProtectedRoute = ({ children, allowedRoles, requireFirstLogin = false }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole);
+  const clientData = useSelector((state) => state.clientAuth.clientData);
+  const clientRole = clientData?.clientRole;
+  const firstLogin = clientData?.firstLogin;
 
+
+  // Check if user is authenticated
   if (!isAuthenticated) {
+    console.log('Redirecting to /client-portal/clientSignForm due to unauthenticated');
     return <Navigate to="/client-portal/clientSignForm" replace />;
   }
 
-  if (!clientRole || !allowedRoles.includes(clientRole)) {
+  // Check if clientData and clientRole are defined
+  if (!clientData || !clientRole) {
+    console.log('Redirecting to /client-portal/clientSignForm due to missing clientData or clientRole');
+    return <Navigate to="/client-portal/clientSignForm" replace />;
+  }
+
+  // Check if user has the required role
+  if (!allowedRoles.includes(clientRole)) {
+    console.log(`Redirecting to / due to invalid role. Expected: ${allowedRoles}, Got: ${clientRole}`);
     return <Navigate to="/" replace />;
+  }
+
+  // For routes requiring firstLogin: true, check the firstLogin status
+  if (requireFirstLogin && firstLogin !== true) {
+    console.log('Redirecting to /client-portal/investor due to firstLogin !== true');
+    return <Navigate to="/client-portal/investor" replace />;
   }
 
   return children;
 };
 
 function ClientPortal() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole);
 
   return (
     <Routes>
-      {/* Default route: Redirect based on clientRole */}
+      {/* Default route: Redirect based on authentication and clientRole */}
       <Route
         path="/"
         element={
-          clientRole === 'Investor' ? (
+          !isAuthenticated ? (
+            <Navigate to="/client-portal/clientSignForm" replace />
+          ) : clientRole === 'Investor' ? (
             <Navigate to="investor" replace />
           ) : clientRole === 'Entrepreneur' ? (
             <Navigate to="entrepreneur" replace />
@@ -67,7 +89,7 @@ function ClientPortal() {
         }
       />
       <Route
-        path="investor/viewProject" //:projectId
+        path="investor/viewProject"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
             <ClientInvestorViewProject />
@@ -75,7 +97,7 @@ function ClientPortal() {
         }
       />
       <Route
-        path="investor/messages" 
+        path="investor/messages"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
             <ClientInvestorMessages />
@@ -92,6 +114,22 @@ function ClientPortal() {
       />
       <Route
         path="investor/about"
+        element={
+          <ProtectedRoute allowedRoles={['Investor']}>
+            <AboutUs />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="investor/investorPreferences"
+        element={
+          <ProtectedRoute allowedRoles={['Investor']} requireFirstLogin={true}>
+            <ClientInvestorPreferences />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="investor/editPreferences"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
             <ClientInvestorPreferences />

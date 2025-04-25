@@ -7,7 +7,7 @@ import { useFunctions } from "../../../useFunctions";
 
 function CustomCard({ project }) {
   const { API_BASE_URL } = useFunctions();
-  console.log("Project data:", project); // Debugging line to check project data
+  // console.log("Project data:", project); // Debugging line to check project data
 
   const projectImage = project.project_images && project.project_images[0]
     ? `${API_BASE_URL}/${project.project_images[0]}`

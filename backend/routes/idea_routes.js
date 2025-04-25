@@ -74,7 +74,7 @@ router.post('/contact', createContact);
 router.post('/signup', signUp);
 
 // Update user data
-router.put('/users/:id', authenticateToken, userImageUploads.single('image'), updateUserById);
+router.patch('/users/:id', authenticateToken, userImageUploads.single('image'), updateUserById);
 
 // Verify OTP and complete signup route
 router.post('/verify-otp', verifyOtp);

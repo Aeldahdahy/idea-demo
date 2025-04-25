@@ -88,10 +88,87 @@ const signUp = async (req, res) => {
   }
 };
 
+const signIn = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if the user status is inactive
+    if (user.status !== 'Active') {
+      return res.status(403).json({ message: 'Access denied. User is inactive.' });
+    }
+
+    // Prepare payload for JWT and response
+    const payload = {
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role, // Backend returns 'investor' or 'entrepreneur'
+        clientRole: user.role.charAt(0).toUpperCase() + user.role.slice(1), // Normalized to 'Investor' or 'Entrepreneur'
+        fullName: user.fullName,
+        phone: user.phone,
+        address: user.address,
+        date_of_birth: user.date_of_birth,
+        national_id: user.national_id,
+        education: user.education,
+        experience: user.experience,
+        biography: user.biography,
+        image: user.image,
+        status: user.status,
+        firstLogin: user.firstLogin,
+        investorPreference: user.investorPreference // Include investor preferences if present
+      }
+    };
+
+    jwt.sign(
+      payload,
+      JWT_SECRET,
+      { expiresIn: '1h' },
+      (err, token) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ message: 'Failed to generate token' });
+        }
+        req.session.user = payload.user; // Save user info in session
+        res.status(200).json({ 
+          token, 
+          user: payload.user // Return user data to frontend
+        });
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const updateUserById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Validate ObjectId
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID format'
+      });
+    }
+
+    // Prepare updates object with basic user fields
     const updates = {
       role: req.body.role,
       fullName: req.body.fullName,
@@ -106,18 +183,158 @@ const updateUserById = async (req, res) => {
       biography: req.body.biography
     };
 
+    // Handle image upload if provided
     if (req.file) {
       updates.image = req.file.filename;
     }
 
-    const user = await User.findByIdAndUpdate(id, updates, { new: true });
+    // Handle investorPreference for investors only
+    if (req.body.investorPreference && req.body.role === 'investor') {
+      let investorPreference;
+      try {
+        // Parse investorPreference from JSON string
+        investorPreference = typeof req.body.investorPreference === 'string'
+          ? JSON.parse(req.body.investorPreference)
+          : req.body.investorPreference;
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid investorPreference format. Expected a valid JSON object.'
+        });
+      }
+
+      // Pre-validate investorPreference fields
+      const {
+        investorType,
+        minInvestment,
+        maxInvestment,
+        yearsOfExperience,
+        socialAccounts,
+        country,
+        city,
+        industries
+      } = investorPreference;
+
+      if (!['individual', 'company'].includes(investorType)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Investor type must be either "individual" or "company"'
+        });
+      }
+
+      const minInvest = Number(minInvestment);
+      const maxInvest = Number(maxInvestment);
+      if (isNaN(minInvest) || isNaN(maxInvest)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Minimum and maximum investment must be valid numbers'
+        });
+      }
+
+      if (minInvest < 0 || maxInvest > 1000000) {
+        return res.status(400).json({
+          success: false,
+          message: 'Investment range must be between 0 and 1,000,000'
+        });
+      }
+
+      if (maxInvest < minInvest) {
+        return res.status(400).json({
+          success: false,
+          message: 'Maximum investment must be greater than or equal to minimum investment'
+        });
+      }
+
+      if (!['0-1', '1-3', '3-5', '5+'].includes(yearsOfExperience)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Years of experience must be one of: 0-1, 1-3, 3-5, 5+'
+        });
+      }
+
+      const validSocialAccounts = Array.isArray(socialAccounts)
+        ? socialAccounts.filter(account => account.trim() !== '')
+        : [];
+      if (validSocialAccounts.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'At least one social account is required'
+        });
+      }
+
+      if (!country || !city) {
+        return res.status(400).json({
+          success: false,
+          message: 'Country and city are required'
+        });
+      }
+
+      if (!Array.isArray(industries) || industries.length !== 3) {
+        return res.status(400).json({
+          success: false,
+          message: 'Exactly 3 industries must be selected'
+        });
+      }
+
+      // Set investorPreference in updates
+      updates.investorPreference = {
+        investorType,
+        minInvestment: minInvest,
+        maxInvestment: maxInvest,
+        yearsOfExperience,
+        socialAccounts: validSocialAccounts,
+        country,
+        city,
+        industries
+      };
+
+      // Set firstLogin to false
+      updates.firstLogin = false;
+    } else if (req.body.role === 'entrepreneur') {
+      // Ensure investorPreference is null for entrepreneurs
+      updates.investorPreference = null;
+    }
+
+    // Update the user using $set to ensure atomic update
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    res.status(200).json({ success: true, data: user });
+    // Prepare response data
+    const responseData = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      clientRole: user.role.charAt(0).toUpperCase() + user.role.slice(1),
+      fullName: user.fullName,
+      phone: user.phone,
+      address: user.address,
+      date_of_birth: user.date_of_birth,
+      national_id: user.national_id,
+      education: user.education,
+      experience: user.experience,
+      biography: user.biography,
+      image: user.image,
+      status: user.status,
+      firstLogin: user.firstLogin,
+      investorPreference: user.investorPreference
+    };
+
+    console.log('updateUserById response:', responseData);
+
+    // Return normalized user data
+    res.status(200).json({
+      success: true,
+      data: responseData
+    });
   } catch (error) {
+    console.error('updateUserById error:', error);
     res.status(500).json({ success: false, message: 'Error updating user', error: error.message });
   }
 };
@@ -157,67 +374,7 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-const signIn = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
 
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    // Check if the user status is inactive
-    if (user.status !== 'Active') {
-      return res.status(403).json({ message: 'Access denied. User is inactive.' });
-    }
-
-    const payload = {
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        fullName: user.fullName,
-        phone: user.phone,
-        address: user.address,
-        date_of_birth: user.date_of_birth,
-        national_id: user.national_id,
-        education: user.education,
-        experience: user.experience,
-        biography: user.biography,
-        image: user.image,
-        status: user.status
-      }
-    };
-
-    jwt.sign(
-      payload,
-      JWT_SECRET,
-      { expiresIn: '1h' },
-      (err, token) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ message: 'Failed to generate token' });
-        }
-        req.session.user = payload.user; // Save user info in session
-        res.status(200).json({ token });
-      }
-    );
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-};
 
 const signOut = (req, res) => {
   req.session.destroy(err => {

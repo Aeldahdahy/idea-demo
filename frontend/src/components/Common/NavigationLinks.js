@@ -17,6 +17,7 @@ function NavigationLinks({ isAuthenticated, role, clientRole }) {
   const investorLinks = [
     { to: '/client-portal/investor', label: 'Home' },
     { to: '/client-portal/investor/myInvestments', label: 'My Investments' },
+    // { to: '/client-portal/investor/viewProject' },
     { to: '/client-portal/investor/messages', label: 'Messages' },
     { to: '/client-portal/investor/stories', label: 'Blogs' },
     { to: '/client-portal/investor/about', label: 'About Us' },

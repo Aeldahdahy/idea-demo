@@ -42,7 +42,7 @@ router.get('/contacts', authenticateToken, isAdmin, getAllContacts);
 router.put('/contacts/:contactId/status', authenticateToken, isAdmin, updateContactStatus);
 
 // Get all projects (Admin only)
-router.get('/projects', authenticateToken, isAdmin, getAllProjects);
+router.get('/projects', authenticateToken, getAllProjects);
 
 // Get a single project by ID (Admin only)
 router.get('/projects/:projectId', authenticateToken, isAdmin, getProjectById);

@@ -2,16 +2,19 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import ClientInvestorHome from './Investor/ClientInvestorHome';
+// public components
+import Blog from '../Common/Blog'; 
+import AboutUs from '../Common/AboutUs'; 
+import Contact from '../Common/Contact'; 
+
+// Entrepreneur components
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
-import ClientInvestorPreferences from './Investor/ClientInvestorPreferences'
-// import InvestorOpportunities from './Investor/InvestorOpportunities';
-// import InvestorPortfolio from './Investor/InvestorPortfolio';
-// import EntrepreneurMyProjects from './Entrepreneur/EntrepreneurMyProjects'; // New component
-// import EntrepreneurMessages from './Entrepreneur/EntrepreneurMessages'; // New component
-import Blog from '../Common/Blog'; // Reused from public routes
-import AboutUs from '../Common/AboutUs'; // Reused from public routes
-import Contact from '../Common/Contact'; // Reused from public routes
+
+// investor components
+import ClientInvestorHome from './Investor/ClientInvestorHome';
+import ClientInvestorMyInvestment from './Investor/ClientInvestorMyInvestment';
+import ClientInvestorViewProject from './Investor/ClientInvestorViewProject';
+import ClientInvestorMessages from './Investor/ClientInvestorMessages';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -55,22 +58,30 @@ function ClientPortal() {
           </ProtectedRoute>
         }
       />
-      {/* <Route
-        path="investor/opportunities"
+      <Route
+        path="investor/myInvestments"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
-            <InvestorOpportunities />
+            <ClientInvestorMyInvestment />
           </ProtectedRoute>
         }
       />
       <Route
-        path="investor/portfolio"
+        path="investor/viewProject" //:projectId
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
-            <InvestorPortfolio />
+            <ClientInvestorViewProject />
           </ProtectedRoute>
         }
-      /> */}
+      />
+      <Route
+        path="investor/messages" 
+        element={
+          <ProtectedRoute allowedRoles={['Investor']}>
+            <ClientInvestorMessages />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="investor/stories"
         element={

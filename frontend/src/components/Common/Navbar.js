@@ -1,7 +1,7 @@
 // Navbar.js
 import React from 'react';
-import SearchBox from '../Common/SearchBox';
-import LanguageSelector from './LanguageSelector';
+// import SearchBox from '../Common/SearchBox';
+// import LanguageSelector from './LanguageSelector';
 import NavigationLinks from './NavigationLinks';
 import NavUser from './NavUser';
 import NavbarSide from './NavbarSide';
@@ -18,8 +18,8 @@ function NavBar({ isAuthenticated, role, clientRole, onSignInClick }) {
         <div className='logoSearchLangUserNav'>
           <Logo />
           <div className='navSearchLangUser'>
-            <SearchBox />
-            <LanguageSelector />
+            {/* <SearchBox /> */}
+            {/* <LanguageSelector /> */}
             <NavUser
               isAuthenticated={isAuthenticated}
               role={role}

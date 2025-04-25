@@ -271,22 +271,23 @@ export const useFunctions = () => {
           username: decodedToken.user.fullName || 'Unknown User',
         }));
   
+
         dispatch(setClientAuth({
           clientData: {
             _id: decodedToken.user.id, // Map 'id' to '_id'
             fullName: decodedToken.user.fullName || null,
             clientRole, // Use normalized clientRole
             email: decodedToken.user.email || null,
-            phone: null,
-            address: null,
-            biography: null,
-            date_of_birth: null,
-            education: null,
-            experience: null,
-            national_id: null,
-            image: null,
-            createdAt: null,
-            updatedAt: null,
+            phone: decodedToken.user.phone || null,
+            address: decodedToken.user.address || null,
+            biography: decodedToken.user.biography || null,
+            date_of_birth: decodedToken.user.date_of_birth || null,
+            education: decodedToken.user.education || null,
+            experience: decodedToken.user.experience || null,
+            national_id: decodedToken.user.national_id || null,
+            image: decodedToken.user.image || null,
+            // createdAt: null,
+            // updatedAt: null,
             status: decodedToken.user.status || null,
           },
         }));

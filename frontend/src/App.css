@@ -704,7 +704,6 @@ nav.hidden-nav {
 }
 
 .form-control {
-  width: 60% !important;
   border-radius: 25px !important;
 }
 
@@ -3856,6 +3855,8 @@ textarea.form-control-custom {
 }
 
 
+
+
 /* responsive */
 @media screen and (max-width:1171px) {
   .carousel-caption h1 {
@@ -4123,6 +4124,11 @@ textarea.form-control-custom {
       transform: translateX(0) rotate(7deg);
     }
   } */
+
+  .prefrencesAddAccount{
+    font-size: 0.4em !important;
+    font-weight: bold !important;
+  }
 
 }
 

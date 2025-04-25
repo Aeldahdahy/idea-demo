@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ClientInvestorHome from './Investor/ClientInvestorHome';
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
+import ClientInvestorPreferences from './Investor/ClientInvestorPreferences'
 // import InvestorOpportunities from './Investor/InvestorOpportunities';
 // import InvestorPortfolio from './Investor/InvestorPortfolio';
 // import EntrepreneurMyProjects from './Entrepreneur/EntrepreneurMyProjects'; // New component
@@ -82,7 +83,7 @@ function ClientPortal() {
         path="investor/about"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
-            <AboutUs />
+            <ClientInvestorPreferences />
           </ProtectedRoute>
         }
       />

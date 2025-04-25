@@ -5,7 +5,7 @@ const upload = require('../middleWare/projectMiddleware'); // Import multer midd
 
 // functions
 const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject, updateUserById } = require('../controller/clientController'); 
-const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff,  createMeeting, assignAuditor, investorSelectSlots, entrepreneurConfirmSlot } = require('../controller/staffController');
+const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff,  createMeeting, assignAuditor, investorSelectSlots, entrepreneurConfirmSlot, getAllMeetings, getMeetingById } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const userImageUploads = require('../middleWare/userImageUploads');
 const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
@@ -58,6 +58,12 @@ router.put('/investor-select/:meetingId', authenticateToken, validateMeetingSlot
 
 // Step 4: Entrepreneur confirms final slot
 router.put('/entrepreneur-confirm/:meetingId', authenticateToken, validateMeetingSlots, entrepreneurConfirmSlot);
+
+// Route to get all meetings
+router.get('/meetings', authenticateToken, getAllMeetings);
+
+// Route to get a meeting by ID
+router.get('/meetings/:id', getMeetingById);
 
 // -----------------------------------------------------------------------------------> client portal <-----------------------------------------------------------------------------------
 

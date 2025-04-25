@@ -353,6 +353,33 @@ const entrepreneurConfirmSlot = async (req, res) => {
   }
 };
 
+// Get all meetings
+const getAllMeetings = async (req, res) => {
+  try {
+    const meetings = await Meeting.find(); // Fetch all meetings from the database
+    res.status(200).json({ success: true, data: meetings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching meetings', error: error.message });
+  }
+};
+
+// Get a single meeting by ID
+const getMeetingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const meeting = await Meeting.findById(id);
+
+    if (!meeting) {
+      return res.status(404).json({ success: false, message: 'Meeting not found' });
+    }
+
+    res.status(200).json({ success: true, data: meeting });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching meeting', error: error.message });
+  }
+};
+
+
 
 
 module.exports = 
@@ -365,5 +392,7 @@ module.exports =
     createMeeting,
     assignAuditor,
     investorSelectSlots,
-    entrepreneurConfirmSlot 
+    entrepreneurConfirmSlot,
+    getAllMeetings,
+    getMeetingById 
 };

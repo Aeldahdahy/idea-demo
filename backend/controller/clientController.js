@@ -187,6 +187,14 @@ const signIn = async (req, res) => {
         email: user.email,
         role: user.role,
         fullName: user.fullName,
+        phone: user.phone,
+        address: user.address,
+        date_of_birth: user.date_of_birth,
+        national_id: user.national_id,
+        education: user.education,
+        experience: user.experience,
+        biography: user.biography,
+        image: user.image,
         status: user.status
       }
     };

@@ -1,3 +1,4 @@
+// Main.js
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -29,6 +30,7 @@ function Main() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, role } = useSelector((state) => state.auth); // Redux state
+  const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole); // Investor or Entrepreneur
 
   useEffect(() => {
     // Redirect users based on their role after login
@@ -41,11 +43,14 @@ function Main() {
     }
   }, [isAuthenticated, role, location, navigate]);
 
-  const hideNavAndFooter = location.pathname.startsWith('/client-portal') || location.pathname.startsWith('/employee-portal');
+  // Hide NavBar and Footer for /client-portal/clientSignForm and /employee-portal/*
+  const hideNavAndFooter =
+    location.pathname === '/client-portal/clientSignForm' ||
+    location.pathname.startsWith('/employee-portal');
 
   return (
     <>
-      {!hideNavAndFooter && <NavBar />}
+      {!hideNavAndFooter && <NavBar isAuthenticated={isAuthenticated} role={role} clientRole={clientRole} />}
       <Routes>
         {/* Public Routes (Accessible by Anyone) */}
         <Route path="/" element={<Home />} />
@@ -55,13 +60,16 @@ function Main() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* Role-Based Portals */}
-        {isAuthenticated && role === 'client' ? (
-          <Route path="/client-portal/*" element={<ClientPortal />} />
-        ) : (
-          <Route path="/client-portal/*" element={<ClientSignForm />} />
-        )}
+        {/* Client Portal Routes */}
+        {/* <Route path="/client-portal/clientSignForm" element={<ClientSignForm />} /> */}
+        <Route
+          path="/client-portal/*"
+          element={
+            isAuthenticated && role === 'client' ? <ClientPortal /> : <ClientSignForm />
+          }
+        />
 
+        {/* Employee Portal Routes */}
         {isAuthenticated && role === 'employee' ? (
           <Route path="/employee-portal/*" element={<EmployeePortal />} />
         ) : (
@@ -74,7 +82,6 @@ function Main() {
       <PopUpConfirmationOk />
       <PopUpConfirmationYesNo />
       <ToastContainer />
-      
     </>
   );
 }

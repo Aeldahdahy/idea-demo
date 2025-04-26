@@ -71,6 +71,8 @@ function ClientPortal() {
           )
         }
       />
+
+
       {/* Investor Routes */}
       <Route
         path="investor"
@@ -89,7 +91,7 @@ function ClientPortal() {
         }
       />
       <Route
-        path="investor/viewProject"
+        path="investor/viewProject/:projectId"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
             <ClientInvestorViewProject />
@@ -144,6 +146,8 @@ function ClientPortal() {
           </ProtectedRoute>
         }
       />
+
+
       {/* Entrepreneur Routes */}
       <Route
         path="entrepreneur"

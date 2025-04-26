@@ -4,21 +4,40 @@ import defaultImage from "../../../assets/img-0.45.png";
 import defaultLogo from "../../../assets/img-0.46.png";
 import { Link } from "react-router-dom";
 import { useFunctions } from "../../../useFunctions";
+import { encryptId } from "../../../Security/encryptionUtils";
 
 function CustomCard({ project }) {
   const { API_BASE_URL } = useFunctions();
-  // console.log("Project data:", project); // Debugging line to check project data
 
   const projectImage = project.project_images && project.project_images[0]
     ? `${API_BASE_URL}/${project.project_images[0]}`
     : defaultImage;
 
-  // Construct the project logo URL or fallback to defaultLogo
   const projectLogo = project.project_logo
     ? `${API_BASE_URL}/${project.project_logo}`
     : defaultLogo;
 
   const projectLocation = `${project.city || "N/A"}, ${project.state || "N/A"}`;
+
+  // Encrypt the project ID for the URL
+  let encryptedProjectId;
+  try {
+    encryptedProjectId = encryptId(project._id);
+  } catch (error) {
+    console.error('Failed to encrypt project ID:', error);
+    return (
+      <Card
+        className="shadow-sm overflow-hidden"
+        style={{ backgroundColor: "#e6ebf5", maxWidth: "28rem", margin: "0 auto", borderRadius: "0.75rem" }}
+      >
+        <Card.Body className="p-4">
+          <p style={{ color: 'red', textAlign: 'center' }}>
+            Error: Unable to load project link due to encryption failure.
+          </p>
+        </Card.Body>
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -38,7 +57,7 @@ function CustomCard({ project }) {
             style={{ flexShrink: 0 }}
           >
             <img
-              src={projectLogo} // Use projectLogo instead of defaultLogo
+              src={projectLogo}
               alt={`Logo for ${project.project_name || "project"}`}
               style={{ width: "3.5rem", height: "3.5rem", objectFit: "contain" }}
             />
@@ -81,7 +100,7 @@ function CustomCard({ project }) {
             }}
             onMouseOver={(e) => (e.target.style.backgroundColor = "#002a75")}
             onMouseOut={(e) => (e.target.style.backgroundColor = "#0039a6")}
-            to={`/client-portal/investor/viewProject/${project._id}`}
+            to={`/client-portal/investor/viewProject/${encryptedProjectId}`}
           >
             View Project
           </Link>

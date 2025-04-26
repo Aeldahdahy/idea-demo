@@ -8,6 +8,7 @@ import Contact from '../Common/Contact';
 
 // Entrepreneur components
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
+import ClientEntreProjectData from './Entrepreneur/ClientEntreProjectData'
 
 // Investor components
 import ClientInvestorHome from './Investor/ClientInvestorHome';
@@ -149,7 +150,7 @@ function ClientPortal() {
         path="entrepreneur"
         element={
           <ProtectedRoute allowedRoles={['Entrepreneur']}>
-            <ClientEntreHome />
+            <ClientEntreProjectData />
           </ProtectedRoute>
         }
       />

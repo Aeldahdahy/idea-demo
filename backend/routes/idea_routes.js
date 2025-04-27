@@ -4,8 +4,38 @@ const router = express.Router();
 const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
 
 // functions
-const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject, updateUserById } = require('../controller/clientController'); 
-const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff,  createMeeting, assignAuditor, investorSelectSlots, entrepreneurConfirmSlot, getAllMeetings, getMeetingById, cancelMeeting, getMeetingStatus } = require('../controller/staffController');
+const { createContact,
+   signUp,
+   signIn,
+   signOut,
+   verifyOtp,
+   forgotPassword,
+   verifyOtpForReset,
+   resetPassword,
+   getAllUsers,
+   updateUser,
+   getAllContacts,
+   updateContactStatus,
+   createProject,
+   getAllProjects,
+   getProjectById,
+   updateProject,
+   deleteProject,
+   updateUserById } = require('../controller/clientController'); 
+
+const { createStaff,
+   loginStaff,
+   getAllStaff,
+   getStaffById,
+   updateStaff,
+   createMeeting,
+   assignAuditor,
+   investorSelectSlots,
+   entrepreneurConfirmSlot,
+   getAllMeetings,
+   getMeetingById,
+   cancelMeeting,
+   getMeetingStatus } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const userImageUploads = require('../middleWare/userImageUploads');
 const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
@@ -68,7 +98,7 @@ router.get('/meetings', authenticateToken, getAllMeetings);
 router.get('/meetings/:id', getMeetingById);
 
 // Route to get meeting status
-router.get('/meetings/status', authenticateToken, getMeetingStatus);
+router.get('/meeting/status/:project_id/:investor_id/:entrepreneur_id', authenticateToken, getMeetingStatus);
 
 // -----------------------------------------------------------------------------------> client portal <-----------------------------------------------------------------------------------
 

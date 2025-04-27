@@ -266,6 +266,38 @@ const cancelMeeting = async (req, res) => {
   }
 };
 
+const getMeetingStatus = async (req, res) => {
+  try {
+    const { project_id, investor_id, entrepreneur_id } = req.params;
+
+    if (!project_id || !investor_id || !entrepreneur_id) {
+      return res.status(400).json({ success: false, message: 'Missing required parameters' });
+    }
+
+    const meeting = await Meeting.findOne({
+      project_id,
+      investor_id,
+      entrepreneur_id,
+    });
+
+    if (!meeting) {
+      return res.status(200).json({ 
+        exists: false,
+        status: null,
+        meetingId: null
+      });
+    }
+
+    res.status(200).json({
+      exists: true,
+      status: meeting.status,
+      meetingId: meeting._id
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error checking meeting status' });
+  }
+};
+
 // Step 2: Assign auditor and generate 3 random slots
 const assignAuditor = async (req, res) => {
   try {
@@ -403,36 +435,7 @@ const getMeetingById = async (req, res) => {
   }
 };
 
-const getMeetingStatus = async (req, res) => {
-  try {
-    const { project_id, investor_id, entrepreneur_id } = req.query;
 
-    // Validate required query parameters
-    if (!project_id || !investor_id || !entrepreneur_id) {
-      return res.status(400).json({ success: false, message: 'Missing required query parameters' });
-    }
-
-    // Find the meeting with the given IDs
-    const meeting = await Meeting.findOne({
-      project_id,
-      investor_id,
-      entrepreneur_id,
-    });
-
-    if (!meeting) {
-      return res.status(200).json({ success: true, exists: false, status: null });
-    }
-
-    res.status(200).json({
-      success: true,
-      exists: true,
-      status: meeting.status,
-      meetingId: meeting._id,
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Error checking meeting status', error: err.message });
-  }
-};
 
 
 

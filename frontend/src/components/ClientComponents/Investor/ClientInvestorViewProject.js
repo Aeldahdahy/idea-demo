@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Col, Button, Carousel } from 'react-bootstrap';
-import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFunctions } from '../../../useFunctions';
 import { decryptId } from '../../../Security/encryptionUtils';
 import defaultImage from '../../../assets/img-0.47.png';
+import { setMeetingStatus, suppressChecks, clearMeetingStatus, setMeetingError } from '../../../redux/meetingSlice'; 
+import {jwtDecode} from 'jwt-decode'; // Assuming you have a jwt-decode library installed
 
 function TeamMember({ imgSrc, altText, name, role }) {
   return (
@@ -26,9 +28,9 @@ function TeamMember({ imgSrc, altText, name, role }) {
 function ClientInvestorViewProject() {
   const { projectId: encryptedProjectId } = useParams();
   const { getProjectById, createMeeting, cancelMeeting, checkMeetingStatus, loading, error, API_BASE_URL } = useFunctions();
+  const dispatch = useDispatch();
+  const { meetingStatus, meetingId, suppressChecksUntil } = useSelector((state) => state.meeting);
   const [projectData, setProjectData] = useState(null);
-  const [meetingStatus, setMeetingStatus] = useState(null);
-  const [meetingId, setMeetingId] = useState(null);
   const [investorId, setInvestorId] = useState(null);
 
   let projectId;
@@ -39,14 +41,19 @@ function ClientInvestorViewProject() {
     projectId = null;
   }
 
-  // Placeholder function to get investor ID (adjust based on your auth system)
+  // Placeholder function to get investor ID
   const getInvestorId = async () => {
-    // This should be replaced with your actual method to get the investor ID
     const authToken = localStorage.getItem('authToken');
     if (authToken) {
-      // Assuming the investor ID is stored in the token or can be fetched
-      // For now, we'll use a placeholder ID or fetch it from an API
-      return 'investor-placeholder-id'; // Replace with actual investor ID
+      try {
+        // Replace with actual logic to decode the token or fetch investor ID
+        // Example: Decode JWT token to get user ID
+        const decoded = jwtDecode(authToken); // Assuming you use jwt-decode
+        return decoded.userId; // Adjust based on your token structure
+      } catch (err) {
+        console.error('Failed to decode auth token:', err);
+        return null;
+      }
     }
     return null;
   };
@@ -54,46 +61,66 @@ function ClientInvestorViewProject() {
   useEffect(() => {
     const initialize = async () => {
       if (!projectId) {
-        toast.error('Invalid project ID. The ID may not be properly encrypted.');
         return;
       }
-
-      // Fetch project data
-      const project = await getProjectById(projectId);
-      if (project) {
-        setProjectData(project);
-      }
-
-      // Fetch investor ID
-      const invId = await getInvestorId();
-      setInvestorId(invId);
-
-      // Check meeting status if project data and investor ID are available
-      if (project && invId) {
-        try {
-          const statusResponse = await checkMeetingStatus(projectId, invId, project.user_id);
-          setMeetingStatus(statusResponse.status);
-          if (statusResponse.exists) {
-            setMeetingId(statusResponse.meetingId);
+  
+      try {
+        // Fetch project data only if not already loaded
+        if (!projectData) {
+          const project = await getProjectById(projectId);
+          if (project) {
+            setProjectData(project);
           }
-        } catch (err) {
-          console.error('Failed to check meeting status:', err);
         }
+  
+        // Fetch investor ID only if not already set
+        if (!investorId) {
+          const invId = await getInvestorId();
+          setInvestorId(invId);
+        }
+  
+        // Check meeting status if not suppressed and all required data is available
+        if (
+          projectData &&
+          investorId &&
+          (!suppressChecksUntil || Date.now() >= suppressChecksUntil)
+        ) {
+          const statusResponse = await checkMeetingStatus(
+            projectId,
+            investorId,
+            projectData.user_id
+          );
+          dispatch(
+            setMeetingStatus({
+              status: statusResponse.status,
+              meetingId: statusResponse.exists ? statusResponse.meetingId : null,
+            })
+          );
+  
+          // Suppress further checks for 1 hour if status is null
+          if (!statusResponse.exists || statusResponse.status === null) {
+            const oneHourFromNow = Date.now() + 60 * 60 * 1000; // 1 hour in milliseconds
+            dispatch(suppressChecks(oneHourFromNow));
+          }
+        }
+      } catch (err) {
+        console.error('Error during initialization:', err);
+        dispatch(setMeetingError(err.message));
       }
     };
-
+  
     initialize();
-  }, [projectId, getProjectById, checkMeetingStatus]);
+  }, [projectId, projectData, investorId, suppressChecksUntil, dispatch, getProjectById, checkMeetingStatus]);
 
   const handleMeetingRequest = async () => {
     if (meetingStatus && meetingStatus !== 'Cancelled' && meetingStatus !== 'Completed') {
       // Cancel the meeting
       try {
         await cancelMeeting(meetingId);
-        setMeetingStatus('Cancelled');
-        setMeetingId(null);
+        dispatch(clearMeetingStatus());
       } catch (err) {
         console.error('Failed to cancel meeting:', err);
+        dispatch(setMeetingError(err.message));
       }
     } else {
       // Request a meeting
@@ -102,12 +129,29 @@ function ClientInvestorViewProject() {
           project_id: projectId,
           entrepreneur_id: projectData.user_id,
         };
-        console.log('Meeting Data:', meetingData);
         const response = await createMeeting(meetingData);
-        setMeetingStatus('Requested');
-        setMeetingId(response.data._id);
+        dispatch(setMeetingStatus({
+          status: 'Requested',
+          meetingId: response.data._id,
+        }));
+
+        // Check status one more time after creating the meeting
+        try {
+          const statusResponse = await checkMeetingStatus(projectId, investorId, projectData.user_id);
+          dispatch(setMeetingStatus({
+            status: statusResponse.status,
+            meetingId: statusResponse.exists ? statusResponse.meetingId : null,
+          }));
+          // Suppress further checks
+          const oneHourFromNow = Date.now() + 60 * 60 * 1000;
+          dispatch(suppressChecks(oneHourFromNow));
+        } catch (err) {
+          console.error('Failed to check meeting status after creation:', err);
+          dispatch(setMeetingError(err.message));
+        }
       } catch (err) {
         console.error('Failed to request meeting:', err);
+        dispatch(setMeetingError(err.message));
       }
     }
   };
@@ -163,7 +207,7 @@ function ClientInvestorViewProject() {
                 <Carousel.Item key={index}>
                   <img
                     src={image}
-                    alt={`Project Image ${index + 1}`}
+                    alt={`Project ${index + 1}`}
                     className="rounded-xl w-100 object-cover"
                     style={{
                       maxWidth: '700px',

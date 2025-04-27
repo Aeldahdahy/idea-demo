@@ -1088,21 +1088,16 @@ export const useFunctions = () => {
     setError(null);
     const authToken = localStorage.getItem('authToken');
     try {
-      const response = await axios.get(`${API_BASE_URL}/meetings/status`, {
-        params: {
-          project_id: projectId,
-          investor_id: investorId,
-          entrepreneur_id: entrepreneurId,
-        },
+      // Construct the URL using path parameters
+      const url = `${API_BASE_URL}/api/meeting/status/${projectId}/${investorId}/${entrepreneurId}`;
+      const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
+      console.log('Meeting status:', response.data);
       return response.data;
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Failed to check meeting status.';
-      console.error('Check meeting status error:', err.response?.data || err);
-      setError(errorMessage);
-      toast.error(errorMessage);
-      throw err;
+      console.error('Check meeting status error: ', err.response?.data, errorMessage || err);
     } finally {
       setLoading(false);
     }

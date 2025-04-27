@@ -4765,3 +4765,31 @@ textarea.form-control-custom {
   font-size: 1rem;
   font-weight: 500;
 }
+/* clientinvestormessgae */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.border-start {
+  border-left-width: 4px !important;
+}
+
+.overflow-auto {
+  overflow-y: auto;
+}
+
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+.card {
+  transition: background-color 0.2s;
+}
+
+.card:hover {
+  background-color: #f8f9fa;
+}
+
+small {
+  font-size: 0.75rem;
+}

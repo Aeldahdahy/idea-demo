@@ -4,7 +4,7 @@ const router = express.Router();
 const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
 
 // functions
-const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject, updateUserById } = require('../controller/clientController'); 
+const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, getProjectByUserId, updateProject, deleteProject, updateUserById } = require('../controller/clientController'); 
 const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff,  createMeeting, assignAuditor, investorSelectSlots, entrepreneurConfirmSlot, getAllMeetings, getMeetingById } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const userImageUploads = require('../middleWare/userImageUploads');
@@ -104,6 +104,9 @@ router.post('/projects', authenticateToken, upload, createProject);
 
 // Update project (Authenticated users only)
 router.put('/projects/:projectId', authenticateToken, upload, updateProject);
+
+// Get project by user_id
+router.get('/projects/user/:userId', getProjectByUserId);
 
 // Delete project (Authenticated users only)
 router.delete('/projects/:projectId', authenticateToken, deleteProject);

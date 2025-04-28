@@ -16,8 +16,8 @@ createUploadDirs();
 // Multer storage configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // Save project_logo to the same folder as images
-        if (file.mimetype.startsWith('image/') || file.fieldname === 'project_logo') {
+        // Save images (including member_image and project_logo) to 'uploads/images'
+        if (file.mimetype.startsWith('image/') || ['project_logo', 'member_image'].includes(file.fieldname)) {
             cb(null, 'uploads/images');
         } else {
             cb(null, 'uploads/documents');
@@ -44,9 +44,10 @@ const upload = multer({
     { name: 'business_plan', maxCount: 1 },
     { name: 'additional_document', maxCount: 1 },
     { name: 'financial_statement', maxCount: 1 },
-    { name: 'exective_sunnary', maxCount: 1 }, // Note: Fix typo to 'executive_summary' if intended
+    { name: 'exective_sunnary', maxCount: 1 }, // ⚡ (Reminder: consider renaming to 'executive_summary' later)
     { name: 'project_images', maxCount: 5 },
-    { name: 'project_logo', maxCount: 1 } // Added project_logo field
+    { name: 'project_logo', maxCount: 1 },
+    { name: 'member_image', maxCount: 10 } // ✅ Added member_image field (up to 10 members for example)
 ]);
 
 module.exports = upload;

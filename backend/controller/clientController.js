@@ -497,13 +497,15 @@ const updateContactStatus = async (req, res) => {
   }
 };
 
+// create project controller
 const createProject = async (req, res) => {
   try {
     const {
       project_name, project_industry, max_investment, min_investment,
       city, state, postal_code, market_description, business_objectives,
       project_stage, networth, deal_type, website_link,
-      bussiness_highlights, financial_status, business_description
+      bussiness_highlights, financial_status, business_description,
+      team_overview // Don't forget to get team_overview if you're using it
     } = req.body;
 
     // File uploads from middleware
@@ -514,11 +516,36 @@ const createProject = async (req, res) => {
     const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : null;
     const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
 
+    // Get uploaded member images
+    const member_images = req.files?.member_image ? req.files.member_image.map(file => file.path) : [];
+
     // Get user data from token
     const user_id = req.user.user.id;
     const user_name = req.user.user.fullName;
-// console.log(user_id);
-// console.log(user_name);
+
+    // Build team_members array
+    let team_members = [];
+
+    if (Array.isArray(req.body.member_name)) {
+      // Multiple members (member_name, member_position, etc. are arrays)
+      team_members = req.body.member_name.map((_, index) => ({
+        member_name: req.body.member_name[index],
+        linkedin_account: req.body.linkedin_account[index],
+        member_position: req.body.member_position[index],
+        member_bio: req.body.member_bio[index],
+        member_image: member_images[index] || null
+      }));
+    } else if (req.body.member_name) {
+      // Single member (not an array)
+      team_members.push({
+        member_name: req.body.member_name,
+        linkedin_account: req.body.linkedin_account,
+        member_position: req.body.member_position,
+        member_bio: req.body.member_bio,
+        member_image: member_images[0] || null
+      });
+    }
+
     // Create new project
     const newProject = new Project({
       user_id,
@@ -545,6 +572,8 @@ const createProject = async (req, res) => {
       bussiness_highlights,
       financial_status,
       business_description,
+      team_overview,
+      team_members, // 🔥 New team_members field set
       status: 'Rejected' 
     });
 
@@ -562,7 +591,6 @@ const createProject = async (req, res) => {
     });
   }
 };
-
 
 // Get All Projects Controller
 const getAllProjects = async (req, res) => {
@@ -590,6 +618,24 @@ const getProjectById = async (req, res) => {
   }
 };
 
+// Get Project by User ID Controller
+const getProjectByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params; // Get user ID from request params
+
+    const projects = await Project.find({ user_id: userId }); // Find all projects matching the user_id
+
+    if (!projects || projects.length === 0) {
+      return res.status(404).json({ success: false, message: 'No projects found for this user' });
+    }
+
+    res.status(200).json({ success: true, data: projects });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching projects', error: error.message });
+  }
+};
+
+
 // Update Project Controller
 const updateProject = async (req, res) => {
   try {
@@ -599,7 +645,8 @@ const updateProject = async (req, res) => {
       project_name, project_industry, max_investment, min_investment,
       city, state, postal_code, market_description, business_objectives,
       status, project_stage, networth, deal_type, website_link,
-      bussiness_highlights, financial_status, business_description, comment
+      bussiness_highlights, financial_status, business_description, comment,
+      team_members // expect team_members as JSON string
     } = req.body;
 
     // Validate status
@@ -621,6 +668,27 @@ const updateProject = async (req, res) => {
     const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : project.exective_sunnary;
     const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : project.project_images;
     const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : project.project_logo;
+
+    // Handle team_members update
+    let parsedTeamMembers = [];
+    if (team_members) {
+      parsedTeamMembers = JSON.parse(team_members);
+
+      // If there are member_image files uploaded, match them
+      const memberImages = req.files?.member_image || [];
+
+      parsedTeamMembers = parsedTeamMembers.map((member, index) => {
+        return {
+          member_image: memberImages[index] ? memberImages[index].path : (project.team_members[index]?.member_image || null),
+          member_name: member.member_name,
+          linkedin_account: member.linkedin_account,
+          member_position: member.member_position,
+          member_bio: member.member_bio
+        };
+      });
+    } else {
+      parsedTeamMembers = project.team_members; // If no update provided, keep the existing
+    }
 
     // Update the project
     const updatedProject = await Project.findByIdAndUpdate(
@@ -648,8 +716,9 @@ const updateProject = async (req, res) => {
         bussiness_highlights,
         financial_status,
         business_description,
-        comment, // Added comment field
-        status: status || project.status
+        comment,
+        status: status || project.status,
+        team_members: parsedTeamMembers
       },
       { new: true, runValidators: true }
     );
@@ -717,6 +786,7 @@ module.exports =
   createProject,
   getAllProjects,
   getProjectById,
+  getProjectByUserId,
   updateProject,
   deleteProject,
   updateUserById

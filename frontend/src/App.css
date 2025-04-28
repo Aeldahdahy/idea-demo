@@ -3951,372 +3951,6 @@ textarea.form-control-custom {
 /* Project Form Wizard */
 
 
-
-
-/* responsive */
-@media screen and (max-width:1171px) {
-  .carousel-caption h1 {
-    font-size: 4rem;
-  }
-
-  .carousel-caption p {
-    font-size: 1.5rem;
-    max-width: 60%;
-  }
-
-  .Statistics-container h2 {
-    max-width: 70%;
-  }
-}
-
-@media screen and (min-width:961px) {
-  .sideBartoggleButton {
-    display: none;
-  }
-
-}
-
-@media screen and (max-width: 960px) {
-  .navSearchLangUser {
-    display: none;
-  }
-
-  .Links {
-    display: none;
-  }
-
-  .sideBarNav {
-    display: flex;
-    /* Make it visible */
-    font-size: 25px;
-    width: 100%;
-    /* Adjusted for better visibility */
-  }
-
-  .sideBarSearch {
-    display: flex;
-    justify-content: center;
-  }
-
-  .dropdownMenu {
-    top: -5em;
-    right: -1em;
-  }
-
-  .dropdown {
-    top: -5.3em;
-    right: -2.5em;
-  }
-
-  .navUser .dropdownMenu {
-    top: -5em;
-  }
-
-  .footerContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .footerLinks {
-    text-align: center;
-  }
-
-  .footerSection {
-    margin-bottom: 5rem;
-  }
-
-  .footerHeaderSection {
-    margin-bottom: 3rem;
-  }
-
-  .carousel-caption h1 {
-    font-size: 3.2rem;
-  }
-
-  .carousel-caption p {
-    font-size: 1.5rem;
-    max-width: 70%;
-  }
-
-  .Statistics-container h2 {
-    max-width: 90%;
-  }
-
-
-}
-
-@media (max-width: 870px) {
-  .SignContainer {
-    min-height: 800px;
-    height: 96vh;
-  }
-
-  .signin-signup {
-    width: 100%;
-    top: 95%;
-    transform: translate(-50%, -100%);
-    transition: 1s 0.8s ease-in-out;
-  }
-
-  .signin-signup,
-  .SignContainer.sign-up-mode .signin-signup {
-    left: 50%;
-  }
-
-  .panels-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 2fr 1fr;
-  }
-
-  .panel {
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: 2.5rem 8%;
-    grid-column: 1 / 2;
-  }
-
-  .right-panel {
-    grid-row: 3 / 4;
-  }
-
-  .left-panel {
-    grid-row: 1 / 2;
-  }
-
-  .image {
-    width: 200px;
-    transition: transform 0.9s ease-in-out;
-    transition-delay: 0.6s;
-  }
-
-  .panel .content {
-    padding-right: 15%;
-    transition: transform 0.9s ease-in-out;
-    transition-delay: 0.8s;
-  }
-
-  .panel h3 {
-    font-size: 1.2rem;
-  }
-
-  .panel p {
-    font-size: 0.7rem;
-    padding: 0.5rem 0;
-  }
-
-  .btn.transparent {
-    width: 110px;
-    height: 35px;
-    font-size: 0.7rem;
-  }
-
-  .SignContainer:before {
-    width: 1500px;
-    height: 1500px;
-    transform: translateX(-50%);
-    left: 30%;
-    bottom: 68%;
-    right: initial;
-    top: initial;
-    transition: 2s ease-in-out;
-  }
-
-  .SignContainer.sign-up-mode:before {
-    transform: translate(-50%, 100%);
-    bottom: 32%;
-    right: initial;
-  }
-
-  .SignContainer.sign-up-mode .left-panel .image,
-  .SignContainer.sign-up-mode .left-panel .content {
-    transform: translateY(-300px);
-  }
-
-  .SignContainer.sign-up-mode .right-panel .image,
-  .SignContainer.sign-up-mode .right-panel .content {
-    transform: translateY(0px);
-  }
-
-  .right-panel .image,
-  .right-panel .content {
-    transform: translateY(300px);
-  }
-
-  .SignContainer.sign-up-mode .signin-signup {
-    top: 5%;
-    transform: translate(-50%, 0);
-  }
-}
-
-@media screen and (max-width:768px) {
-  .box {
-    width: 150px;
-    /* Adjust width for smaller screens */
-    padding: 15px;
-  }
-
-  .box img {
-    width: 60px;
-    height: 60px;
-  }
-
-  .Statistics-container h2 {
-    font-size: 1.2em;
-    max-width: 100%;
-  }
-
-  .box span {
-    font-size: 0.9em;
-  }
-
-  .carousel-caption h1 {
-    font-size: 2.5rem;
-  }
-
-  .carousel-caption p {
-    font-size: 1rem;
-    max-width: 80%;
-  }
-
-  .input-field {
-    height: 40px;
-  }
-
-  .contactNameEmail {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .input-container input,
-  .textBox-container textarea {
-    font-size: 12px;
-  }
-
-  /* .wrapper{
-    width: 400px;
-  }
-  @keyframes animateSignIn{
-    0% {
-      transform: translateX(0);
-      z-index: 1;
-    }
-    50% {
-      transform: translateX(-500px);
-    }
-    100%{
-      transform: translateX(0) rotate(7deg);
-    }
-  }
-  @keyframes animateSignUp{
-    0% {
-      transform: translateX(0);
-    }
-    50% {
-      transform: translateX(500px);
-    }
-    100%{
-      transform: translateX(0) rotate(7deg);
-    }
-  } */
-
-  .prefrencesAddAccount{
-    font-size: 0.4em !important;
-    font-weight: bold !important;
-  }
-
-}
-
-@media screen and (max-width:580px) {
-  .CompaniesStoriesContainer {
-    padding: 13% 0%;
-  }
-
-  .carousel-caption {
-    left: 3%;
-    width: 70%;
-  }
-
-  .carousel-caption h1 {
-    font-size: 2.2rem;
-  }
-
-  .carousel-caption p {
-    font-size: 1rem;
-    max-width: 80%;
-  }
-
-  .Statistics-container h2 {
-    font-size: 1em;
-  }
-
-  form {
-    padding: 0 1.5rem;
-  }
-
-  .image {
-    display: none;
-  }
-
-  .panel .content {
-    padding: 0.5rem 1rem;
-  }
-
-  .SignContainer {
-    padding: 1.5rem;
-  }
-
-  .SignContainer:before {
-    bottom: 72%;
-    left: 50%;
-  }
-
-  .SignContainer.sign-up-mode:before {
-    bottom: 28%;
-    left: 50%;
-  }
-
-  .switch-container {
-    margin: 20px 0;
-  }
-
-  .HowItWorksCard {
-    max-width: 300px;
-  }
-
-
-  /* .wrapper{
-    width: 300px;
-    height: 600px;
-  }
-  @keyframes animateSignIn{
-    0% {
-      transform: translateX(0);
-      z-index: 1;
-    }
-    50% {
-      transform: translateX(-300px);
-    }
-    100%{
-      transform: translateX(0) rotate(7deg);
-    }
-  }
-  @keyframes animateSignUp{
-    0% {
-      transform: translateX(0);
-    }
-    50% {
-      transform: translateX(300px);
-    }
-    100%{
-      transform: translateX(0) rotate(7deg);
-    }
-  }
-  .input-group{
-    margin: 15px 0;
-  } */
-}
 /* blogs */
 .idea-website {
   display: flex;
@@ -4765,6 +4399,7 @@ textarea.form-control-custom {
   font-size: 1rem;
   font-weight: 500;
 }
+
 /* clientinvestormessgae */
 .cursor-pointer {
   cursor: pointer;
@@ -4793,3 +4428,371 @@ textarea.form-control-custom {
 small {
   font-size: 0.75rem;
 }
+
+
+
+/* responsive */
+@media screen and (max-width:1171px) {
+  .carousel-caption h1 {
+    font-size: 4rem;
+  }
+
+  .carousel-caption p {
+    font-size: 1.5rem;
+    max-width: 60%;
+  }
+
+  .Statistics-container h2 {
+    max-width: 70%;
+  }
+}
+
+@media screen and (min-width:961px) {
+  .sideBartoggleButton {
+    display: none;
+  }
+
+}
+
+@media screen and (max-width: 960px) {
+  .navSearchLangUser {
+    display: none;
+  }
+
+  .Links {
+    display: none;
+  }
+
+  .sideBarNav {
+    display: flex;
+    /* Make it visible */
+    font-size: 25px;
+    width: 100%;
+    /* Adjusted for better visibility */
+  }
+
+  .sideBarSearch {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dropdownMenu {
+    top: -5em;
+    right: -1em;
+  }
+
+  .dropdown {
+    top: -5.3em;
+    right: -2.5em;
+  }
+
+  .navUser .dropdownMenu {
+    top: -5em;
+  }
+
+  .footerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footerLinks {
+    text-align: center;
+  }
+
+  .footerSection {
+    margin-bottom: 5rem;
+  }
+
+  .footerHeaderSection {
+    margin-bottom: 3rem;
+  }
+
+  .carousel-caption h1 {
+    font-size: 3.2rem;
+  }
+
+  .carousel-caption p {
+    font-size: 1.5rem;
+    max-width: 70%;
+  }
+
+  .Statistics-container h2 {
+    max-width: 90%;
+  }
+
+
+}
+
+@media (max-width: 870px) {
+  .SignContainer {
+    min-height: 800px;
+    height: 96vh;
+  }
+
+  .signin-signup {
+    width: 100%;
+    top: 95%;
+    transform: translate(-50%, -100%);
+    transition: 1s 0.8s ease-in-out;
+  }
+
+  .signin-signup,
+  .SignContainer.sign-up-mode .signin-signup {
+    left: 50%;
+  }
+
+  .panels-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+  }
+
+  .panel {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2.5rem 8%;
+    grid-column: 1 / 2;
+  }
+
+  .right-panel {
+    grid-row: 3 / 4;
+  }
+
+  .left-panel {
+    grid-row: 1 / 2;
+  }
+
+  .image {
+    width: 200px;
+    transition: transform 0.9s ease-in-out;
+    transition-delay: 0.6s;
+  }
+
+  .panel .content {
+    padding-right: 15%;
+    transition: transform 0.9s ease-in-out;
+    transition-delay: 0.8s;
+  }
+
+  .panel h3 {
+    font-size: 1.2rem;
+  }
+
+  .panel p {
+    font-size: 0.7rem;
+    padding: 0.5rem 0;
+  }
+
+  .btn.transparent {
+    width: 110px;
+    height: 35px;
+    font-size: 0.7rem;
+  }
+
+  .SignContainer:before {
+    width: 1500px;
+    height: 1500px;
+    transform: translateX(-50%);
+    left: 30%;
+    bottom: 68%;
+    right: initial;
+    top: initial;
+    transition: 2s ease-in-out;
+  }
+
+  .SignContainer.sign-up-mode:before {
+    transform: translate(-50%, 100%);
+    bottom: 32%;
+    right: initial;
+  }
+
+  .SignContainer.sign-up-mode .left-panel .image,
+  .SignContainer.sign-up-mode .left-panel .content {
+    transform: translateY(-300px);
+  }
+
+  .SignContainer.sign-up-mode .right-panel .image,
+  .SignContainer.sign-up-mode .right-panel .content {
+    transform: translateY(0px);
+  }
+
+  .right-panel .image,
+  .right-panel .content {
+    transform: translateY(300px);
+  }
+
+  .SignContainer.sign-up-mode .signin-signup {
+    top: 5%;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media screen and (max-width:768px) {
+  .box {
+    width: 150px;
+    /* Adjust width for smaller screens */
+    padding: 15px;
+  }
+
+  .box img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .Statistics-container h2 {
+    font-size: 1.2em;
+    max-width: 100%;
+  }
+
+  .box span {
+    font-size: 0.9em;
+  }
+
+  .carousel-caption h1 {
+    font-size: 2.5rem;
+  }
+
+  .carousel-caption p {
+    font-size: 1rem;
+    max-width: 80%;
+  }
+
+  .input-field {
+    height: 40px;
+  }
+
+  .contactNameEmail {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .input-container input,
+  .textBox-container textarea {
+    font-size: 12px;
+  }
+
+  /* .wrapper{
+    width: 400px;
+  }
+  @keyframes animateSignIn{
+    0% {
+      transform: translateX(0);
+      z-index: 1;
+    }
+    50% {
+      transform: translateX(-500px);
+    }
+    100%{
+      transform: translateX(0) rotate(7deg);
+    }
+  }
+  @keyframes animateSignUp{
+    0% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(500px);
+    }
+    100%{
+      transform: translateX(0) rotate(7deg);
+    }
+  } */
+
+  .prefrencesAddAccount{
+    font-size: 0.4em !important;
+    font-weight: bold !important;
+  }
+
+}
+
+@media screen and (max-width:580px) {
+  .CompaniesStoriesContainer {
+    padding: 13% 0%;
+  }
+
+  .carousel-caption {
+    left: 3%;
+    width: 70%;
+  }
+
+  .carousel-caption h1 {
+    font-size: 2.2rem;
+  }
+
+  .carousel-caption p {
+    font-size: 1rem;
+    max-width: 80%;
+  }
+
+  .Statistics-container h2 {
+    font-size: 1em;
+  }
+
+  form {
+    padding: 0 1.5rem;
+  }
+
+  .image {
+    display: none;
+  }
+
+  .panel .content {
+    padding: 0.5rem 1rem;
+  }
+
+  .SignContainer {
+    padding: 1.5rem;
+  }
+
+  .SignContainer:before {
+    bottom: 72%;
+    left: 50%;
+  }
+
+  .SignContainer.sign-up-mode:before {
+    bottom: 28%;
+    left: 50%;
+  }
+
+  .switch-container {
+    margin: 20px 0;
+  }
+
+  .HowItWorksCard {
+    max-width: 300px;
+  }
+
+
+  /* .wrapper{
+    width: 300px;
+    height: 600px;
+  }
+  @keyframes animateSignIn{
+    0% {
+      transform: translateX(0);
+      z-index: 1;
+    }
+    50% {
+      transform: translateX(-300px);
+    }
+    100%{
+      transform: translateX(0) rotate(7deg);
+    }
+  }
+  @keyframes animateSignUp{
+    0% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(300px);
+    }
+    100%{
+      transform: translateX(0) rotate(7deg);
+    }
+  }
+  .input-group{
+    margin: 15px 0;
+  } */
+}
+

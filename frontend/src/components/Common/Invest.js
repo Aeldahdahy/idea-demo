@@ -1,196 +1,359 @@
 "use client";
-import * as React from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import React from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { motion } from "framer-motion";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+  Search,
+} from "lucide-react";
+// import styles from "../../assets/styles.module.css";
 
 function Invest() {
-  return (
-    <div className="bg-white">
-      <Container fluid className="py-5">
-        <Row className="mb-5">
-          <Col md={12} className="text-start px-4">
-            <h1 className="display-5 mt-5">We make it easy to start investing.</h1>
-          </Col>
-        </Row>
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+  };
 
-        <Row className="mb-5">
-          <Col md={6} className="mb-4">
-            <h3 className="h4">
-              <strong>Browse</strong> hundreds of investment opportunities, connect
-              with entrepreneurs, and manage your investment contacts with the
-              world's Entrepreneur network.
-            </h3>
-            <h5 className="mt-4">Follow Us</h5>
-            <div className="d-flex gap-2 mt-3">
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+  };
+
+  return (
+    <Container fluid style={{ backgroundColor: "#FFFFFF", padding: "0" }}>
+      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 15px" }}>
+        {/* Header Section */}
+        <motion.div
+          style={{ padding: "60px 0" }}
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+        >
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "40px" }}>
+              <div style={{ flex: "1 1 600px", maxWidth: "700px" }}>
+                <h1
+                  style={{
+                    color: "#000000",
+                    fontSize: "clamp(36px, 5vw, 48px)",
+                    fontWeight: "bold",
+                    margin: "0 0 20px 0",
+                  }}
+                >
+                  We make it easy to start investing.
+                </h1>
+                <p
+                  style={{
+                    color: "#000000",
+                    fontSize: "20px",
+                    lineHeight: "1.6",
+                    maxWidth: "600px",
+                  }}
+                >
+                  Browse hundreds of investment opportunities, connect with entrepreneurs, and manage your investment contacts with the world’s Entrepreneur network.
+                </p>
+              </div>
+              <div style={{ flex: "1 1 400px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
+  <img
+    src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/279shj4h_expires_30_days.png"
+    alt="Investment Dashboard"
+    style={{
+      width: "100%",
+      maxWidth: "600px",
+      height: "auto",
+      objectFit: "contain",
+      zIndex: 100,
+      position: "absolute ",
+      top: "215px",
+    }}
+  />
+  <div
+    style={{
+      position: "relative",
+      width: "600px",
+      height: "700px",
+      background: "#262A35",
+      borderRadius: "20px",
+      padding: "20px",
+      color: "#FFFFFF",
+      fontSize: "16px",
+      textAlign: "center",
+      zIndex: 50, 
+      transform: "rotate(5deg)", // Added 70-degree rotation
+    }}
+  >
+            <div style={{ display: "flex", gap: "40px", marginTop: "40px", flexWrap: "wrap", 
+                  transform: "rotate(-5deg)", // Added -70-degree rotation
+
+             }}>
               {[
-                "5af065c5520ae218cda23d2494f00a15430cab52",
-                "974c3c3e7f16f24929b6e8d24ef8dd072fe0e2ec",
-                "76333511bb5bb69d2acf99a1f8e3bb83d721eb40",
-                "9920bdb6c892f438fe0415b5d5a29a3b395cafba",
-                "0ed0b013dd8bcdf2dc854fc2ec5ec7ce0f861456",
-              ].map((id) => (
-                <img
-                  key={id}
-                  src={`https://cdn.builder.io/api/v1/image/assets/TEMP/${id}?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97`}
-                  alt="Social Icon"
-                  className="img-fluid"
-                  style={{ width: "40px", height: "40px" }}
-                />
+                {
+                  img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/kjtbudh9_expires_30_days.png",
+                  title: "IDEA-Venture",
+                  type: "Investment Start-up",
+                  stage: "Seed stage",
+                  min: "EGP 15,000",
+                  bg: "#163696",
+                  textColor: "#FFFFFF",
+                },
+                {
+                  img: "https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/s1avosq2_expires_30_days.png",
+                  title: "IDEA-Venture",
+                  type: "Investment Start-up",
+                  stage: "Seed stage",
+                  min: "EGP 15,000",
+                  bg: "#D9EFFF",
+                  textColor: "#2F2828",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  style={{
+                    flex: "1 1 400px",
+                    background: item.bg,
+                    borderRadius: "20px",
+                    padding: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "40px",
+                    height: "150px",
+                  }}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    style={{ width: "80px", height: "80px", objectFit: "contain" }}
+                  />
+                  <div style={{ display: "flex", justifyContent:"space-between", flex: 1 }}>
+                    <div>
+
+                    <h3 style={{ color: item.textColor, fontSize: "24px", fontWeight: "bold", margin: "0 0 10px 0" }}>
+                      {item.title}
+                    </h3>
+                    <p style={{ color: item.textColor, fontSize: "16px", margin: "0 0 10px 0" }}>{item.type}</p>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+
+                    <div
+                      style={{
+                        background: item.textColor === "#FFFFFF" ? "#F4F4F4E8" : "#C5C5C5E8",
+                        borderRadius: "15px",
+                        padding: "5px 15px",
+                        display: "inline-block",
+                        fontSize: "14px",
+                        color: "#000000",
+                      }}
+                      >
+                      {item.stage}
+                    </div>
+                    <span style={{ color: item.textColor, fontSize: "16px", margin: "10px 0 0 0" }}>
+                      {item.min} Min per Investor
+                    </span>
+                      </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
-          </Col>
-          <Col md={6} className="mb-4">
-            <Card className="position-relative border-0" style={{position:"relative"}}>
-              <Card.Img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/d11bd8b663851db6a3d75e21352ea0c8fbee94df?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-                alt="Background"
-                className="img-fluid"
-              />
-              <Card.Body className="p-4" style={{position:"absolute"}}>
-                {[
-                  { bg: "bg-primary text-white", textColor: "text-white" },
-                  { bg: "bg-light", textColor: "text-dark" },
-                ].map((style, index) => (
-                  <Card key={index} className={`mb-3 rounded-4 ${style.bg}`}>
-                    <Card.Body className="d-flex flex-column flex-md-row">
-                      <div className="flex-grow-1">
-                        <div className="d-flex gap-3">
-                          <img
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/b45c590850af54ec1ea5a845137c9a2eda78b1d8?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-                            alt="Venture"
-                            className="img-fluid rounded-3"
-                            style={{ width: "60px" }}
-                          />
-                          <div>
-                            <h4 className="mb-1">IDEA-Venture</h4>
-                            <p className="mb-1">Investment Start-up</p>
-                            <p className="mb-0">Seed stage</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-end">
-                        <p className={`mb-1 ${style.textColor}`}>
-                          EGP 15,000
-                        </p>
-                        <small>Min per Investor</small>
-                      </div>
-                    </Card.Body>
-                  </Card>
-                ))}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row className="mb-5">
-          <Col md={7} className="mb-4">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/a0e2ef40b67c649e8c470d8e700d29d9848bb50d?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-              alt="Investment"
-              className="img-fluid rounded-4"
-            />
-          </Col>
-          <Col md={5} className="d-flex align-items-center">
-            <div className="text-center">
-              <h3 className="h4">
-                <strong>Find the best investment deals</strong>
-              </h3>
-              <p className="fs-5">
-                Access the largest network of entrepreneurs. Filter opportunities
-                by country, location, industry, stage, investment range, and
-                language to find the deal for you.
-              </p>
+  </div>
+</div>
             </div>
-          </Col>
-        </Row>
-      </Container>
+            <div style={{ marginTop: "40px", textAlign: "left" }}>
+              <h4 style={{ color: "#000000", fontSize: "20px", fontWeight: "bold", marginBottom: "20px" }}>
+                Follow Us
+              </h4>
+              <div style={{ display: "flex", gap: "15px" }}>
+                {[Facebook, Twitter, Instagram, Linkedin, Youtube].map((Icon, index) => (
+                  <button
+                    key={index}
+                    style={{
+                      color: "#000000",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "transform 0.3s",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    onClick={() => alert("Replace this with your desired action or navigation logic.")}
+                  >
+                    <Icon size={30} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
-      <div className="bg-dark text-white py-5">
-        <Container>
-          <h3 className="text-center mb-5">
-            Seamless Experience: Our Platform Now Also Accessible via Mobile App
-          </h3>
-          <Row>
-            <Col md={7} className="mb-4">
-              <div className="d-flex flex-column">
-                <div className="d-flex gap-3">
-                  <div>
-                    {[
-                      "a39aa70844f377d8877c85e557b86f96dfb96900",
-                      "6232b12c7b72a4a29282e2e00f5696e6eafa5b77",
-                      "68e65d213653dede69c85cd5a84748327c655ba9",
-                    ].map((id) => (
-                      <img
-                        key={id}
-                        src={`https://cdn.builder.io/api/v1/image/assets/TEMP/${id}?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97`}
-                        alt="Icon"
-                        className="img-fluid mb-3"
-                        style={{ width: "50px" }}
-                      />
-                    ))}
-                  </div>
-                  <div>
-                    <p className="fs-5">
-                      Search and manage deals through your private interface.
-                      <br />
-                      Request a meeting to discuss deals with projects.
-                      <br />
-                      Manage your investments and grow your portfolio.
+        {/* Investment Deals Section */}
+        <motion.div
+          style={{ padding: "60px 0" }}
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+        >
+          <Row style={{ alignItems: "center", flexWrap: "wrap", gap: "40px" }}>
+            <Col md={6} style={{ flex: "1 1 500px" }}>
+              <div style={{ position: "relative", maxWidth: "500px", margin: "0 auto" }}>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "400px",
+                    background: "#C5D7F5",
+                    borderRadius: "30px",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "20px",
+                      left: "20px",
+                      background: "#E8E8E8",
+                      padding: "20px",
+                      borderRadius: "15px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                    }}
+                  >
+                    <img
+                      src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/s9hgmmxf_expires_30_days.png"
+                      alt="Location Icon"
+                      style={{ width: "30px", height: "30px" }}
+                    />
+                    <p style={{ color: "#000000", fontSize: "20px", margin: "0" }}>
+                      Egypt<br />Software & Technology
                     </p>
                   </div>
                 </div>
-                <h4 className="mt-3">Download the app</h4>
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/34f41d287b76cd6ddf44a546860a7cac4325cee0?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-                  alt="App Store"
-                  className="img-fluid"
-                  style={{ width: "200px" }}
-                />
-                <p className="fs-6">Available on Android and iOS.</p>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-50px",
+                    right: "-50px",
+                    width: "300px",
+                    background: "#E7EEFA",
+                    borderRadius: "20px",
+                    padding: "20px",
+                    textAlign: "center",
+                  }}
+                >
+                  <img
+                    src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/f4b0qvx1_expires_30_days.png"
+                    alt="Venture"
+                    style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "10px" }}
+                  />
+                  <h3 style={{ color: "#000000", fontSize: "24px", fontWeight: "bold", margin: "10px 0" }}>
+                    IDEA-Venture
+                  </h3>
+                  <p style={{ color: "#000000", fontSize: "16px" }}>25,000 EGP Min per investor</p>
+                </div>
               </div>
             </Col>
-            <Col md={5} className="mb-4">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/a93abb4711467a15340e6046acdd9b712df4c797?placeholderIfAbsent=true&apiKey=434533fb4921439f899ea5ef72b0fd97"
-                alt="Mobile App"
-                className="img-fluid rounded-3" style={{width:"65%"}}
-              />
+            <Col md={6} style={{ flex: "1 1 400px" }}>
+              <h2 style={{ color: "#000000", fontSize: "32px", fontWeight: "bold", marginBottom: "20px" }}>
+                Find the best investment deals
+              </h2>
+              <p style={{ color: "#000000", fontSize: "18px", lineHeight: "1.6", marginBottom: "30px" }}>
+                Access the largest network of entrepreneurs. Filter opportunities by country, location, industry, stage, investment range, and language to find the deal for you.
+              </p>
+              <div style={{ background: "#EEEEEE", padding: "20px", borderRadius: "15px" }}>
+                <p style={{ color: "#000000", fontSize: "16px", margin: "0 0 10px 0" }}>
+                  How much are you looking to invest?
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <Search size={20} />
+                  <div style={{ flex: 1, background: "#F5F5F5", borderRadius: "4px", height: "6px" }}>
+                    <div style={{ width: "60%", height: "6px", background: "#0029A4", borderRadius: "4px" }}></div>
+                  </div>
+                  <span style={{ color: "#353535", fontSize: "12px" }}>10M</span>
+                </div>
+                <p style={{ color: "#000000", fontSize: "14px", textAlign: "center", marginTop: "10px" }}>
+                  $25,000 – $5,000,000
+                </p>
+              </div>
             </Col>
           </Row>
-        </Container>
+        </motion.div>
+
+        {/* Mobile App Section */}
+        <motion.section
+          style={{ background: "#0C1736", padding: "60px 0", position: "relative", overflow: "hidden" }}
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+        >
+          <div
+            style={{
+              backgroundImage: "url(https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/q0q7c7nt_expires_30_days.png)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              padding: "40px 0",
+            }}
+          >
+            <h2
+              style={{
+                color: "#FFFFFF",
+                fontSize: "clamp(24px, 4\n\n\n\n4vw, 36px)",
+                fontWeight: "bold",
+                textAlign: "center",
+                marginBottom: "40px",
+                maxWidth: "800px",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              Seamless Experience: Our Platform Now Also Accessible via Mobile App
+            </h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", justifyContent: "center", maxWidth: "1000px", margin: "0 auto" }}>
+              <div style={{ flex: "1 1 300px", color: "#FFFFFF", fontSize: "18px", lineHeight: "1.6" }}>
+                <img
+                  src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/v5iyzune_expires_30_days.png"
+                  alt="Feature Icon"
+                  style={{ width: "40px", height: "40px", marginBottom: "20px" }}
+                />
+                <p>
+                  Search and manage deals through your private interface. Request a meeting to discuss deals with projects. Manage your investments and grow your portfolio.
+                </p>
+              </div>
+              <div style={{ flex: "1 1 300px" }}>
+                <img
+                  src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/3s01328w_expires_30_days.png"
+                  alt="Mobile App"
+                  style={{ width: "100%", maxWidth: "300px", height: "auto", objectFit: "contain" }}
+                />
+              </div>
+            </div>
+            <div style={{ textAlign: "center", marginTop: "40px" }}>
+              <h3 style={{ color: "#FFFFFF", fontSize: "24px", marginBottom: "20px" }}>Download the app</h3>
+              <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
+                <img
+                  src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/sn1aod97_expires_30_days.png"
+                  alt="App Store"
+                  style={{ width: "120px", height: "auto" }}
+                />
+                <img
+                  src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/shb2q66n_expires_30_days.png"
+                  alt="Google Play"
+                  style={{ width: "120px", height: "auto" }}
+                />
+              </div>
+              <p style={{ color: "#FFFFFF", fontSize: "16px" }}>Available on Android and iOS.</p>
+            </div>
+          </div>
+        </motion.section>
       </div>
-
-      
-
-      
-    </div>
+    </Container>
   );
 }
 
 export default Invest;
-
-// Custom CSS for additional styling
-<style jsx>{`
-  .bg-gradient {
-    background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
-  }
-  .navbar-light .navbar-nav .nav-link {
-    color: #000;
-    font-weight: 500;
-  }
-  .navbar-light .navbar-nav .nav-link:hover {
-    color: #3b82f6;
-  }
-  h1.display-4 {
-    font-size: 3.5rem;
-    line-height: 1.2;
-  }
-  .card {
-    transition: transform 0.3s;
-  }
-  .card:hover {
-    transform: translateY(-5px);
-  }
-  .rounded-5 {
-    border-radius: 50px !important;
-  }
-`}</style>

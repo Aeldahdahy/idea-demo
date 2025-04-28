@@ -150,7 +150,7 @@ const ImageThumb = styled.img`
 const WizardContainer = styled.div`
   display: flex;
   min-height: 100vh;
-  width: 100vw;
+  width: 98vw;
   background: #fff;
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 `;

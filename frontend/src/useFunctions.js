@@ -966,6 +966,39 @@ export const useFunctions = () => {
     }
   }, [API_BASE_URL, lastProjectFetched, dispatch]);
 
+    // get a single project by ID
+    const getProjectById = useCallback(async (projectId) => {
+      const token = localStorage.getItem('authToken');
+  
+      if (!token) {
+        const errorMessage = 'Authentication token is missing. Please sign in again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+        return null;
+      }
+  
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/projects/${projectId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        if (response.data.data) {
+          return response.data.data; // Return the project data
+        } else {
+          throw new Error('Invalid data format: Expected project data in response.data');
+        }
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || 'An error occurred while fetching the project.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    }, [API_BASE_URL]);
+
   // update project
   const updateProject = async (id, updatedData) => {
     setLoading(true);
@@ -988,6 +1021,83 @@ export const useFunctions = () => {
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // create meeting
+  const createMeeting = async (meetingData) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+
+    // Log the request details for debugging
+    console.log('Creating meeting with data:', meetingData);
+    console.log('Request URL:', `${API_BASE_URL}/api/create-meeting`);
+    console.log('Auth Token:', authToken);
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/create-meeting`, meetingData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status !== 201) {
+        throw new Error('Failed to create meeting');
+      }
+      toast.success('Meeting created successfully!');
+      return response.data;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      console.error('Create meeting error:', err.response?.data || err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // cancel meeting
+  const cancelMeeting = async (meetingId) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/api/cancel-meeting/${meetingId}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to cancel meeting');
+      }
+      toast.success('Meeting canceled successfully!');
+      return response.data;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'An error occurred while canceling the meeting.';
+      console.error('Cancel meeting error:', err.response?.data || err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // get meeting status
+  const checkMeetingStatus = async (projectId, investorId, entrepreneurId) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    try {
+      // Construct the URL using path parameters
+      const url = `${API_BASE_URL}/api/meeting/status/${projectId}/${investorId}/${entrepreneurId}`;
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      console.log('Meeting status:', response.data);
+      return response.data;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Failed to check meeting status.';
+      console.error('Check meeting status error: ', err.response?.data, errorMessage || err);
     } finally {
       setLoading(false);
     }
@@ -1076,15 +1186,19 @@ export const useFunctions = () => {
     handleSearch,
     setFormError,
     resetPassword,
+    cancelMeeting,
     updateProject,
     toggleSideBar,
+    createMeeting,
     getAllProjects,
     updateMessages,
     toggleDropdown,
     selectLanguage,
     getAllMessages,
+    getProjectById,
     setBackendError,
     handleInputChange,
+    checkMeetingStatus,
     signOutDistroySession,
     resendForgetPasswordOtp,
     verifyOtpForPasswordReset,

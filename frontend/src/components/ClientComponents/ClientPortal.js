@@ -8,7 +8,9 @@ import Contact from '../Common/Contact';
 
 // Entrepreneur components
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
-import ClientEntreProjectData from './Entrepreneur/ClientEntreProjectData'
+import ClientEntreMyProjects from './Entrepreneur/ClientEntreMyProjects';
+import ClientEntreProjectData from './Entrepreneur/ClientEntreProjectData';
+
 
 // Investor components
 import ClientInvestorHome from './Investor/ClientInvestorHome';
@@ -22,7 +24,6 @@ const ProtectedRoute = ({ children, allowedRoles, requireFirstLogin = false }) =
   const clientData = useSelector((state) => state.clientAuth.clientData);
   const clientRole = clientData?.clientRole;
   const firstLogin = clientData?.firstLogin;
-
 
   // Check if user is authenticated
   if (!isAuthenticated) {
@@ -51,27 +52,31 @@ const ProtectedRoute = ({ children, allowedRoles, requireFirstLogin = false }) =
   return children;
 };
 
+function DefaultRedirect({ isAuthenticated, clientRole }) {
+  if (!isAuthenticated) {
+    return <Navigate to="/client-portal/clientSignForm" replace />;
+  } else if (clientRole === 'Investor') {
+    return <Navigate to="/client-portal/investor" replace />;
+  } else if (clientRole === 'Entrepreneur') {
+    return <Navigate to="/client-portal/entrepreneur" replace />;
+  } else {
+    return <Navigate to="/client-portal/clientSignForm" replace />;
+  }
+}
+
 function ClientPortal() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole);
 
   return (
     <Routes>
-      {/* Default route: Redirect based on authentication and clientRole */}
       <Route
         path="/"
         element={
-          !isAuthenticated ? (
-            <Navigate to="/client-portal/clientSignForm" replace />
-          ) : clientRole === 'Investor' ? (
-            <Navigate to="investor" replace />
-          ) : clientRole === 'Entrepreneur' ? (
-            <Navigate to="entrepreneur" replace />
-          ) : (
-            <Navigate to="/client-portal/clientSignForm" replace />
-          )
+          <DefaultRedirect isAuthenticated={isAuthenticated} clientRole={clientRole} />
         }
       />
+
       {/* Investor Routes */}
       <Route
         path="investor"
@@ -90,7 +95,7 @@ function ClientPortal() {
         }
       />
       <Route
-        path="investor/viewProject"
+        path="investor/viewProject/:projectId"
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
             <ClientInvestorViewProject />
@@ -145,31 +150,24 @@ function ClientPortal() {
           </ProtectedRoute>
         }
       />
+
       {/* Entrepreneur Routes */}
       <Route
         path="entrepreneur"
         element={
           <ProtectedRoute allowedRoles={['Entrepreneur']}>
-            <ClientEntreProjectData />
-          </ProtectedRoute>
-        }
-      />
-      {/* <Route
-        path="entrepreneur/myProjects"
-        element={
-          <ProtectedRoute allowedRoles={['Entrepreneur']}>
-            <EntrepreneurMyProjects />
+            <ClientEntreHome />
           </ProtectedRoute>
         }
       />
       <Route
-        path="entrepreneur/messages"
+        path="entrepreneur/myProjects"
         element={
           <ProtectedRoute allowedRoles={['Entrepreneur']}>
-            <EntrepreneurMessages />
+            <ClientEntreMyProjects />
           </ProtectedRoute>
         }
-      /> */}
+      />
       <Route
         path="entrepreneur/stories"
         element={
@@ -194,6 +192,15 @@ function ClientPortal() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="entrepreneur/entreProjectData"
+        element={
+          <ProtectedRoute allowedRoles={['Entrepreneur']}>
+            <ClientEntreProjectData />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/client-portal/" replace />} />
     </Routes>
   );

@@ -242,6 +242,62 @@ const createMeeting = async (req, res) => {
   }
 };
 
+const cancelMeeting = async (req, res) => {
+  try {
+    const { meetingId } = req.params;
+    const investor_id = req.user.user.id;
+
+    // Find the meeting
+    const meeting = await Meeting.findById(meetingId);
+    if (!meeting) {
+      return res.status(404).json({ success: false, message: 'Meeting not found' });
+    }
+
+    // Check if the investor is authorized to cancel this meeting
+    if (meeting.investor_id.toString() !== investor_id) {
+      return res.status(403).json({ success: false, message: 'Not authorized to cancel this meeting' });
+    }
+
+    // Delete the meeting
+    await Meeting.findByIdAndDelete(meetingId);
+    res.status(200).json({ success: true, message: 'Meeting canceled successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error canceling meeting', error: err.message });
+  }
+};
+
+const getMeetingStatus = async (req, res) => {
+  try {
+    const { project_id, investor_id, entrepreneur_id } = req.params;
+
+    if (!project_id || !investor_id || !entrepreneur_id) {
+      return res.status(400).json({ success: false, message: 'Missing required parameters' });
+    }
+
+    const meeting = await Meeting.findOne({
+      project_id,
+      investor_id,
+      entrepreneur_id,
+    });
+
+    if (!meeting) {
+      return res.status(200).json({ 
+        exists: false,
+        status: null,
+        meetingId: null
+      });
+    }
+
+    res.status(200).json({
+      exists: true,
+      status: meeting.status,
+      meetingId: meeting._id
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Error checking meeting status' });
+  }
+};
+
 // Step 2: Assign auditor and generate 3 random slots
 const assignAuditor = async (req, res) => {
   try {
@@ -382,6 +438,7 @@ const getMeetingById = async (req, res) => {
 
 
 
+
 module.exports = 
 { 
     createStaff,
@@ -394,5 +451,7 @@ module.exports =
     investorSelectSlots,
     entrepreneurConfirmSlot,
     getAllMeetings,
-    getMeetingById 
+    getMeetingById,
+    cancelMeeting,
+    getMeetingStatus,
 };

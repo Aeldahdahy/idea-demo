@@ -47,6 +47,7 @@ function Main() {
   const hideNavAndFooter =
     location.pathname === '/client-portal/clientSignForm' ||
     location.pathname === '/client-portal/investor/investorPreferences' ||
+    location.pathname === '/client-portal/entrepreneur/entreProjectData' ||
     location.pathname.startsWith('/employee-portal');
 
   return (

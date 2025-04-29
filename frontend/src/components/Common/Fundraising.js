@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, {useState} from "react";
 import { Container, Row, Col, 
   // Button
  } from "react-bootstrap";
@@ -31,6 +31,13 @@ function Fundraise() {
     visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
   };
 
+  const [investmentValue, setInvestmentValue] = useState(25000);
+
+  const formatNumber = (num) => {
+    return `$${num.toLocaleString()}`;
+  };
+
+
   return (
     <Container fluid style={{ backgroundColor: "#FFFFFF", padding: "0" }}>
       <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 15px" }}>
@@ -48,7 +55,7 @@ function Fundraise() {
                   color: "#000000",
                   fontSize: "clamp(36px, 5vw, 48px)",
                   fontWeight: "bold",
-                  margin: "0 0 20px 0",
+                  margin: "0 0 0 0",
                 }}
               >
                 We make it easy to start your project.
@@ -64,7 +71,7 @@ function Fundraise() {
           animate="visible"
           variants={sectionVariants}
         >
-          <Row style={{ marginBottom: "60px", alignItems: "center" }}>
+          <Row style={{ marginBottom: "220px", alignItems: "center" }}>
             <Col xs={12} md={6} style={{ marginBottom: "30px" }}>
               <h3
                 style={{
@@ -157,14 +164,14 @@ function Fundraise() {
               </motion.div>
             </Col>
           </Row>
-
+          <div className="spacemax"></div> 
           <Row style={{ marginBottom: "60px", alignItems: "center" }}>
             <Col xs={12} md={7} style={{ marginBottom: "30px" }}>
-              <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto" }}>
+              <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto", display: "flex", justifyContent: "center" }}>
                 <div
                   style={{
-                    width: "100%",
-                    height: "300px",
+                    width: "90%",
+                    height: "270px",
                     border: "2px dashed #2563EB",
                     borderRadius: "20px",
                     position: "relative",
@@ -174,8 +181,8 @@ function Fundraise() {
                   <div
                     style={{
                       position: "absolute",
-                      top: "-60px",
-                      left: "-30px",
+                      top: "2px",
+                      left: "-60px",
                       background: "#FFFFFF",
                       border: "1px solid #E5E7EB",
                       borderRadius: "15px",
@@ -216,6 +223,192 @@ function Fundraise() {
                       ))}
                     </div>
                   </div>
+                  <div
+                  style={{
+                    position: "absolute",
+                    top: "-120px",
+                    right: "-100px",
+                    background: "#FFFFFF",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: "15px",
+                    padding: "15px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    transform: "scale(0.9)",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "20px",
+                      backgroundColor: "#F9FAFB",
+                      borderRadius: "12px",
+                      border: "1px solid #E5E7EB",
+                      gap: "10px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        backgroundColor: "#1E3A8A",
+                        borderRadius: "8px",
+                      }}
+                    ></div>
+
+                    <div
+                      style={{
+                        width: "60%",
+                        height: "10px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+
+                    <div
+                      style={{
+                        width: "80%",
+                        height: "8px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        width: "70%",
+                        height: "8px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        width: "90%",
+                        height: "8px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              marginTop: "20px",
+            }}
+          >
+            <div style={{ textAlign: "center" }}>
+              <div
+                style={{ fontWeight: "bold", fontSize: "18px", color: "#111827" }}
+              >
+                $1,000,000
+              </div>
+              <div style={{ fontSize: "14px", color: "#6B7280" }}>
+                Total Required
+              </div>
+            </div>
+
+            <div style={{ textAlign: "center" }}>
+              <div
+                style={{ fontWeight: "bold", fontSize: "18px", color: "#111827" }}
+              >
+                {formatNumber(investmentValue)}
+              </div>
+              <div style={{ fontSize: "14px", color: "#6B7280" }}>
+                Min per Investor
+              </div>
+            </div>
+          </div>
+        </div>
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "-75px",
+                      right: "50px",
+                      background: "#FFFFFF",
+                      border: "1px solid #E5E7EB",
+                      borderRadius: "15px",
+                      padding: "15px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      transform: "scale(0.9)",
+                    }}
+                  >
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <div>
+                        <h2
+                          style={{ color: "#1F2937", fontSize: "18px", fontWeight: "600" }}
+                        >
+                          Investment Range
+                        </h2>
+                        <p
+                          style={{ color: "#6B7280", fontSize: "14px", marginTop: "5px" }}
+                        >
+                          How much are you looking to invest?
+                        </p>
+                      </div>
+                      <div>
+                        <input
+                          type="range"
+                          min="25000"
+                          max="5000000"
+                          value={investmentValue}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value);
+                            setInvestmentValue(value);
+                            e.target.style.background = `linear-gradient(to right, #2563EB 0%, #2563EB ${
+                              ((value - 25000) / (5000000 - 25000)) * 100
+                            }%, #E5E7EB ${
+                              ((value - 25000) / (5000000 - 25000)) * 100
+                            }%, #E5E7EB 100%)`;
+                          }}
+                          style={{
+                            width: "100%",
+                            height: "8px",
+                            background: "#E5E7EB",
+                            borderRadius: "5px",
+                            outline: "none",
+                            appearance: "none",
+                            cursor: "pointer",
+                          }}
+                        />
+                        <style>
+                          {`
+                            input[type="range"]::-webkit-slider-thumb {
+                              -webkit-appearance: none;
+                              appearance: none;
+                              width: 20px;
+                              height: 20px;
+                              background: #2563EB;
+                              borderRadius: 50%;
+                              cursor: pointer;
+                            }
+                            input[type="range"]::-moz-range-thumb {
+                              width: 20px;
+                              height: "20px",
+                              background: #2563EB;
+                              borderRadius: "50%",
+                              cursor: "pointer",
+                              border: "none",
+                            }
+                          `}
+                        </style>
+                        <p
+                          style={{
+                            color: "#1F2937",
+                            fontSize: "14px",
+                            marginTop: "10px",
+                            textAlign: "center",
+                          }}
+                        >
+                          {formatNumber(investmentValue)} - $5,000,000
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Col>
@@ -238,7 +431,7 @@ function Fundraise() {
             </Col>
           </Row>
         </motion.div>
-
+        <div className="spacemax"></div>
         {/* Mobile App Section */}
         <motion.section
   style={{
@@ -368,7 +561,7 @@ function Fundraise() {
       </p>
     </div>
   </div>
-</motion.section>
+        </motion.section>
       </div>
     </Container>
   );

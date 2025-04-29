@@ -1,177 +1,569 @@
 "use client";
-import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import React, {useState} from "react";
+import { Container, Row, Col, 
+  // Button
+ } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { motion } from "framer-motion";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+  // Search,
+  // CalendarCheck,
+  // TrendingUp,
+  // Apple,
+  // Play,
+  Globe,
+} from "lucide-react";
+// import styles from "../../assets/styles.module.css";
 
 function Fundraise() {
-  return (
-    <div className="bg-white mx-auto" style={{ maxWidth: "1440px" }}>
-      {/* Header Section */}
-      <Container fluid className="py-5 px-4">
-        <h1 className="mt-5 text-dark fw-bold display-4 text-start ms-3">
-          We make it easy to start your project.
-        </h1>
-      </Container>
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+  };
 
-      {/* Main Content Section */}
-      <Container fluid className="px-4">
-        <Row className="mt-5">
-          <Col xs={12} md={6} className="mt-4">
-            <p className="fs-2 text-dark">
-              <span className="fw-bold">Browse</span> hundreds of investment opportunities, connect with investors and manage your investment contacts with the world's investors network.
-            </p>
-            <div className="mt-5">
-              <h3 className="fs-4 fw-bold">Follow Us</h3>
-              <div className="d-flex gap-2 mt-3">
-                {[
-                  "d08d1c7b17113ec12bafd97d86d046d5ba1d3de6",
-                  "b5cc48022ac760096a5de64a9a40d75e86140e38",
-                  "c48db060c22cbbdbfcda78e79607ef525048b50c",
-                  "150c0b317a34eac146955992419d4495b7397420",
-                  "e3fa4663eede982f7acd0e9a172c8b1674ac6fb7"
-                ].map((id, index) => (
-                  <img
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+  };
+
+  const [investmentValue, setInvestmentValue] = useState(25000);
+
+  const formatNumber = (num) => {
+    return `$${num.toLocaleString()}`;
+  };
+
+
+  return (
+    <Container fluid style={{ backgroundColor: "#FFFFFF", padding: "0" }}>
+      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 15px" }}>
+        {/* Header Section */}
+        <motion.div
+          style={{ padding: "60px 0" }}
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+        >
+          <Row>
+            <Col xs={12} style={{ textAlign: "left" }}>
+              <h1
+                style={{
+                  color: "#000000",
+                  fontSize: "clamp(36px, 5vw, 48px)",
+                  fontWeight: "bold",
+                  margin: "0 0 0 0",
+                }}
+              >
+                We make it easy to start your project.
+              </h1>
+            </Col>
+          </Row>
+        </motion.div>
+
+        {/* Main Content Section */}
+        <motion.div
+          style={{ padding: "0 15px" }}
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+        >
+          <Row style={{ marginBottom: "220px", alignItems: "center" }}>
+            <Col xs={12} md={6} style={{ marginBottom: "30px" }}>
+              <h3
+                style={{
+                  color: "#000000",
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  lineHeight: "1.5",
+                  marginBottom: "20px",
+                }}
+              >
+                Browse hundreds of investment opportunities, connect with investors, and manage your investment contacts with the world's investors network.
+              </h3>
+              <h5 style={{ color: "#000000", fontSize: "20px", fontWeight: "bold", margin: "20px 0 15px 0" }}>
+                Follow Us
+              </h5>
+              <div style={{ display: "flex", gap: "15px" }}>
+                {[Facebook, Twitter, Instagram, Linkedin, Youtube].map((Icon, index) => (
+                  <button
                     key={index}
-                    src={`https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/${id}?placeholderIfAbsent=true`}
-                    className="img-fluid"
-                    alt="Social media icon"
-                    style={{ width: "50px" }}
-                  />
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#000000",
+                      cursor: "pointer",
+                      transition: "transform 0.3s",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    onClick={() => alert("Replace with navigation logic or valid URL")}
+                  >
+                    <Icon size={30} />
+                  </button>
                 ))}
               </div>
-            </div>
-          </Col>
-          <Col xs={12} md={6} className="position-relative mt-4">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/87e77f73034a43f89a19a81b3dbd12e8aa25f50f?placeholderIfAbsent=true"
-              className="img-fluid position-absolute w-100 h-100"
-              alt="Background pattern"
-              style={{ objectFit: "cover" }}
-            />
-            <div className="bg-dark text-white rounded-4 p-4 mt-5 position-relative" style={{ maxWidth: "500px" }}>
-              <Row>
-                <Col xs={7}>
-                  <div className="d-flex align-items-start">
-                    <img
-                      src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/9681df83f94dc594a2e0a40495d9952f8487f01e?placeholderIfAbsent=true"
-                      className="img-fluid rounded-3 me-3"
-                      alt="Investor profile"
-                      style={{ width: "80px" }}
-                    />
-                    <div>
-                      <h4 className="fs-3 fw-bold">BOB</h4>
-                      <p className="fs-5">Angel Investor</p>
-                      <div className="d-flex align-items-center bg-light bg-opacity-75 rounded-3 p-2 mt-2">
-                        <span className="fs-5 text-dark me-2">Egypt</span>
-                        <img
-                          src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/da4216f546a517d730c2fa80bc4468a55c53600d?placeholderIfAbsent=true"
-                          className="img-fluid"
-                          alt="Location icon"
-                          style={{ width: "20px" }}
-                        />
+            </Col>
+            <Col xs={12} md={6} style={{ marginBottom: "30px" }}>
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={cardVariants}
+              >
+                <div
+                  style={{
+                    background: "#262A35",
+                    color: "#FFFFFF",
+                    borderRadius: "20px",
+                    padding: "20px",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "20px",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ flex: "1 1 200px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                      <img
+                        src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/9681df83f94dc594a2e0a40495d9952f8487f01e?placeholderIfAbsent=true"
+                        alt="Investor profile"
+                        style={{ width: "60px", height: "60px", borderRadius: "10px" }}
+                      />
+                      <div>
+                        <h4 style={{ color: "#FFFFFF", fontSize: "20px", margin: "0 0 5px 0" }}>BOB</h4>
+                        <p style={{ color: "#FFFFFF", fontSize: "16px", margin: "0 0 10px 0" }}>
+                          Angel Investor
+                        </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            background: "#FFFFFF33",
+                            borderRadius: "10px",
+                            padding: "5px 10px",
+                          }}
+                        >
+                          <span style={{ color: "#FFFFFF", fontSize: "16px", marginRight: "10px" }}>
+                            Egypt
+                          </span>
+                          <Globe size={20} />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </Col>
-                <Col xs={5} className="text-center">
-                  <p className="fs-5">EGP 150,000,000</p>
-                  <p className="fs-6">Net Worth</p>
-                </Col>
-              </Row>
-            </div>
-          </Col>
-        </Row>
-        <Row className="mt-5">
-          <Col xs={12} md={7}>
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/3666f2aae661ac4f4bd012e653c6279a95f54fb8?placeholderIfAbsent=true"
-              className="img-fluid rounded-4 shadow"
-              alt="Project showcase"
-              style={{ maxWidth: "100%", minHeight: "480px" }}
-            />
-          </Col>
-          <Col xs={12} md={5} className="d-flex align-items-center">
-            <div className="text-center">
-              <h2 className="fs-1 fw-bold">Find investor for your project</h2>
-              <p className="fs-4">
-                Access the largest opportunities to reach investors in your field. Filter opportunities by country, location, industry, stage, investment range and language to find the deal for you.
-              </p>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-
-      {/* Mobile App Section */}
-      <section className="bg-dark text-white py-5 px-4 mt-5">
-        <Container>
-          <h2 className="text-center fs-2">
-            Seamless Experience: Our Platform Now Also Accessible via Mobile App
-          </h2>
-          <Row className="mt-5">
-            <Col xs={12} md={8}>
-              <div className="d-flex align-items-start">
-                <div className="me-3">
-                  {[
-                    "a8434e1f049ddf5e45408a2140c5b4280ab72ea3",
-                    "921f5ec1f30981d7eeedc0a1b61953eb9a53796f",
-                    "8c076dd4957b8ff287034280c700254eeb5ed216"
-                  ].map((id, index) => (
-                    <img
-                      key={index}
-                      src={`https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/${id}?placeholderIfAbsent=true`}
-                      className="img-fluid mb-3"
-                      alt={`Feature icon ${index + 1}`}
-                      style={{ width: "60px" }}
-                    />
-                  ))}
+                  <div style={{ flex: "1 1 150px", textAlign: "right" }}>
+                    <p style={{ color: "#FFFFFF", fontSize: "18px", margin: "0 0 5px 0" }}>
+                      EGP 150,000,000
+                    </p>
+                    <small style={{ color: "#FFFFFF", fontSize: "14px" }}>Net Worth</small>
+                  </div>
                 </div>
-                <div>
-                  <p className="fs-4">
-                    Search for opportunists through your private interface.<br />
-                    Request a meeting to discuss deals with investors.<br />
-                    Manage your project grow and your portfolio.
-                  </p>
-                  <h3 className="fs-4 mt-3">Download the app</h3>
-                  <img
-                    src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/20b4ff6e9593b91edd808c2a296609667afc572a?placeholderIfAbsent=true"
-                    className="img-fluid mt-3"
-                    alt="App store badges"
-                    style={{ maxWidth: "300px" }}
-                  />
-                  <p className="fs-5 mt-2">Available on Android and iOS.</p>
+              </motion.div>
+            </Col>
+          </Row>
+          <div className="spacemax"></div> 
+          <Row style={{ marginBottom: "60px", alignItems: "center" }}>
+            <Col xs={12} md={7} style={{ marginBottom: "30px" }}>
+              <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto", display: "flex", justifyContent: "center" }}>
+                <div
+                  style={{
+                    width: "90%",
+                    height: "270px",
+                    border: "2px dashed #2563EB",
+                    borderRadius: "20px",
+                    position: "relative",
+                    background: "#F9FAFB",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "2px",
+                      left: "-60px",
+                      background: "#FFFFFF",
+                      border: "1px solid #E5E7EB",
+                      borderRadius: "15px",
+                      padding: "15px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      transform: "scale(0.9)",
+                    }}
+                  >
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {[
+                        { id: "location", label: "London" },
+                        { id: "industry", label: "Software & Technology" },
+                        { id: "stage", label: "Achieving Sales" },
+                      ].map((item) => (
+                        <div key={item.id} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <input
+                            id={item.id}
+                            type="checkbox"
+                            checked
+                            disabled
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                              borderRadius: "4px",
+                              border: "1px solid #D1D5DB",
+                              background: "#2563EB",
+                              appearance: "none",
+                              position: "relative",
+                            }}
+                          />
+                          <label
+                            htmlFor={item.id}
+                            style={{ color: "#1F2937", fontSize: "16px" }}
+                          >
+                            {item.label}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div
+                  style={{
+                    position: "absolute",
+                    top: "-120px",
+                    right: "-100px",
+                    background: "#FFFFFF",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: "15px",
+                    padding: "15px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    transform: "scale(0.9)",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "20px",
+                      backgroundColor: "#F9FAFB",
+                      borderRadius: "12px",
+                      border: "1px solid #E5E7EB",
+                      gap: "10px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "48px",
+                        height: "48px",
+                        backgroundColor: "#1E3A8A",
+                        borderRadius: "8px",
+                      }}
+                    ></div>
+
+                    <div
+                      style={{
+                        width: "60%",
+                        height: "10px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+
+                    <div
+                      style={{
+                        width: "80%",
+                        height: "8px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        width: "70%",
+                        height: "8px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+                    <div
+                      style={{
+                        width: "90%",
+                        height: "8px",
+                        backgroundColor: "#E5E7EB",
+                        borderRadius: "5px",
+                      }}
+                    ></div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              marginTop: "20px",
+            }}
+          >
+            <div style={{ textAlign: "center" }}>
+              <div
+                style={{ fontWeight: "bold", fontSize: "18px", color: "#111827" }}
+              >
+                $1,000,000
+              </div>
+              <div style={{ fontSize: "14px", color: "#6B7280" }}>
+                Total Required
+              </div>
+            </div>
+
+            <div style={{ textAlign: "center" }}>
+              <div
+                style={{ fontWeight: "bold", fontSize: "18px", color: "#111827" }}
+              >
+                {formatNumber(investmentValue)}
+              </div>
+              <div style={{ fontSize: "14px", color: "#6B7280" }}>
+                Min per Investor
+              </div>
+            </div>
+          </div>
+        </div>
+                  </div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "-75px",
+                      right: "50px",
+                      background: "#FFFFFF",
+                      border: "1px solid #E5E7EB",
+                      borderRadius: "15px",
+                      padding: "15px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      transform: "scale(0.9)",
+                    }}
+                  >
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <div>
+                        <h2
+                          style={{ color: "#1F2937", fontSize: "18px", fontWeight: "600" }}
+                        >
+                          Investment Range
+                        </h2>
+                        <p
+                          style={{ color: "#6B7280", fontSize: "14px", marginTop: "5px" }}
+                        >
+                          How much are you looking to invest?
+                        </p>
+                      </div>
+                      <div>
+                        <input
+                          type="range"
+                          min="25000"
+                          max="5000000"
+                          value={investmentValue}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value);
+                            setInvestmentValue(value);
+                            e.target.style.background = `linear-gradient(to right, #2563EB 0%, #2563EB ${
+                              ((value - 25000) / (5000000 - 25000)) * 100
+                            }%, #E5E7EB ${
+                              ((value - 25000) / (5000000 - 25000)) * 100
+                            }%, #E5E7EB 100%)`;
+                          }}
+                          style={{
+                            width: "100%",
+                            height: "8px",
+                            background: "#E5E7EB",
+                            borderRadius: "5px",
+                            outline: "none",
+                            appearance: "none",
+                            cursor: "pointer",
+                          }}
+                        />
+                        <style>
+                          {`
+                            input[type="range"]::-webkit-slider-thumb {
+                              -webkit-appearance: none;
+                              appearance: none;
+                              width: 20px;
+                              height: 20px;
+                              background: #2563EB;
+                              borderRadius: 50%;
+                              cursor: pointer;
+                            }
+                            input[type="range"]::-moz-range-thumb {
+                              width: 20px;
+                              height: "20px",
+                              background: #2563EB;
+                              borderRadius: "50%",
+                              cursor: "pointer",
+                              border: "none",
+                            }
+                          `}
+                        </style>
+                        <p
+                          style={{
+                            color: "#1F2937",
+                            fontSize: "14px",
+                            marginTop: "10px",
+                            textAlign: "center",
+                          }}
+                        >
+                          {formatNumber(investmentValue)} - $5,000,000
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Col>
-            <Col xs={12} md={4}>
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/88e757e2156092bd9dfdb0d919769ba088523963?placeholderIfAbsent=true"
-                className="img-fluid rounded-3"
-                alt="Mobile app preview"
-                style={{ maxWidth: "100%" }}
-              />
+            <Col xs={12} md={5} style={{ marginBottom: "30px" }}>
+              <div style={{ textAlign: "center" }}>
+                <h3
+                  style={{
+                    color: "#000000",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                    marginBottom: "20px",
+                  }}
+                >
+                  Find investors for your project
+                </h3>
+                <p style={{ color: "#000000", fontSize: "18px", lineHeight: "1.6" }}>
+                  Access the largest opportunities to reach investors in your field. Filter opportunities by country, location, industry, stage, investment range, and language to find the deal for you.
+                </p>
+              </div>
             </Col>
           </Row>
-        </Container>
-      </section>
-
-      {/* Scroll to Top Button */}
-      <Button
-        variant="light"
-        className="position-fixed bottom-0 end-0 m-4 shadow"
-        aria-label="Scroll to top"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      >
+        </motion.div>
+        <div className="spacemax"></div>
+        {/* Mobile App Section */}
+        <motion.section
+  style={{
+    background: "#0C1736",
+    padding: "60px 0",
+    position: "relative",
+    overflow: "hidden",
+  }}
+  initial="hidden"
+  animate="visible"
+  variants={sectionVariants}
+>
+  <div
+    style={{
+      backgroundImage: "url(https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/q0q7c7nt_expires_30_days.png)",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      padding: "40px 0",
+    }}
+  >
+    <h2
+      style={{
+        color: "#FFFFFF",
+        fontSize: "clamp(24px, 4vw, 36px)",
+        fontWeight: "bold",
+        textAlign: "center",
+        marginBottom: "40px",
+        maxWidth: "800px",
+        marginLeft: "auto",
+        marginRight: "auto",
+      }}
+    >
+      Seamless Experience: Our Platform Now Also Accessible via Mobile App
+    </h2>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", justifyContent: "center", maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ flex: "1 1 300px", color: "#FFFFFF", fontSize: "18px", lineHeight: "1.6" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "15px", marginBottom: "20px" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30px",
+              height: "30px",
+              background: "#2563EB",
+              borderRadius: "50%",
+              color: "#FFFFFF",
+              fontSize: "16px",
+              fontWeight: "bold",
+            }}
+          >
+            1
+          </span>
+          <p style={{ margin: "0" }}>
+            Search for opportunities through your private interface.
+          </p>
+        </div>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "15px", marginBottom: "20px" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30px",
+              height: "30px",
+              background: "#2563EB",
+              borderRadius: "50%",
+              color: "#FFFFFF",
+              fontSize: "16px",
+              fontWeight: "bold",
+            }}
+          >
+            2
+          </span>
+          <p style={{ margin: "0" }}>
+            Request a meeting to discuss deals with investors.
+          </p>
+        </div>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "15px", marginBottom: "20px" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30px",
+              height: "30px",
+              background: "#2563EB",
+              borderRadius: "50%",
+              color: "#FFFFFF",
+              fontSize: "16px",
+              fontWeight: "bold",
+            }}
+          >
+            3
+          </span>
+          <p style={{ margin: "0" }}>
+            Manage your project growth and your portfolio.
+          </p>
+        </div>
+      </div>
+      <div style={{ flex: "1 1 300px" }}>
         <img
-          src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/e2eea0565481af2cb1df24eb0e680dcde96c1516?placeholderIfAbsent=true"
-          alt="Scroll to top"
-          style={{ width: "26px" }}
+          src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/88e757e2156092bd9dfdb0d919769ba088523963?placeholderIfAbsent=true"
+          alt="Mobile app preview"
+          style={{ width: "100%", maxWidth: "300px", height: "auto", objectFit: "contain" }}
         />
-      </Button>
-
-     
-
-
+      </div>
     </div>
+    <div style={{ textAlign: "center", marginTop: "40px" }}>
+      <h3 style={{ color: "#FFFFFF", fontSize: "24px", marginBottom: "20px" }}>
+        Download the app
+      </h3>
+      <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
+        <img
+          src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/sn1aod97_expires_30_days.png"
+          alt="App Store"
+          style={{ width: "120px", height: "auto" }}
+        />
+        <img
+          src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/shb2q66n_expires_30_days.png"
+          alt="Google Play"
+          style={{ width: "120px", height: "auto" }}
+        />
+      </div>
+      <p style={{ color: "#FFFFFF", fontSize: "16px" }}>
+        Available on Android and iOS.
+      </p>
+    </div>
+  </div>
+        </motion.section>
+      </div>
+    </Container>
   );
 }
 

@@ -71,7 +71,90 @@ const userSchema = new mongoose.Schema({
     image: {
         type: String,
         default: null
-    }
+    },
+    firstLogin: {
+        type: Boolean,
+        default: true
+    },
+    investorPreference: {
+        type: {
+          investorType: {
+            type: String,
+            enum: ['individual', 'company'],
+            required: function () {
+              return this.role === 'investor';
+            }
+          },
+          minInvestment: {
+            type: Number,
+            min: [0, 'Minimum investment cannot be negative'],
+            max: [1000000, 'Minimum investment cannot exceed $1,000,000'],
+            required: function () {
+              return this.role === 'investor';
+            }
+          },
+          maxInvestment: {
+            type: Number,
+            min: [0, 'Maximum investment cannot be negative'],
+            max: [1000000, 'Maximum investment cannot exceed $1,000,000'],
+            validate: {
+              validator: function (value) {
+                // Safely check if investorPreference and minInvestment exist
+                return !this.investorPreference || typeof this.investorPreference.minInvestment !== 'number' || value >= this.investorPreference.minInvestment;
+              },
+              message: 'Maximum investment must be greater than or equal to minimum investment'
+            },
+            required: function () {
+              return this.role === 'investor';
+            }
+          },
+          yearsOfExperience: {
+            type: String,
+            enum: ['0-1', '1-3', '3-5', '5+'],
+            required: function () {
+              return this.role === 'investor';
+            }
+          },
+          socialAccounts: {
+            type: [String],
+            validate: {
+              validator: function (v) {
+                return v.length > 0 && v.every(account => account.trim() !== '');
+              },
+              message: 'At least one valid social account is required'
+            },
+            required: function () {
+              return this.role === 'investor';
+            }
+          },
+          country: {
+            type: String,
+            required: function () {
+              return this.role === 'investor';
+            }
+          },
+          city: {
+            type: String,
+            required: function () {
+              return this.role === 'investor';
+            }
+          },
+          industries: {
+            type: [String],
+            validate: {
+              validator: function (v) {
+                return v.length === 3;
+              },
+              message: 'Exactly 3 industries must be selected'
+            },
+            required: function () {
+              return this.role === 'investor';
+            }
+          }
+        },
+        default: null
+      }
+
 
 }, { timestamps: true });
 

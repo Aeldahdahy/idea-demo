@@ -4,8 +4,39 @@ const router = express.Router();
 const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
 
 // functions
-const { createContact, signUp, signIn, signOut, verifyOtp, forgotPassword, verifyOtpForReset, resetPassword, getAllUsers, updateUser, getAllContacts, updateContactStatus, createProject, getAllProjects, getProjectById, updateProject, deleteProject, updateUserById } = require('../controller/clientController'); 
-const { createStaff, loginStaff, getAllStaff, getStaffById, updateStaff,  createMeeting, assignAuditor, investorSelectSlots, entrepreneurConfirmSlot, getAllMeetings, getMeetingById } = require('../controller/staffController');
+const { createContact,
+   signUp,
+   signIn,
+   signOut,
+   verifyOtp,
+   forgotPassword,
+   verifyOtpForReset,
+   resetPassword,
+   getAllUsers,
+   updateUser,
+   getAllContacts,
+   updateContactStatus,
+   createProject,
+   getAllProjects,
+   getProjectById,
+   getProjectByUserId,
+   updateProject,
+   deleteProject,
+   updateUserById } = require('../controller/clientController'); 
+
+const { createStaff,
+   loginStaff,
+   getAllStaff,
+   getStaffById,
+   updateStaff,
+   createMeeting,
+   assignAuditor,
+   investorSelectSlots,
+   entrepreneurConfirmSlot,
+   getAllMeetings,
+   getMeetingById,
+   cancelMeeting,
+   getMeetingStatus } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const userImageUploads = require('../middleWare/userImageUploads');
 const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
@@ -42,13 +73,15 @@ router.get('/contacts', authenticateToken, isAdmin, getAllContacts);
 router.put('/contacts/:contactId/status', authenticateToken, isAdmin, updateContactStatus);
 
 // Get all projects (Admin only)
-router.get('/projects', authenticateToken, isAdmin, getAllProjects);
+router.get('/projects', authenticateToken, getAllProjects);
 
 // Get a single project by ID (Admin only)
-router.get('/projects/:projectId', authenticateToken, isAdmin, getProjectById);
+router.get('/projects/:projectId', authenticateToken, getProjectById);
 
 // Step 1: Investor requests a meeting
 router.post('/create-meeting', authenticateToken, createMeeting);
+// step 1.5: Entrepreneur cancels a meeting
+router.delete('/cancel-meeting/:meetingId', authenticateToken, cancelMeeting);
 
 // Step 2: Admin assigns an auditor and generates 3 slots
 router.put('/assign-auditor/:meetingId', authenticateToken, isAdmin, assignAuditor);
@@ -65,6 +98,9 @@ router.get('/meetings', authenticateToken, getAllMeetings);
 // Route to get a meeting by ID
 router.get('/meetings/:id', getMeetingById);
 
+// Route to get meeting status
+router.get('/meeting/status/:project_id/:investor_id/:entrepreneur_id', authenticateToken, getMeetingStatus);
+
 // -----------------------------------------------------------------------------------> client portal <-----------------------------------------------------------------------------------
 
 // Handle contact form submission
@@ -74,7 +110,7 @@ router.post('/contact', createContact);
 router.post('/signup', signUp);
 
 // Update user data
-router.put('/users/:id', authenticateToken, userImageUploads.single('image'), updateUserById);
+router.patch('/users/:id', authenticateToken, userImageUploads.single('image'), updateUserById);
 
 // Verify OTP and complete signup route
 router.post('/verify-otp', verifyOtp);
@@ -104,6 +140,9 @@ router.post('/projects', authenticateToken, upload, createProject);
 
 // Update project (Authenticated users only)
 router.put('/projects/:projectId', authenticateToken, upload, updateProject);
+
+// Get project by user_id
+router.get('/projects/user/:userId', getProjectByUserId);
 
 // Delete project (Authenticated users only)
 router.delete('/projects/:projectId', authenticateToken, deleteProject);

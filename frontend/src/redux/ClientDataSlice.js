@@ -18,8 +18,11 @@ const clientDataSlice = createSlice({
       state.typeClient = '';
       state.initialClientData = {};
     },
+    updateClientData: (state, action) => {
+      state.clientData = action.payload;
+    },
   },
 });
 
-export const { openClientData, closeClientData } = clientDataSlice.actions;
+export const { openClientData, closeClientData, updateClientData } = clientDataSlice.actions;
 export default clientDataSlice.reducer;

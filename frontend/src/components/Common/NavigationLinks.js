@@ -7,7 +7,7 @@ function NavigationLinks({ isAuthenticated, role, clientRole }) {
   const publicLinks = [
     { to: '/', label: 'Home' },
     { to: '/invest', label: 'Invest' },
-    { to: '/fundraising', label: 'Fund raise' },
+    { to: '/fundraising', label: 'Capital raising' },
     { to: '/stories', label: 'Blogs' },
     { to: '/about', label: 'About Us' },
     { to: '/contact', label: 'Contact Us' },

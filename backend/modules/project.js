@@ -29,6 +29,10 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Min investment is required']
   },
+  project_location: {
+    type: String,
+    required: [true, 'Country is required']
+  },
   city: {
     type: String,
     required: [true, 'City is required']
@@ -70,6 +74,10 @@ const projectSchema = new mongoose.Schema({
     required: false,
     default: []
   },
+  project_logo:{
+    type: String, 
+    required: false
+  },
   project_stage: {
     type: String
   },
@@ -90,6 +98,47 @@ const projectSchema = new mongoose.Schema({
   },
   business_description: {
     type: String
+  },
+  team_overview: {
+    type: String
+  },
+  team_members: {
+    type: [
+      {
+        member_image: {
+          type: String,
+          required: [true, 'Member image is required']
+        },
+        member_name: {
+          type: String,
+          required: [true, 'Member name is required'],
+          trim: true
+        },
+        linkedin_account: {
+          type: String,
+          required: [true, 'LinkedIn account is required'],
+          trim: true,
+          validate: {
+            validator: function (v) {
+              // Optional: Basic URL validation for LinkedIn
+              return /^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(v);
+            },
+            message: 'Please enter a valid LinkedIn profile URL'
+          }
+        },
+        member_position: {
+          type: String,
+          required: [true, 'Member position is required'],
+          trim: true
+        },
+        member_bio: {
+          type: String,
+          required: [true, 'Member bio is required'],
+          trim: true
+        }
+      }
+    ],
+    default: [] // Default is empty array
   },
   comment: {
     type: String,

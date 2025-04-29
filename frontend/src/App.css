@@ -4400,7 +4400,6 @@ textarea.form-control-custom {
   font-weight: 500;
 }
 
-<<<<<<< HEAD
 /*--------------------------ENTREPRENEUR (MAIN PAGE) (Lama)--------------------------*/
 .client-entre-home {
   padding: 2rem;
@@ -4698,7 +4697,8 @@ textarea.form-control-custom {
   transform: translateX(-50%);
   font-family: 'Signika', sans-serif;
 }
-=======
+
+
 /* clientinvestormessgae */
 .cursor-pointer {
   cursor: pointer;
@@ -5095,4 +5095,3 @@ small {
   } */
 }
 
->>>>>>> 039789e1b22c6f7cd8bb23cedb592a08fa8b621e

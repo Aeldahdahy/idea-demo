@@ -4757,3 +4757,301 @@ textarea.form-control-custom {
   font-size: 1rem;
   font-weight: 500;
 }
+
+/*--------------------------ENTREPRENEUR (MAIN PAGE) (Lama)--------------------------*/
+.client-entre-home {
+  padding: 2rem;
+}
+
+/* Layout */
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+  padding: 4rem 2rem;
+}
+
+.welcome-content {
+  max-width: 500px;
+}
+
+/* Text */
+.welcome-heading {
+  font-size: 2.2rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.welcome-text {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.underline {
+  border-bottom: 1px solid #003ecb;
+}
+
+/* Button */
+.create-pitch-btn {
+  background: linear-gradient(to right, #003ecb, #0056ff);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  border-radius: 999px;
+  box-shadow: 0px 4px 10px rgba(0, 62, 203, 0.5);
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+/* Social */
+.social-section small {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-icons i {
+  font-size: 1.5rem;
+  border: 1px solid #ccc;
+  padding: 0.6rem;
+  border-radius: 50%;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.social-icons i:hover {
+  background: #f0f0f0;
+  transform: scale(1.1);
+}
+
+/* Right side: Image and Card */
+.welcome-image {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.stars {
+  position: absolute;
+  top: -30px;
+  right: 50px;
+  display: flex;
+  gap: 10px;
+}
+
+.star {
+  width: 15px;
+  height: 15px;
+  background: #003ecb;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: twinkle 1.5s infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 1; }
+  to { opacity: 0.5; transform: scale(1.2); }
+}
+
+.investor-card {
+  background: #1a1a2e;
+  border-radius: 15px;
+  padding: 1.2rem;
+  color: white;
+  position: relative;
+  transform: rotate(-5deg);
+  width: 280px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  margin: 3rem auto 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.investor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.8rem;
+}
+
+.location {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  background: #003ecb;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.bell-icon {
+  color: white;
+}
+
+.card-body {
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.card-body p {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.card-body small {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+/* Swoosh effect */
+.swoosh {
+  position: absolute;
+  bottom: -20px;
+  left: -40px;
+  width: 400px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(0,62,203,0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: rotate(-20deg);
+  z-index: -1;
+}
+
+.how-it-works {
+  text-align: center;
+  margin-bottom: 10rem;
+}
+
+.how-it-works h2 {
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  font-size: 2.5rem;
+  margin-bottom: 3%;
+  margin-top: 10%;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.step {
+  max-width: 300px;
+  margin: 1rem;
+  padding: 2rem;
+  background-color: #EDF1F8;
+  border-radius: 25px;
+  font-family: 'Signika', sans-serif;
+}
+
+.step h3 {
+  background-color: #003ecb;
+  color: white;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.step h4 {
+  font-size: 23.5px;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  margin-top: 7%;
+}
+
+.packages-section {
+  text-align: center;
+  margin-bottom: 8%;
+}
+
+.packages-section h2 {
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+  font-size: 2.5rem;
+  margin-bottom: 5%;
+}
+
+.packages {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  flex-wrap: wrap;
+  margin-top: 4%;
+}
+
+.package {
+  max-width: 400px;
+  height: 550px;
+  padding: 2rem;
+  background-color: #EDF1F8;
+  border-radius: 25px;
+  text-align: left;
+  position: relative;
+}
+
+.package h3 {
+  font-size: 2rem;
+  font-weight: bold;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  margin-top: 2rem;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.package h4 {
+  margin-top: 1rem;
+  color: #000;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.package .h5 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.package ul {
+  margin-top: 1rem;
+  padding-left: 1.2rem;
+  font-family: 'Signika', sans-serif;
+}
+
+.package ul li {
+  margin-bottom: 0.7rem;
+}
+
+.premium-package {
+  border: 10px solid #163696;
+  position: relative;
+}
+
+.recommended {
+  background-color: #163696;
+  color: white;
+  padding: 0.6rem 2rem;
+  border-radius: 999px;
+  font-size: 1.3rem;
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Signika', sans-serif;
+}

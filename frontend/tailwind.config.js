@@ -1,3 +1,5 @@
+const flowbiteReact = require("flowbite-react/plugin/tailwindcss");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -9,6 +11,7 @@ module.exports = {
     "./node_modules/primereact/**/*.{js,ts,jsx,tsx}",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
+    ".flowbite-react\\class-list.json"
   ],
   mode: "jit",
   darkMode: "class",
@@ -214,5 +217,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [flowbiteReact],
 };

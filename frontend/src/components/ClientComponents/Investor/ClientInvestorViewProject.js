@@ -95,7 +95,7 @@ function ClientInvestorViewProject() {
             <Carousel.Item key={index} style={{ height: '35vh' }}>
               <img
                 src={image}
-                alt={`Project Image ${index + 1}`}
+                alt={`Project ${index + 1}`}
                 className="rounded-xl w-100 object-cover"
                 style={{
                   height: '100%',

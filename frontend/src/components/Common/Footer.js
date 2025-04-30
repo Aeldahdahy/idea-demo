@@ -46,14 +46,17 @@ function Footer() {
                 <Link to="/support">Support</Link>
               </div>
               <div className="footerSocialMediaIcons">
-                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.facebook.com/share/1JUWs1jYhQ/" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={["fab", "facebook-f"]} />
                 </a>
                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={["fab", "twitter"]} />
                 </a>
-                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.instagram.com/idea.x.venture?utm_source=qr&igsh=MW01cG1hYmF4MGliZg==" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={["fab", "instagram"]} />
+                </a>
+                <a href="https://www.linkedin.com/in/idea-venture-658978362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={["fab", "linkedin-in"]} />
                 </a>
                 <a href="tel:+123456789" target="_blank" rel="noopener noreferrer">
                   <FontAwesomeIcon icon={["fas", "phone"]} />

@@ -18,7 +18,7 @@ import {
   // Play,
   Globe,
 } from "lucide-react";
-// import styles from "../../assets/styles.module.css";
+import image1 from "../../assets/img-0.51.jpg";
 
 function Fundraise() {
   const sectionVariants = {
@@ -79,7 +79,7 @@ function Fundraise() {
                   fontSize: "24px",
                   fontWeight: "bold",
                   lineHeight: "1.5",
-                  marginBottom: "20px",
+                  marginBottom: "45px",
                 }}
               >
                 Browse hundreds of investment opportunities, connect with investors, and manage your investment contacts with the world's investors network.
@@ -88,34 +88,46 @@ function Fundraise() {
                 Follow Us
               </h5>
               <div style={{ display: "flex", gap: "15px" }}>
-                {[Facebook, Twitter, Instagram, Linkedin, Youtube].map((Icon, index) => (
-                  <button
-                    key={index}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      color: "#000000",
-                      cursor: "pointer",
-                      transition: "transform 0.3s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                    onClick={() => alert("Replace with navigation logic or valid URL")}
-                  >
-                    <Icon size={30} />
-                  </button>
-                ))}
-              </div>
+  {[
+    { Icon: Facebook, url: "https://www.facebook.com/share/1JUWs1jYhQ/" },
+    { Icon: Twitter, url: "https://twitter.com" }, // Replace with actual Twitter URL if available
+    { Icon: Instagram, url: "https://www.instagram.com/idea.x.venture?utm_source=qr&igsh=MW01cG1hYmF4MGliZg==" },
+    { Icon: Linkedin, url: "https://www.linkedin.com/in/idea-venture-658978362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
+    { Icon: Youtube, url: "https://www.youtube.com" }, // Replace with actual YouTube URL if available
+  ].map(({ Icon, url }, index) => (
+    <button
+      key={index}
+      style={{
+        color: "#000000",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        transition: "transform 0.3s",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
+      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      onClick={() => window.open(url, "_blank")} // Opens the URL in a new tab
+    >
+      <Icon size={30} />
+    </button>
+  ))}
+</div>
             </Col>
             <Col xs={12} md={6} style={{ marginBottom: "30px" }}>
               <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={cardVariants}
+                style={{
+                  height:" 460px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-evenly"
+                }}
               >
                 <div
                   style={{
-                    background: "#262A35",
+                    background: "#163696",
                     color: "#FFFFFF",
                     borderRadius: "20px",
                     padding: "20px",
@@ -123,9 +135,10 @@ function Fundraise() {
                     flexWrap: "wrap",
                     gap: "20px",
                     alignItems: "center",
+                   
                   }}
                 >
-                  <div style={{ flex: "1 1 200px" }}>
+                  <div style={{ flex: "1 1 200px"}}>
                     <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                       <img
                         src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/9681df83f94dc594a2e0a40495d9952f8487f01e?placeholderIfAbsent=true"
@@ -135,7 +148,7 @@ function Fundraise() {
                       <div>
                         <h4 style={{ color: "#FFFFFF", fontSize: "20px", margin: "0 0 5px 0" }}>BOB</h4>
                         <p style={{ color: "#FFFFFF", fontSize: "16px", margin: "0 0 10px 0" }}>
-                          Angel Investor
+                          Individual Investor
                         </p>
                         <div
                           style={{
@@ -152,20 +165,67 @@ function Fundraise() {
                           <Globe size={20} />
                         </div>
                       </div>
-                    </div>
-                  </div>
                   <div style={{ flex: "1 1 150px", textAlign: "right" }}>
                     <p style={{ color: "#FFFFFF", fontSize: "18px", margin: "0 0 5px 0" }}>
-                      EGP 150,000,000
+                      EGP 50,000,000
                     </p>
                     <small style={{ color: "#FFFFFF", fontSize: "14px" }}>Net Worth</small>
+                  </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: "#D9EFFF",
+                    color: "#000",
+                    borderRadius: "20px",
+                    padding: "20px",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "20px",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ flex: "1 1 200px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                      <img
+                        src={image1}
+                        alt="Investor profile"
+                        style={{ width: "60px", height: "60px", borderRadius: "10px" }}
+                      />
+                      <div>
+                        <h4 style={{ color: "#000", fontSize: "20px", margin: "0 0 5px 0" }}>Ahmed</h4>
+                        <p style={{ color: "#000", fontSize: "16px", margin: "0 0 10px 0" }}>
+                          Angel Investor
+                        </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            background: "rgba(197, 197, 197, 0.91) ",
+                            borderRadius: "10px",
+                            padding: "5px 10px",
+                          }}
+                        >
+                          <span style={{ color: "#000", fontSize: "16px", marginRight: "10px"}}>
+                            Egypt
+                          </span>
+                          <Globe size={20} />
+                        </div>
+                      </div>
+                  <div style={{ flex: "1 1 150px", textAlign: "right" }}>
+                    <p style={{ color: "#000", fontSize: "18px", margin: "0 0 5px 0" }}>
+                      EGP 15,000,000
+                    </p>
+                    <small style={{ color: "#000", fontSize: "14px" }}>Net Worth</small>
+                  </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
             </Col>
           </Row>
-          <div className="spacemax"></div> 
-          <Row style={{ marginBottom: "60px", alignItems: "center" }}>
+          <Row style={{ padding: "60px 0", alignItems: "center" }}>
             <Col xs={12} md={7} style={{ marginBottom: "30px" }}>
               <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto", display: "flex", justifyContent: "center" }}>
                 <div
@@ -193,9 +253,9 @@ function Fundraise() {
                   >
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       {[
-                        { id: "location", label: "London" },
-                        { id: "industry", label: "Software & Technology" },
-                        { id: "stage", label: "Achieving Sales" },
+                        { id: "location", label: "Country" },
+                        { id: "industry", label: "Project Industry" },
+                        { id: "stage", label: "Project Stage" },
                       ].map((item) => (
                         <div key={item.id} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                           <input
@@ -304,7 +364,7 @@ function Fundraise() {
               <div
                 style={{ fontWeight: "bold", fontSize: "18px", color: "#111827" }}
               >
-                $1,000,000
+                25,000 EGP
               </div>
               <div style={{ fontSize: "14px", color: "#6B7280" }}>
                 Total Required
@@ -404,7 +464,7 @@ function Fundraise() {
                             textAlign: "center",
                           }}
                         >
-                          {formatNumber(investmentValue)} - $5,000,000
+                          {formatNumber(investmentValue)} - 5,000,000 EGP
                         </p>
                       </div>
                     </div>
@@ -431,51 +491,45 @@ function Fundraise() {
             </Col>
           </Row>
         </motion.div>
-        <div className="spacemax"></div>
-        {/* Mobile App Section */}
+<div className="spacemax" />
         <motion.section
-  style={{
-    background: "#0C1736",
-    padding: "60px 0",
-    position: "relative",
-    overflow: "hidden",
-  }}
-  initial="hidden"
-  animate="visible"
-  variants={sectionVariants}
->
-  <div
-    style={{
-      backgroundImage: "url(https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/q0q7c7nt_expires_30_days.png)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      padding: "40px 0",
-    }}
-  >
-    <h2
-      style={{
-        color: "#FFFFFF",
-        fontSize: "clamp(24px, 4vw, 36px)",
-        fontWeight: "bold",
-        textAlign: "center",
-        marginBottom: "40px",
-        maxWidth: "800px",
-        marginLeft: "auto",
-        marginRight: "auto",
-      }}
-    >
-      Seamless Experience: Our Platform Now Also Accessible via Mobile App
-    </h2>
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", justifyContent: "center", maxWidth: "1000px", margin: "0 auto" }}>
-      <div style={{ flex: "1 1 300px", color: "#FFFFFF", fontSize: "18px", lineHeight: "1.6" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "15px", marginBottom: "20px" }}>
+          style={{ background: "#0C1736", padding: "60px 0", position: "relative", overflow: "hidden" }}
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+        >
+          <div
+            style={{
+              backgroundImage: "url(https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/q0q7c7nt_expires_30_days.png)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              padding: "40px 0",
+            }}
+          >
+            <h2
+              style={{
+                color: "#FFFFFF",
+                fontSize : "36px",
+                fontWeight: "bold",
+                textAlign: "center",
+                marginBottom: "40px",
+                maxWidth: "800px",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              Our Platform Now Also Accessible via Mobile App
+            </h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", justifyContent: "center", maxWidth: "1000px", margin: "0 auto" }}>
+            <div style={{ flex: "1 1 300px", color: "#FFFFFF", fontSize: "18px", lineHeight: "2.5", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
           <span
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "30px",
-              height: "30px",
+              width: "50px",
+              height: "50px",
               background: "#2563EB",
               borderRadius: "50%",
               color: "#FFFFFF",
@@ -485,18 +539,18 @@ function Fundraise() {
           >
             1
           </span>
-          <p style={{ margin: "0" }}>
-            Search for opportunities through your private interface.
+          <p style={{ margin: "0", fontSize: "22px" }}>
+            Search for opportunists through your private interface.          
           </p>
         </div>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "15px", marginBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
           <span
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "30px",
-              height: "30px",
+              width: "50px",
+              height: "50px",
               background: "#2563EB",
               borderRadius: "50%",
               color: "#FFFFFF",
@@ -506,18 +560,18 @@ function Fundraise() {
           >
             2
           </span>
-          <p style={{ margin: "0" }}>
-            Request a meeting to discuss deals with investors.
+          <p style={{ margin: "0", fontSize: "22px" }}>
+            Request a meeting  to discuss deals with investors.
           </p>
         </div>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "15px", marginBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
           <span
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "30px",
-              height: "30px",
+              width: "50px",
+              height: "50px",
               background: "#2563EB",
               borderRadius: "50%",
               color: "#FFFFFF",
@@ -527,40 +581,48 @@ function Fundraise() {
           >
             3
           </span>
-          <p style={{ margin: "0" }}>
-            Manage your project growth and your portfolio.
+          <p style={{ margin: "0", fontSize: "22px" }}>
+            Manage your  project grow  and your portfolio.
           </p>
         </div>
       </div>
-      <div style={{ flex: "1 1 300px" }}>
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/88e757e2156092bd9dfdb0d919769ba088523963?placeholderIfAbsent=true"
-          alt="Mobile app preview"
-          style={{ width: "100%", maxWidth: "300px", height: "auto", objectFit: "contain" }}
-        />
-      </div>
-    </div>
-    <div style={{ textAlign: "center", marginTop: "40px" }}>
-      <h3 style={{ color: "#FFFFFF", fontSize: "24px", marginBottom: "20px" }}>
-        Download the app
-      </h3>
-      <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
-        <img
-          src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/sn1aod97_expires_30_days.png"
-          alt="App Store"
-          style={{ width: "120px", height: "auto" }}
-        />
-        <img
-          src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/shb2q66n_expires_30_days.png"
-          alt="Google Play"
-          style={{ width: "120px", height: "auto" }}
-        />
-      </div>
-      <p style={{ color: "#FFFFFF", fontSize: "16px" }}>
-        Available on Android and iOS.
-      </p>
-    </div>
-  </div>
+              <div >
+                <img
+                  src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/3s01328w_expires_30_days.png"
+                  alt="Mobile App"
+                  style={{ width: "100%", maxWidth: "300px", height: "auto", objectFit: "contain" }}
+                />
+              </div>
+            </div>
+            <div style={{ textAlign: "center", marginTop: "40px" }}>
+              <h3 style={{ color: "#FFFFFF", fontSize: "24px", marginBottom: "20px" }}>Download the app</h3>
+              <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
+  <a
+    href="https://www.apple.com/app-store/"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img
+      src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/sn1aod97_expires_30_days.png"
+      alt="Download on the App Store"
+      style={{ width: "120px", height: "auto" }}
+    />
+  </a>
+  <a
+    href="https://play.google.com/store"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img
+      src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/shb2q66n_expires_30_days.png"
+      alt="Get it on Google Play"
+      style={{ width: "120px", height: "auto" }}
+    />
+  </a>
+</div>
+              <p style={{ color: "#FFFFFF", fontSize: "16px" }}>Available on Android and iOS.</p>
+            </div>
+          </div>
         </motion.section>
       </div>
     </Container>

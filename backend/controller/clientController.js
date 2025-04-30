@@ -14,6 +14,7 @@ const Contact = require('../modules/contact');
 const User = require('../modules/signup');
 const Otp = require('../modules/otp');
 const Project = require('../modules/project');
+const Blog = require('../modules/blog');
 
 // Create a transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -768,7 +769,89 @@ const deleteProject = async (req, res) => {
     }
 };
 
+// Create Blog
+const createBlog = async (req, res) => {
+  try {
+    const { blog_description } = req.body;
 
+    if (!blog_description) {
+      return res.status(400).json({ message: 'Blog description is required' });
+    }
+
+    const blog_image = req.file ? req.file.path : null;
+
+    const newBlog = new Blog({
+      blog_description,
+      blog_image,
+    });
+
+    const savedBlog = await newBlog.save();
+
+    res.status(201).json({
+      message: 'Blog created successfully',
+      blog: savedBlog,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Update Blog
+const updateBlog = async (req, res) => {
+  try {
+    const { id: blogId } = req.params;
+    const { blog_description, status } = req.body;
+
+    // Validate status
+    const validStatuses = ['Active', 'Inactive'];
+    if (status && !validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status value'
+      });
+    }
+
+    // Find existing blog
+    const blog = await Blog.findById(blogId);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog not found'
+      });
+    }
+
+    // Handle image replacement if a new file is uploaded
+    let blog_image = blog.blog_image;
+    if (req.file) {
+      blog_image = req.file.path;
+    }
+
+    // Prepare update fields
+    const updatedData = {
+      blog_description: blog_description || blog.blog_description,
+      blog_image,
+      status: status || blog.status
+    };
+
+    // Update the blog
+    const updatedBlog = await Blog.findByIdAndUpdate(blogId, updatedData, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Blog updated successfully',
+      blog: updatedBlog
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error updating blog',
+      error: error.message
+    });
+  }
+};
 
 module.exports =
 {
@@ -789,5 +872,7 @@ module.exports =
   getProjectByUserId,
   updateProject,
   deleteProject,
-  updateUserById
+  updateUserById,
+  createBlog,
+  updateBlog
 };

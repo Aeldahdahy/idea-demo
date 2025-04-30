@@ -22,7 +22,9 @@ const { createContact,
    getProjectByUserId,
    updateProject,
    deleteProject,
-   updateUserById } = require('../controller/clientController'); 
+   updateUserById,
+   createBlog,
+   updateBlog } = require('../controller/clientController'); 
 
 const { createStaff,
    loginStaff,
@@ -40,6 +42,7 @@ const { createStaff,
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const userImageUploads = require('../middleWare/userImageUploads');
 const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
+const blogUpload = require('../middleWare/blogImageUploads');
 const { body } = require('express-validator');
 const { validateMeetingSlots } = require('../middleWare/slotValidation');
 
@@ -146,5 +149,11 @@ router.get('/projects/user/:userId', getProjectByUserId);
 
 // Delete project (Authenticated users only)
 router.delete('/projects/:projectId', authenticateToken, deleteProject);
+
+// Create Blog
+router.post('/blog', blogUpload.single('blog_image'), authenticateToken, createBlog);
+
+// Update Blog
+router.put('/blog/:id', blogUpload.single('blog_image'), authenticateToken, updateBlog);
 
 module.exports = router;

@@ -926,6 +926,20 @@ export const useFunctions = () => {
     }
   };
 
+  const getAllProjectsBeforeAuth = async () => {
+
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/projectBeforLogin`);
+      return response.data.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred while fetching projects.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // get all projects
   const getAllProjects = useCallback(async () => {
     const THIRTY_MINUTES = 30 * 60 * 1000;
@@ -1201,6 +1215,7 @@ export const useFunctions = () => {
     checkMeetingStatus,
     signOutDistroySession,
     resendForgetPasswordOtp,
+    getAllProjectsBeforeAuth,
     verifyOtpForPasswordReset,
     otp,
     timer,

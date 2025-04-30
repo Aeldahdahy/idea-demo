@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { CheckIcon } from '@heroicons/react/20/solid'
 
 
@@ -222,7 +222,6 @@ function Component({name, price}) {
                 {tier.description}
               </p>
               <ul
-                role="list"
                 className={classNames(
                   tier.featured ? 'text-gray-300' : 'text-gray-600',
                   'mt-8 space-y-3 text-sm/6 sm:mt-10',

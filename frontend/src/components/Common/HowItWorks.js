@@ -71,11 +71,11 @@ function HowItWorks() {
 
   return (
     <div className='HowItWorks'>
-      <h1 className="mb-4">How it Works?</h1>
+      <h1 className="mb-4" style={{ fontSize: 35, fontWeight: "bold"}}>How it Works?</h1>
       <div className='space'></div>
       <div className='HowItWorksCon'>
         <div className='HowItWorksCard'>
-          <h2>Investor</h2>
+          <h2 style={{fontSize: 20, fontWeight:"bold"}}>Investor</h2>
           <Slider {...settings}>
             {renderSlides(investorSlides)}
           </Slider>
@@ -86,7 +86,7 @@ function HowItWorks() {
         </div>
 
         <div className='HowItWorksCard'>
-          <h2>Entrepreneur</h2>
+          <h2 style={{fontSize: 20, fontWeight:"bold"}}>Entrepreneur</h2>
           <Slider {...settings}>
             {renderSlides(entrepreneurSlides)}
           </Slider>

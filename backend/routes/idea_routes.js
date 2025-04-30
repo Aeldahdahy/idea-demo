@@ -75,6 +75,9 @@ router.put('/contacts/:contactId/status', authenticateToken, isAdmin, updateCont
 // Get all projects (Admin only)
 router.get('/projects', authenticateToken, getAllProjects);
 
+// get all projects before login 
+router.get('/projectBeforLogin', getAllProjects);
+
 // Get a single project by ID (Admin only)
 router.get('/projects/:projectId', authenticateToken, getProjectById);
 

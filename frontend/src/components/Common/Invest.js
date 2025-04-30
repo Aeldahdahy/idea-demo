@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { motion } from "framer-motion";
@@ -13,17 +13,41 @@ import {
 } from "lucide-react";
 import image1 from "../../assets/img-0.49.png";
 import image2 from "../../assets/img-0.50.jpg";
+import image3 from "../../assets/img-0.52.png";
+import image4 from "../../assets/img-0.53.png";
+import image5 from "../../assets/img-0.54.png";
+import image6 from "../../assets/img-0.55.png";
+
+
+const images = [
+  image5,
+  image6,
+  image4,
+];
+
 
 function Invest() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
   };
 
+
+
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Container fluid style={{ backgroundColor: "#FFFFFF", padding: "0" }}>
@@ -217,6 +241,9 @@ function Invest() {
           </div>
         </motion.div>
 
+
+
+
         {/* Investment Deals Section */}
         <motion.div
           style={{ padding: "60px 0" }}
@@ -309,7 +336,84 @@ function Invest() {
             </Col>
           </Row>
         </motion.div>
-<div className="spacemax" />
+
+        <div className="spacemax" />
+
+        <div className="bg-white py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Heading and Subheading */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+            3 easy steps from sign up to making connections
+          </h2>
+          <p className="mt-4 text-lg text-gray-600">
+            Find Project locally, nationally.
+          </p>
+        </div>
+
+        {/* Mockup */}
+        <div className="relative flex justify-center mb-16 flex-col items-center">
+          {/* Laptop Mockup */}
+
+          <div class="relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[8px] rounded-t-xl h-[172px] max-w-[301px] md:h-[294px] md:max-w-[512px]">
+          <div className="rounded-lg overflow-hidden h-[156px] md:h-[278px] bg-white dark:bg-gray-800">
+            <img
+              src={images[currentImageIndex]}
+              className="h-[156px] md:h-[278px] w-full rounded-lg object-cover"
+              alt={`Slide ${currentImageIndex + 1}`}
+            />
+          </div>
+          </div>
+              <div class="relative mx-auto bg-gray-900 dark:bg-gray-700 rounded-b-xl rounded-t-sm h-[17px] max-w-[351px] md:h-[21px] md:max-w-[597px]">
+                  <div class="absolute left-1/2 top-0 -translate-x-1/2 rounded-b-xl w-[56px] h-[5px] md:w-[550px] md:h-[8px] bg-gray-800"></div>
+              </div>
+
+        </div>
+
+        {/* Steps */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          {/* Step 1 */}
+          <div>
+            <div className="flex justify-center mb-4">
+              <span className="flex items-center justify-center h-12 w-12 rounded-full bg-[#0029A4] text-white text-xl font-bold">
+                1
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">Create</h3>
+            <p className="mt-2 text-gray-600">
+              Create your Account and fill in your profile to get started
+            </p>
+          </div>
+
+          {/* Step 2 */}
+          <div>
+            <div className="flex justify-center mb-4">
+              <span className="flex items-center justify-center h-12 w-12 rounded-full bg-[#0029A4] text-white text-xl font-bold">
+                2
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">Search</h3>
+            <p className="mt-2 text-gray-600">
+              Find projects that match your investment criteria and interests
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div>
+            <div className="flex justify-center mb-4">
+              <span className="flex items-center justify-center h-12 w-12 rounded-full bg-[#0029A4] text-white text-xl font-bold">
+                3
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">Connect</h3>
+            <p className="mt-2 text-gray-600">
+              Connect with Entrepreneur and message them to discuss deals
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
         {/* Mobile App Section */}
         <motion.section
@@ -404,39 +508,46 @@ function Invest() {
         </div>
       </div>
               <div >
-                <img
-                  src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/3s01328w_expires_30_days.png"
-                  alt="Mobile App"
-                  style={{ width: "100%", maxWidth: "300px", height: "auto", objectFit: "contain" }}
-                />
+               
+                <div class="relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-xl">
+                    <div class="w-[148px] h-[18px] bg-gray-800 top-0 rounded-b-[1rem] left-1/2 -translate-x-1/2 absolute"></div>
+                    <div class="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[124px] rounded-s-lg"></div>
+                    <div class="h-[46px] w-[3px] bg-gray-800 absolute -start-[17px] top-[178px] rounded-s-lg"></div>
+                    <div class="h-[64px] w-[3px] bg-gray-800 absolute -end-[17px] top-[142px] rounded-e-lg"></div>
+                    <div class="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-white dark:bg-gray-800">
+                        <img src={image3} class="dark:hidden w-[272px] h-[572px]" alt="" />
+                        <img src={image3} class="hidden dark:block w-[272px] h-[572px]" alt="" />
+                    </div>
+                </div>
+
               </div>
             </div>
             <div style={{ textAlign: "center", marginTop: "40px" }}>
               <h3 style={{ color: "#FFFFFF", fontSize: "24px", marginBottom: "20px" }}>Download the app</h3>
               <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "20px" }}>
-  <a
-    href="https://www.apple.com/app-store/"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <img
-      src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/sn1aod97_expires_30_days.png"
-      alt="Download on the App Store"
-      style={{ width: "120px", height: "auto" }}
-    />
-  </a>
-  <a
-    href="https://play.google.com/store"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <img
-      src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/shb2q66n_expires_30_days.png"
-      alt="Get it on Google Play"
-      style={{ width: "120px", height: "auto" }}
-    />
-  </a>
-</div>
+                <a
+                  href="https://www.apple.com/app-store/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/sn1aod97_expires_30_days.png"
+                    alt="Download on the App Store"
+                    style={{ width: "120px", height: "auto" }}
+                  />
+                </a>
+                <a
+                  href="https://play.google.com/store"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/shb2q66n_expires_30_days.png"
+                    alt="Get it on Google Play"
+                    style={{ width: "120px", height: "auto" }}
+                  />
+                </a>
+              </div>
               <p style={{ color: "#FFFFFF", fontSize: "16px" }}>Available on Android and iOS.</p>
             </div>
           </div>

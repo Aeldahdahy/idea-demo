@@ -19,7 +19,7 @@ function PartnersFeatured() {
 
   return (
     <div className="container-fluid">
-       <h1 className="text-center mt-5 mb-4">Partners & Featured In</h1>
+       <h1 className="text-center mt-5 mb-4" style={{ fontWeight: "bold", fontSize:35 }}>Partners & Featured In</h1>
        <div className="row justify-content-center">
            {collaborators.map((company, index) => (
            <div key={index} className="col-lg-2 col-md-3 col-sm-4 col-6 mb-4 d-flex justify-content-center align-items-center">

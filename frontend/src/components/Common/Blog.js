@@ -236,7 +236,7 @@ function Example(){
                           key={index}
                           className="h-32 w-20 rounded-lg object-cover"
                           src={src}
-                          alt={`Review image ${index + 1}`}
+                          alt={`Review ${index + 1}`}
                         />
                       ))}
                     </div>
@@ -490,7 +490,7 @@ function Blog() {
             <div className="event-container">
               <div className="event-description">
                 <div className="event-image">
-                  <img src={image1} alt="Smart logistics system demonstration" />
+                  <img src={image1} alt="Smart logistics system" />
                 </div>
                 <p>
                   Our latest business project focuses on integrating advanced technology to revolutionize the supply chain process. We’ve introduced a new smart logistics system that optimizes container management, improves cargo tracking, and streamlines warehouse operations. This initiative aims to reduce turnaround times, enhance shipment visibility, and boost cost efficiency across the logistics chain.
@@ -508,7 +508,7 @@ function Blog() {
             <article className="article">
               <h3 className="article-title">Grow wealth like a tree, roots in savings, branches reaching toward diverse investments.</h3>
               <div className="article-content">
-                <img src={image2} alt="Investment growth illustration" className="article-image" />
+                <img src={image2} alt="Investment growth" className="article-image" />
               </div>
             </article>
 

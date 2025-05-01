@@ -505,7 +505,7 @@ const createProject = async (req, res) => {
       city, state, postal_code, market_description, business_objectives,
       project_stage, networth, deal_type, website_link,
       bussiness_highlights, financial_status, business_description,
-      team_overview // Don't forget to get team_overview if you're using it
+      team_overview
     } = req.body;
 
     // File uploads from middleware
@@ -546,6 +546,9 @@ const createProject = async (req, res) => {
       });
     }
 
+    // Ensure deal_type is an array
+    const dealTypeArray = Array.isArray(deal_type) ? deal_type : deal_type ? [deal_type] : [];
+
     // Create new project
     const newProject = new Project({
       user_id,
@@ -567,14 +570,14 @@ const createProject = async (req, res) => {
       project_logo,
       project_stage,
       networth,
-      deal_type,
+      deal_type: dealTypeArray, // Use the array version of deal_type
       website_link,
       bussiness_highlights,
       financial_status,
       business_description,
       team_overview,
-      team_members, // 🔥 New team_members field set
-      status: 'Rejected' 
+      team_members,
+      status: 'Rejected'
     });
 
     await newProject.save();

@@ -1117,6 +1117,30 @@ export const useFunctions = () => {
     }
   };
 
+  const createProject = async (projectData) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/projects`, projectData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status !== 201) {
+        throw new Error('Failed to create project');
+      }
+      toast.success('Project created successfully!');
+      return response.data;
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
+      console.error('Create project error:', err.response?.data || err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
 
@@ -1204,6 +1228,7 @@ export const useFunctions = () => {
     updateProject,
     toggleSideBar,
     createMeeting,
+    createProject,
     getAllProjects,
     updateMessages,
     toggleDropdown,

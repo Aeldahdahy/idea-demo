@@ -79,13 +79,16 @@ const projectSchema = new mongoose.Schema({
     required: false
   },
   project_stage: {
-    type: String
+    type: String,
+    required: [true, 'Project stage is required'],
   },
   networth: {
-    type: String
+    type: String,
+    required: [true, 'Net worth is required']
   },
   deal_type: {
-    type: String
+    type: [String],
+    required: [true, 'Deal type is required'], 
   },
   website_link: {
     type: String

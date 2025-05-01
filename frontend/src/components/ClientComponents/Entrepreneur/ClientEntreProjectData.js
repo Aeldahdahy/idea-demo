@@ -1,5 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
+import {
+  CountrySelect,
+} from "react-country-state-city";
+import { initFlowbite } from "flowbite"; // Import Flowbite JS for dropdown functionality
+import "react-country-state-city/dist/react-country-state-city.css";
+import { useFunctions } from '../../../useFunctions';
 
 // --- Styled Components ---
 const TeamSection = styled.div`
@@ -298,17 +304,17 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
-  width: 100%;
-  padding: 15px 18px;
-  border: 1.5px solid #e3e8f0;
-  border-radius: 9px;
-  background: #fff;
-  font-size: 1.08rem;
-  margin-bottom: 24px;
-  outline: none;
-  color: #222;
-`;
+// const Select = styled.select`
+//   width: 100%;
+//   padding: 15px 18px;
+//   border: 1.5px solid #e3e8f0;
+//   border-radius: 9px;
+//   background: #fff;
+//   font-size: 1.08rem;
+//   margin-bottom: 24px;
+//   outline: none;
+//   color: #222;
+// `;
 
 const Row = styled.div`
   display: flex;
@@ -469,6 +475,8 @@ const steps = [
 
 // --- Main Component ---
 function ClientEntreProjectData() {
+  const { createProject } = useFunctions();
+
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     projectName: "",
@@ -476,12 +484,12 @@ function ClientEntreProjectData() {
     minInvestment: "",
     maxInvestment: "",
     industry: "",
-    location: "",
+    project_location: "",
     city: "",
     state: "",
     zip: "",
     stage: "",
-    dealType: "",
+    dealType: [], // Changed to an array for multiple selections
     marketDescription: "",
     businessHighlights: "",
     financialStatus: "",
@@ -493,13 +501,40 @@ function ClientEntreProjectData() {
     financialDocs: null,
     executiveSummary: null,
     additionalDocs: null,
-    projectImages: []
+    projectImages: [],
+    projectLogo: null 
   });
 
-  // Handle input change
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  useEffect(() => {
+    initFlowbite();
+  }, []);
+
+  const dealTypeOptions = [
+    { id: "deal-type-equity", value: "equity", label: "Equity" },
+    { id: "deal-type-debt", value: "debt", label: "Debt" },
+    { id: "deal-type-grant", value: "grant", label: "Grant" }
+  ];
+
+  const handleCheckboxChange = (value) => {
+    // Toggle the value in the dealType array
+    setForm((prevForm) => {
+      const currentDealTypes = prevForm.dealType;
+      const updatedDealTypes = currentDealTypes.includes(value)
+        ? currentDealTypes.filter((type) => type !== value) // Remove if already selected
+        : [...currentDealTypes, value]; // Add if not selected
+      return { ...prevForm, dealType: updatedDealTypes };
+    });
   };
+
+  // Handle input change
+  const handleChange = (e, selectedOption) => {
+    if (selectedOption) {
+      setForm({ ...form, project_location: selectedOption });
+    } else {
+      setForm({ ...form, [e.target.name]: e.target.value });
+    }
+  };
+  
 
   const handleFileChange = (e, key) => {
     const file = e.target.files[0];
@@ -588,6 +623,35 @@ const removeTeamMember = (idx) => {
   setTeamMembers(members => members.filter((_, i) => i !== idx));
 };
 
+const handleSubmitProject = async () => {
+  try {
+    const formData = new FormData();
+    
+    // Append all form fields to FormData
+    Object.keys(form).forEach((key) => {
+      if (key === 'dealType') {
+        // Handle array for dealType
+        form[key].forEach((value, index) => {
+          formData.append(`${key}[${index}]`, value);
+        });
+      } else {
+        formData.append(key, form[key]);
+      }
+    });
+
+    // Call the Firebase Cloud Function
+    const result = await createProject(formData);
+    
+    // Handle success (e.g., move to next step or show success message)
+    console.log('Project created:', result);
+    setStep(step + 1); // Move to the next step in multi-step form
+
+  } catch (error) {
+    console.error('Error creating project:', error);
+    // Handle error (e.g., show error message to user)
+  }
+};
+
   // Step 1: General Information
   const Step1 = (
     <>
@@ -639,12 +703,10 @@ const removeTeamMember = (idx) => {
         placeholder="e.g. Technology, Healthcare, Real Estate"
       />
       <Label>Project Location</Label>
-      <Input
-        name="location"
-        value={form.location}
-        onChange={handleChange}
-        placeholder="Country"
-      />
+      <CountrySelect
+          value={form.project_location || null}
+          onChange={(selectedOption) => handleChange(null, selectedOption)}
+        />
       <Row>
         <div style={{ flex: 1 }}>
           <Label>City</Label>
@@ -675,6 +737,87 @@ const removeTeamMember = (idx) => {
         </div>
       </Row>
       <Row>
+      <div  style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+          <button
+          id="dropdownHelperButton"
+          data-dropdown-toggle="dropdownHelper"
+          className="
+          text-black
+          bg-white-700 
+          hover:bg-white-800 
+          focus:ring-4 
+          focus:outline-none 
+          focus:ring-blue-300 
+          font-medium 
+          rounded-lg 
+          text-sm px-2 
+          py-3 text-left 
+          inline-flex 
+          items-center 
+          dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-gray-300 w-100 justify-between"
+          type="button"
+        >
+          Select Deal Type
+          <svg
+            className="w-2.5 h-2.5 ms-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+          </button>
+
+        {/* Dropdown menu */}
+        <div
+          id="dropdownHelper"
+          className="absolute z-10 hidden bg-blue-800 divide-y divide-blue-700 rounded-lg shadow-sm w-60 dark:bg-blue-700 dark:divide-blue-600 top-full mt-1 left-0 max-h-64 overflow-y-auto"
+        >
+          <ul
+            className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownHelperButton"
+          >
+          {dealTypeOptions.map((option) => (
+            <li key={option.id}>
+              <div className="flex p-2 rounded-sm hover:bg-blue-500">
+                <div className="flex items-center h-5">
+                  <input
+                    id={option.id}
+                    type="checkbox"
+                    value={option.value}
+                    checked={form.dealType.includes(option.value)}
+                    onChange={() => handleCheckboxChange(option.value)}
+                    className="w-4 h-4 text-blue-300 bg-blue-700 border-blue-300 rounded-sm focus:ring-blue-400 dark:focus:ring-blue-500 dark:ring-offset-blue-700 dark:focus:ring-offset-blue-700 focus:ring-2 dark:bg-blue-600 dark:border-blue-500"
+                  />
+                </div>
+                <div className="ms-2 text-sm">
+                  <label
+                    htmlFor={option.id}
+                    className="font-medium text-white"
+                  >
+                    <div>{option.label}</div>
+                    <p
+                      id={`${option.id}-text`}
+                      className="text-xs font-normal text-white"
+                    >
+                      Select {option.label} deal type
+                    </p>
+                  </label>
+                </div>
+              </div>
+            </li>
+          ))}
+          </ul>
+        </div>
+        </div>
+
         <div style={{ flex: 1 }}>
           <Label>Project Stage</Label>
           <Input
@@ -684,19 +827,7 @@ const removeTeamMember = (idx) => {
             placeholder="e.g. Seed, Series A, Growth"
           />
         </div>
-        <div style={{ flex: 1 }}>
-          <Label>Deal Type</Label>
-          <Select
-            name="dealType"
-            value={form.dealType}
-            onChange={handleChange}
-          >
-            <option value="">Select deal type</option>
-            <option value="equity">Equity</option>
-            <option value="debt">Debt</option>
-            <option value="grant">Grant</option>
-          </Select>
-        </div>
+
       </Row>
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)} disabled={step === 0}>Back</Button>
@@ -860,6 +991,36 @@ const removeTeamMember = (idx) => {
           )}
         </DocBox>
       </DocSection>
+
+        <DocSection>
+          <DocLabel>
+            <DocIcon>🖼️</DocIcon> Project Logo
+          </DocLabel>
+          <DocBox>
+            {files.projectLogo && files.projectLogo.file ? (
+              <PreviewBox>
+                <ImageThumb src={files.projectLogo.preview} alt="logo preview" />
+                <span>{files.projectLogo.file.name}</span>
+                <RemoveBtn onClick={() => handleRemoveFile("projectLogo")}>✖</RemoveBtn>
+              </PreviewBox>
+            ) : (
+              <>
+                <DocInfo>( File accepted: .jpg,.jpeg,.png,.gif - Max file size: 5MB for demo limit )</DocInfo>
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.gif"
+                  style={{ display: "none" }}
+                  id="projectLogo"
+                  onChange={e => handleFileChange(e, "projectLogo")}
+                />
+                <UploadBtn htmlFor="projectLogo">
+                  Upload The Logo
+                </UploadBtn>
+              </>
+            )}
+          </DocBox>
+        </DocSection>
+
       <DocSection>
         <DocLabel>
           <DocIcon>🖼️</DocIcon> Project Images
@@ -898,12 +1059,13 @@ const removeTeamMember = (idx) => {
                 onChange={handleImagesChange}
               />
               <UploadBtn htmlFor="projectImages">
-                Upload The Documents
+                Upload The images
               </UploadBtn>
             </>
           )}
         </DocBox>
       </DocSection>
+
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)}>Back</Button>
         <Button primary onClick={() => setStep(step + 1)}>Next</Button>
@@ -994,7 +1156,7 @@ const removeTeamMember = (idx) => {
         <ButtonRow>
       <TeamActions>
         <Button onClick={() => setStep(step - 1)}>Back</Button>
-        <CreateBtn primary>Create Pitch</CreateBtn>
+        <CreateBtn primary onClick={handleSubmitProject}>Create Pitch</CreateBtn>
       </TeamActions>
         </ButtonRow>
     </>

@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { updateClientData } from './redux/clientAuthSlice'; // Import the action to update client data
 
 
+
 export const useFunctions = () => {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
@@ -99,6 +100,38 @@ export const useFunctions = () => {
     }, []);
   };
 
+  // Blogs
+  const [blogs, setBlogs] = useState([]);
+  const [lastBlogFetched, setLastBlogFetched] = useState(null);
+  
+  const getAllBlogs = useCallback(async () => {
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+    const now = Date.now();
+  
+    if (lastBlogFetched && now - lastBlogFetched < THIRTY_MINUTES) {
+      return;
+    }
+  
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/blog`);
+      console.log('Blog API response:', response.data); // Log response for debugging
+      if (Array.isArray(response.data.blogs)) {
+        setBlogs(response.data.blogs);
+        setLastBlogFetched(now);
+      } else {
+        throw new Error('Invalid data format: Expected an array in response.data.data');
+      }
+    } catch (error) {
+      console.error('Error fetching blogs:', error); // Log full error details
+      const errorMessage = error.response?.data?.message || error.message || 'An error occurred while fetching blogs. Please try again later.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, lastBlogFetched]);
   // Who are we
   // useEffect(() => {
   //   const fetchText = async () => {
@@ -1242,6 +1275,7 @@ export const useFunctions = () => {
     resendForgetPasswordOtp,
     getAllProjectsBeforeAuth,
     verifyOtpForPasswordReset,
+    getAllBlogs,
     otp,
     timer,
     users,
@@ -1265,5 +1299,6 @@ export const useFunctions = () => {
     formError,
     backendError,
     API_BASE_URL,
+    blogs,
   };
 };

@@ -1,7 +1,7 @@
 // Initialize packages
 const express = require('express');
 const router = express.Router();
-const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
+const {upload, handleMulterErrors} = require('../middleWare/projectMiddleware'); // Import multer middleware
 
 // functions
 const { createContact,

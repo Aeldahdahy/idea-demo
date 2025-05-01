@@ -473,6 +473,22 @@ const steps = [
   "Team Description"
 ];
 
+const countries = [
+  "United States",
+  "Canada",
+  "United Kingdom",
+  "Germany",
+  "France",
+  "Egypt",
+  "India",
+  "Australia",
+  "Brazil",
+  "China",
+  "Japan"
+  // ...add more as needed
+];
+
+
 // --- Main Component ---
 function ClientEntreProjectData() {
   const { createProject } = useFunctions();
@@ -489,7 +505,8 @@ function ClientEntreProjectData() {
     state: "",
     zip: "",
     stage: "",
-    dealType: [], // Changed to an array for multiple selections
+    dealType: [],
+    networth: "",
     marketDescription: "",
     businessHighlights: "",
     financialStatus: "",
@@ -527,13 +544,17 @@ function ClientEntreProjectData() {
   };
 
   // Handle input change
-  const handleChange = (e, selectedOption) => {
-    if (selectedOption) {
-      setForm({ ...form, project_location: selectedOption });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (['minInvestment', 'maxInvestment', 'networth'].includes(name)) {
+      const cleanedValue = value.replace(/[^0-9.]/g, '');
+      setForm({ ...form, [name]: cleanedValue });
     } else {
-      setForm({ ...form, [e.target.name]: e.target.value });
+      setForm({ ...form, [name]: value });
     }
   };
+  
+  
   
 
   const handleFileChange = (e, key) => {
@@ -625,30 +646,117 @@ const removeTeamMember = (idx) => {
 
 const handleSubmitProject = async () => {
   try {
+    const requiredFields = [
+      { key: 'projectName', label: 'Project Name', backendKey: 'project_name', validate: val => val.length >= 3, error: 'Project Name must be at least 3 characters' },
+      { key: 'industry', label: 'Project Industry', backendKey: 'project_industry', validate: val => val.length >= 3, error: 'Industry must be at least 3 characters' },
+      { key: 'minInvestment', label: 'Minimum Investment', backendKey: 'min_investment', validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), error: 'Minimum Investment must be a number' },
+      { key: 'maxInvestment', label: 'Maximum Investment', backendKey: 'max_investment', validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), error: 'Maximum Investment must be a number' },
+      { key: 'zip', label: 'Postal Code', backendKey: 'postal_code', validate: val => /^[0-9]{5}$/.test(val), error: 'Postal Code must be a 5-digit number' },
+      { key: 'marketDescription', label: 'Market Description', backendKey: 'market_description', validate: val => val.length >= 50, error: 'Market Description must be at least 50 characters' },
+      { key: 'businessObjectives', label: 'Business Objectives', backendKey: 'business_objectives', validate: val => val.length >= 50, error: 'Business Objectives must be at least 50 characters' },
+      { key: 'stage', label: 'Project Stage', backendKey: 'project_stage', validate: val => ['Seed', 'Series A', 'Series B', 'Growth'].includes(val), error: 'Project Stage must be a valid stage (e.g., Seed, Series A)' },
+      { key: 'networth', label: 'Net Worth', backendKey: 'networth', validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), error: 'Net Worth must be a number' },
+      { key: 'project_location', label: 'Project Location', backendKey: 'project_location', validate: val => val.length > 0, error: 'Project Location is required' },
+    ];
+
+    const errors = requiredFields
+      .map(field => {
+        const value = form[field.key];
+        if (!value || value.trim() === '') return `${field.label} is required`;
+        if (field.validate && !field.validate(value)) return field.error;
+        return null;
+      })
+      .filter(error => error);
+
+    // Validate website if provided
+    if (form.website && !/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(form.website)) {
+      errors.push('Website must be a valid URL (e.g., https://example.com)');
+    }
+
+    // Ensure maxInvestment > minInvestment
+    const minInv = parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''));
+    const maxInv = parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''));
+    if (!isNaN(minInv) && !isNaN(maxInv) && maxInv <= minInv) {
+      errors.push('Maximum Investment must be greater than Minimum Investment');
+    }
+
+    // Validate team members
+    if (teamMembers.length === 0) {
+      errors.push('At least one team member is required');
+    } else {
+      teamMembers.forEach((member, idx) => {
+        if (!member.name) errors.push(`Team Member ${idx + 1}: Name is required`);
+        if (!member.position) errors.push(`Team Member ${idx + 1}: Position is required`);
+        if (!member.bio) errors.push(`Team Member ${idx + 1}: Bio is required`);
+        if (!member.linkedin || !/^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(member.linkedin)) {
+          errors.push(`Team Member ${idx + 1}: Valid LinkedIn URL is required`);
+        }
+        if (!member.avatar) errors.push(`Team Member ${idx + 1}: Avatar is required`);
+      });
+    }
+
+    if (errors.length > 0) {
+      alert(`Please fix the following errors:\n${errors.join('\n')}`);
+      return;
+    }
+
     const formData = new FormData();
-    
-    // Append all form fields to FormData
-    Object.keys(form).forEach((key) => {
-      if (key === 'dealType') {
-        // Handle array for dealType
-        form[key].forEach((value, index) => {
-          formData.append(`${key}[${index}]`, value);
-        });
+
+    // Append required fields
+    requiredFields.forEach(field => {
+      const value = form[field.key];
+      if (field.key === 'project_location') {
+        formData.append(field.backendKey, value || '');
+      } else if (['minInvestment', 'maxInvestment', 'networth'].includes(field.key)) {
+        formData.append(field.backendKey, value.replace(/[^0-9.]/g, ''));
       } else {
-        formData.append(key, form[key]);
+        formData.append(field.backendKey, value);
       }
     });
 
-    // Call the Firebase Cloud Function
+    // Append deal_type as an array
+    formData.append('deal_type', JSON.stringify(form.dealType));
+
+    // Append optional fields
+    if (form.website) formData.append('website_link', form.website);
+    if (form.city) formData.append('city', form.city);
+    if (form.state) formData.append('state', form.state);
+    if (form.financialStatus) formData.append('financial_status', form.financialStatus);
+    if (form.businessHighlights) formData.append('bussiness_highlights', form.businessHighlights);
+    if (teamOverview) formData.append('team_overview', teamOverview);
+
+    // Append files
+    if (files.businessPlan?.file) formData.append('business_plan', files.businessPlan.file);
+    if (files.financialDocs?.file) formData.append('financial_statement', files.financialDocs.file);
+    if (files.executiveSummary?.file) formData.append('exective_sunnary', files.executiveSummary.file);
+    if (files.additionalDocs?.file) formData.append('additional_document', files.additionalDocs.file);
+    if (files.projectLogo?.file) formData.append('project_logo', files.projectLogo.file);
+    files.projectImages.forEach((img, idx) => {
+      formData.append('project_images', img.file);
+    });
+
+    // Append team members
+    teamMembers.forEach((member, idx) => {
+      formData.append(`member_name[${idx}]`, member.name);
+      formData.append(`linkedin_account[${idx}]`, member.linkedin);
+      formData.append(`member_position[${idx}]`, member.position);
+      formData.append(`member_bio[${idx}]`, member.bio);
+      if (member.avatar) formData.append(`member_image`, member.avatar);
+    });
+
+    // Log FormData for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
     const result = await createProject(formData);
-    
-    // Handle success (e.g., move to next step or show success message)
     console.log('Project created:', result);
-    setStep(step + 1); // Move to the next step in multi-step form
+    setStep(step + 1);
 
   } catch (error) {
     console.error('Error creating project:', error);
-    // Handle error (e.g., show error message to user)
+    const errorMessage = error.response?.data?.error || 'Failed to create project. Please check the form and try again.';
+    alert(`Submission failed:\n${errorMessage}`);
   }
 };
 
@@ -656,13 +764,19 @@ const handleSubmitProject = async () => {
   const Step1 = (
     <>
       <Title>General Information</Title>
-      <Label>Project Name</Label>
-      <Input
-        name="projectName"
-        value={form.projectName}
-        onChange={handleChange}
-        placeholder="Enter your project name"
-      />
+      <Label>Project Name <span style={{ color: 'red' }}>*</span></Label>
+<Input
+  name="projectName"
+  value={form.projectName}
+  onChange={handleChange}
+  placeholder="Enter your project name"
+  required
+/>
+{form.projectName.length < 3 && (
+  <span style={{ color: '#e3e3e', fontSize: '0.9rem' }}>
+    Project Name must be at least 3 characters
+  </span>
+)}
       <Label>Website Link</Label>
       <Input
         name="website"
@@ -670,26 +784,55 @@ const handleSubmitProject = async () => {
         onChange={handleChange}
         placeholder="https://example.com"
       />
-      <Row>
-        <div style={{ flex: 1 }}>
-          <Label>Minimum Investment</Label>
-          <Input
-            name="minInvestment"
-            value={form.minInvestment}
-            onChange={handleChange}
-            placeholder="$"
-          />
-        </div>
-        <div style={{ flex: 1 }}>
-          <Label>Maximum Investment</Label>
-          <Input
-            name="maxInvestment"
-            value={form.maxInvestment}
-            onChange={handleChange}
-            placeholder="$"
-          />
-        </div>
-      </Row>
+<Row>
+  <div style={{ flex: 1 }}>
+    <Label>Minimum Investment <span style={{ color: 'red' }}>*</span></Label>
+    <Input
+      name="minInvestment"
+      type="text"
+      value={form.minInvestment}
+      onChange={handleChange}
+      placeholder="100000"
+      required
+    />
+    {!form.minInvestment || isNaN(parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''))) ? (
+      <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+        Minimum Investment must be a valid number
+      </span>
+    ) : null}
+  </div>
+  <div style={{ flex: 1 }}>
+    <Label>Maximum Investment <span style={{ color: 'red' }}>*</span></Label>
+    <Input
+      name="maxInvestment"
+      type="text"
+      value={form.maxInvestment}
+      onChange={handleChange}
+      placeholder="1000000"
+      required
+    />
+    {!form.maxInvestment || isNaN(parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''))) ? (
+      <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+        Maximum Investment must be a valid number
+      </span>
+    ) : null}
+  </div>
+</Row>
+
+<Label>Net Worth <span style={{ color: 'red' }}>*</span></Label>
+<Input
+  name="networth"
+  type="text"
+  value={form.networth}
+  onChange={handleChange}
+  placeholder="500000"
+  required
+/>
+{!form.networth || isNaN(parseFloat(form.networth.replace(/[^0-9.]/g, ''))) ? (
+  <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+    Net Worth must be a valid number
+  </span>
+) : null}
       <Label>
         <StepCircle active style={{ width: 28, height: 28, fontSize: "1rem", marginRight: 7, marginBottom: 0 }}>1</StepCircle>
         Project Industry
@@ -702,11 +845,37 @@ const handleSubmitProject = async () => {
         onChange={handleChange}
         placeholder="e.g. Technology, Healthcare, Real Estate"
       />
-      <Label>Project Location</Label>
-      <CountrySelect
-          value={form.project_location || null}
-          onChange={(selectedOption) => handleChange(null, selectedOption)}
-        />
+<Label>Project Location</Label>
+<select
+  name="project_location"
+  value={form.project_location}
+  onChange={handleChange}
+  required
+  style={{
+    width: '100%',
+    padding: '15px 18px',
+    border: '1.5px solid #e3e8f0',
+    borderRadius: '9px',
+    fontSize: '1.08rem',
+    marginBottom: '24px',
+    outline: 'none',
+    color: '#222',
+  }}
+>
+  <option value="">Select a country</option>
+  {countries.map((country) => (
+    <option key={country} value={country}>
+      {country}
+    </option>
+  ))}
+</select>
+
+{!form.project_location && (
+  <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+    Project Location is required
+  </span>
+)}
+
       <Row>
         <div style={{ flex: 1 }}>
           <Label>City</Label>
@@ -819,13 +988,34 @@ const handleSubmitProject = async () => {
         </div>
 
         <div style={{ flex: 1 }}>
-          <Label>Project Stage</Label>
-          <Input
+        <Label>Project Stage <span style={{ color: 'red' }}>*</span></Label>
+          <select
             name="stage"
             value={form.stage}
             onChange={handleChange}
-            placeholder="e.g. Seed, Series A, Growth"
-          />
+            style={{
+              width: '100%',
+              padding: '15px 18px',
+              border: '1.5px solid #e3e8f0',
+              borderRadius: '9px',
+              fontSize: '1.08rem',
+              marginBottom: '24px',
+              outline: 'none',
+              color: '#222',
+            }}
+            required
+          >
+            <option value="" disabled>Select a stage</option>
+            <option value="Seed">Seed</option>
+            <option value="Series A">Series A</option>
+            <option value="Series B">Series B</option>
+            <option value="Growth">Growth</option>
+          </select>
+          {!form.stage && (
+            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+              Project Stage is required
+            </span>
+          )}
         </div>
 
       </Row>
@@ -840,13 +1030,18 @@ const handleSubmitProject = async () => {
   const Step2 = (
     <>
       <Title>Business Description</Title>
-      <Label>Market Description</Label>
-      <StyledTextarea
-        name="marketDescription"
-        value={form.marketDescription}
-        onChange={handleChange}
-        placeholder="Describe your target market, industry trends, and competitive landscape..."
-      />
+      <Label>Market Description <span style={{ color: 'red' }}>*</span></Label>
+<StyledTextarea
+  name="marketDescription"
+  value={form.marketDescription}
+  onChange={handleChange}
+  placeholder="Describe your target market, industry trends, and competitive landscape..."
+/>
+{form.marketDescription.length < 50 && (
+  <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+    Market Description must be at least 50 characters
+  </span>
+)}
       <Label>Business Highlights</Label>
       <StyledTextarea
         name="businessHighlights"

@@ -1164,11 +1164,16 @@ export const useFunctions = () => {
       toast.success('Project created successfully!');
       return response.data;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
-      console.error('Create project error:', err.response?.data || err);
+      console.error('Create project error:', err);
+      let errorMessage = 'An error occurred. Please try again.';
+      if (err.code === 'ERR_NETWORK') {
+        errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
+      } else if (err.response) {
+        errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
+      }
       setError(errorMessage);
       toast.error(errorMessage);
-      throw err;
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }

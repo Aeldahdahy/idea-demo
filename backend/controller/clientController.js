@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
+const fs = require('fs');
 const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
 
 
@@ -772,15 +773,16 @@ const deleteProject = async (req, res) => {
 // Create Blog
 const createBlog = async (req, res) => {
   try {
-    const { blog_description } = req.body;
+    const { blog_title, blog_description } = req.body;
 
-    if (!blog_description) {
-      return res.status(400).json({ message: 'Blog description is required' });
+    if (!blog_title || !blog_description) {
+      return res.status(400).json({ message: 'Blog title and description are required' });
     }
 
     const blog_image = req.file ? req.file.path : null;
 
     const newBlog = new Blog({
+      blog_title,
       blog_description,
       blog_image,
     });
@@ -800,9 +802,8 @@ const createBlog = async (req, res) => {
 const updateBlog = async (req, res) => {
   try {
     const { id: blogId } = req.params;
-    const { blog_description, status } = req.body;
+    const { blog_title, blog_description, status } = req.body;
 
-    // Validate status
     const validStatuses = ['Active', 'Inactive'];
     if (status && !validStatuses.includes(status)) {
       return res.status(400).json({
@@ -811,7 +812,6 @@ const updateBlog = async (req, res) => {
       });
     }
 
-    // Find existing blog
     const blog = await Blog.findById(blogId);
     if (!blog) {
       return res.status(404).json({
@@ -820,20 +820,21 @@ const updateBlog = async (req, res) => {
       });
     }
 
-    // Handle image replacement if a new file is uploaded
     let blog_image = blog.blog_image;
     if (req.file) {
+      if (blog.blog_image && fs.existsSync(blog.blog_image)) {
+        fs.unlinkSync(blog.blog_image);
+      }
       blog_image = req.file.path;
     }
 
-    // Prepare update fields
     const updatedData = {
+      blog_title: blog_title || blog.blog_title,
       blog_description: blog_description || blog.blog_description,
       blog_image,
       status: status || blog.status
     };
 
-    // Update the blog
     const updatedBlog = await Blog.findByIdAndUpdate(blogId, updatedData, {
       new: true,
       runValidators: true
@@ -848,6 +849,25 @@ const updateBlog = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error updating blog',
+      error: error.message
+    });
+  }
+};
+
+// Get all blogs
+const getAllBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 }); // Latest first
+
+    res.status(200).json({
+      success: true,
+      count: blogs.length,
+      blogs
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching blogs',
       error: error.message
     });
   }
@@ -874,5 +894,6 @@ module.exports =
   deleteProject,
   updateUserById,
   createBlog,
-  updateBlog
+  updateBlog,
+  getAllBlogs
 };

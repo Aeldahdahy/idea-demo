@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const blogSchema = new mongoose.Schema({
+  blog_title: {
+    type: String,
+    required: [true, 'Blog title is required'],
+    trim: true
+  },
   blog_image: {
     type: String, 
     default: null

@@ -24,7 +24,8 @@ const { createContact,
    deleteProject,
    updateUserById,
    createBlog,
-   updateBlog } = require('../controller/clientController'); 
+   updateBlog,
+   getAllBlogs } = require('../controller/clientController'); 
 
 const { createStaff,
    loginStaff,
@@ -158,5 +159,8 @@ router.post('/blog', blogUpload.single('blog_image'), authenticateToken, createB
 
 // Update Blog
 router.put('/blog/:id', blogUpload.single('blog_image'), authenticateToken, updateBlog);
+
+// Get All blogs
+router.get('/blog', getAllBlogs);
 
 module.exports = router;

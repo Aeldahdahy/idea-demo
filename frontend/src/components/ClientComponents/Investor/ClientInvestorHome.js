@@ -3,7 +3,7 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import CustomCard from "./CustomeCard";
+import Card from "../../Common/Card";
 import { useFunctions } from "../../../useFunctions";
 
 function ClientInvestorHome() {
@@ -24,7 +24,7 @@ function ClientInvestorHome() {
     getAllProjects().catch((err) => {
       toast.error(`Failed to load projects: ${err.message}`);
     });
-  }, [getAllProjects]);
+  }, []);
 
   // Handle retry on error
   const handleRetry = () => {
@@ -52,7 +52,7 @@ function ClientInvestorHome() {
       <Row xs={1} sm={2} md={3} lg={4} className="g-4">
         {project.map((project) => (
           <Col key={project._id}>
-            <CustomCard project={project} />
+            <Card project={project} />
           </Col>
         ))}
       </Row>

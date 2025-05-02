@@ -1,5 +1,8 @@
 import React from 'react';
 import { useFunctions } from '../../useFunctions.js'; // Adjust the import path as necessary
+import { Link } from "react-router-dom";
+import { encryptId } from "../../Security/encryptionUtils";
+
 
 function Card({ project, errorFetching }) {
   const { API_BASE_URL } = useFunctions();
@@ -11,9 +14,29 @@ function Card({ project, errorFetching }) {
     <div className={`bg-gray-200 animate-pulse rounded ${className}`}></div>
   );
 
+    // Encrypt the project ID for the URL
+    let encryptedProjectId;
+    try {
+      encryptedProjectId = encryptId(project._id);
+    } catch (error) {
+      console.error('Failed to encrypt project ID:', error);
+      return (
+        <Card
+          className="shadow-sm overflow-hidden"
+          style={{ backgroundColor: "#e6ebf5", maxWidth: "28rem", margin: "0 auto", borderRadius: "0.75rem" }}
+        >
+          <Card.Body className="p-4">
+            <p style={{ color: 'red', textAlign: 'center' }}>
+              Error: Unable to load project link due to encryption failure.
+            </p>
+          </Card.Body>
+        </Card>
+      );
+    }
+
   if (isLoading) {
     return (
-      <div className="max-w-sm w-full h-[600px] bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
+      <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
         {/* Ribbon Placeholder */}
         <div className="absolute top-0 right-0 bg-gray-200 text-gray-200 text-xs font-bold px-2 py-1 rounded-bl-lg">
           LOADING
@@ -73,7 +96,7 @@ function Card({ project, errorFetching }) {
     : null;
 
   return (
-    <div className="max-w-sm w-full h-[600px] bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
+    <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
       {/* Ribbon */}
       <div className="absolute top-0 right-0 bg-orange-400 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
         {project.project_stage || 'SEED STAGE'}
@@ -141,22 +164,24 @@ function Card({ project, errorFetching }) {
         <div className="flex justify-between mt-4 text-gray-800">
           <div>
             <p className="text-lg font-bold">
-              {project.max_investment || 'N/A'}
+              {`${project.max_investment} EGP` || 'N/A'}
             </p>
             <p className="text-xs text-gray-500">Total Required</p>
           </div>
           <div>
             <p className="text-lg font-bold">
-              {project.min_investment || 'N/A'}
+              {`${project.min_investment} EGP` || 'N/A'}
             </p>
             <p className="text-xs text-gray-500">Min per Investor</p>
           </div>
         </div>
 
         {/* Button */}
-        <button className="w-full mt-4 bg-blue-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
+        <Link
+          to={`/client-portal/investor/viewProject/${encryptedProjectId}`}
+          className="w-full mt-4 bg-blue-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-blue-700 transition text-center">
           FIND OUT MORE
-        </button>
+        </Link> 
       </div>
     </div>
   );

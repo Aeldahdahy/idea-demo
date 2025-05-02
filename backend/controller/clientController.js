@@ -504,11 +504,26 @@ const updateContactStatus = async (req, res) => {
 const createProject = async (req, res) => {
   try {
     const {
-      project_name, project_industry, max_investment, min_investment,
-      city, state, postal_code, market_description, business_objectives,
-      project_stage, networth, deal_type, website_link,
-      bussiness_highlights, financial_status, business_description,
-      team_overview // Don't forget to get team_overview if you're using it
+      project_name,
+      project_industry,
+      max_investment,
+      min_investment,
+      city,
+      state,
+      postal_code,
+      market_description,
+      business_objectives,
+      project_stage,
+      networth,
+      deal_type,
+      website_link,
+      bussiness_highlights,
+      financial_status,
+      team_overview,
+      member_name,
+      linkedin_account,
+      member_position,
+      member_bio,
     } = req.body;
 
     // File uploads from middleware
@@ -526,26 +541,58 @@ const createProject = async (req, res) => {
     const user_id = req.user.user.id;
     const user_name = req.user.user.fullName;
 
+    // Parse deal_type if it's a JSON string
+    let dealTypeArray = [];
+    if (deal_type) {
+      try {
+        dealTypeArray = JSON.parse(deal_type);
+        if (!Array.isArray(dealTypeArray)) {
+          dealTypeArray = [dealTypeArray];
+        }
+      } catch (e) {
+        dealTypeArray = Array.isArray(deal_type) ? deal_type : deal_type ? [deal_type] : [];
+      }
+    }
+
     // Build team_members array
     let team_members = [];
-
-    if (Array.isArray(req.body.member_name)) {
-      // Multiple members (member_name, member_position, etc. are arrays)
-      team_members = req.body.member_name.map((_, index) => ({
-        member_name: req.body.member_name[index],
-        linkedin_account: req.body.linkedin_account[index],
-        member_position: req.body.member_position[index],
-        member_bio: req.body.member_bio[index],
-        member_image: member_images[index] || null
+    if (Array.isArray(member_name)) {
+      team_members = member_name.map((name, index) => ({
+        member_name: name,
+        linkedin_account: linkedin_account[index],
+        member_position: member_position[index],
+        member_bio: member_bio[index],
+        member_image: member_images[index] || null,
       }));
-    } else if (req.body.member_name) {
-      // Single member (not an array)
+    } else if (member_name) {
       team_members.push({
-        member_name: req.body.member_name,
-        linkedin_account: req.body.linkedin_account,
-        member_position: req.body.member_position,
-        member_bio: req.body.member_bio,
-        member_image: member_images[0] || null
+        member_name,
+        linkedin_account,
+        member_position,
+        member_bio,
+        member_image: member_images[0] || null,
+      });
+    }
+
+    // Validate required fields
+    const requiredFields = {
+      project_name,
+      project_industry,
+      max_investment,
+      min_investment,
+      market_description,
+      business_objectives,
+      project_stage,
+      networth,
+      deal_type: dealTypeArray,
+      postal_code,
+    };
+
+    const missingFields = Object.keys(requiredFields).filter(key => !requiredFields[key]);
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(', ')}`,
       });
     }
 
@@ -557,8 +604,9 @@ const createProject = async (req, res) => {
       project_industry,
       max_investment,
       min_investment,
-      city,
-      state,
+      project_location: req.body.project_location || '',
+      city: city || '',
+      state: state || '',
       postal_code,
       market_description,
       business_objectives,
@@ -570,27 +618,27 @@ const createProject = async (req, res) => {
       project_logo,
       project_stage,
       networth,
-      deal_type,
+      deal_type: dealTypeArray,
       website_link,
       bussiness_highlights,
       financial_status,
-      business_description,
       team_overview,
-      team_members, // 🔥 New team_members field set
-      status: 'Rejected' 
+      team_members,
+      status: 'Rejected',
     });
 
     await newProject.save();
     res.status(201).json({
       success: true,
       message: 'Project created successfully',
-      data: newProject
+      data: newProject,
     });
   } catch (error) {
+    console.error('Error creating project:', error);
     res.status(500).json({
       success: false,
       message: 'Error creating project',
-      error: error.message
+      error: error.message,
     });
   }
 };

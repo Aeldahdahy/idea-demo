@@ -1,5 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
+// import {
+//   CountrySelect,
+// } from "react-country-state-city";
+import { initFlowbite } from "flowbite"; // Import Flowbite JS for dropdown functionality
+import "react-country-state-city/dist/react-country-state-city.css";
+import { useFunctions } from '../../../useFunctions';
 
 // --- Styled Components ---
 const TeamSection = styled.div`
@@ -259,27 +265,27 @@ const Label = styled.label`
   letter-spacing: 0.01em;
 `;
 
-const InfoIcon = styled.span`
-  background: #2563eb;
-  color: #fff;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-left: 7px;
-  margin-right: 2px;
-`;
+// const InfoIcon = styled.span`
+//   background: #2563eb;
+//   color: #fff;
+//   border-radius: 50%;
+//   width: 22px;
+//   height: 22px;
+//   display: inline-flex;
+//   align-items: center;
+//   justify-content: center;
+//   font-weight: bold;
+//   font-size: 1.1rem;
+//   margin-left: 7px;
+//   margin-right: 2px;
+// `;
 
-const InfoText = styled.span`
-  font-size: 0.98rem;
-  color: #2563eb;
-  margin-left: 8px;
-  font-weight: 500;
-`;
+// const InfoText = styled.span`
+//   font-size: 0.98rem;
+//   color: #2563eb;
+//   margin-left: 8px;
+//   font-weight: 500;
+// `;
 
 const Input = styled.input`
   width: 100%;
@@ -298,17 +304,17 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
-  width: 100%;
-  padding: 15px 18px;
-  border: 1.5px solid #e3e8f0;
-  border-radius: 9px;
-  background: #fff;
-  font-size: 1.08rem;
-  margin-bottom: 24px;
-  outline: none;
-  color: #222;
-`;
+// const Select = styled.select`
+//   width: 100%;
+//   padding: 15px 18px;
+//   border: 1.5px solid #e3e8f0;
+//   border-radius: 9px;
+//   background: #fff;
+//   font-size: 1.08rem;
+//   margin-bottom: 24px;
+//   outline: none;
+//   color: #222;
+// `;
 
 const Row = styled.div`
   display: flex;
@@ -467,8 +473,33 @@ const steps = [
   "Team Description"
 ];
 
+const countries = [
+  "United States",
+  "Canada",
+  "United Kingdom",
+  "Germany",
+  "France",
+  "Egypt",
+  "India",
+  "Australia",
+  "Brazil",
+  "China",
+  "Japan"
+];
+
+// Industry options
+const industryOptions = [
+  'Agriculture', 'Entertainment & Leisure', 'Food & Beverage', 'Media',
+  'Products & Inventions', 'Sales & Marketing', 'Transportation', 'Software',
+  'Education & Training', 'Fashion & Beauty', 'Hospitality, Restaurants & Bars', 'Energy & Natural Resources',
+  'Medical & Sciences', 'Finance', 'Manufacturing & Engineering', 'Personal Services',
+  'Property', 'Retail', 'Technology', 'Business Services'
+];
+
 // --- Main Component ---
 function ClientEntreProjectData() {
+  const { createProject } = useFunctions();
+
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     projectName: "",
@@ -476,12 +507,13 @@ function ClientEntreProjectData() {
     minInvestment: "",
     maxInvestment: "",
     industry: "",
-    location: "",
+    project_location: "",
     city: "",
     state: "",
     zip: "",
     stage: "",
-    dealType: "",
+    dealType: [],
+    networth: "",
     marketDescription: "",
     businessHighlights: "",
     financialStatus: "",
@@ -493,14 +525,41 @@ function ClientEntreProjectData() {
     financialDocs: null,
     executiveSummary: null,
     additionalDocs: null,
-    projectImages: []
+    projectImages: [],
+    projectLogo: null 
   });
+
+  useEffect(() => {
+    initFlowbite();
+  }, []);
+
+  const dealTypeOptions = [
+    { id: "deal-type-equity", value: "equity", label: "Equity" },
+    { id: "deal-type-debt", value: "debt", label: "Debt" },
+    { id: "deal-type-grant", value: "grant", label: "Grant" }
+  ];
+
+  const handleCheckboxChange = (value) => {
+    setForm((prevForm) => {
+      const currentDealTypes = prevForm.dealType;
+      const updatedDealTypes = currentDealTypes.includes(value)
+        ? currentDealTypes.filter((type) => type !== value) // Remove if already selected
+        : [...currentDealTypes, value]; // Add if not selected
+      return { ...prevForm, dealType: updatedDealTypes };
+    });
+  };
 
   // Handle input change
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (['minInvestment', 'maxInvestment', 'networth'].includes(name)) {
+      const cleanedValue = value.replace(/[^0-9.]/g, '');
+      setForm({ ...form, [name]: cleanedValue });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
-
+  
   const handleFileChange = (e, key) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -588,17 +647,207 @@ const removeTeamMember = (idx) => {
   setTeamMembers(members => members.filter((_, i) => i !== idx));
 };
 
+const handleSubmitProject = async () => {
+  try {
+    const requiredFields = [
+      {  
+        key: 'projectName',
+        label: 'Project Name',
+        backendKey: 'project_name',
+        validate: val => val.length >= 3,
+        error: 'Project Name must be at least 3 characters' 
+      },
+      { 
+        key: 'industry',
+        label: 'Project Industry',
+        backendKey: 'project_industry',
+        validate: val => val.length >= 3,
+        error: 'Industry must be at least 3 characters' 
+      },
+      { 
+        key: 'minInvestment',
+        label: 'Minimum per Investment', 
+        backendKey: 'min_investment', 
+        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+        error: 'Minimum per Investment must be a number' 
+      },
+      { 
+        key: 'maxInvestment', 
+        label: 'Target Investment', 
+        backendKey: 'max_investment', 
+        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+        error: 'Target Investment must be a number' },
+      { 
+        key: 'zip', 
+        label: 'Postal Code', 
+        backendKey: 'postal_code', 
+        validate: val => /^[0-9]{5}$/.test(val), 
+        error: 'Postal Code must be a 5-digit number' },
+      { 
+        key: 'marketDescription', 
+        label: 'Market Description', 
+        backendKey: 'market_description', 
+        validate: val => val.length >= 50, 
+        error: 'Market Description must be at least 50 characters' },
+      { 
+        key: 'businessObjectives', 
+        label: 'Business Objectives', 
+        backendKey: 'business_objectives', 
+        validate: val => val.length >= 50, 
+        error: 'Business Objectives must be at least 50 characters' },
+      { 
+        key: 'stage', 
+        label: 'Project Stage', 
+        backendKey: 'project_stage', 
+        validate: val => ['Seed', 'Series A', 'Series B', 'Growth'].includes(val), 
+        error: 'Project Stage must be a valid stage (e.g., Seed, Series A)' },
+      { 
+        key: 'networth', 
+        label: 'Net Worth', 
+        backendKey: 'networth', 
+        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+        error: 'Net Worth must be a number' },
+      { 
+        key: 'project_location', 
+        label: 'Project Location', 
+        backendKey: 'project_location', 
+        validate: val => val.length > 0, 
+        error: 'Project Location is required' 
+      },
+      { 
+        key: 'industry', 
+        label: 'Industry', 
+        backendKey: 'industry', 
+        validate: val => val.length > 0, 
+        error: 'Project Industry is required' 
+      },
+    ];
+
+    const errors = requiredFields
+      .map(field => {
+        const value = form[field.key];
+        if (!value || value.trim() === '') return `${field.label} is required`;
+        if (field.validate && !field.validate(value)) return field.error;
+        return null;
+      })
+      .filter(error => error);
+
+    // Validate website if provided
+    if (form.website && !/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(form.website)) {
+      errors.push('Website must be a valid URL (e.g., https://example.com)');
+    }
+
+    // Ensure maxInvestment > minInvestment
+    const minInv = parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''));
+    const maxInv = parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''));
+    if (!isNaN(minInv) && !isNaN(maxInv) && maxInv <= minInv) {
+      errors.push('Target Investment must be greater than Minimum per Investment');
+    }
+
+    // Validate team members
+    if (teamMembers.length === 0) {
+      errors.push('At least one team member is required');
+    } else {
+      teamMembers.forEach((member, idx) => {
+        if (!member.name) errors.push(`Team Member ${idx + 1}: Name is required`);
+        if (!member.position) errors.push(`Team Member ${idx + 1}: Position is required`);
+        if (!member.bio) errors.push(`Team Member ${idx + 1}: Bio is required`);
+        if (!member.linkedin || !/^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(member.linkedin)) {
+          errors.push(`Team Member ${idx + 1}: Valid LinkedIn URL is required`);
+        }
+        if (!member.avatar) errors.push(`Team Member ${idx + 1}: Avatar is required`);
+      });
+    }
+
+    if (errors.length > 0) {
+      alert(`Please fix the following errors:\n${errors.join('\n')}`);
+      return;
+    }
+
+    const formData = new FormData();
+
+    // Append required fields
+    requiredFields.forEach(field => {
+      const value = form[field.key];
+      if (field.key === 'project_location') {
+        formData.append(field.backendKey, value || '');
+      } else if (field.key === 'industry') {
+        formData.append(field.backendKey, value || '');
+      } else if (['minInvestment', 'maxInvestment', 'networth'].includes(field.key)) {
+        formData.append(field.backendKey, value.replace(/[^0-9.]/g, ''));
+      } else {
+        formData.append(field.backendKey, value);
+      }
+    });
+
+    // Append deal_type as an array
+    formData.append('deal_type', JSON.stringify(form.dealType));
+
+    // Append optional fields
+    if (form.website) formData.append('website_link', form.website);
+    if (form.city) formData.append('city', form.city);
+    if (form.state) formData.append('state', form.state);
+    if (form.financialStatus) formData.append('financial_status', form.financialStatus);
+    if (form.businessHighlights) formData.append('bussiness_highlights', form.businessHighlights);
+    if (teamOverview) formData.append('team_overview', teamOverview);
+
+    // Append files
+    if (files.businessPlan?.file) formData.append('business_plan', files.businessPlan.file);
+    if (files.financialDocs?.file) formData.append('financial_statement', files.financialDocs.file);
+    if (files.executiveSummary?.file) formData.append('exective_sunnary', files.executiveSummary.file);
+    if (files.additionalDocs?.file) formData.append('additional_document', files.additionalDocs.file);
+    if (files.projectLogo?.file) formData.append('project_logo', files.projectLogo.file);
+    files.projectImages.forEach((img, idx) => {
+      formData.append('project_images', img.file);
+    });
+
+    // Append team members
+    teamMembers.forEach((member, idx) => {
+      formData.append(`member_name[${idx}]`, member.name);
+      formData.append(`linkedin_account[${idx}]`, member.linkedin);
+      formData.append(`member_position[${idx}]`, member.position);
+      formData.append(`member_bio[${idx}]`, member.bio);
+      if (member.avatar) formData.append(`member_image`, member.avatar);
+    });
+
+    // Log FormData for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+    const result = await createProject(formData);
+    console.log('Project created:', result);
+    setStep(step + 1);
+
+  } catch (error) {
+    console.error('Error creating project:', error);
+    const errorMessage = error.response?.data?.error || 'Failed to create project. Please check the form and try again.';
+    alert(`Submission failed:\n${errorMessage}`);
+  }
+};
+
   // Step 1: General Information
   const Step1 = (
     <>
       <Title>General Information</Title>
-      <Label>Project Name</Label>
+      {form.projectName && form.projectName.length < 3 && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Project Name must be at least 3 characters
+        </span>
+      )}
+      <Label>Project Name <span style={{ color: 'red' }}>*</span></Label>
       <Input
         name="projectName"
         value={form.projectName}
         onChange={handleChange}
         placeholder="Enter your project name"
+        required
       />
+      {form.website && !/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(form.website) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Website must be a valid URL (e.g., https://example.com)
+        </span>
+      )}
       <Label>Website Link</Label>
       <Input
         name="website"
@@ -608,43 +857,110 @@ const removeTeamMember = (idx) => {
       />
       <Row>
         <div style={{ flex: 1 }}>
-          <Label>Minimum Investment</Label>
+        {form.minInvestment && (isNaN(parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''))) || form.minInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+              Minimum per Investment must be a valid number (e.g., 1000 or 1000.50)
+            </span>
+          )}
+          <Label>Minimum per Investment in EGP <span style={{ color: 'red' }}>*</span></Label>
           <Input
             name="minInvestment"
+            type="text"
             value={form.minInvestment}
             onChange={handleChange}
-            placeholder="$"
+            placeholder="100000"
+            required
           />
         </div>
         <div style={{ flex: 1 }}>
-          <Label>Maximum Investment</Label>
+        {form.maxInvestment && (isNaN(parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''))) || form.maxInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+              Target Investment must be a valid number (e.g., 1000 or 1000.50)
+            </span>
+          )}
+          <Label>Target Investment in EGP <span style={{ color: 'red' }}>*</span></Label>
           <Input
             name="maxInvestment"
+            type="text"
             value={form.maxInvestment}
             onChange={handleChange}
-            placeholder="$"
+            placeholder="1000000"
+            required
           />
         </div>
       </Row>
-      <Label>
-        <StepCircle active style={{ width: 28, height: 28, fontSize: "1rem", marginRight: 7, marginBottom: 0 }}>1</StepCircle>
-        Project Industry
-        <InfoIcon>i</InfoIcon>
-        <InfoText>e.g. Technology, Healthcare, Real Estate</InfoText>
-      </Label>
+      {form.networth && (isNaN(parseFloat(form.networth.replace(/[^0-9.]/g, ''))) || form.networth.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Net Worth must be a valid number (e.g., 500000 or 500000.50)
+        </span>
+      )}
+      <Label>Net Worth <span style={{ color: 'red' }}>*</span></Label>
       <Input
+        name="networth"
+        type="text"
+        value={form.networth}
+        onChange={handleChange}
+        placeholder="500000"
+        required
+      />
+      {form.industry && !industryOptions.includes(form.industry) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Please select a valid industry
+        </span>
+      )}
+      <Label>Project Industry</Label>
+      <select
         name="industry"
         value={form.industry}
         onChange={handleChange}
-        placeholder="e.g. Technology, Healthcare, Real Estate"
-      />
+        required
+        style={{
+          width: '100%',
+          padding: '15px 18px',
+          border: '1.5px solid #e3e8f0',
+          borderRadius: '9px',
+          fontSize: '1.08rem',
+          marginBottom: '24px',
+          outline: 'none',
+          color: '#222',
+        }}
+      >
+        <option value="">Select a industry</option>
+        {industryOptions.map((industry) => (
+          <option key={industry} value={industry}>
+            {industry}
+          </option>
+        ))}
+      </select>     
+      {form.project_location && !countries.includes(form.project_location) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Please select a valid country
+        </span>
+      )}
       <Label>Project Location</Label>
-      <Input
-        name="location"
-        value={form.location}
+      <select
+        name="project_location"
+        value={form.project_location}
         onChange={handleChange}
-        placeholder="Country"
-      />
+        required
+        style={{
+          width: '100%',
+          padding: '15px 18px',
+          border: '1.5px solid #e3e8f0',
+          borderRadius: '9px',
+          fontSize: '1.08rem',
+          marginBottom: '24px',
+          outline: 'none',
+          color: '#222',
+        }}
+      >
+        <option value="">Select a country</option>
+        {countries.map((country) => (
+          <option key={country} value={country}>
+            {country}
+          </option>
+        ))}
+      </select>
       <Row>
         <div style={{ flex: 1 }}>
           <Label>City</Label>
@@ -656,7 +972,7 @@ const removeTeamMember = (idx) => {
           />
         </div>
         <div style={{ flex: 1 }}>
-          <Label>State / Province / Region</Label>
+          <Label>District</Label>
           <Input
             name="state"
             value={form.state}
@@ -675,28 +991,119 @@ const removeTeamMember = (idx) => {
         </div>
       </Row>
       <Row>
+      <div  style={{ flex: 1 }}>
+        <Label>Deal Type <span style={{ color: 'red' }}>*</span></Label>
+          <button
+          id="dropdownHelperButton"
+          data-dropdown-toggle="dropdownHelper"
+          className="
+          text-black
+          bg-white-700 
+          hover:bg-white-800 
+          focus:ring-4 
+          focus:outline-none 
+          focus:ring-blue-300 
+          font-medium 
+          rounded-lg 
+          text-sm px-2 
+          py-3 text-left 
+          inline-flex 
+          items-center 
+          dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-gray-300 w-100 justify-between"
+          type="button"
+        >
+          Select Deal Type
+          <svg
+            className="w-2.5 h-2.5 ms-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="m1 1 4 4 4-4"
+            />
+          </svg>
+          </button>
+
+        {/* Dropdown menu */}
+        <div
+          id="dropdownHelper"
+          className="absolute z-10 hidden bg-blue-800 divide-y divide-blue-700 rounded-lg shadow-sm w-60 dark:bg-blue-700 dark:divide-blue-600 top-full mt-1 left-0 max-h-64 overflow-y-auto"
+        >
+          <ul
+            className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownHelperButton"
+          >
+          {dealTypeOptions.map((option) => (
+            <li key={option.id}>
+              <div className="flex p-2 rounded-sm hover:bg-blue-500">
+                <div className="flex items-center h-5">
+                  <input
+                    id={option.id}
+                    type="checkbox"
+                    value={option.value}
+                    checked={form.dealType.includes(option.value)}
+                    onChange={() => handleCheckboxChange(option.value)}
+                    className="w-4 h-4 text-blue-300 bg-blue-700 border-blue-300 rounded-sm focus:ring-blue-400 dark:focus:ring-blue-500 dark:ring-offset-blue-700 dark:focus:ring-offset-blue-700 focus:ring-2 dark:bg-blue-600 dark:border-blue-500"
+                  />
+                </div>
+                <div className="ms-2 text-sm">
+                  <label
+                    htmlFor={option.id}
+                    className="font-medium text-white"
+                  >
+                    <div>{option.label}</div>
+                    <p
+                      id={`${option.id}-text`}
+                      className="text-xs font-normal text-white"
+                    >
+                      Select {option.label} deal type
+                    </p>
+                  </label>
+                </div>
+              </div>
+            </li>
+          ))}
+          </ul>
+        </div>
+        </div>
+
         <div style={{ flex: 1 }}>
-          <Label>Project Stage</Label>
-          <Input
+        {form.stage && !['Seed', 'Series A', 'Series B', 'Growth'].includes(form.stage) && (
+            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+              Please select a valid stage
+            </span>
+          )}
+        <Label>Project Stage <span style={{ color: 'red' }}>*</span></Label>
+          <select
             name="stage"
             value={form.stage}
             onChange={handleChange}
-            placeholder="e.g. Seed, Series A, Growth"
-          />
-        </div>
-        <div style={{ flex: 1 }}>
-          <Label>Deal Type</Label>
-          <Select
-            name="dealType"
-            value={form.dealType}
-            onChange={handleChange}
+            style={{
+              width: '100%',
+              padding: '15px 18px',
+              border: '1.5px solid #e3e8f0',
+              borderRadius: '9px',
+              fontSize: '1.08rem',
+              marginBottom: '24px',
+              outline: 'none',
+              color: '#222',
+            }}
+            required
           >
-            <option value="">Select deal type</option>
-            <option value="equity">Equity</option>
-            <option value="debt">Debt</option>
-            <option value="grant">Grant</option>
-          </Select>
+            <option value="" disabled>Select a stage</option>
+            <option value="Seed">Seed</option>
+            <option value="Series A">Series A</option>
+            <option value="Series B">Series B</option>
+            <option value="Growth">Growth</option>
+          </select>
         </div>
+
       </Row>
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)} disabled={step === 0}>Back</Button>
@@ -709,13 +1116,18 @@ const removeTeamMember = (idx) => {
   const Step2 = (
     <>
       <Title>Business Description</Title>
-      <Label>Market Description</Label>
-      <StyledTextarea
-        name="marketDescription"
-        value={form.marketDescription}
-        onChange={handleChange}
-        placeholder="Describe your target market, industry trends, and competitive landscape..."
-      />
+      <Label>Market Description <span style={{ color: 'red' }}>*</span></Label>
+<StyledTextarea
+  name="marketDescription"
+  value={form.marketDescription}
+  onChange={handleChange}
+  placeholder="Describe your target market, industry trends, and competitive landscape..."
+/>
+{form.marketDescription.length < 50 && (
+  <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+    Market Description must be at least 50 characters
+  </span>
+)}
       <Label>Business Highlights</Label>
       <StyledTextarea
         name="businessHighlights"
@@ -860,6 +1272,36 @@ const removeTeamMember = (idx) => {
           )}
         </DocBox>
       </DocSection>
+
+        <DocSection>
+          <DocLabel>
+            <DocIcon>🖼️</DocIcon> Project Logo
+          </DocLabel>
+          <DocBox>
+            {files.projectLogo && files.projectLogo.file ? (
+              <PreviewBox>
+                <ImageThumb src={files.projectLogo.preview} alt="logo preview" />
+                <span>{files.projectLogo.file.name}</span>
+                <RemoveBtn onClick={() => handleRemoveFile("projectLogo")}>✖</RemoveBtn>
+              </PreviewBox>
+            ) : (
+              <>
+                <DocInfo>( File accepted: .jpg,.jpeg,.png,.gif - Max file size: 5MB for demo limit )</DocInfo>
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.gif"
+                  style={{ display: "none" }}
+                  id="projectLogo"
+                  onChange={e => handleFileChange(e, "projectLogo")}
+                />
+                <UploadBtn htmlFor="projectLogo">
+                  Upload The Logo
+                </UploadBtn>
+              </>
+            )}
+          </DocBox>
+        </DocSection>
+
       <DocSection>
         <DocLabel>
           <DocIcon>🖼️</DocIcon> Project Images
@@ -898,12 +1340,13 @@ const removeTeamMember = (idx) => {
                 onChange={handleImagesChange}
               />
               <UploadBtn htmlFor="projectImages">
-                Upload The Documents
+                Upload The images
               </UploadBtn>
             </>
           )}
         </DocBox>
       </DocSection>
+
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)}>Back</Button>
         <Button primary onClick={() => setStep(step + 1)}>Next</Button>
@@ -994,7 +1437,7 @@ const removeTeamMember = (idx) => {
         <ButtonRow>
       <TeamActions>
         <Button onClick={() => setStep(step - 1)}>Back</Button>
-        <CreateBtn primary>Create Pitch</CreateBtn>
+        <CreateBtn primary onClick={handleSubmitProject}>Create Pitch</CreateBtn>
       </TeamActions>
         </ButtonRow>
     </>

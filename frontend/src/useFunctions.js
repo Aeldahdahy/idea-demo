@@ -1185,6 +1185,35 @@ const getAllReviews = useCallback(async () => {
     }
   };
 
+  const createProject = async (projectData) => {
+    setLoading(true);
+    setError(null);
+    const authToken = localStorage.getItem('authToken');
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/projects`, projectData, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.status !== 201) {
+        throw new Error('Failed to create project');
+      }
+      toast.success('Project created successfully!');
+      return response.data;
+    } catch (err) {
+      console.error('Create project error:', err);
+      let errorMessage = 'An error occurred. Please try again.';
+      if (err.code === 'ERR_NETWORK') {
+        errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
+      } else if (err.response) {
+        errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
+      }
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const validate = (formType, name, value, formData) => {
     let errors = { ...formError };
 
@@ -1272,6 +1301,7 @@ const getAllReviews = useCallback(async () => {
     updateProject,
     toggleSideBar,
     createMeeting,
+    createProject,
     getAllProjects,
     updateMessages,
     toggleDropdown,

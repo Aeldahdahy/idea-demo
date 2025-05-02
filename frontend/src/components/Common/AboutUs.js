@@ -2,6 +2,7 @@ import React from 'react';
 import image45 from "../../assets/image45.png";
 import image46 from "../../assets/image46.png";
 import image47 from "../../assets/image47.png";
+import image48 from "../../assets/img-0.44.png";
 
 function AboutUs() {
   return (
@@ -37,6 +38,58 @@ function AboutUs() {
         <h2>6+</h2>
         <p>Employees</p>
       </div>
+      <section className="owners-section mt-8 px-4">
+  <div className="flex flex-wrap justify-center gap-6">
+    {/* Owner 1 */}
+    <div className="flex flex-col items-center">
+      <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+        <img src={image48} alt="Owner 1" className="w-full h-full object-cover" />
+      </div>
+      <h3 className="mt-2 text-lg font-semibold text-gray-800">Abdelrahman Tarek</h3>
+      <p className="text-sm text-gray-500">CEO</p>
+    </div>
+    {/* Owner 2 */}
+    <div className="flex flex-col items-center">
+      <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+        <img src={image48} alt="Owner 2" className="w-full h-full object-cover" />
+      </div>
+      <h3 className="mt-2 text-lg font-semibold text-gray-800">Sara Khaled</h3>
+      <p className="text-sm text-gray-500">CTO</p>
+    </div>
+    {/* Owner 3 */}
+    <div className="flex flex-col items-center">
+      <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+        <img src={image48} alt="Owner 3" className="w-full h-full object-cover" />
+      </div>
+      <h3 className="mt-2 text-lg font-semibold text-gray-800">Omar Hassan</h3>
+      <p className="text-sm text-gray-500">COO</p>
+    </div>
+    {/* Owner 4 */}
+    <div className="flex flex-col items-center">
+      <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+        <img src={image48} alt="Owner 4" className="w-full h-full object-cover" />
+      </div>
+      <h3 className="mt-2 text-lg font-semibold text-gray-800">Laila Ali</h3>
+      <p className="text-sm text-gray-500">CFO</p>
+    </div>
+    {/* Owner 5 */}
+    <div className="flex flex-col items-center">
+      <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+        <img src={image48} alt="Owner 5" className="w-full h-full object-cover" />
+      </div>
+      <h3 className="mt-2 text-lg font-semibold text-gray-800">Mohamed Nour</h3>
+      <p className="text-sm text-gray-500">CMO</p>
+    </div>
+    {/* Owner 6 */}
+    <div className="flex flex-col items-center">
+      <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+        <img src={image48} alt="Owner 6" className="w-full h-full object-cover" />
+      </div>
+      <h3 className="mt-2 text-lg font-semibold text-gray-800">Fatima Youssef</h3>
+      <p className="text-sm text-gray-500">Head of Design</p>
+    </div>
+  </div>
+</section>      
     </section>
 
     <div className="about-right">

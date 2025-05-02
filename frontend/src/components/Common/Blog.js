@@ -3,9 +3,12 @@ import { FaSearch, FaTimes, FaChevronDown, FaChevronUp, FaStar } from 'react-ico
 import BlogSeparator from './BlogSeparator';
 import { Link } from 'react-router-dom';
 import { useFunctions } from '../../useFunctions';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 
 function Blog() {
-  const { getAllBlogs, blogs, getAllReviews, reviews, API_BASE_URL } = useFunctions();
+  const { getAllBlogs, blogs, getAllReviews, reviews, setReviews, API_BASE_URL } = useFunctions();
   const [mainBlog, setMainBlog] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -63,11 +66,34 @@ function Blog() {
     setSelectedKeywords([]);
   };
 
-  const openReviewModal = (reviewId) => {
-    setCurrentReviewId(reviewId);
-    setClientReview('');
-    setReviewRate(0);
-    setIsReviewModalOpen(true);
+  const openReviewModal = (review) => {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      toast.error('You must be logged in to submit a review.');
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(authToken);
+      const userId = decodedToken.user?.id;
+      if (!userId) {
+        toast.error('User ID not found in token.');
+        return;
+      }
+      const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(userId);
+      if (!isValidObjectId) {
+        toast.error('Invalid User ID format.');
+        return;
+      }
+      console.log('Decoded userId:', userId);
+      setCurrentReviewId(userId);
+      setClientReview('');
+      setReviewRate(0);
+      setIsReviewModalOpen(true);
+    } catch (err) {
+      console.error('Error decoding token:', err);
+      toast.error('Failed to decode token. Please log in again.');
+    }
   };
 
   const closeReviewModal = () => {
@@ -77,28 +103,63 @@ function Blog() {
     setReviewRate(0);
   };
 
-  const handleSubmitReply = (e) => {
+  const handleSubmitReply = async (e) => {
     e.preventDefault();
-    // Placeholder: Log form data or replace with API call
-    console.log({
-      reviewId: currentReviewId,
-      clientReview,
-      reviewRate,
-    });
-    // Example API call (uncomment and configure):
-    /*
-    axios.post(`${API_BASE_URL}/api/reviews/${currentReviewId}/reply`, {
-      clientReview,
-      reviewRate,
-    }).then(() => {
-      alert('Reply submitted!');
-      closeReviewModal();
-    }).catch((err) => {
-      console.error('Error submitting reply:', err);
-    });
-    */
-    closeReviewModal();
+    const authToken = localStorage.getItem('authToken');
+
+    if (!authToken) {
+      toast.error('You must be logged in to submit a review.');
+      return;
+    }
+
+    if (!currentReviewId) {
+      toast.error('User ID is missing.');
+      return;
+    }
+
+    if (!clientReview || !reviewRate) {
+      toast.error('Please provide a review and rating.');
+      return;
+    }
+
+    console.log('Submitting review for userId:', currentReviewId);
+    console.log('API URL:', `${API_BASE_URL}/api/review/${currentReviewId}`);
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/review/${currentReviewId}`,
+        {
+          client_review: clientReview,
+          review_rate: reviewRate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        // Option 1: Use setReviews (preferred if working)
+        if (typeof setReviews === 'function') {
+          setReviews((prevReviews) => [...prevReviews, response.data.review]);
+        } else {
+          console.error('setReviews is not a function:', setReviews);
+          // Option 2: Fallback to refetching reviews
+          await getAllReviews();
+        }
+        toast.success('Review submitted successfully!');
+        closeReviewModal();
+      }
+    } catch (err) {
+      console.error('Error submitting review:', err);
+      const errorMessage =
+        err.response?.data?.error || 'Failed to submit review. Please try again.';
+      toast.error(errorMessage);
+    }
   };
+
 
   const filteredBlogs = blogs.filter((blog) => {
     // Case-insensitive filtering by blog_title

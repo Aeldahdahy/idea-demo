@@ -1,4 +1,3 @@
-// NavUser.js
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -13,7 +12,7 @@ function NavUser({ isAuthenticated, role, clientRole }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { signOutDistroySession, API_BASE_URL } = useFunctions();
   const clientData = useSelector((state) => state.clientAuth.clientData); 
-  const userImage = clientData?.image ? `${API_BASE_URL}/uploads/user_images/${clientData.image}` : null; 
+  const userImage = clientData?.image ? `${API_BASE_URL}/Uploads/user_images/${clientData.image}` : null; 
   const userName = clientData?.fullName;
 
   const toggleDropdown = () => {
@@ -70,9 +69,7 @@ function NavUser({ isAuthenticated, role, clientRole }) {
           ) : (
             <>
               <Link
-                to={`/client-portal/${
-                  clientRole === 'Investor' ? 'investor' : 'entrepreneur'
-                }/profile`}
+                to="/client-portal/profile"
                 className="dropdownItem primaryButton"
                 onClick={toggleDropdown}
               >

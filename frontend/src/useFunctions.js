@@ -387,7 +387,7 @@ const getAllReviews = useCallback(async () => {
       // Update clientAuth.clientData
       dispatch(updateClientData(clientData));
   
-      toast.success('User updated successfully!');
+      toast.success('Profile updated successfully!');
       return response.data;
     } catch (err) {
       // Revert the user data if the API call fails
@@ -1219,29 +1219,31 @@ const getAllReviews = useCallback(async () => {
   const getMyProjects = async () => {
     setLoading(true);
     setError(null);
-
+  
     if (!token) {
       setLoading(false);
       throw new Error('Authentication token not found');
     }
-
+  
     const userId = clientData?._id || clientData?.userId;
     if (!userId) {
       setLoading(false);
       throw new Error('User ID not found in client data');
     }
-
+  
     try {
       const response = await axios.get(`${API_BASE_URL}/api/projects/user/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log('API Response:', response);
       setLoading(false);
-      return response;
+      return response; // Successful response with projects
     } catch (error) {
       setLoading(false);
+      if (error.response?.status === 404) {
+        return { data: { data: [] } }; // Explicitly return empty array for 404
+      }
       setError(error.response?.data?.message || 'Failed to fetch projects');
-      throw error;
+      throw error; // Rethrow for other errors
     }
   };
 

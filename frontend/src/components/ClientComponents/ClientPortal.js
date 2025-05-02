@@ -5,12 +5,12 @@ import { useSelector } from 'react-redux';
 import Blog from '../Common/Blog';
 import AboutUs from '../Common/AboutUs';
 import Contact from '../Common/Contact';
+import Profile from '../Common/Profile';
 
 // Entrepreneur components
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
 import ClientEntreMyProjects from './Entrepreneur/ClientEntreMyProjects';
 import ClientEntreProjectData from './Entrepreneur/ClientEntreProjectData';
-
 
 // Investor components
 import ClientInvestorHome from './Investor/ClientInvestorHome';
@@ -74,6 +74,16 @@ function ClientPortal() {
         path="/"
         element={
           <DefaultRedirect isAuthenticated={isAuthenticated} clientRole={clientRole} />
+        }
+      />
+
+      {/* Profile Route */}
+      <Route
+        path="profile"
+        element={
+          <ProtectedRoute allowedRoles={['Investor', 'Entrepreneur']}>
+            <Profile />
+          </ProtectedRoute>
         }
       />
 

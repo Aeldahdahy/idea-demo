@@ -25,7 +25,9 @@ const { createContact,
    updateUserById,
    createBlog,
    updateBlog,
-   getAllBlogs } = require('../controller/clientController'); 
+   getAllBlogs,
+   createReview,
+   getAllReviews } = require('../controller/clientController'); 
 
 const { createStaff,
    loginStaff,
@@ -162,5 +164,11 @@ router.put('/blog/:id', blogUpload.single('blog_image'), authenticateToken, upda
 
 // Get All blogs
 router.get('/blog', getAllBlogs);
+
+// Create Review
+router.post('/review/:userId', authenticateToken, createReview);
+
+// Get All Reviews
+router.get('/review', getAllReviews); 
 
 module.exports = router;

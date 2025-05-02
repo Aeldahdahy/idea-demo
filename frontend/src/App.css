@@ -3949,7 +3949,6 @@ textarea.form-control-custom {
   text-align: center;
   color: black;
   font-size: 1.25rem; /* text-xl */
-  max-width: 72rem; /* max-w-4xl */
   line-height: 1.625; /* leading-relaxed */
 }
 

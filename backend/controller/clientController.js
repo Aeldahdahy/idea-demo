@@ -16,6 +16,7 @@ const User = require('../modules/signup');
 const Otp = require('../modules/otp');
 const Project = require('../modules/project');
 const Blog = require('../modules/blog');
+const Review = require('../modules/review');
 
 // Create a transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -873,6 +874,70 @@ const getAllBlogs = async (req, res) => {
   }
 };
 
+// Create Review
+const createReview = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { client_review, review_rate } = req.body;
+
+    // Validate input
+    if (!client_review || !review_rate) {
+      return res.status(400).json({ error: 'client_review and review_rate are required' });
+    }
+
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Create and save the review
+    const newReview = new Review({
+      user: userId,
+      client_review,
+      review_rate
+    });
+
+    await newReview.save();
+
+    res.status(201).json({
+      message: 'Review created successfully',
+      review: {
+        _id: newReview._id,
+        client_name: user.fullName,
+        client_image: user.image,
+        client_review: newReview.client_review,
+        review_rate: newReview.review_rate,
+        createdAt: newReview.createdAt
+      }
+    });
+  } catch (err) {
+    console.error('Error creating review:', err);
+    res.status(500).json({ error: 'Failed to create review' });
+  }
+};
+
+// Fetch all reviews with client name and image
+const getAllReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find()
+      .populate('user', 'fullName image');
+
+    const formattedReviews = reviews.map(review => ({
+      _id: review._id,
+      client_name: review.user.fullName,
+      client_image: review.user.image,
+      client_review: review.client_review,
+      review_rate: review.review_rate,
+      createdAt: review.createdAt
+    }));
+
+    res.status(200).json(formattedReviews);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
+};
+
 module.exports =
 {
   createContact,
@@ -895,5 +960,7 @@ module.exports =
   updateUserById,
   createBlog,
   updateBlog,
-  getAllBlogs
+  getAllBlogs,
+  createReview,
+  getAllReviews
 };

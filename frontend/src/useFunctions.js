@@ -132,6 +132,41 @@ export const useFunctions = () => {
       setLoading(false);
     }
   }, [API_BASE_URL, lastBlogFetched]);
+
+
+  // Reviews
+// Reviews
+const [reviews, setReviews] = useState([]);
+const [lastReviewFetched, setLastReviewFetched] = useState(null);
+
+const getAllReviews = useCallback(async () => {
+  const THIRTY_MINUTES = 30 * 60 * 1000;
+  const now = Date.now();
+
+  if (lastReviewFetched && now - lastReviewFetched < THIRTY_MINUTES) {
+    return;
+  }
+
+  setLoading(true);
+  setError(null);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/review`);
+    console.log('Reviews API response:', response.data); // Log response for debugging
+    if (Array.isArray(response.data)) {
+      setReviews(response.data);
+      setLastReviewFetched(now);
+    } else {
+      throw new Error('Invalid data format: Expected an array in response.data');
+    }
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    const errorMessage = error.response?.data?.message || error.message || 'An error occurred while fetching reviews. Please try again later.';
+    setError(errorMessage);
+    toast.error(errorMessage);
+  } finally {
+    setLoading(false);
+  }
+}, [API_BASE_URL, lastReviewFetched]);
   // Who are we
   // useEffect(() => {
   //   const fetchText = async () => {
@@ -1251,6 +1286,8 @@ export const useFunctions = () => {
     getAllProjectsBeforeAuth,
     verifyOtpForPasswordReset,
     getAllBlogs,
+    getAllReviews, 
+    reviews,
     otp,
     timer,
     users,

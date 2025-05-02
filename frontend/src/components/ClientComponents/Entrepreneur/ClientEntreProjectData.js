@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
-import {
-  CountrySelect,
-} from "react-country-state-city";
+// import {
+//   CountrySelect,
+// } from "react-country-state-city";
 import { initFlowbite } from "flowbite"; // Import Flowbite JS for dropdown functionality
 import "react-country-state-city/dist/react-country-state-city.css";
 import { useFunctions } from '../../../useFunctions';
@@ -265,27 +265,27 @@ const Label = styled.label`
   letter-spacing: 0.01em;
 `;
 
-const InfoIcon = styled.span`
-  background: #2563eb;
-  color: #fff;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-left: 7px;
-  margin-right: 2px;
-`;
+// const InfoIcon = styled.span`
+//   background: #2563eb;
+//   color: #fff;
+//   border-radius: 50%;
+//   width: 22px;
+//   height: 22px;
+//   display: inline-flex;
+//   align-items: center;
+//   justify-content: center;
+//   font-weight: bold;
+//   font-size: 1.1rem;
+//   margin-left: 7px;
+//   margin-right: 2px;
+// `;
 
-const InfoText = styled.span`
-  font-size: 0.98rem;
-  color: #2563eb;
-  margin-left: 8px;
-  font-weight: 500;
-`;
+// const InfoText = styled.span`
+//   font-size: 0.98rem;
+//   color: #2563eb;
+//   margin-left: 8px;
+//   font-weight: 500;
+// `;
 
 const Input = styled.input`
   width: 100%;
@@ -485,9 +485,16 @@ const countries = [
   "Brazil",
   "China",
   "Japan"
-  // ...add more as needed
 ];
 
+// Industry options
+const industryOptions = [
+  'Agriculture', 'Entertainment & Leisure', 'Food & Beverage', 'Media',
+  'Products & Inventions', 'Sales & Marketing', 'Transportation', 'Software',
+  'Education & Training', 'Fashion & Beauty', 'Hospitality, Restaurants & Bars', 'Energy & Natural Resources',
+  'Medical & Sciences', 'Finance', 'Manufacturing & Engineering', 'Personal Services',
+  'Property', 'Retail', 'Technology', 'Business Services'
+];
 
 // --- Main Component ---
 function ClientEntreProjectData() {
@@ -533,7 +540,6 @@ function ClientEntreProjectData() {
   ];
 
   const handleCheckboxChange = (value) => {
-    // Toggle the value in the dealType array
     setForm((prevForm) => {
       const currentDealTypes = prevForm.dealType;
       const updatedDealTypes = currentDealTypes.includes(value)
@@ -554,9 +560,6 @@ function ClientEntreProjectData() {
     }
   };
   
-  
-  
-
   const handleFileChange = (e, key) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -647,16 +650,77 @@ const removeTeamMember = (idx) => {
 const handleSubmitProject = async () => {
   try {
     const requiredFields = [
-      { key: 'projectName', label: 'Project Name', backendKey: 'project_name', validate: val => val.length >= 3, error: 'Project Name must be at least 3 characters' },
-      { key: 'industry', label: 'Project Industry', backendKey: 'project_industry', validate: val => val.length >= 3, error: 'Industry must be at least 3 characters' },
-      { key: 'minInvestment', label: 'Minimum Investment', backendKey: 'min_investment', validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), error: 'Minimum Investment must be a number' },
-      { key: 'maxInvestment', label: 'Maximum Investment', backendKey: 'max_investment', validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), error: 'Maximum Investment must be a number' },
-      { key: 'zip', label: 'Postal Code', backendKey: 'postal_code', validate: val => /^[0-9]{5}$/.test(val), error: 'Postal Code must be a 5-digit number' },
-      { key: 'marketDescription', label: 'Market Description', backendKey: 'market_description', validate: val => val.length >= 50, error: 'Market Description must be at least 50 characters' },
-      { key: 'businessObjectives', label: 'Business Objectives', backendKey: 'business_objectives', validate: val => val.length >= 50, error: 'Business Objectives must be at least 50 characters' },
-      { key: 'stage', label: 'Project Stage', backendKey: 'project_stage', validate: val => ['Seed', 'Series A', 'Series B', 'Growth'].includes(val), error: 'Project Stage must be a valid stage (e.g., Seed, Series A)' },
-      { key: 'networth', label: 'Net Worth', backendKey: 'networth', validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), error: 'Net Worth must be a number' },
-      { key: 'project_location', label: 'Project Location', backendKey: 'project_location', validate: val => val.length > 0, error: 'Project Location is required' },
+      {  
+        key: 'projectName',
+        label: 'Project Name',
+        backendKey: 'project_name',
+        validate: val => val.length >= 3,
+        error: 'Project Name must be at least 3 characters' 
+      },
+      { 
+        key: 'industry',
+        label: 'Project Industry',
+        backendKey: 'project_industry',
+        validate: val => val.length >= 3,
+        error: 'Industry must be at least 3 characters' 
+      },
+      { 
+        key: 'minInvestment',
+        label: 'Minimum per Investment', 
+        backendKey: 'min_investment', 
+        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+        error: 'Minimum per Investment must be a number' 
+      },
+      { 
+        key: 'maxInvestment', 
+        label: 'Target Investment', 
+        backendKey: 'max_investment', 
+        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+        error: 'Target Investment must be a number' },
+      { 
+        key: 'zip', 
+        label: 'Postal Code', 
+        backendKey: 'postal_code', 
+        validate: val => /^[0-9]{5}$/.test(val), 
+        error: 'Postal Code must be a 5-digit number' },
+      { 
+        key: 'marketDescription', 
+        label: 'Market Description', 
+        backendKey: 'market_description', 
+        validate: val => val.length >= 50, 
+        error: 'Market Description must be at least 50 characters' },
+      { 
+        key: 'businessObjectives', 
+        label: 'Business Objectives', 
+        backendKey: 'business_objectives', 
+        validate: val => val.length >= 50, 
+        error: 'Business Objectives must be at least 50 characters' },
+      { 
+        key: 'stage', 
+        label: 'Project Stage', 
+        backendKey: 'project_stage', 
+        validate: val => ['Seed', 'Series A', 'Series B', 'Growth'].includes(val), 
+        error: 'Project Stage must be a valid stage (e.g., Seed, Series A)' },
+      { 
+        key: 'networth', 
+        label: 'Net Worth', 
+        backendKey: 'networth', 
+        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+        error: 'Net Worth must be a number' },
+      { 
+        key: 'project_location', 
+        label: 'Project Location', 
+        backendKey: 'project_location', 
+        validate: val => val.length > 0, 
+        error: 'Project Location is required' 
+      },
+      { 
+        key: 'industry', 
+        label: 'Industry', 
+        backendKey: 'industry', 
+        validate: val => val.length > 0, 
+        error: 'Project Industry is required' 
+      },
     ];
 
     const errors = requiredFields
@@ -677,7 +741,7 @@ const handleSubmitProject = async () => {
     const minInv = parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''));
     const maxInv = parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''));
     if (!isNaN(minInv) && !isNaN(maxInv) && maxInv <= minInv) {
-      errors.push('Maximum Investment must be greater than Minimum Investment');
+      errors.push('Target Investment must be greater than Minimum per Investment');
     }
 
     // Validate team members
@@ -706,6 +770,8 @@ const handleSubmitProject = async () => {
     requiredFields.forEach(field => {
       const value = form[field.key];
       if (field.key === 'project_location') {
+        formData.append(field.backendKey, value || '');
+      } else if (field.key === 'industry') {
         formData.append(field.backendKey, value || '');
       } else if (['minInvestment', 'maxInvestment', 'networth'].includes(field.key)) {
         formData.append(field.backendKey, value.replace(/[^0-9.]/g, ''));
@@ -764,19 +830,24 @@ const handleSubmitProject = async () => {
   const Step1 = (
     <>
       <Title>General Information</Title>
+      {form.projectName && form.projectName.length < 3 && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Project Name must be at least 3 characters
+        </span>
+      )}
       <Label>Project Name <span style={{ color: 'red' }}>*</span></Label>
-<Input
-  name="projectName"
-  value={form.projectName}
-  onChange={handleChange}
-  placeholder="Enter your project name"
-  required
-/>
-{form.projectName.length < 3 && (
-  <span style={{ color: '#e3e3e', fontSize: '0.9rem' }}>
-    Project Name must be at least 3 characters
-  </span>
-)}
+      <Input
+        name="projectName"
+        value={form.projectName}
+        onChange={handleChange}
+        placeholder="Enter your project name"
+        required
+      />
+      {form.website && !/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(form.website) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Website must be a valid URL (e.g., https://example.com)
+        </span>
+      )}
       <Label>Website Link</Label>
       <Input
         name="website"
@@ -784,98 +855,112 @@ const handleSubmitProject = async () => {
         onChange={handleChange}
         placeholder="https://example.com"
       />
-<Row>
-  <div style={{ flex: 1 }}>
-    <Label>Minimum Investment <span style={{ color: 'red' }}>*</span></Label>
-    <Input
-      name="minInvestment"
-      type="text"
-      value={form.minInvestment}
-      onChange={handleChange}
-      placeholder="100000"
-      required
-    />
-    {!form.minInvestment || isNaN(parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''))) ? (
-      <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
-        Minimum Investment must be a valid number
-      </span>
-    ) : null}
-  </div>
-  <div style={{ flex: 1 }}>
-    <Label>Maximum Investment <span style={{ color: 'red' }}>*</span></Label>
-    <Input
-      name="maxInvestment"
-      type="text"
-      value={form.maxInvestment}
-      onChange={handleChange}
-      placeholder="1000000"
-      required
-    />
-    {!form.maxInvestment || isNaN(parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''))) ? (
-      <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
-        Maximum Investment must be a valid number
-      </span>
-    ) : null}
-  </div>
-</Row>
-
-<Label>Net Worth <span style={{ color: 'red' }}>*</span></Label>
-<Input
-  name="networth"
-  type="text"
-  value={form.networth}
-  onChange={handleChange}
-  placeholder="500000"
-  required
-/>
-{!form.networth || isNaN(parseFloat(form.networth.replace(/[^0-9.]/g, ''))) ? (
-  <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
-    Net Worth must be a valid number
-  </span>
-) : null}
-      <Label>
-        <StepCircle active style={{ width: 28, height: 28, fontSize: "1rem", marginRight: 7, marginBottom: 0 }}>1</StepCircle>
-        Project Industry
-        <InfoIcon>i</InfoIcon>
-        <InfoText>e.g. Technology, Healthcare, Real Estate</InfoText>
-      </Label>
+      <Row>
+        <div style={{ flex: 1 }}>
+        {form.minInvestment && (isNaN(parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''))) || form.minInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+              Minimum per Investment must be a valid number (e.g., 1000 or 1000.50)
+            </span>
+          )}
+          <Label>Minimum per Investment in EGP <span style={{ color: 'red' }}>*</span></Label>
+          <Input
+            name="minInvestment"
+            type="text"
+            value={form.minInvestment}
+            onChange={handleChange}
+            placeholder="100000"
+            required
+          />
+        </div>
+        <div style={{ flex: 1 }}>
+        {form.maxInvestment && (isNaN(parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''))) || form.maxInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+              Target Investment must be a valid number (e.g., 1000 or 1000.50)
+            </span>
+          )}
+          <Label>Target Investment in EGP <span style={{ color: 'red' }}>*</span></Label>
+          <Input
+            name="maxInvestment"
+            type="text"
+            value={form.maxInvestment}
+            onChange={handleChange}
+            placeholder="1000000"
+            required
+          />
+        </div>
+      </Row>
+      {form.networth && (isNaN(parseFloat(form.networth.replace(/[^0-9.]/g, ''))) || form.networth.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Net Worth must be a valid number (e.g., 500000 or 500000.50)
+        </span>
+      )}
+      <Label>Net Worth <span style={{ color: 'red' }}>*</span></Label>
       <Input
+        name="networth"
+        type="text"
+        value={form.networth}
+        onChange={handleChange}
+        placeholder="500000"
+        required
+      />
+      {form.industry && !industryOptions.includes(form.industry) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Please select a valid industry
+        </span>
+      )}
+      <Label>Project Industry</Label>
+      <select
         name="industry"
         value={form.industry}
         onChange={handleChange}
-        placeholder="e.g. Technology, Healthcare, Real Estate"
-      />
-<Label>Project Location</Label>
-<select
-  name="project_location"
-  value={form.project_location}
-  onChange={handleChange}
-  required
-  style={{
-    width: '100%',
-    padding: '15px 18px',
-    border: '1.5px solid #e3e8f0',
-    borderRadius: '9px',
-    fontSize: '1.08rem',
-    marginBottom: '24px',
-    outline: 'none',
-    color: '#222',
-  }}
->
-  <option value="">Select a country</option>
-  {countries.map((country) => (
-    <option key={country} value={country}>
-      {country}
-    </option>
-  ))}
-</select>
-
-{!form.project_location && (
-  <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
-    Project Location is required
-  </span>
-)}
-
+        required
+        style={{
+          width: '100%',
+          padding: '15px 18px',
+          border: '1.5px solid #e3e8f0',
+          borderRadius: '9px',
+          fontSize: '1.08rem',
+          marginBottom: '24px',
+          outline: 'none',
+          color: '#222',
+        }}
+      >
+        <option value="">Select a industry</option>
+        {industryOptions.map((industry) => (
+          <option key={industry} value={industry}>
+            {industry}
+          </option>
+        ))}
+      </select>     
+      {form.project_location && !countries.includes(form.project_location) && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Please select a valid country
+        </span>
+      )}
+      <Label>Project Location</Label>
+      <select
+        name="project_location"
+        value={form.project_location}
+        onChange={handleChange}
+        required
+        style={{
+          width: '100%',
+          padding: '15px 18px',
+          border: '1.5px solid #e3e8f0',
+          borderRadius: '9px',
+          fontSize: '1.08rem',
+          marginBottom: '24px',
+          outline: 'none',
+          color: '#222',
+        }}
+      >
+        <option value="">Select a country</option>
+        {countries.map((country) => (
+          <option key={country} value={country}>
+            {country}
+          </option>
+        ))}
+      </select>
       <Row>
         <div style={{ flex: 1 }}>
           <Label>City</Label>
@@ -887,7 +972,7 @@ const handleSubmitProject = async () => {
           />
         </div>
         <div style={{ flex: 1 }}>
-          <Label>State / Province / Region</Label>
+          <Label>District</Label>
           <Input
             name="state"
             value={form.state}
@@ -906,7 +991,8 @@ const handleSubmitProject = async () => {
         </div>
       </Row>
       <Row>
-      <div  style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+      <div  style={{ flex: 1 }}>
+        <Label>Deal Type <span style={{ color: 'red' }}>*</span></Label>
           <button
           id="dropdownHelperButton"
           data-dropdown-toggle="dropdownHelper"
@@ -988,6 +1074,11 @@ const handleSubmitProject = async () => {
         </div>
 
         <div style={{ flex: 1 }}>
+        {form.stage && !['Seed', 'Series A', 'Series B', 'Growth'].includes(form.stage) && (
+            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+              Please select a valid stage
+            </span>
+          )}
         <Label>Project Stage <span style={{ color: 'red' }}>*</span></Label>
           <select
             name="stage"
@@ -1011,11 +1102,6 @@ const handleSubmitProject = async () => {
             <option value="Series B">Series B</option>
             <option value="Growth">Growth</option>
           </select>
-          {!form.stage && (
-            <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
-              Project Stage is required
-            </span>
-          )}
         </div>
 
       </Row>

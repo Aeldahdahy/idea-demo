@@ -1,9 +1,9 @@
-// Main.js
 import React, { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/ReactToastify.css";
+import useSessionCheck from './useSessionCheck'; // Adjust path
 
 // Common components
 import NavBar from './components/Common/Navbar';
@@ -26,13 +26,17 @@ import EmployeeSignForm from './components/EmployeeComponents/EmployeeSignForm';
 import ClientPortal from './components/ClientComponents/ClientPortal';
 import ClientSignForm from './components/ClientComponents/ClientSignForm';
 
-
+// Component to handle session checking
+function SessionChecker() {
+  useSessionCheck();
+  return null;
+}
 
 function Main() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, role } = useSelector((state) => state.auth); // Redux state
-  const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole); // Investor or Entrepreneur
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
+  const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole);
 
   useEffect(() => {
     // Redirect users based on their role after login
@@ -45,7 +49,7 @@ function Main() {
     }
   }, [isAuthenticated, role, location, navigate]);
 
-  // Hide NavBar and Footer for /client-portal/clientSignForm and /employee-portal/*
+  // Hide NavBar and Footer for specific routes
   const hideNavAndFooter =
     location.pathname === '/client-portal/clientSignForm' ||
     location.pathname === '/client-portal/investor/investorPreferences' ||
@@ -54,9 +58,10 @@ function Main() {
 
   return (
     <>
+      <SessionChecker /> {/* Global session check */}
       {!hideNavAndFooter && <NavBar isAuthenticated={isAuthenticated} role={role} clientRole={clientRole} />}
       <Routes>
-        {/* Public Routes (Accessible by Anyone) */}
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/invest" element={<Invest />} />
         <Route path="/fundraising" element={<Fundraising />} />
@@ -65,7 +70,6 @@ function Main() {
         <Route path="/contact" element={<Contact />} />
 
         {/* Client Portal Routes */}
-        {/* <Route path="/client-portal/clientSignForm" element={<ClientSignForm />} /> */}
         <Route
           path="/client-portal/*"
           element={
@@ -74,15 +78,15 @@ function Main() {
         />
 
         {/* Employee Portal Routes */}
-        {isAuthenticated && role === 'employee' ? (
-          <Route path="/employee-portal/*" element={<EmployeePortal />} />
-        ) : (
-          <Route path="/employee-portal/*" element={<EmployeeSignForm />} />
-        )}
+        <Route
+          path="/employee-portal/*"
+          element={
+            isAuthenticated && role === 'employee' ? <EmployeePortal /> : <EmployeeSignForm />
+          }
+        />
       </Routes>
       {!hideNavAndFooter && <Footer />}
       <CopyRight />
-
       <PopUpConfirmationOk />
       <PopUpConfirmationYesNo />
       <ToastContainer />

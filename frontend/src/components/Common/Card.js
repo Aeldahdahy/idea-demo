@@ -46,6 +46,13 @@ const Card = memo(({ project, errorFetching, baseUrl }) => {
     return null;
   }, [project?.project_images, baseUrl, API_BASE_URL]);
 
+  // Function to trim text and add ellipsis if needed
+  const trimText = (text, maxLength = 100) => {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return `${text.substring(0, maxLength)}...`;
+  };
+
   if (encryptedProjectId === null && !isLoading) {
     return (
       <div
@@ -157,20 +164,24 @@ const Card = memo(({ project, errorFetching, baseUrl }) => {
               ? `${project.city}, ${project.state}`
               : 'Location not specified'}
           </p>
-          <p className="text-sm text-gray-600 mt-2">
-            {project.market_description ||
-              project.business_description ||
-              'No description available.'}
-          </p>
+          
+          {/* Updated Market Description with label */}
+          <div className="mt-2">
+            <h3 className="text-sm font-semibold text-gray-700">Market Description:</h3>
+            <p className="text-sm text-gray-600">
+              {trimText(project.market_description || project.business_description || 'No description available.', 120)}
+            </p>
+          </div>
+          
           <ul className="mt-4 text-sm text-gray-600 list-disc list-inside">
-            {project.bussiness_highlights ? (
-              <li>{project.bussiness_highlights}</li>
-            ) : (
-              <li>No highlights provided.</li>
-            )}
+            {/* Updated Business Highlights with label */}
+            <li>
+              <span className="font-semibold">Highlights:</span> {trimText(project.bussiness_highlights || 'No highlights provided.', 80)}
+            </li>
             <li>Industry: {project.project_industry || 'Not specified'}</li>
             <li>Deal Type: {project.deal_type || 'Not specified'}</li>
           </ul>
+          
           <div className="flex justify-between mt-4 text-gray-800">
             <div>
               <p className="text-lg font-bold">

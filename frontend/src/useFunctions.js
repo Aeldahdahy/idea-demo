@@ -689,9 +689,8 @@ const getAllReviews = useCallback(async () => {
       localStorage.removeItem('userFullName');
       localStorage.removeItem('username');
       localStorage.removeItem('hasAccessedPortal'); // Remove portal access flag
+      navigate('/'); 
       dispatch(logout());
-      // Redirect the user to the main route
-      navigate('/'); // Ensure this points to the correct main route
       toast.success('Signed out successfully!');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'An error occurred. please try again later.';
@@ -1031,7 +1030,7 @@ const getAllReviews = useCallback(async () => {
       const response = await axios.get(`${API_BASE_URL}/api/projects`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // console.log(response.data.data);
+      console.log(response.data.data);
 
       if (Array.isArray(response.data.data)) {
         dispatch(setProject(response.data.data));
@@ -1202,7 +1201,7 @@ const getAllReviews = useCallback(async () => {
       console.error('Create project error:', err);
       let errorMessage = 'An error occurred. Please try again.';
       if (err.code === 'ERR_NETWORK') {
-        errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
+        // errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
       } else if (err.response) {
         errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
       }
@@ -1211,6 +1210,38 @@ const getAllReviews = useCallback(async () => {
       throw new Error(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const { token } = useSelector((state) => state.auth);
+  const { clientData } = useSelector((state) => state.clientAuth);
+
+  const getMyProjects = async () => {
+    setLoading(true);
+    setError(null);
+
+    if (!token) {
+      setLoading(false);
+      throw new Error('Authentication token not found');
+    }
+
+    const userId = clientData?._id || clientData?.userId;
+    if (!userId) {
+      setLoading(false);
+      throw new Error('User ID not found in client data');
+    }
+
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/projects/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log('API Response:', response);
+      setLoading(false);
+      return response;
+    } catch (error) {
+      setLoading(false);
+      setError(error.response?.data?.message || 'Failed to fetch projects');
+      throw error;
     }
   };
 
@@ -1317,6 +1348,7 @@ const getAllReviews = useCallback(async () => {
     verifyOtpForPasswordReset,
     getAllBlogs,
     getAllReviews, 
+    getMyProjects,
     reviews,
     otp,
     timer,

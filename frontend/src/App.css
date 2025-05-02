@@ -707,7 +707,7 @@ nav.hidden-nav {
   background-color: #f1f1f1;
   border-radius: 200px 0px 0px 0px;
   padding: 5%;
-  height: 1150px;
+  /* height: 1150px; */
   overflow: hidden;
 }
 

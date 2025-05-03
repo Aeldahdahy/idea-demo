@@ -7,7 +7,8 @@ const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
-const path = require('path'); // Import path module
+const path = require('path');
+
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
 const dbHost = process.env.DB_HOST;
@@ -16,31 +17,46 @@ const dbOptions = process.env.DB_OPTIONS;
 
 const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${dbOptions}`;
 
-db_connection(); // Ensure this is called correctly
+db_connection();
 
 const hostname = '127.0.0.1';
 const port = 7030;
 
-// Serve static files from the 'uploads' directory
+// 🟢 Redirect root to /idea-demo
+app.get('/', (req, res) => {
+  res.redirect('/idea-demo');
+});
+
+// 🟢 Serve static files from React build under /idea-demo
+app.use('/idea-demo', express.static(path.join(__dirname, '../frontend/build')));
+
+// 🟢 Handle React Router paths under /idea-demo
+app.get('/idea-demo/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+});
+
+// Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Session config
 app.use(session({
-  secret: 'your_session_secret_key', // Replace with your actual session secret
+  secret: 'your_session_secret_key',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: db_URL, // Ensure db_URL is correctly defined
-    collectionName: 'sessions', // Optional: specify a collection name for sessions
-    ttl: 2 * 60 * 60 // Session TTL in seconds (2 hours)
+    mongoUrl: db_URL,
+    collectionName: 'sessions',
+    ttl: 2 * 60 * 60
   }),
   cookie: {
-    secure: false, // Set to true if using HTTPS
-    maxAge: 2 * 60 * 60 * 1000 // Session cookie expiration time (2 hours in milliseconds)
+    secure: false,
+    maxAge: 2 * 60 * 60 * 1000
   }
 }));
 
+// Middleware setup
 app.use(cors({
-  origin: 'http://localhost:7020',
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -50,9 +66,10 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Use the idea routes for handling contact, sign up, and sign in
+// API routes
 app.use('/api', ideaRoutes);
 
+// Start server
 app.listen(port, hostname, () => {
-  console.log(`Server is running on http://${hostname}:${port}`);
+  console.log(`Server is running at http://${hostname}:${port}`);
 });

@@ -243,7 +243,7 @@ const getAllReviews = useCallback(async () => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-  
+
     // Validate id
     if (!id || typeof id !== 'string' || id.trim() === '') {
       const errorMessage = 'Invalid or missing user ID';
@@ -252,10 +252,10 @@ const getAllReviews = useCallback(async () => {
       toast.error(errorMessage);
       throw new Error(errorMessage);
     }
-  
-    // Validate investorPreference
+
+    // Validate investorPreference for investors
     if (updatedData.role === 'investor' && updatedData.investorPreference) {
-      const { investorType, minInvestment, maxInvestment, yearsOfExperience, socialAccounts, country, city, industries } = updatedData.investorPreference;
+      const { investorType, minInvestment, maxInvestment, industries } = updatedData.investorPreference;
       if (!['individual', 'company'].includes(investorType)) {
         const errorMessage = 'Investor type must be either "individual" or "company"';
         setError(errorMessage);
@@ -272,49 +272,89 @@ const getAllReviews = useCallback(async () => {
         toast.error(errorMessage);
         throw new Error(errorMessage);
       }
-      if (!['0-1', '1-3', '3-5', '5+'].includes(yearsOfExperience)) {
-        const errorMessage = 'Invalid years of experience';
+      if (!Array.isArray(industries) || industries.length < 3) {
+        const errorMessage = 'At least 3 industries must be selected';
         setError(errorMessage);
         setLoading(false);
         toast.error(errorMessage);
         throw new Error(errorMessage);
       }
-      const validSocialAccounts = Array.isArray(socialAccounts) ? socialAccounts.filter(account => account.trim() !== '') : [];
-      if (validSocialAccounts.length === 0) {
-        const errorMessage = 'At least one social account is required';
+    } else if (updatedData.role === 'investor' && !updatedData.investorPreference) {
+      const errorMessage = 'investorPreference is required for investors';
+      setError(errorMessage);
+      setLoading(false);
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    // Validate entrepreneurPreference for entrepreneurs
+    if (updatedData.role === 'entrepreneur' && updatedData.entrepreneurPreference) {
+      const { projectName, projectIndustry, fundingGoal } = updatedData.entrepreneurPreference;
+      if (!projectName?.trim() || !projectIndustry?.trim()) {
+        const errorMessage = 'Project name and industry are required';
         setError(errorMessage);
         setLoading(false);
         toast.error(errorMessage);
         throw new Error(errorMessage);
       }
-      if (!country || !city) {
-        const errorMessage = 'Country and city are required';
-        setError(errorMessage);
-        setLoading(false);
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
-      }
-      if (!Array.isArray(industries) || industries.length !== 3) {
-        const errorMessage = 'Exactly 3 industries must be selected';
+      if (fundingGoal < 0) {
+        const errorMessage = 'Funding goal cannot be negative';
         setError(errorMessage);
         setLoading(false);
         toast.error(errorMessage);
         throw new Error(errorMessage);
       }
     }
-  
+
+    // Validate root-level fields
+    const { country, city, socialAccounts, yearsOfExperience } = updatedData;
+    if (!country?.trim() || !city?.trim()) {
+      const errorMessage = 'Country and city are required';
+      setError(errorMessage);
+      setLoading(false);
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+    const validSocialAccounts = Array.isArray(socialAccounts) ? socialAccounts.filter(account => account.trim() !== '') : [];
+    if (validSocialAccounts.length === 0) {
+      const errorMessage = 'At least one social account is required';
+      setError(errorMessage);
+      setLoading(false);
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+    if (!['0-1', '1-3', '3-5', '5+', 'N/A'].includes(yearsOfExperience)) {
+      const errorMessage = 'Invalid years of experience';
+      setError(errorMessage);
+      setLoading(false);
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    // Normalize socialAccounts
+    const normalizedSocialAccounts = validSocialAccounts.map(acc => {
+      try {
+        return typeof acc === 'string' && acc.startsWith('[') ? JSON.parse(acc)[0] : acc;
+      } catch {
+        return acc;
+      }
+    });
+
     // Optimistically update the user in the UI
     const optimisticData = {
       ...updatedData,
+      socialAccounts: normalizedSocialAccounts,
       image: imageFile ? URL.createObjectURL(imageFile) : updatedData.image || null,
       ...(updatedData.investorPreference && updatedData.role === 'investor' ? {
         firstLogin: false,
-        investorPreference: updatedData.investorPreference
+        investorPreference: updatedData.investorPreference,
+        entrepreneurPreference: null
       } : updatedData.role === 'entrepreneur' ? {
-        investorPreference: null
+        investorPreference: null,
+        entrepreneurPreference: updatedData.entrepreneurPreference
       } : {})
     };
-  
+
     dispatch(
       setUsers(
         users.map((user) =>
@@ -322,7 +362,7 @@ const getAllReviews = useCallback(async () => {
         )
       )
     );
-  
+
     try {
       const formData = new FormData();
       // Append standard user fields if provided
@@ -337,60 +377,58 @@ const getAllReviews = useCallback(async () => {
       if (updatedData.experience) formData.append('experience', updatedData.experience);
       if (updatedData.biography) formData.append('biography', updatedData.biography);
       if (updatedData.status) formData.append('status', updatedData.status);
-  
-      // Append investorPreference for investors
+      if (updatedData.country) formData.append('country', updatedData.country);
+      if (updatedData.city) formData.append('city', updatedData.city);
+      formData.append('socialAccounts', JSON.stringify(normalizedSocialAccounts));
+      if (updatedData.yearsOfExperience) formData.append('yearsOfExperience', updatedData.yearsOfExperience);
+
+      // Append role-specific preferences
       if (updatedData.investorPreference && updatedData.role === 'investor') {
         formData.append('investorPreference', JSON.stringify(updatedData.investorPreference));
         formData.append('firstLogin', 'false');
       }
-  
+      if (updatedData.entrepreneurPreference && updatedData.role === 'entrepreneur') {
+        formData.append('entrepreneurPreference', JSON.stringify(updatedData.entrepreneurPreference));
+      }
+
       // Append image file if present
       if (imageFile) {
         formData.append('image', imageFile);
       }
-  
+
       const response = await axios.patch(`${API_BASE_URL}/api/users/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
-  
-      console.log('updateUsers API response:', response.data);
-  
+
       if (response.status !== 200) {
         throw new Error('Failed to update user');
       }
-  
-      // Validate response data
+
       const backendData = response.data.data;
       if (!backendData || !backendData.id || !backendData.role) {
         throw new Error('Invalid response data from server');
       }
-  
-      // Construct clientData with fallback for clientRole
+
       const clientData = {
         ...backendData,
         clientRole: backendData.clientRole || (backendData.role ? backendData.role.charAt(0).toUpperCase() + backendData.role.slice(1) : 'Investor'),
-        firstLogin: backendData.firstLogin ?? false // Fallback to false if undefined
+        firstLogin: backendData.firstLogin ?? false
       };
-  
-      console.log('Dispatching clientData:', clientData);
-  
-      // Update Redux with the server response
+
       dispatch(
         setUsers(
           users.map((user) => (user._id === id ? clientData : user))
         )
       );
-  
-      // Update clientAuth.clientData
+
       dispatch(updateClientData(clientData));
-  
+
       toast.success('Profile updated successfully!');
       return response.data;
     } catch (err) {
-      // Revert the user data if the API call fails
       dispatch(setUsers(users));
       const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
       console.error('updateUsers error:', errorMessage);
@@ -401,6 +439,117 @@ const getAllReviews = useCallback(async () => {
       setLoading(false);
     }
   };
+
+  const signIn = async (formData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/signin`, {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 200) {
+        const { token, user } = response.data;
+        if (!token || !user) {
+          throw new Error('Invalid API response: Missing token or user data');
+        }
+
+        // Normalize socialAccounts
+        const normalizedSocialAccounts = user.socialAccounts?.map(acc => {
+          try {
+            return typeof acc === 'string' && acc.startsWith('[') ? JSON.parse(acc)[0] : acc;
+          } catch {
+            return acc;
+          }
+        }) || [''];
+
+        // Normalize investorPreference
+        const investorPreference = user.investorPreference && 
+          user.investorPreference.investorType &&
+          typeof user.investorPreference.minInvestment === 'number' &&
+          typeof user.investorPreference.maxInvestment === 'number' &&
+          Array.isArray(user.investorPreference.industries) &&
+          user.investorPreference.industries.length >= 3
+          ? {
+              investorType: user.investorPreference.investorType,
+              minInvestment: user.investorPreference.minInvestment,
+              maxInvestment: user.investorPreference.maxInvestment,
+              industries: user.investorPreference.industries,
+            }
+          : null;
+
+        // Validate user status
+        if (user.status === 'Inactive') {
+          setLoading(false);
+          throw new Error('This account has been deactivated!');
+        }
+
+        const clientRole = user.clientRole;
+        if (!['Investor', 'Entrepreneur'].includes(clientRole)) {
+          throw new Error(`Invalid client role: ${clientRole}`);
+        }
+
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('username', user.fullName || 'Unknown User');
+        localStorage.setItem('hasAccessedPortal', 'true');
+        localStorage.setItem('portalType', 'client');
+
+        dispatch(login({
+          token,
+          role: 'client',
+          username: user.fullName || 'Unknown User',
+        }));
+
+        dispatch(setClientAuth({
+          clientData: {
+            _id: user.id,
+            fullName: user.fullName || null,
+            clientRole: user.clientRole,
+            role: user.role,
+            email: user.email || null,
+            phone: user.phone || null,
+            address: user.address || null,
+            biography: user.biography || null,
+            date_of_birth: user.date_of_birth || null,
+            education: user.education || null,
+            experience: user.experience || null,
+            national_id: user.national_id || null,
+            image: user.image || null,
+            status: user.status || null,
+            firstLogin: user.firstLogin ?? null,
+            investorPreference,
+            yearsOfExperience: user.yearsOfExperience || '0-1',
+            socialAccounts: normalizedSocialAccounts,
+            country: user.country || '',
+            city: user.city || '',
+            entrepreneurPreference: user.entrepreneurPreference || null,
+          },
+        }));
+
+        setTokenExpiration();
+
+        const redirectPath = clientRole === 'Investor' ? '/client-portal/investor' : '/client-portal/entrepreneur';
+        navigate(redirectPath);
+        toast.success('Login successful!');
+        return response.data;
+      } else {
+        const errorMessage = 'Sign-in failed. Please try again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+    } catch (err) {
+      console.error('Sign-in error:', err);
+      const errorMessage = err.response?.data?.message || `An error occurred: ${err.message}`;
+      setError(errorMessage);
+      toast.error(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const verifyOtp = async (formData, otp) => {
     setLoading(true);
     setError(null);
@@ -456,97 +605,6 @@ const getAllReviews = useCallback(async () => {
       dispatch(logout());
       navigate('/');
     }, 18000000); // 5 hour in milliseconds
-  };
-
-  const signIn = async (formData) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post(`${API_BASE_URL}/api/signin`, {
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (response.status === 200) {
-        const { token, user } = response.data;
-        if (!token || !user) {
-          throw new Error('Invalid API response: Missing token or user data');
-        }
-
-        // Store token in localStorage
-        localStorage.setItem('authToken', token);
-
-        // Decode token (optional, since user data is provided in response)
-        // const decodedToken = jwtDecode(token);
-
-        // Validate user status
-        if (user.status === 'Inactive') {
-          setLoading(false);
-          throw new Error('This account has been deactivated!');
-        }
-
-        // Use clientRole from response (already normalized by backend)
-        const clientRole = user.clientRole;
-        if (!['Investor', 'Entrepreneur'].includes(clientRole)) {
-          throw new Error(`Invalid client role: ${clientRole}`);
-        }
-
-        // Store additional data in localStorage
-        localStorage.setItem('username', user.fullName || 'Unknown User');
-        localStorage.setItem('hasAccessedPortal', 'true');
-        localStorage.setItem('portalType', 'client');
-
-        // Dispatch authSlice login action
-        dispatch(login({
-          token,
-          role: 'client',
-          username: user.fullName || 'Unknown User',
-        }));
-
-        // Dispatch clientAuthSlice setClientAuth action
-        dispatch(setClientAuth({
-          clientData: {
-            _id: user.id,
-            fullName: user.fullName || null,
-            clientRole: user.clientRole, // Use backend-normalized clientRole
-            email: user.email || null,
-            phone: user.phone || null,
-            address: user.address || null,
-            biography: user.biography || null,
-            date_of_birth: user.date_of_birth || null,
-            education: user.education || null,
-            experience: user.experience || null,
-            national_id: user.national_id || null,
-            image: user.image || null,
-            status: user.status || null,
-            firstLogin: user.firstLogin ?? null,
-            investorPreference: user.investorPreference || null
-          }
-        }));
-
-        // Set token expiration
-        setTokenExpiration();
-
-        // Redirect based on role (ClientInvestorHome handles firstLogin redirect)
-        const redirectPath = clientRole === 'Investor' ? '/client-portal/investor' : '/client-portal/entrepreneur';
-        navigate(redirectPath);
-        toast.success('Login successful!');
-        return response.data;
-      } else {
-        const errorMessage = 'Sign-in failed. Please try again.';
-        setError(errorMessage);
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
-      }
-    } catch (err) {
-      console.error('Sign-in error:', err);
-      const errorMessage = err.response?.data?.message || `An error occurred: ${err.message}`;
-      setError(errorMessage);
-      toast.error(errorMessage);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
   };
 
   const StaffSignIn = async (formData) => {

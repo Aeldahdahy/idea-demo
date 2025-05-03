@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
-// import {
-//   CountrySelect,
-// } from "react-country-state-city";
-import { initFlowbite } from "flowbite"; // Import Flowbite JS for dropdown functionality
+import { useLocation } from "react-router-dom";
+import { initFlowbite } from "flowbite";
 import "react-country-state-city/dist/react-country-state-city.css";
 import { useFunctions } from '../../../useFunctions';
 
@@ -20,8 +18,9 @@ const TeamCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 18px;
-  position: relative; // <-- add this
+  position: relative;
 `;
+
 const TeamRow = styled.div`
   display: flex;
   gap: 18px;
@@ -62,8 +61,6 @@ const AvatarImg = styled.img`
   object-fit: cover;
   border-radius: 50%;
 `;
-
-
 
 const TeamLabel = styled.label`
   font-size: 1.08rem;
@@ -116,13 +113,6 @@ const TeamActions = styled.div`
   gap: 18px;
 `;
 
-
-// const DocBoxRow = styled.div`
-//   width: 100%;
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-// `;
 const PreviewBox = styled.div`
   display: flex;
   align-items: center;
@@ -265,28 +255,6 @@ const Label = styled.label`
   letter-spacing: 0.01em;
 `;
 
-// const InfoIcon = styled.span`
-//   background: #2563eb;
-//   color: #fff;
-//   border-radius: 50%;
-//   width: 22px;
-//   height: 22px;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-//   font-weight: bold;
-//   font-size: 1.1rem;
-//   margin-left: 7px;
-//   margin-right: 2px;
-// `;
-
-// const InfoText = styled.span`
-//   font-size: 0.98rem;
-//   color: #2563eb;
-//   margin-left: 8px;
-//   font-weight: 500;
-// `;
-
 const Input = styled.input`
   width: 100%;
   padding: 15px 18px;
@@ -303,18 +271,6 @@ const Input = styled.input`
     font-weight: 400;
   }
 `;
-
-// const Select = styled.select`
-//   width: 100%;
-//   padding: 15px 18px;
-//   border: 1.5px solid #e3e8f0;
-//   border-radius: 9px;
-//   background: #fff;
-//   font-size: 1.08rem;
-//   margin-bottom: 24px;
-//   outline: none;
-//   color: #222;
-// `;
 
 const Row = styled.div`
   display: flex;
@@ -350,6 +306,7 @@ const Button = styled.button`
       cursor: not-allowed;
     `}
 `;
+
 const StyledTextarea = styled.textarea`
   width: 100%;
   min-height: 110px;
@@ -419,6 +376,7 @@ const UploadBtn = styled.label`
     background: #1746a2;
   }
 `;
+
 const AddMemberBtn = styled.button`
   display: flex;
   align-items: center;
@@ -487,7 +445,6 @@ const countries = [
   "Japan"
 ];
 
-// Industry options
 const industryOptions = [
   'Agriculture', 'Entertainment & Leisure', 'Food & Beverage', 'Media',
   'Products & Inventions', 'Sales & Marketing', 'Transportation', 'Software',
@@ -498,7 +455,10 @@ const industryOptions = [
 
 // --- Main Component ---
 function ClientEntreProjectData() {
-  const { createProject } = useFunctions();
+  const { createProject, updateProject, API_BASE_URL } = useFunctions();
+  const location = useLocation();
+  const project = location.state?.project || null;
+  const isEditMode = !!project;
 
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
@@ -529,6 +489,75 @@ function ClientEntreProjectData() {
     projectLogo: null 
   });
 
+  const [teamOverview, setTeamOverview] = useState("");
+  const [teamMembers, setTeamMembers] = useState([
+    {
+      avatar: null,
+      avatarPreview: null,
+      name: "",
+      linkedin: "",
+      position: "",
+      bio: ""
+    }
+  ]);
+
+  // Initialize form with project data in edit mode
+  useEffect(() => {
+    if (isEditMode && project) {
+      setForm({
+        projectName: project.project_name || "",
+        website: project.website_link || "",
+        minInvestment: project.min_investment?.toString() || "",
+        maxInvestment: project.max_investment?.toString() || "",
+        industry: project.project_industry || "",
+        project_location: project.project_location || "",
+        city: project.city || "",
+        state: project.state || "",
+        zip: project.postal_code || "",
+        stage: project.project_stage || "",
+        dealType: project.deal_type || [],
+        networth: project.networth?.toString() || "",
+        marketDescription: project.market_description || "",
+        businessHighlights: project.bussiness_highlights || "",
+        financialStatus: project.financial_status || "",
+        businessObjectives: project.business_objectives || ""
+      });
+
+      setTeamOverview(project.team_overview || "");
+
+      // Initialize team members from team_members array
+      const teamMembersData = project.team_members || [];
+      const members = teamMembersData.map(member => ({
+        avatar: null, // File object not available, only URL
+        avatarPreview: member.member_image || null, // URL for preview
+        name: member.member_name || "",
+        linkedin: member.linkedin_account || "",
+        position: member.member_position || "",
+        bio: member.member_bio || ""
+      }));
+
+      setTeamMembers(members.length > 0 ? members : [{
+        avatar: null,
+        avatarPreview: null,
+        name: "",
+        linkedin: "",
+        position: "",
+        bio: ""
+      }]);
+
+      // Initialize files with URLs for previews
+      setFiles({
+        businessPlan: project.business_plan ? { file: null, preview: project.business_plan } : null,
+        financialDocs: project.financial_statement ? { file: null, preview: project.financial_statement } : null,
+        executiveSummary: project.exective_sunnary ? { file: null, preview: project.exective_sunnary } : null,
+        additionalDocs: project.additional_document ? { file: null, preview: project.additional_document } : null,
+        projectLogo: project.project_logo ? { file: null, preview: project.project_logo } : null,
+        projectImages: project.project_images?.map(url => ({ file: null, preview: url })) || []
+      });
+    }
+  }, [isEditMode, project]);
+
+ 
   useEffect(() => {
     initFlowbite();
   }, []);
@@ -543,13 +572,12 @@ function ClientEntreProjectData() {
     setForm((prevForm) => {
       const currentDealTypes = prevForm.dealType;
       const updatedDealTypes = currentDealTypes.includes(value)
-        ? currentDealTypes.filter((type) => type !== value) // Remove if already selected
-        : [...currentDealTypes, value]; // Add if not selected
+        ? currentDealTypes.filter((type) => type !== value)
+        : [...currentDealTypes, value];
       return { ...prevForm, dealType: updatedDealTypes };
     });
   };
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (['minInvestment', 'maxInvestment', 'networth'].includes(name)) {
@@ -559,7 +587,7 @@ function ClientEntreProjectData() {
       setForm({ ...form, [name]: value });
     }
   };
-  
+
   const handleFileChange = (e, key) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -586,7 +614,6 @@ function ClientEntreProjectData() {
     setFiles({ ...files, [key]: null });
   };
 
-  // For multiple images
   const handleImagesChange = (e) => {
     const newFiles = Array.from(e.target.files).map(file => ({
       file,
@@ -605,231 +632,217 @@ function ClientEntreProjectData() {
     }));
   };
 
-  const [teamOverview, setTeamOverview] = useState("");
-const [teamMembers, setTeamMembers] = useState([
-  {
-    avatar: null,
-    avatarPreview: null,
-    name: "",
-    linkedin: "",
-    position: "",
-    bio: ""
-  }
-]);
+  const handleTeamMemberChange = (idx, field, value) => {
+    setTeamMembers(members =>
+      members.map((m, i) =>
+        i === idx ? { ...m, [field]: value } : m
+      )
+    );
+  };
 
-const handleTeamMemberChange = (idx, field, value) => {
-  setTeamMembers(members =>
-    members.map((m, i) =>
-      i === idx ? { ...m, [field]: value } : m
-    )
-  );
-};
+  const handleAvatarChange = (idx, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const preview = URL.createObjectURL(file);
+    setTeamMembers(members =>
+      members.map((m, i) =>
+        i === idx ? { ...m, avatar: file, avatarPreview: preview } : m
+      )
+    );
+  };
 
-const handleAvatarChange = (idx, e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const preview = URL.createObjectURL(file);
-  setTeamMembers(members =>
-    members.map((m, i) =>
-      i === idx ? { ...m, avatar: file, avatarPreview: preview } : m
-    )
-  );
-};
+  const addTeamMember = () => {
+    setTeamMembers(members => [
+      ...members,
+      { avatar: null, avatarPreview: null, name: "", linkedin: "", position: "", bio: "" }
+    ]);
+  };
 
-const addTeamMember = () => {
-  setTeamMembers(members => [
-    ...members,
-    { avatar: null, avatarPreview: null, name: "", linkedin: "", position: "", bio: "" }
-  ]);
-};
+  const removeTeamMember = (idx) => {
+    setTeamMembers(members => members.filter((_, i) => i !== idx));
+  };
 
-const removeTeamMember = (idx) => {
-  setTeamMembers(members => members.filter((_, i) => i !== idx));
-};
+  const handleSubmitProject = async () => {
+    try {
+      const requiredFields = [
+        {  
+          key: 'projectName',
+          label: 'Project Name',
+          backendKey: 'project_name',
+          validate: val => val.length >= 3,
+          error: 'Project Name must be at least 3 characters' 
+        },
+        { 
+          key: 'industry',
+          label: 'Project Industry',
+          backendKey: 'project_industry',
+          validate: val => val.length >= 3,
+          error: 'Industry must be at least 3 characters' 
+        },
+        { 
+          key: 'minInvestment',
+          label: 'Minimum per Investment', 
+          backendKey: 'min_investment', 
+          validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+          error: 'Minimum per Investment must be a number' 
+        },
+        { 
+          key: 'maxInvestment', 
+          label: 'Target Investment', 
+          backendKey: 'max_investment', 
+          validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+          error: 'Target Investment must be a number' 
+        },
+        { 
+          key: 'zip', 
+          label: 'Postal Code', 
+          backendKey: 'postal_code', 
+          validate: val => /^[0-9]{5}$/.test(val), 
+          error: 'Postal Code must be a 5-digit number' 
+        },
+        { 
+          key: 'marketDescription', 
+          label: 'Market Description', 
+          backendKey: 'market_description', 
+          validate: val => val.length >= 50, 
+          error: 'Market Description must be at least 50 characters' 
+        },
+        { 
+          key: 'businessObjectives', 
+          label: 'Business Objectives', 
+          backendKey: 'business_objectives', 
+          validate: val => val.length >= 50, 
+          error: 'Business Objectives must be at least 50 characters' 
+        },
+        { 
+          key: 'stage', 
+          label: 'Project Stage', 
+          backendKey: 'project_stage', 
+          validate: val => ['Seed', 'Series A', 'Series B', 'Growth'].includes(val), 
+          error: 'Project Stage must be a valid stage (e.g., Seed, Series A)' 
+        },
+        { 
+          key: 'networth', 
+          label: 'Net Worth', 
+          backendKey: 'networth', 
+          validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
+          error: 'Net Worth must be a number' 
+        },
+        { 
+          key: 'project_location', 
+          label: 'Project Location', 
+          backendKey: 'project_location', 
+          validate: val => val.length > 0, 
+          error: 'Project Location is required' 
+        },
+        { 
+          key: 'industry', 
+          label: 'Industry', 
+          backendKey: 'industry', 
+          validate: val => val.length > 0, 
+          error: 'Project Industry is required' 
+        },
+      ];
 
-const handleSubmitProject = async () => {
-  try {
-    const requiredFields = [
-      {  
-        key: 'projectName',
-        label: 'Project Name',
-        backendKey: 'project_name',
-        validate: val => val.length >= 3,
-        error: 'Project Name must be at least 3 characters' 
-      },
-      { 
-        key: 'industry',
-        label: 'Project Industry',
-        backendKey: 'project_industry',
-        validate: val => val.length >= 3,
-        error: 'Industry must be at least 3 characters' 
-      },
-      { 
-        key: 'minInvestment',
-        label: 'Minimum per Investment', 
-        backendKey: 'min_investment', 
-        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
-        error: 'Minimum per Investment must be a number' 
-      },
-      { 
-        key: 'maxInvestment', 
-        label: 'Target Investment', 
-        backendKey: 'max_investment', 
-        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
-        error: 'Target Investment must be a number' },
-      { 
-        key: 'zip', 
-        label: 'Postal Code', 
-        backendKey: 'postal_code', 
-        validate: val => /^[0-9]{5}$/.test(val), 
-        error: 'Postal Code must be a 5-digit number' },
-      { 
-        key: 'marketDescription', 
-        label: 'Market Description', 
-        backendKey: 'market_description', 
-        validate: val => val.length >= 50, 
-        error: 'Market Description must be at least 50 characters' },
-      { 
-        key: 'businessObjectives', 
-        label: 'Business Objectives', 
-        backendKey: 'business_objectives', 
-        validate: val => val.length >= 50, 
-        error: 'Business Objectives must be at least 50 characters' },
-      { 
-        key: 'stage', 
-        label: 'Project Stage', 
-        backendKey: 'project_stage', 
-        validate: val => ['Seed', 'Series A', 'Series B', 'Growth'].includes(val), 
-        error: 'Project Stage must be a valid stage (e.g., Seed, Series A)' },
-      { 
-        key: 'networth', 
-        label: 'Net Worth', 
-        backendKey: 'networth', 
-        validate: val => !isNaN(parseFloat(val.replace(/[^0-9.]/g, ''))), 
-        error: 'Net Worth must be a number' },
-      { 
-        key: 'project_location', 
-        label: 'Project Location', 
-        backendKey: 'project_location', 
-        validate: val => val.length > 0, 
-        error: 'Project Location is required' 
-      },
-      { 
-        key: 'industry', 
-        label: 'Industry', 
-        backendKey: 'industry', 
-        validate: val => val.length > 0, 
-        error: 'Project Industry is required' 
-      },
-    ];
+      const errors = requiredFields
+        .map(field => {
+          const value = form[field.key];
+          if (!value || value.trim() === '') return `${field.label} is required`;
+          if (field.validate && !field.validate(value)) return field.error;
+          return null;
+        })
+        .filter(error => error);
 
-    const errors = requiredFields
-      .map(field => {
-        const value = form[field.key];
-        if (!value || value.trim() === '') return `${field.label} is required`;
-        if (field.validate && !field.validate(value)) return field.error;
-        return null;
-      })
-      .filter(error => error);
-
-    // Validate website if provided
-    if (form.website && !/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(form.website)) {
-      errors.push('Website must be a valid URL (e.g., https://example.com)');
-    }
-
-    // Ensure maxInvestment > minInvestment
-    const minInv = parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''));
-    const maxInv = parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''));
-    if (!isNaN(minInv) && !isNaN(maxInv) && maxInv <= minInv) {
-      errors.push('Target Investment must be greater than Minimum per Investment');
-    }
-
-    // Validate team members
-    if (teamMembers.length === 0) {
-      errors.push('At least one team member is required');
-    } else {
-      teamMembers.forEach((member, idx) => {
-        if (!member.name) errors.push(`Team Member ${idx + 1}: Name is required`);
-        if (!member.position) errors.push(`Team Member ${idx + 1}: Position is required`);
-        if (!member.bio) errors.push(`Team Member ${idx + 1}: Bio is required`);
-        if (!member.linkedin || !/^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(member.linkedin)) {
-          errors.push(`Team Member ${idx + 1}: Valid LinkedIn URL is required`);
-        }
-        if (!member.avatar) errors.push(`Team Member ${idx + 1}: Avatar is required`);
-      });
-    }
-
-    if (errors.length > 0) {
-      alert(`Please fix the following errors:\n${errors.join('\n')}`);
-      return;
-    }
-
-    const formData = new FormData();
-
-    // Append required fields
-    requiredFields.forEach(field => {
-      const value = form[field.key];
-      if (field.key === 'project_location') {
-        formData.append(field.backendKey, value || '');
-      } else if (field.key === 'industry') {
-        formData.append(field.backendKey, value || '');
-      } else if (['minInvestment', 'maxInvestment', 'networth'].includes(field.key)) {
-        formData.append(field.backendKey, value.replace(/[^0-9.]/g, ''));
-      } else {
-        formData.append(field.backendKey, value);
+      if (form.website && !/^https?:\/\/[^\s/$.?#].[^\s]*$/.test(form.website)) {
+        errors.push('Website must be a valid URL (e.g., https://example.com)');
       }
-    });
 
-    // Append deal_type as an array
-    formData.append('deal_type', JSON.stringify(form.dealType));
+      const minInv = parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''));
+      const maxInv = parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''));
+      if (!isNaN(minInv) && !isNaN(maxInv) && maxInv <= minInv) {
+        errors.push('Target Investment must be greater than Minimum per Investment');
+      }
 
-    // Append optional fields
-    if (form.website) formData.append('website_link', form.website);
-    if (form.city) formData.append('city', form.city);
-    if (form.state) formData.append('state', form.state);
-    if (form.financialStatus) formData.append('financial_status', form.financialStatus);
-    if (form.businessHighlights) formData.append('bussiness_highlights', form.businessHighlights);
-    if (teamOverview) formData.append('team_overview', teamOverview);
+      if (teamMembers.length === 0) {
+        errors.push('At least one team member is required');
+      } else {
+        teamMembers.forEach((member, idx) => {
+          if (!member.name) errors.push(`Team Member ${idx + 1}: Name is required`);
+          if (!member.position) errors.push(`Team Member ${idx + 1}: Position is required`);
+          if (!member.bio) errors.push(`Team Member ${idx + 1}: Bio is required`);
+          if (!member.linkedin || !/^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(member.linkedin)) {
+            errors.push(`Team Member ${idx + 1}: Valid LinkedIn URL is required`);
+          }
+          if (!member.avatar && !member.avatarPreview) errors.push(`Team Member ${idx + 1}: Avatar is required`);
+        });
+      }
 
-    // Append files
-    if (files.businessPlan?.file) formData.append('business_plan', files.businessPlan.file);
-    if (files.financialDocs?.file) formData.append('financial_statement', files.financialDocs.file);
-    if (files.executiveSummary?.file) formData.append('exective_sunnary', files.executiveSummary.file);
-    if (files.additionalDocs?.file) formData.append('additional_document', files.additionalDocs.file);
-    if (files.projectLogo?.file) formData.append('project_logo', files.projectLogo.file);
-    files.projectImages.forEach((img, idx) => {
-      formData.append('project_images', img.file);
-    });
+      if (errors.length > 0) {
+        alert(`Please fix the following errors:\n${errors.join('\n')}`);
+        return;
+      }
 
-    // Append team members
-    teamMembers.forEach((member, idx) => {
-      formData.append(`member_name[${idx}]`, member.name);
-      formData.append(`linkedin_account[${idx}]`, member.linkedin);
-      formData.append(`member_position[${idx}]`, member.position);
-      formData.append(`member_bio[${idx}]`, member.bio);
-      if (member.avatar) formData.append(`member_image`, member.avatar);
-    });
+      const formData = new FormData();
 
-    // Log FormData for debugging
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
+      requiredFields.forEach(field => {
+        const value = form[field.key];
+        if (field.key === 'project_location' || field.key === 'industry') {
+          formData.append(field.backendKey, value || '');
+        } else if (['minInvestment', 'maxInvestment', 'networth'].includes(field.key)) {
+          formData.append(field.backendKey, value.replace(/[^0-9.]/g, ''));
+        } else {
+          formData.append(field.backendKey, value);
+        }
+      });
+
+      formData.append('deal_type', JSON.stringify(form.dealType));
+
+      if (form.website) formData.append('website_link', form.website);
+      if (form.city) formData.append('city', form.city);
+      if (form.state) formData.append('state', form.state);
+      if (form.financialStatus) formData.append('financial_status', form.financialStatus);
+      if (form.businessHighlights) formData.append('bussiness_highlights', form.businessHighlights);
+      if (teamOverview) formData.append('team_overview', teamOverview);
+
+      if (files.businessPlan?.file) formData.append('business_plan', files.businessPlan.file);
+      if (files.financialDocs?.file) formData.append('financial_statement', files.financialDocs.file);
+      if (files.executiveSummary?.file) formData.append('exective_sunnary', files.executiveSummary.file);
+      if (files.additionalDocs?.file) formData.append('additional_document', files.additionalDocs.file);
+      if (files.projectLogo?.file) formData.append('project_logo', files.projectLogo.file);
+      files.projectImages.forEach((img, idx) => {
+        if (img.file) formData.append('project_images', img.file);
+      });
+
+      teamMembers.forEach((member, idx) => {
+        formData.append(`member_name[${idx}]`, member.name);
+        formData.append(`linkedin_account[${idx}]`, member.linkedin);
+        formData.append(`member_position[${idx}]`, member.position);
+        formData.append(`member_bio[${idx}]`, member.bio);
+        if (member.avatar) formData.append(`member_image`, member.avatar);
+      });
+
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      if (isEditMode) {
+        await updateProject(project._id, formData);
+      } else {
+        await createProject(formData);
+      }
+      setStep(step + 1);
+
+    } catch (error) {
+      console.error('Error submitting project:', error);
+      const errorMessage = error.response?.data?.error || 'Failed to submit project. Please check the form and try again.';
+      alert(`Submission failed:\n${errorMessage}`);
     }
-
-    const result = await createProject(formData);
-    console.log('Project created:', result);
-    setStep(step + 1);
-
-  } catch (error) {
-    console.error('Error creating project:', error);
-    const errorMessage = error.response?.data?.error || 'Failed to create project. Please check the form and try again.';
-    alert(`Submission failed:\n${errorMessage}`);
-  }
-};
+  };
 
   // Step 1: General Information
   const Step1 = (
     <>
-      <Title>General Information</Title>
+      <Title>{isEditMode ? "Edit General Information" : "General Information"}</Title>
       {form.projectName && form.projectName.length < 3 && (
         <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
           Project Name must be at least 3 characters
@@ -857,7 +870,7 @@ const handleSubmitProject = async () => {
       />
       <Row>
         <div style={{ flex: 1 }}>
-        {form.minInvestment && (isNaN(parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''))) || form.minInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+          {form.minInvestment && (isNaN(parseFloat(form.minInvestment.replace(/[^0-9.]/g, ''))) || form.minInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
             <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
               Minimum per Investment must be a valid number (e.g., 1000 or 1000.50)
             </span>
@@ -873,7 +886,7 @@ const handleSubmitProject = async () => {
           />
         </div>
         <div style={{ flex: 1 }}>
-        {form.maxInvestment && (isNaN(parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''))) || form.maxInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
+          {form.maxInvestment && (isNaN(parseFloat(form.maxInvestment.replace(/[^0-9.]/g, ''))) || form.maxInvestment.replace(/[^0-9.]/g, '').match(/\./g)?.length > 1) && (
             <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
               Target Investment must be a valid number (e.g., 1000 or 1000.50)
             </span>
@@ -925,7 +938,7 @@ const handleSubmitProject = async () => {
           color: '#222',
         }}
       >
-        <option value="">Select a industry</option>
+        <option value="">Select an industry</option>
         {industryOptions.map((industry) => (
           <option key={industry} value={industry}>
             {industry}
@@ -991,95 +1004,92 @@ const handleSubmitProject = async () => {
         </div>
       </Row>
       <Row>
-      <div  style={{ flex: 1 }}>
-        <Label>Deal Type <span style={{ color: 'red' }}>*</span></Label>
-          <button
-          id="dropdownHelperButton"
-          data-dropdown-toggle="dropdownHelper"
-          className="
-          text-black
-          bg-white-700 
-          hover:bg-white-800 
-          focus:ring-4 
-          focus:outline-none 
-          focus:ring-blue-300 
-          font-medium 
-          rounded-lg 
-          text-sm px-2 
-          py-3 text-left 
-          inline-flex 
-          items-center 
-          dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-gray-300 w-100 justify-between"
-          type="button"
-        >
-          Select Deal Type
-          <svg
-            className="w-2.5 h-2.5 ms-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 10 6"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="m1 1 4 4 4-4"
-            />
-          </svg>
-          </button>
-
-        {/* Dropdown menu */}
-        <div
-          id="dropdownHelper"
-          className="absolute z-10 hidden bg-blue-800 divide-y divide-blue-700 rounded-lg shadow-sm w-60 dark:bg-blue-700 dark:divide-blue-600 top-full mt-1 left-0 max-h-64 overflow-y-auto"
-        >
-          <ul
-            className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-            aria-labelledby="dropdownHelperButton"
-          >
-          {dealTypeOptions.map((option) => (
-            <li key={option.id}>
-              <div className="flex p-2 rounded-sm hover:bg-blue-500">
-                <div className="flex items-center h-5">
-                  <input
-                    id={option.id}
-                    type="checkbox"
-                    value={option.value}
-                    checked={form.dealType.includes(option.value)}
-                    onChange={() => handleCheckboxChange(option.value)}
-                    className="w-4 h-4 text-blue-300 bg-blue-700 border-blue-300 rounded-sm focus:ring-blue-400 dark:focus:ring-blue-500 dark:ring-offset-blue-700 dark:focus:ring-offset-blue-700 focus:ring-2 dark:bg-blue-600 dark:border-blue-500"
-                  />
-                </div>
-                <div className="ms-2 text-sm">
-                  <label
-                    htmlFor={option.id}
-                    className="font-medium text-white"
-                  >
-                    <div>{option.label}</div>
-                    <p
-                      id={`${option.id}-text`}
-                      className="text-xs font-normal text-white"
-                    >
-                      Select {option.label} deal type
-                    </p>
-                  </label>
-                </div>
-              </div>
-            </li>
-          ))}
-          </ul>
-        </div>
-        </div>
-
         <div style={{ flex: 1 }}>
-        {form.stage && !['Seed', 'Series A', 'Series B', 'Growth'].includes(form.stage) && (
+          <Label>Deal Type <span style={{ color: 'red' }}>*</span></Label>
+          <button
+            id="dropdownHelperButton"
+            data-dropdown-toggle="dropdownHelper"
+            className="
+              text-black
+              bg-white-700 
+              hover:bg-white-800 
+              focus:ring-4 
+              focus:outline-none 
+              focus:ring-blue-300 
+              font-medium 
+              rounded-lg 
+              text-sm px-2 
+              py-3 text-left 
+              inline-flex 
+              items-center 
+              dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 border border-gray-300 w-100 justify-between"
+            type="button"
+          >
+            Select Deal Type
+            <svg
+              className="w-2.5 h-2.5 ms-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 10 6"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m1 1 4 4 4-4"
+              />
+            </svg>
+          </button>
+          <div
+            id="dropdownHelper"
+            className="absolute z-10 hidden bg-blue-800 divide-y divide-blue-700 rounded-lg shadow-sm w-60 dark:bg-blue-700 dark:divide-blue-600 top-full mt-1 left-0 max-h-64 overflow-y-auto"
+          >
+            <ul
+              className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownHelperButton"
+            >
+              {dealTypeOptions.map((option) => (
+                <li key={option.id}>
+                  <div className="flex p-2 rounded-sm hover:bg-blue-500">
+                    <div className="flex items-center h-5">
+                      <input
+                        id={option.id}
+                        type="checkbox"
+                        value={option.value}
+                        checked={form.dealType.includes(option.value)}
+                        onChange={() => handleCheckboxChange(option.value)}
+                        className="w-4 h-4 text-blue-300 bg-blue-700 border-blue-300 rounded-sm focus:ring-blue-400 dark:focus:ring-blue-500 dark:ring-offset-blue-700 dark:focus:ring-offset-blue-700 focus:ring-2 dark:bg-blue-600 dark:border-blue-500"
+                      />
+                    </div>
+                    <div className="ms-2 text-sm">
+                      <label
+                        htmlFor={option.id}
+                        className="font-medium text-white"
+                      >
+                        <div>{option.label}</div>
+                        <p
+                          id={`${option.id}-text`}
+                          className="text-xs font-normal text-white"
+                        >
+                          Select {option.label} deal type
+                        </p>
+                      </label>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div style={{ flex: 1 }}>
+          {form.stage && !['Seed', 'Series A', 'Series B', 'Growth'].includes(form.stage) && (
             <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
               Please select a valid stage
             </span>
           )}
-        <Label>Project Stage <span style={{ color: 'red' }}>*</span></Label>
+          <Label>Project Stage <span style={{ color: 'red' }}>*</span></Label>
           <select
             name="stage"
             value={form.stage}
@@ -1103,7 +1113,6 @@ const handleSubmitProject = async () => {
             <option value="Growth">Growth</option>
           </select>
         </div>
-
       </Row>
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)} disabled={step === 0}>Back</Button>
@@ -1115,19 +1124,19 @@ const handleSubmitProject = async () => {
   // Step 2: Business Description
   const Step2 = (
     <>
-      <Title>Business Description</Title>
+      <Title>{isEditMode ? "Edit Business Description" : "Business Description"}</Title>
       <Label>Market Description <span style={{ color: 'red' }}>*</span></Label>
-<StyledTextarea
-  name="marketDescription"
-  value={form.marketDescription}
-  onChange={handleChange}
-  placeholder="Describe your target market, industry trends, and competitive landscape..."
-/>
-{form.marketDescription.length < 50 && (
-  <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
-    Market Description must be at least 50 characters
-  </span>
-)}
+      <StyledTextarea
+        name="marketDescription"
+        value={form.marketDescription}
+        onChange={handleChange}
+        placeholder="Describe your target market, industry trends, and competitive landscape..."
+      />
+      {form.marketDescription.length > 0 && form.marketDescription.length < 50 && (
+        <span style={{ color: '#e53e3e', fontSize: '0.9rem' }}>
+          Market Description must be at least 50 characters
+        </span>
+      )}
       <Label>Business Highlights</Label>
       <StyledTextarea
         name="businessHighlights"
@@ -1159,16 +1168,23 @@ const handleSubmitProject = async () => {
   // Step 3: Project Documents & Images
   const Step3 = (
     <>
-      <Title>Project Documents & Images</Title>
+      <Title>{isEditMode ? "Edit Project Documents & Images" : "Project Documents & Images"}</Title>
       <DocSection>
         <DocLabel>
           <DocIcon>➕</DocIcon> Business plan
         </DocLabel>
         <DocBox>
-          {files.businessPlan && files.businessPlan.file ? (
+          {files.businessPlan && files.businessPlan.preview ? (
             <PreviewBox>
               <FileIcon>📄</FileIcon>
-              <span>{files.businessPlan.file.name}</span>
+              <a
+                href={`http://127.0.0.1:7030/${files.businessPlan.preview.replace(/\\/g, '/')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                <span>{files.businessPlan.preview ? files.businessPlan.preview.replace(/\\/g, '/').split('/').pop() : 'Business Plan'}</span>
+              </a>
               <RemoveBtn onClick={() => handleRemoveFile("businessPlan")}>✖</RemoveBtn>
             </PreviewBox>
           ) : (
@@ -1193,10 +1209,17 @@ const handleSubmitProject = async () => {
           <DocIcon>➕</DocIcon> Financial documents
         </DocLabel>
         <DocBox>
-          {files.financialDocs && files.financialDocs.file ? (
+          {files.financialDocs && files.financialDocs.preview ? (
             <PreviewBox>
               <FileIcon>📄</FileIcon>
-              <span>{files.financialDocs.file.name}</span>
+              <a
+                href={`http://127.0.0.1:7030/${files.financialDocs.preview.replace(/\\/g, '/')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                <span>{files.financialDocs.preview ? files.financialDocs.preview.replace(/\\/g, '/').split('/').pop() : 'Financial Documents'}</span>
+              </a>
               <RemoveBtn onClick={() => handleRemoveFile("financialDocs")}>✖</RemoveBtn>
             </PreviewBox>
           ) : (
@@ -1221,10 +1244,17 @@ const handleSubmitProject = async () => {
           <DocIcon>➕</DocIcon> Executive summary
         </DocLabel>
         <DocBox>
-          {files.executiveSummary && files.executiveSummary.file ? (
+          {files.executiveSummary && files.executiveSummary.preview ? (
             <PreviewBox>
               <FileIcon>📄</FileIcon>
-              <span>{files.executiveSummary.file.name}</span>
+              <a
+                href={`http://127.0.0.1:7030/${files.executiveSummary.preview.replace(/\\/g, '/')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                <span>{files.executiveSummary.preview ? files.executiveSummary.preview.replace(/\\/g, '/').split('/').pop() : 'Executive Summary'}</span>
+              </a>
               <RemoveBtn onClick={() => handleRemoveFile("executiveSummary")}>✖</RemoveBtn>
             </PreviewBox>
           ) : (
@@ -1249,10 +1279,17 @@ const handleSubmitProject = async () => {
           <DocIcon>➕</DocIcon> Additional documents
         </DocLabel>
         <DocBox>
-          {files.additionalDocs && files.additionalDocs.file ? (
+          {files.additionalDocs && files.additionalDocs.preview ? (
             <PreviewBox>
               <FileIcon>📄</FileIcon>
-              <span>{files.additionalDocs.file.name}</span>
+              <a
+                href={`http://127.0.0.1:7030/${files.additionalDocs.preview.replace(/\\/g, '/')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
+                <span>{files.additionalDocs.preview ? files.additionalDocs.preview.replace(/\\/g, '/').split('/').pop() : 'Additional Documents'}</span>
+              </a>
               <RemoveBtn onClick={() => handleRemoveFile("additionalDocs")}>✖</RemoveBtn>
             </PreviewBox>
           ) : (
@@ -1272,36 +1309,34 @@ const handleSubmitProject = async () => {
           )}
         </DocBox>
       </DocSection>
-
-        <DocSection>
-          <DocLabel>
-            <DocIcon>🖼️</DocIcon> Project Logo
-          </DocLabel>
-          <DocBox>
-            {files.projectLogo && files.projectLogo.file ? (
-              <PreviewBox>
-                <ImageThumb src={files.projectLogo.preview} alt="logo preview" />
-                <span>{files.projectLogo.file.name}</span>
-                <RemoveBtn onClick={() => handleRemoveFile("projectLogo")}>✖</RemoveBtn>
-              </PreviewBox>
-            ) : (
-              <>
-                <DocInfo>( File accepted: .jpg,.jpeg,.png,.gif - Max file size: 5MB for demo limit )</DocInfo>
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  style={{ display: "none" }}
-                  id="projectLogo"
-                  onChange={e => handleFileChange(e, "projectLogo")}
-                />
-                <UploadBtn htmlFor="projectLogo">
-                  Upload The Logo
-                </UploadBtn>
-              </>
-            )}
-          </DocBox>
-        </DocSection>
-
+      <DocSection>
+        <DocLabel>
+          <DocIcon>🖼️</DocIcon> Project Logo
+        </DocLabel>
+        <DocBox>
+          {files.projectLogo && files.projectLogo.preview ? (
+            <PreviewBox>
+              <ImageThumb src={`${API_BASE_URL}/${files.projectLogo.preview}`} alt="logo preview" />
+              <span>{files.projectLogo.file?.name || 'Project Logo'}</span>
+              <RemoveBtn onClick={() => handleRemoveFile("projectLogo")}>✖</RemoveBtn>
+            </PreviewBox>
+          ) : (
+            <>
+              <DocInfo>( File accepted: .jpg,.jpeg,.png,.gif - Max file size: 5MB for demo limit )</DocInfo>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                style={{ display: "none" }}
+                id="projectLogo"
+                onChange={e => handleFileChange(e, "projectLogo")}
+              />
+              <UploadBtn htmlFor="projectLogo">
+                Upload The Logo
+              </UploadBtn>
+            </>
+          )}
+        </DocBox>
+      </DocSection>
       <DocSection>
         <DocLabel>
           <DocIcon>🖼️</DocIcon> Project Images
@@ -1311,8 +1346,8 @@ const handleSubmitProject = async () => {
             <PreviewBox>
               {files.projectImages.map((img, idx) => (
                 <span key={idx} style={{ display: "flex", alignItems: "center" }}>
-                  <ImageThumb src={img.preview} alt="preview" />
-                  <span>{img.file.name}</span>
+                  <ImageThumb src={`${API_BASE_URL}/${img.preview}`} alt="preview" />
+                  <span>{img.file?.name || 'Image'}</span>
                   <RemoveBtn onClick={() => handleRemoveImage(idx)}>✖</RemoveBtn>
                 </span>
               ))}
@@ -1325,7 +1360,7 @@ const handleSubmitProject = async () => {
                 onChange={handleImagesChange}
               />
               <UploadBtn htmlFor="projectImages">
-                Upload The Documents
+                Upload More Images
               </UploadBtn>
             </PreviewBox>
           ) : (
@@ -1340,13 +1375,12 @@ const handleSubmitProject = async () => {
                 onChange={handleImagesChange}
               />
               <UploadBtn htmlFor="projectImages">
-                Upload The images
+                Upload The Images
               </UploadBtn>
             </>
           )}
         </DocBox>
       </DocSection>
-
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)}>Back</Button>
         <Button primary onClick={() => setStep(step + 1)}>Next</Button>
@@ -1354,9 +1388,10 @@ const handleSubmitProject = async () => {
     </>
   );
 
+  // Step 4: Team Description
   const Step4 = (
     <>
-      <Title>Team Description</Title>
+      <Title>{isEditMode ? "Edit Team Description" : "Team Description"}</Title>
       <TeamSection>
         <TeamLabel>Team Overview</TeamLabel>
         <TeamTextarea
@@ -1369,20 +1404,20 @@ const handleSubmitProject = async () => {
         <h3 style={{ fontWeight: 700, fontSize: "1.3rem", margin: "18px 0 18px 0" }}>Team Members</h3>
         {teamMembers.map((member, idx) => (
           <TeamCard key={idx}>
-              {teamMembers.length > 1 && (
-      <RemoveMemberBtn
-        type="button"
-        title="Remove team member"
-        onClick={() => removeTeamMember(idx)}
-      >
-        ×
-      </RemoveMemberBtn>
-    )}
+            {teamMembers.length > 1 && (
+              <RemoveMemberBtn
+                type="button"
+                title="Remove team member"
+                onClick={() => removeTeamMember(idx)}
+              >
+                ×
+              </RemoveMemberBtn>
+            )}
             <TeamRow>
               <AvatarWrapper>
                 <Avatar htmlFor={`avatar-upload-${idx}`}>
                   {member.avatarPreview ? (
-                    <AvatarImg src={member.avatarPreview} alt="avatar" />
+                    <AvatarImg src={`${API_BASE_URL}/${member.avatarPreview}`} alt="avatar" />
                   ) : (
                     <span style={{ fontSize: "2.5rem" }}>👤</span>
                   )}
@@ -1434,12 +1469,14 @@ const handleSubmitProject = async () => {
           <span style={{ fontSize: "1.2em" }}>👥</span> Add Team Member
         </AddMemberBtn>
       </TeamSection>
-        <ButtonRow>
-      <TeamActions>
-        <Button onClick={() => setStep(step - 1)}>Back</Button>
-        <CreateBtn primary onClick={handleSubmitProject}>Create Pitch</CreateBtn>
-      </TeamActions>
-        </ButtonRow>
+      <ButtonRow>
+        <TeamActions>
+          <Button onClick={() => setStep(step - 1)}>Back</Button>
+          <CreateBtn primary onClick={handleSubmitProject}>
+            {isEditMode ? "Update Pitch" : "Create Pitch"}
+          </CreateBtn>
+        </TeamActions>
+      </ButtonRow>
     </>
   );
 
@@ -1483,4 +1520,4 @@ const handleSubmitProject = async () => {
   );
 }
 
-export default ClientEntreProjectData; 
+export default ClientEntreProjectData;

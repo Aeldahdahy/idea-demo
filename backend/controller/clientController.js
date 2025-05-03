@@ -110,31 +110,58 @@ const signIn = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // Check if the user status is inactive
     if (user.status !== 'Active') {
       return res.status(403).json({ message: 'Access denied. User is inactive.' });
     }
 
-    // Prepare payload for JWT and response
+    // Normalize socialAccounts
+    const normalizedSocialAccounts = user.socialAccounts?.map(acc => {
+      try {
+        return typeof acc === 'string' && acc.startsWith('[') ? JSON.parse(acc)[0] : acc;
+      } catch {
+        return acc;
+      }
+    }) || [''];
+
+    // Normalize investorPreference
+    const investorPreference = user.investorPreference &&
+      user.investorPreference.investorType &&
+      typeof user.investorPreference.minInvestment === 'number' &&
+      typeof user.investorPreference.maxInvestment === 'number' &&
+      Array.isArray(user.investorPreference.industries) &&
+      user.investorPreference.industries.length >= 3
+      ? {
+          investorType: user.investorPreference.investorType,
+          minInvestment: user.investorPreference.minInvestment,
+          maxInvestment: user.investorPreference.maxInvestment,
+          industries: user.investorPreference.industries,
+        }
+      : null;
+
     const payload = {
       user: {
         id: user._id,
         email: user.email,
-        role: user.role, // Backend returns 'investor' or 'entrepreneur'
-        clientRole: user.role.charAt(0).toUpperCase() + user.role.slice(1), // Normalized to 'Investor' or 'Entrepreneur'
-        fullName: user.fullName,
-        phone: user.phone,
-        address: user.address,
-        date_of_birth: user.date_of_birth,
-        national_id: user.national_id,
-        education: user.education,
-        experience: user.experience,
-        biography: user.biography,
-        image: user.image,
-        status: user.status,
-        firstLogin: user.firstLogin,
-        investorPreference: user.investorPreference // Include investor preferences if present
-      }
+        role: user.role,
+        clientRole: user.role.charAt(0).toUpperCase() + user.role.slice(1),
+        fullName: user.fullName || null,
+        phone: user.phone || null,
+        address: user.address || null,
+        date_of_birth: user.date_of_birth || null,
+        national_id: user.national_id || null,
+        education: user.education || null,
+        experience: user.experience || null,
+        biography: user.biography || null,
+        image: user.image || null,
+        status: user.status || null,
+        firstLogin: user.firstLogin ?? null,
+        investorPreference,
+        yearsOfExperience: user.yearsOfExperience || '0-1',
+        socialAccounts: normalizedSocialAccounts,
+        country: user.country || '',
+        city: user.city || '',
+        entrepreneurPreference: user.entrepreneurPreference || null,
+      },
     };
 
     jwt.sign(
@@ -143,18 +170,18 @@ const signIn = async (req, res) => {
       { expiresIn: '1h' },
       (err, token) => {
         if (err) {
-          console.error(err);
+          console.error('JWT sign error:', err);
           return res.status(500).json({ message: 'Failed to generate token' });
         }
-        req.session.user = payload.user; // Save user info in session
-        res.status(200).json({ 
-          token, 
-          user: payload.user // Return user data to frontend
+        req.session.user = payload.user;
+        res.status(200).json({
+          token,
+          user: payload.user,
         });
       }
     );
   } catch (error) {
-    console.error(error);
+    console.error('Sign-in error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -163,7 +190,6 @@ const updateUserById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate ObjectId
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({
         success: false,
@@ -171,7 +197,6 @@ const updateUserById = async (req, res) => {
       });
     }
 
-    // Prepare updates object with basic user fields
     const updates = {
       role: req.body.role,
       fullName: req.body.fullName,
@@ -183,38 +208,61 @@ const updateUserById = async (req, res) => {
       national_id: req.body.national_id,
       education: req.body.education,
       experience: req.body.experience,
-      biography: req.body.biography
+      biography: req.body.biography,
+      country: req.body.country,
+      city: req.body.city,
+      yearsOfExperience: req.body.yearsOfExperience
     };
 
-    // Handle image upload if provided
+    // Handle socialAccounts
+    if (req.body.socialAccounts) {
+      try {
+        updates.socialAccounts = typeof req.body.socialAccounts === 'string' 
+          ? JSON.parse(req.body.socialAccounts) 
+          : req.body.socialAccounts;
+        if (!Array.isArray(updates.socialAccounts) || updates.socialAccounts.length === 0) {
+          return res.status(400).json({
+            success: false,
+            message: 'At least one social account is required'
+          });
+        }
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid socialAccounts format. Expected a valid JSON array.'
+        });
+      }
+    }
+
     if (req.file) {
       updates.image = req.file.filename;
     }
 
-    // Handle investorPreference for investors only
     if (req.body.investorPreference && req.body.role === 'investor') {
       let investorPreference;
       try {
-        // Parse investorPreference from JSON string
-        investorPreference = typeof req.body.investorPreference === 'string'
+        investorPreference = typeof req.body.investorPreference === 'string' && req.body.investorPreference.trim() !== ''
           ? JSON.parse(req.body.investorPreference)
           : req.body.investorPreference;
+        
+        if (!investorPreference || typeof investorPreference !== 'object') {
+          return res.status(400).json({
+            success: false,
+            message: 'investorPreference must be a valid JSON object'
+          });
+        }
       } catch (error) {
+        console.error('Parsing error:', error);
         return res.status(400).json({
           success: false,
           message: 'Invalid investorPreference format. Expected a valid JSON object.'
         });
       }
 
-      // Pre-validate investorPreference fields
       const {
         investorType,
         minInvestment,
         maxInvestment,
-        yearsOfExperience,
-        socialAccounts,
-        country,
-        city,
         industries
       } = investorPreference;
 
@@ -248,57 +296,76 @@ const updateUserById = async (req, res) => {
         });
       }
 
-      if (!['0-1', '1-3', '3-5', '5+'].includes(yearsOfExperience)) {
+      if (!Array.isArray(industries) || industries.length < 3) {
         return res.status(400).json({
           success: false,
-          message: 'Years of experience must be one of: 0-1, 1-3, 3-5, 5+'
+          message: 'At least 3 industries must be selected'
         });
       }
 
-      const validSocialAccounts = Array.isArray(socialAccounts)
-        ? socialAccounts.filter(account => account.trim() !== '')
-        : [];
-      if (validSocialAccounts.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: 'At least one social account is required'
-        });
-      }
-
-      if (!country || !city) {
-        return res.status(400).json({
-          success: false,
-          message: 'Country and city are required'
-        });
-      }
-
-      if (!Array.isArray(industries) || industries.length !== 3) {
-        return res.status(400).json({
-          success: false,
-          message: 'Exactly 3 industries must be selected'
-        });
-      }
-
-      // Set investorPreference in updates
       updates.investorPreference = {
         investorType,
         minInvestment: minInvest,
         maxInvestment: maxInvest,
-        yearsOfExperience,
-        socialAccounts: validSocialAccounts,
-        country,
-        city,
         industries
       };
-
-      // Set firstLogin to false
       updates.firstLogin = false;
     } else if (req.body.role === 'entrepreneur') {
-      // Ensure investorPreference is null for entrepreneurs
       updates.investorPreference = null;
     }
 
-    // Update the user using $set to ensure atomic update
+    if (req.body.entrepreneurPreference && req.body.role === 'entrepreneur') {
+      let entrepreneurPreference;
+      try {
+        entrepreneurPreference = typeof req.body.entrepreneurPreference === 'string' && req.body.entrepreneurPreference.trim() !== ''
+          ? JSON.parse(req.body.entrepreneurPreference)
+          : req.body.entrepreneurPreference;
+        
+        if (!entrepreneurPreference || typeof entrepreneurPreference !== 'object') {
+          return res.status(400).json({
+            success: false,
+            message: 'entrepreneurPreference must be a valid JSON object'
+          });
+        }
+      } catch (error) {
+        console.error('Parsing error:', error);
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid entrepreneurPreference format. Expected a valid JSON object.'
+        });
+      }
+
+      const { projectName, projectIndustry, fundingGoal, pitch } = entrepreneurPreference;
+      if (!projectName?.trim() || !projectIndustry?.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Project name and industry are required'
+        });
+      }
+      const funding = Number(fundingGoal);
+      if (isNaN(funding) || funding < 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Funding goal must be a non-negative number'
+        });
+      }
+      if (pitch && pitch.length > 1000) {
+        return res.status(400).json({
+          success: false,
+          message: 'Pitch cannot exceed 1000 characters'
+        });
+      }
+
+      updates.entrepreneurPreference = {
+        projectName,
+        projectIndustry,
+        fundingGoal: funding,
+        pitch: pitch || ''
+      };
+    } else if (req.body.role === 'investor') {
+      updates.entrepreneurPreference = null;
+    }
+
     const user = await User.findByIdAndUpdate(
       id,
       { $set: updates },
@@ -309,7 +376,6 @@ const updateUserById = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Prepare response data
     const responseData = {
       id: user._id,
       email: user.email,
@@ -326,12 +392,14 @@ const updateUserById = async (req, res) => {
       image: user.image,
       status: user.status,
       firstLogin: user.firstLogin,
-      investorPreference: user.investorPreference
+      country: user.country,
+      city: user.city,
+      socialAccounts: user.socialAccounts,
+      yearsOfExperience: user.yearsOfExperience,
+      investorPreference: user.investorPreference,
+      entrepreneurPreference: user.entrepreneurPreference
     };
 
-    console.log('updateUserById response:', responseData);
-
-    // Return normalized user data
     res.status(200).json({
       success: true,
       data: responseData

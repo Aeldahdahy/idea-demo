@@ -6,7 +6,7 @@ const initialState = {
     investorType: '',
     minInvestment: 0,
     maxInvestment: 1000000,
-    yearsOfExperience: '',
+    yearsOfExperience: 'N/A',
     socialAccounts: [''],
     country: '',
     city: '',
@@ -37,7 +37,7 @@ const investorPreferencesSlice = createSlice({
       const currentIndustries = state.formData.industries;
       if (currentIndustries.includes(industry)) {
         state.formData.industries = currentIndustries.filter(item => item !== industry);
-      } else if (currentIndustries.length < 3) {
+      } else {
         state.formData.industries = [...currentIndustries, industry];
       }
     },

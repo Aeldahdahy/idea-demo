@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Info, PlusCircle, X, CheckCircle2, Circle } from 'lucide-react';
-import { updateClientData } from '../../../redux/clientAuthSlice'; // Adjust path
-import { useFunctions } from '../../../useFunctions'; // Adjust path
+import { updateClientData } from '../../../redux/clientAuthSlice';
+import { useFunctions } from '../../../useFunctions';
 import {
   setStep,
   updateFormData,
@@ -15,52 +15,34 @@ import {
   resetForm
 } from '../../../redux/clientInvestorPreferencesSlice';
 
-// Approximate colors
-const primaryBlue = '#0056b3';
-const mutedGray = '#6c757d';
-const lightGray = '#e9ecef';
-const white = '#ffffff';
-const darkText = '#212529';
-
 function ClientInvestorPreferences() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { updateUsers } = useFunctions();
   const userId = useSelector((state) => state.clientAuth.clientData?._id);
-  const existingPreferences = useSelector((state) => state.clientAuth.clientData?.investorPreference);
+  const clientData = useSelector((state) => state.clientAuth.clientData);
   const { currentStep, formData, loading, error } = useSelector((state) => state.clientInvestorPreferences);
 
-  // Pre-populate formData with existing preferences on mount
+  // Pre-populate formData
   useEffect(() => {
-    if (existingPreferences) {
+    if (clientData) {
       dispatch(updateFormData({
-        investorType: existingPreferences.investorType || '',
-        minInvestment: existingPreferences.minInvestment || 0,
-        maxInvestment: existingPreferences.maxInvestment || 1000000,
-        yearsOfExperience: existingPreferences.yearsOfExperience || '',
-        socialAccounts: existingPreferences.socialAccounts?.length ? existingPreferences.socialAccounts : [''],
-        country: existingPreferences.country || '',
-        city: existingPreferences.city || '',
-        industries: existingPreferences.industries?.length ? existingPreferences.industries : []
+        investorType: clientData.investorPreference?.investorType || '',
+        minInvestment: clientData.investorPreference?.minInvestment || 0,
+        maxInvestment: clientData.investorPreference?.maxInvestment || 1000000,
+        yearsOfExperience: clientData.yearsOfExperience || 'N/A',
+        socialAccounts: clientData.socialAccounts?.length ? clientData.socialAccounts : [''],
+        country: clientData.country || '',
+        city: clientData.city || '',
+        industries: clientData.investorPreference?.industries?.length ? clientData.investorPreference.industries : []
       }));
     }
-  }, [dispatch, existingPreferences]);
+  }, [dispatch, clientData]);
 
-  // State for descriptions and slider
-  const [descriptions, setDescriptions] = useState({
-    individual: false,
-    company: false
-  });
+  // State for modals
+  const [modalOpen, setModalOpen] = useState({ individual: false, company: false });
 
-  const toggleDescription = (type, e) => {
-    e.stopPropagation();
-    setDescriptions(prev => ({
-      ...prev,
-      [type]: !prev[type]
-    }));
-  };
-
-  // Slider refs and configuration
+  // Slider refs and config
   const sliderTrackRef = useRef(null);
   const minThumbRef = useRef(null);
   const maxThumbRef = useRef(null);
@@ -78,6 +60,7 @@ function ClientInvestorPreferences() {
     'Property', 'Retail', 'Technology', 'Business Services'
   ];
 
+  // Auth check
   useEffect(() => {
     if (!userId) {
       toast.error("Please log in to continue.", { position: 'top-right', autoClose: 5000 });
@@ -86,21 +69,21 @@ function ClientInvestorPreferences() {
   }, [userId, navigate]);
 
   const handleNextStep = async () => {
-    // Validate userId
     if (!userId || typeof userId !== 'string' || userId.trim() === '') {
       toast.error("User ID is missing or invalid. Please log in again.", { position: 'top-right', autoClose: 5000 });
       navigate('/login', { replace: true });
       return;
     }
-  
-    // Validation
+
+    console.log('Next Step - Current Step:', currentStep, 'formData:', formData);
+
     if (currentStep === 1) {
       if (!['individual', 'company'].includes(formData.investorType)) {
-        toast.error("Please select a valid investor type (Individual or Company).");
+        toast.error("Please select a valid investor type.");
         return;
       }
     } else if (currentStep === 2) {
-      if (!formData.yearsOfExperience) {
+      if (!['0-1', '1-3', '3-5', '5+', 'N/A'].includes(formData.yearsOfExperience)) {
         toast.error("Please select your years of experience.");
         return;
       }
@@ -116,41 +99,47 @@ function ClientInvestorPreferences() {
       }
     } else if (currentStep === 4) {
       if (!['individual', 'company'].includes(formData.investorType)) {
-        toast.error("Invalid investor type. Please select Individual or Company in Step 1.");
+        toast.error("Invalid investor type.");
         return;
       }
-      if (formData.industries.length !== 3) {
-        toast.error("Please select exactly 3 industries.");
+      if (formData.industries.length < 3) {
+        toast.error("Please select at least 3 industries.");
         return;
       }
     }
-  
+
     if (currentStep === 4) {
-      // Submit form data to backend
       try {
         dispatch(setLoading(true));
         dispatch(setError(null));
         const updatedData = {
           role: 'investor',
-          investorPreference: formData
+          country: formData.country,
+          city: formData.city,
+          socialAccounts: formData.socialAccounts.filter(acc => acc.trim() !== ''),
+          yearsOfExperience: formData.yearsOfExperience,
+          investorPreference: {
+            investorType: formData.investorType,
+            minInvestment: formData.minInvestment,
+            maxInvestment: formData.maxInvestment,
+            industries: formData.industries
+          }
         };
         const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:7030';
         const response = await updateUsers(userId, updatedData, null, {
           dispatch,
           setLoading: (value) => dispatch(setLoading(value)),
           setError: (value) => dispatch(setError(value)),
-          users: [], // Stubbed
-          setUsers: () => {}, // Stubbed
+          users: [],
+          setUsers: () => {},
           API_BASE_URL: apiBaseUrl
         });
-        console.log('updateUsers response:', response.data);
         dispatch(updateClientData(response.data.data));
         dispatch(resetForm());
         toast.success("Profile completed successfully!", { position: 'top-right', autoClose: 3000 });
         navigate('/client-portal/investor', { replace: true });
       } catch (err) {
         const errorMessage = err.response?.data?.message || err.message || 'Failed to save preferences.';
-        console.error('Form submission error:', errorMessage);
         dispatch(setError(errorMessage));
         toast.error(errorMessage, { position: 'top-right', autoClose: 5000 });
       } finally {
@@ -162,10 +151,10 @@ function ClientInvestorPreferences() {
   };
 
   const handlePreviousStep = () => {
+    console.log('Previous Step - Current Step:', currentStep);
     dispatch(setStep(currentStep - 1));
   };
 
-  // Form input handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     dispatch(updateFormData({ [name]: value }));
@@ -173,8 +162,8 @@ function ClientInvestorPreferences() {
 
   const handleSocialAccountChange = (index, value) => {
     const newSocialAccounts = [...formData.socialAccounts];
-    newSocialAccounts[index] = value.trim(); // Add trim() here
-    dispatch(setSocialAccounts(newSocialAccounts.filter(acc => acc !== ''))); // Filter empty strings
+    newSocialAccounts[index] = value.trim();
+    dispatch(setSocialAccounts(newSocialAccounts.filter(acc => acc !== '')));
   };
 
   const handleAddSocialAccount = () => {
@@ -187,10 +176,10 @@ function ClientInvestorPreferences() {
   };
 
   const handleIndustrySelect = (industry) => {
+    console.log('Selecting industry:', industry, 'Current industries:', formData.industries);
     dispatch(toggleIndustry(industry));
   };
 
-  // Slider functions
   const getValueFromPosition = useCallback((position) => {
     if (!sliderTrackRef.current) return 0;
     const trackWidth = sliderTrackRef.current.offsetWidth;
@@ -234,7 +223,7 @@ function ClientInvestorPreferences() {
             maxInvestment: Math.max(newValue, formData.minInvestment)
           }
     ));
-  }, [draggingThumb, sliderTrackRef, getValueFromPosition, dispatch, formData]);
+  }, [draggingThumb, getValueFromPosition, dispatch, formData]);
 
   const handleMouseUp = () => {
     setDraggingThumb(null);
@@ -247,25 +236,25 @@ function ClientInvestorPreferences() {
   };
 
   const handleTouchMove = useCallback((e) => {
-      if (!draggingThumb || !sliderTrackRef.current || !e.touches || !e.touches[0]) return;
-      const trackRect = sliderTrackRef.current.getBoundingClientRect();
-      const touchX = e.touches[0].clientX;
-      let newPosition = touchX - trackRect.left;
-      newPosition = Math.max(0, Math.min(newPosition, trackRect.width));
-      const newValue = getValueFromPosition(newPosition);
-      dispatch(updateFormData(
-        draggingThumb === 'min'
-          ? {
-              minInvestment: Math.min(newValue, formData.maxInvestment),
-              maxInvestment: formData.maxInvestment
-            }
-          : {
-              minInvestment: formData.minInvestment,
-              maxInvestment: Math.max(newValue, formData.minInvestment)
-            }
-      ));
-      e.preventDefault();
-    }, [draggingThumb, sliderTrackRef, getValueFromPosition, dispatch, formData]);
+    if (!draggingThumb || !sliderTrackRef.current || !e.touches || !e.touches[0]) return;
+    const trackRect = sliderTrackRef.current.getBoundingClientRect();
+    const touchX = e.touches[0].clientX;
+    let newPosition = touchX - trackRect.left;
+    newPosition = Math.max(0, Math.min(newPosition, trackRect.width));
+    const newValue = getValueFromPosition(newPosition);
+    dispatch(updateFormData(
+      draggingThumb === 'min'
+        ? {
+            minInvestment: Math.min(newValue, formData.maxInvestment),
+            maxInvestment: formData.maxInvestment
+          }
+        : {
+            minInvestment: formData.minInvestment,
+            maxInvestment: Math.max(newValue, formData.minInvestment)
+          }
+    ));
+    e.preventDefault();
+  }, [draggingThumb, getValueFromPosition, dispatch, formData]);
 
   const handleTouchEnd = () => {
     setDraggingThumb(null);
@@ -277,11 +266,6 @@ function ClientInvestorPreferences() {
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('touchmove', handleTouchMove, { passive: false });
       document.addEventListener('touchend', handleTouchEnd);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
     }
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
@@ -295,225 +279,172 @@ function ClientInvestorPreferences() {
     const minThumbPosition = getPositionFromValue(formData.minInvestment);
     const maxThumbPosition = getPositionFromValue(formData.maxInvestment);
 
+    console.log('Rendering Step:', currentStep, 'Industries:', formData.industries, 'Industry Options:', industryOptions);
+
     return (
-      <div className="p-4">
-        <h2 className="text-center mb-5 fs-4">Account created, now let's complete your profile!</h2>
-        <div className="progress mb-4" style={{ height: '8px' }}>
-          <div
-            className="progress-bar"
-            role="progressbar"
-            style={{ width: `${(currentStep / 4) * 100}%`, backgroundColor: primaryBlue }}
-            aria-valuenow={(currentStep / 4) * 100}
-            aria-valuemin="0"
-            aria-valuemax="100"
-          ></div>
+      <div className="p-6">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Complete Your Investor Profile</h2>
+        <div className="mb-6">
+          <div className="relative pt-1">
+            <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+              <div
+                style={{ width: `${(currentStep / 4) * 100}%` }}
+                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-600 transition-all duration-300"
+              ></div>
+            </div>
+          </div>
         </div>
 
         {currentStep === 1 && (
-          <>
-            <h3 className="text-center mb-4 mt-4 fs-5">What type of investor are you?</h3>
-            <div className="row justify-content-center">
-              <div className="col-md-5 mb-3">
-                <div
-                  className={`card h-100 ${formData.investorType === 'individual' ? 'border-primary border-2' : 'border'}`}
-                  style={{
-                    borderColor: formData.investorType === 'individual' ? primaryBlue : undefined,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease-in-out'
-                  }}
-                  onClick={() => dispatch(updateFormData({ investorType: 'individual' }))}
-                >
-                  <div className="card-body" style={{ transition: 'all 0.2s ease-in-out' }}>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <h5 className="card-title mb-0 fs-6">Individual Net worth</h5>
+          <div>
+            <h3 className="text-xl font-semibold text-center mb-6 text-gray-700">Investor Type</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {['individual', 'company'].map(type => (
+                <div key={type} className="relative">
+                  <div
+                    className={`p-4 cursor-pointer transition-all duration-300 border-2 rounded-lg ${
+                      formData.investorType === type ? 'border-blue-500 shadow-lg bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
+                    }`}
+                    onClick={() => dispatch(updateFormData({ investorType: type }))}
+                  >
+                    <div className="flex justify-between items-center">
+                      <h5 className="text-lg font-medium capitalize">{type}</h5>
                       <button
                         type="button"
-                        className="btn btn-link p-0 text-decoration-none"
-                        onClick={(e) => toggleDescription('individual', e)}
-                        style={{ background: 'none', border: 'none', padding: 0 }}
+                        onClick={() => setModalOpen({ ...modalOpen, [type]: true })}
+                        className="text-gray-500 hover:text-gray-700"
                       >
-                        <Info size={18} color={mutedGray} />
+                        <Info size={20} />
                       </button>
                     </div>
-                    {descriptions.individual && (
-                      <p className="card-text mt-2" style={{ fontSize: '0.9em', color: mutedGray }}>
-                        This option is for individuals who are investing based on their personal net worth.
-                      </p>
-                    )}
                     <input
                       type="radio"
                       name="investorType"
-                      value="individual"
-                      checked={formData.investorType === 'individual'}
-                      onChange={() => dispatch(updateFormData({ investorType: 'individual' }))}
-                      className="d-none"
+                      value={type}
+                      checked={formData.investorType === type}
+                      onChange={() => dispatch(updateFormData({ investorType: type }))}
+                      className="hidden"
                     />
                   </div>
-                </div>
-              </div>
-              <div className="col-md-5 mb-3">
-                <div
-                  className={`card h-100 ${formData.investorType === 'company' ? 'border-primary border-2' : 'border'}`}
-                  style={{
-                    borderColor: formData.investorType === 'company' ? primaryBlue : undefined,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease-in-out'
-                  }}
-                  onClick={() => dispatch(updateFormData({ investorType: 'company' }))}
-                >
-                  <div className="card-body" style={{ transition: 'all 0.2s ease-in-out' }}>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <h5 className="card-title mb-0 fs-6">Company</h5>
-                      <button
-                        type="button"
-                        className="btn btn-link p-0 text-decoration-none"
-                        onClick={(e) => toggleDescription('company', e)}
-                        style={{ background: 'none', border: 'none', padding: 0 }}
-                      >
-                        <Info size={18} color={mutedGray} />
-                      </button>
+                  {modalOpen[type] && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                        <h3 className="text-lg font-semibold mb-4 capitalize">{type} Investor</h3>
+                        <p className="text-gray-600 mb-6">
+                          {type === 'individual'
+                            ? 'For individuals investing based on personal net worth.'
+                            : 'For companies or entities investing significant capital through structured teams.'}
+                        </p>
+                        <button
+                          onClick={() => setModalOpen({ ...modalOpen, [type]: false })}
+                          className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          Close
+                        </button>
+                      </div>
                     </div>
-                    {descriptions.company && (
-                      <p className="card-text mt-2" style={{ fontSize: '0.9em', color: mutedGray }}>
-                        • Categories of companies or entities that invest in various opportunities
-                        <br />• Operate through a structured team or board
-                        <br />• Invest significant capital in large-scale projects
-                      </p>
-                    )}
-                    <input
-                      type="radio"
-                      name="investorType"
-                      value="company"
-                      checked={formData.investorType === 'company'}
-                      onChange={() => dispatch(updateFormData({ investorType: 'company' }))}
-                      className="d-none"
-                    />
-                  </div>
+                  )}
                 </div>
-              </div>
+              ))}
             </div>
-          </>
+          </div>
         )}
 
         {currentStep === 2 && (
-          <>
-            <h3 className="text-center mb-4 mt-4 fs-5">Select your investment range</h3>
-            <div className="px-3 mb-5">
-              <div className="d-flex justify-content-between mb-2">
-                <small style={{ color: mutedGray, fontSize: '1em' }}>${sliderMin.toLocaleString()}</small>
-                <small style={{ color: mutedGray, fontSize: '1em' }}>${sliderMax.toLocaleString()}+</small>
+          <div>
+            <h3 className="text-xl font-semibold text-center mb-6 text-gray-700">Investment Range</h3>
+            <div className="px-4 mb-8">
+              <div className="flex justify-between mb-3 text-sm text-gray-600">
+                <span>{sliderMin.toLocaleString()} EGP</span>
+                <span>{sliderMax.toLocaleString()} EGP +</span>
               </div>
-              <div className="position-relative" style={{ height: '40px' }}>
+              <div className="relative h-8">
                 <div
                   ref={sliderTrackRef}
-                  className="rounded position-absolute top-50 start-0 end-0"
-                  style={{ height: '6px', transform: 'translateY(-50%)', backgroundColor: lightGray }}
+                  className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-gray-200 rounded-full"
                 >
                   <div
-                    className="rounded position-absolute top-0 bottom-0"
+                    className="absolute top-0 bottom-0 bg-blue-600 rounded-full"
                     style={{
                       left: `${minThumbPosition}px`,
                       width: `${maxThumbPosition - minThumbPosition}px`,
-                      backgroundColor: primaryBlue,
                     }}
                   ></div>
                 </div>
                 <div
                   ref={minThumbRef}
-                  className="rounded-circle position-absolute top-50 translate-middle-y border border-2"
-                  style={{
-                    left: `${minThumbPosition}px`,
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    backgroundColor: primaryBlue,
-                    borderColor: white,
-                  }}
+                  className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow cursor-pointer hover:scale-110 transition-transform"
+                  style={{ left: `${minThumbPosition}px` }}
                   onMouseDown={handleMouseDown('min')}
                   onTouchStart={handleTouchStart('min')}
                 ></div>
                 <div
                   ref={maxThumbRef}
-                  className="rounded-circle position-absolute top-50 translate-middle-y border border-2"
-                  style={{
-                    left: `${maxThumbPosition}px`,
-                    width: '20px',
-                    height: '20px',
-                    cursor: 'pointer',
-                    backgroundColor: primaryBlue,
-                    borderColor: white,
-                  }}
+                  className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow cursor-pointer hover:scale-110 transition-transform"
+                  style={{ left: `${maxThumbPosition}px` }}
                   onMouseDown={handleMouseDown('max')}
                   onTouchStart={handleTouchStart('max')}
                 ></div>
               </div>
-              <div className="text-center mt-3" style={{ color: mutedGray, fontSize: '1em' }}>
-                <small>
-                  Selected Range: ${formData.minInvestment.toLocaleString()} to ${formData.maxInvestment.toLocaleString()}
-                </small>
+              <div className="text-center mt-4 text-gray-600">
+                Range: {formData.minInvestment.toLocaleString()} EGP - {formData.maxInvestment.toLocaleString()} EGP
               </div>
             </div>
-            <h3 className="text-center mb-4 mt-4 fs-5">How many years of experience do you have as an investor?</h3>
-            <div className="mb-3">
-              <select
-                name="yearsOfExperience"
-                value={formData.yearsOfExperience}
-                onChange={handleInputChange}
-                className="form-select"
-              >
-                <option value="">Select years</option>
-                <option value="0-1">0-1 Years</option>
-                <option value="1-3">1-3 Years</option>
-                <option value="3-5">3-5 Years</option>
-                <option value="5+">5+ Years</option>
-              </select>
-            </div>
-          </>
+            <h3 className="text-xl font-semibold text-center mb-6 text-gray-700">Years of Experience</h3>
+            <select
+              name="yearsOfExperience"
+              value={formData.yearsOfExperience}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            >
+              <option value="N/A">N/A</option>
+              <option value="0-1">0-1 Years</option>
+              <option value="1-3">1-3 Years</option>
+              <option value="3-5">3-5 Years</option>
+              <option value="5+">5+ Years</option>
+            </select>
+          </div>
         )}
 
         {currentStep === 3 && (
-          <>
-            <h3 className="text-center mb-4 mt-4 fs-5">Add your social networking accounts</h3>
+          <div>
+            <h3 className="text-xl font-semibold text-center mb-6 text-gray-700">Social Accounts</h3>
             {formData.socialAccounts.map((account, index) => (
-              <div key={index} className="mb-3 position-relative w-100">
+              <div key={index} className="relative mb-4">
                 <input
                   type="text"
                   value={account}
                   onChange={(e) => handleSocialAccountChange(index, e.target.value)}
-                  className="form-control form-control-lg w-100"
+                  className="w-full p-3 border border-gray-300 rounded-lg pr-12 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Social media link or username"
-                  style={{ paddingRight: '30px' }}
                 />
                 {formData.socialAccounts.length > 1 && (
                   <button
                     type="button"
                     onClick={() => handleRemoveSocialAccount(index)}
-                    title="Remove account"
-                    className="position-absolute top-50 end-0 translate-middle-y close-btn"
-                    style={{ border: 'none', background: 'none', marginRight: 10 }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    <X size={18} />
+                    <X size={20} />
                   </button>
                 )}
               </div>
             ))}
             <button
               onClick={handleAddSocialAccount}
-              className="btn btn-lg w-50 mb-5 d-block mx-auto prefrencesAddAccount"
-              style={{ backgroundColor: primaryBlue, borderColor: primaryBlue, color: white, fontSize: '1.1em' }}
+              className="flex items-center justify-center w-full md:w-1/2 mx-auto bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mb-8"
             >
-              <PlusCircle size={20} className="me-2" />
+              <PlusCircle size={20} className="mr-2" />
               Add Account
             </button>
-            <div className="row mt-5">
-              <div className="col-md-6 mb-3">
-                <label htmlFor="country" className="form-label" style={{ fontSize: '1.05em' }}>Country</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">Country</label>
                 <select
                   id="country"
                   name="country"
                   value={formData.country}
                   onChange={handleInputChange}
-                  className="form-select"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select Country</option>
                   <option value="Egypt">Egypt</option>
@@ -521,97 +452,93 @@ function ClientInvestorPreferences() {
                   <option value="UAE">UAE</option>
                 </select>
               </div>
-              <div className="col-md-6 mb-3">
-                <label htmlFor="city" className="form-label" style={{ fontSize: '1.05em' }}>City / Town</label>
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">City / Town</label>
                 <input
                   type="text"
                   id="city"
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
-                  className="form-control"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter city or town"
-                  style={{ fontSize: '1.1em' }}
                 />
               </div>
             </div>
-          </>
+          </div>
         )}
 
         {currentStep === 4 && (
-          <>
-            <h3 className="text-center mb-4 mt-4 fs-5">Click on the 3 industries you're most interested in.</h3>
-            <div className="row row-cols-2 row-cols-md-4 g-3 mb-4">
+          <div>
+            <h3 className="text-xl font-semibold text-center mb-6 text-gray-700">Select Your Preferred Industries (Minimum 3)</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               {industryOptions.map(industry => {
                 const isSelected = formData.industries.includes(industry);
                 return (
-                  <div key={industry} className="col">
-                    <button
-                      onClick={() => handleIndustrySelect(industry)}
-                      className={`btn w-100 text-start position-relative py-2`}
-                      style={{
-                        height: '100%',
-                        backgroundColor: white,
-                        borderColor: isSelected ? primaryBlue : mutedGray,
-                        borderWidth: isSelected ? '2px' : '1px',
-                        borderStyle: 'solid',
-                        borderRadius: 0,
-                        color: darkText,
-                      }}
-                    >
-                      <span className="d-inline-block text-truncate" style={{ maxWidth: '85%' }}>
-                        {industry}
-                      </span>
-                      <div className="position-absolute end-0 top-50 translate-middle-y me-2">
-                        {isSelected ? (
-                          <CheckCircle2 size={30} style={{ color: white, backgroundColor: primaryBlue, borderRadius: '20px' }} />
-                        ) : (
-                          <Circle size={30} color={mutedGray} />
-                        )}
-                      </div>
-                    </button>
-                  </div>
+                  <button
+                    key={industry}
+                    onClick={() => handleIndustrySelect(industry)}
+                    className={`flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-300 ${
+                      isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-sm truncate">{industry}</span>
+                    {isSelected ? (
+                      <CheckCircle2 size={24} className="text-blue-500" />
+                    ) : (
+                      <Circle size={24} className="text-gray-400" />
+                    )}
+                  </button>
                 );
               })}
             </div>
-            <div className="text-center mt-3" style={{ color: mutedGray, fontSize: '1em' }}>
-              {formData.industries.length} of 3 industries selected.
+            <div className="text-center text-gray-600 mt-4">
+              {formData.industries.length} industries selected (minimum 3)
             </div>
-          </>
+          </div>
+        )}
+
+        {loading && (
+          <div className="text-center mb-4">
+            <svg className="animate-spin h-8 w-8 text-blue-600 mx-auto" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V4a8 8 0 00-8 8z"></path>
+            </svg>
+            <span className="text-gray-600">Saving preferences...</span>
+          </div>
+        )}
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded">
+            {error}
+          </div>
         )}
       </div>
     );
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center bg-light px-3 px-sm-4 px-md-5" style={{ height: '96vh' }}>
-      <div className="card shadow-sm w-100" style={{ maxWidth: '80%' }}>
-        <div className="card-body p-4">
-          {loading && <div className="text-center mb-3">Saving preferences...</div>}
-          {error && <div className="text-center text-danger mb-3">{error}</div>}
-          {renderStepContent()}
-          <div className="d-flex justify-content-between mt-4">
-            <button
-              onClick={handlePreviousStep}
-              disabled={currentStep === 1 || loading}
-              className={`btn ${currentStep === 1 || loading ? 'btn-outline-secondary disabled' : 'btn-outline-primary'}`}
-              style={{
-                borderColor: currentStep === 1 || loading ? undefined : primaryBlue,
-                color: currentStep === 1 || loading ? undefined : primaryBlue,
-                backgroundColor: currentStep === 1 || loading ? undefined : white
-              }}
-            >
-              Back
-            </button>
-            <button
-              onClick={handleNextStep}
-              disabled={loading}
-              className="btn btn-primary"
-              style={{ backgroundColor: primaryBlue, borderColor: primaryBlue, color: white }}
-            >
-              {currentStep === 4 ? 'Save' : 'Next'}
-            </button>
-          </div>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 sm:p-6 md:p-8">
+      <div className="bg-white shadow-xl rounded-lg w-full max-w-4xl">
+        {renderStepContent()}
+        <div className="flex justify-between p-6">
+          <button
+            onClick={handlePreviousStep}
+            disabled={currentStep === 1 || loading}
+            className={`px-6 py-3 rounded-lg transition-colors ${
+              currentStep === 1 || loading
+                ? 'bg-gray-300 cursor-not-allowed'
+                : 'bg-white border border-blue-600 text-blue-600 hover:bg-blue-50'
+            }`}
+          >
+            Back
+          </button>
+          <button
+            onClick={handleNextStep}
+            disabled={loading}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {currentStep === 4 ? 'Save' : 'Next'}
+          </button>
         </div>
       </div>
     </div>

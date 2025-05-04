@@ -1,10 +1,12 @@
 {
   "files": {
-    "main.css": "/idea-demo/static/css/main.7a7ea87e.css",
-    "main.js": "/idea-demo/static/js/main.b95ecb2b.js",
+    "main.css": "/idea-demo/static/css/main.283cb4d8.css",
+    "main.js": "/idea-demo/static/js/main.d498cef9.js",
     "static/js/453.1c40cb1d.chunk.js": "/idea-demo/static/js/453.1c40cb1d.chunk.js",
     "static/media/EmployeePortalBackGround.mp4": "/idea-demo/static/media/EmployeePortalBackGround.7e472743a2da5b5b4d94.mp4",
     "static/media/image45.png": "/idea-demo/static/media/image45.7b2dd68ede104a441623.png",
+    "static/media/img-0.57.png": "/idea-demo/static/media/img-0.57.604f559195e1b49743db.png",
+    "static/media/img-0.56.png": "/idea-demo/static/media/img-0.56.23386faad30a7485b5e1.png",
     "static/media/TwemojiMozilla.ttf": "/idea-demo/static/media/TwemojiMozilla.c993f93bd40b647e0b38.ttf",
     "static/media/img-0.19.png": "/idea-demo/static/media/img-0.19.9f4739e819dd5141b9e3.png",
     "static/media/img-0.40.png": "/idea-demo/static/media/img-0.40.ee19f8307f7b4248af8e.png",
@@ -25,7 +27,6 @@
     "static/media/image47.png": "/idea-demo/static/media/image47.c845ffa1dfe2e3b529b3.png",
     "static/media/img-0.16.png": "/idea-demo/static/media/img-0.16.980c017207414944cdf3.png",
     "static/media/img-0.52.png": "/idea-demo/static/media/img-0.52.2fbfffaac5696d3f1934.png",
-    "static/media/img-0.51.jpg": "/idea-demo/static/media/img-0.51.3a12f2a2a606763848bd.jpg",
     "static/media/gif-0.3.mp4": "/idea-demo/static/media/gif-0.3.921a622c75b4ee224d73.mp4",
     "static/media/primeicons.eot": "/idea-demo/static/media/primeicons.ff0c4cd79b2ffca2de54.eot",
     "static/media/primeicons.woff": "/idea-demo/static/media/primeicons.8931fda1930c3bd21e96.woff",
@@ -52,12 +53,12 @@
     "static/media/slick.ttf": "/idea-demo/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/idea-demo/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/idea-demo/index.html",
-    "main.7a7ea87e.css.map": "/idea-demo/static/css/main.7a7ea87e.css.map",
-    "main.b95ecb2b.js.map": "/idea-demo/static/js/main.b95ecb2b.js.map",
+    "main.283cb4d8.css.map": "/idea-demo/static/css/main.283cb4d8.css.map",
+    "main.d498cef9.js.map": "/idea-demo/static/js/main.d498cef9.js.map",
     "453.1c40cb1d.chunk.js.map": "/idea-demo/static/js/453.1c40cb1d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7a7ea87e.css",
-    "static/js/main.b95ecb2b.js"
+    "static/css/main.283cb4d8.css",
+    "static/js/main.d498cef9.js"
   ]
 }

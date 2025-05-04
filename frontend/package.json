@@ -1,7 +1,7 @@
 {
   "name": "idea",
   "version": "0.1.0",
-  "homepage": "https://Aeldahdahy.github.io/idea-demo",
+  "homepage": "/idea-demo",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",

@@ -30,10 +30,9 @@ function Footer() {
               <h2 className="footerHeaderSection">Our Newsletter</h2>
               <div className="subscribeSection">
                 <h2>Subscribe to our newsletter</h2>
-                <p>Don't miss out! Be the first to know about exciting new developments.</p>
-                <form className="d-flex justify-content-evenly">
+                <form className="mt-4">
                   <input type="email" className="form-control rounded" placeholder="Your email" />
-                  <input type="submit" className="SubscribeButton btn btn-primary rounded" />
+                  <button type="button" class="mt-4 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Submit</button>
                 </form>
               </div>
             </div>

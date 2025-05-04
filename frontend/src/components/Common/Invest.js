@@ -51,195 +51,116 @@ function Invest() {
 
   return (
     <Container fluid style={{ backgroundColor: "#FFFFFF", padding: "0" }}>
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 15px" }}>
-                <motion.div
-                  style={{ padding: "60px 0" }}
-                  initial="hidden"
-                  animate="visible"
-                  variants={sectionVariants}
-                >
-                  <Row>
-                    <Col xs={12} style={{ textAlign: "left" }}>
-                    <h1
-                  style={{
-                    color: "#000000",
-                    fontSize: "clamp(36px, 5vw, 48px)",
-                    fontWeight: "bold",
-                    margin: "0 0 20px 0",
-                  }}
-                >
-                  We make it easy to start investing.
-                </h1>
-                    </Col>
-                  </Row>
-                </motion.div>
-        
-        {/* Header Section */}
+      <div style={{ maxWidth: "1600px", margin: "0 auto" }}>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={sectionVariants}
-
+          className="text-center"
         >
-          <div style={{ display: "flex", flexDirection: "column", marginBottom: "220px"
-            
-           }}>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "40px" }}>
-              <div style={{ flex: "1 1 600px", maxWidth: "700px" }}>
-                <h3
-                  style={{
-                    color: "#000000",
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    lineHeight: "1.5",
-                    marginBottom: "45px",
-                  }}
-                >
-                  Browse hundreds of investment opportunities, connect with entrepreneurs, and manage your investment contacts with the world’s Entrepreneur network.
-                </h3>
-              <div style={{ textAlign: "left" }}>
-              <h4 style={{ color: "#000000", fontSize: "20px", fontWeight: "bold", marginBottom: "20px" }}>
-                Follow Us
-              </h4>
-              <div style={{ display: "flex", gap: "15px" }}>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            We make it easy to start investing.
+          </h1>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+            Browse hundreds of investment opportunities, connect with entrepreneurs, and manage your investment contacts with the world’s Entrepreneur network.
+          </p>
+          <div className="flex justify-center gap-4">
+            {[
+              { Icon: Facebook, url: "https://www.facebook.com/share/1JUWs1jYhQ/" },
+              { Icon: Twitter, url: "https://twitter.com" },
+              { Icon: Instagram, url: "https://www.instagram.com/idea.x.venture?utm_source=qr&igsh=MW01cG1hYmF4MGliZg==" },
+              { Icon: Linkedin, url: "https://www.linkedin.com/in/idea-venture-658978362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
+              { Icon: Youtube, url: "https://www.youtube.com" },
+            ].map(({ Icon, url }, index) => (
+              <a
+                key={index}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-blue-600 transition-transform transform hover:scale-110"
+              >
+                <Icon size={24} />
+              </a>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={sectionVariants}
+          className="mt-16 flex flex-col lg:flex-row items-center gap-12"
+        >
+          <div className="lg:w-1/2">
+            <div className="relative bg-gray-800 rounded-2xl p-6 shadow-xl transform rotate-3">
+              <div className="flex flex-col sm:flex-row gap-6 transform -rotate-3">
                 {[
-                  { Icon: Facebook, url: "https://www.facebook.com/share/1JUWs1jYhQ/" },
-                  { Icon: Twitter, url: "https://twitter.com" }, // Replace with actual Twitter URL if available
-                  { Icon: Instagram, url: "https://www.instagram.com/idea.x.venture?utm_source=qr&igsh=MW01cG1hYmF4MGliZg==" },
-                  { Icon: Linkedin, url: "https://www.linkedin.com/in/idea-venture-658978362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
-                  { Icon: Youtube, url: "https://www.youtube.com" }, // Replace with actual YouTube URL if available
-                ].map(({ Icon, url }, index) => (
-                  <button
+                  {
+                    img: image2,
+                    title: "Trip Tactix",
+                    type: "Tourism Industry",
+                    stage: "Seed stage",
+                    min: "EGP 50,000",
+                    bg: "bg-blue-900",
+                    textColor: "text-white",
+                  },
+                  {
+                    img: image1,
+                    title: "OddCrop",
+                    type: "Food & Beverage",
+                    stage: "Start-Up stage",
+                    min: "EGP 150,000",
+                    bg: "bg-blue-100",
+                    textColor: "text-gray-900",
+                  },
+                ].map((item, index) => (
+                  <motion.div
                     key={index}
-                    style={{
-                      color: "#000000",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      transition: "transform 0.3s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                    onClick={() => window.open(url, "_blank")} // Opens the URL in a new tab
+                    variants={cardVariants}
+                    className={`flowbite-card ${item.bg} rounded-xl p-4 flex items-center gap-4 shadow-md min-w-[200px]`}
                   >
-                    <Icon size={30} />
-                  </button>
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-16 h-16 object-contain rounded-full"
+                    />
+                    <div className="flex-1">
+                      <h3 className={`text-xl font-bold ${item.textColor}`}>
+                        {item.title}
+                      </h3>
+                      <p className={`text-sm ${item.textColor}`}>
+                        {item.type}
+                      </p>
+                      <div className="flex justify-between items-center mt-2 flex-col">
+                        <span
+                          className={`text-xs px-3 py-1 rounded-full ${
+                            item.textColor === "text-white"
+                              ? "bg-gray-200 text-gray-900"
+                              : "bg-gray-300 text-gray-900"
+                          }`}
+                        >
+                          {item.stage}
+                        </span>
+                        <span className={`text-sm ${item.textColor}`}>
+                          {item.min} Min
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
-            </div>
-
-              <div style={{ flex: "1 1 400px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center"}}>
-              <img
-                src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/279shj4h_expires_30_days.png"
-                alt="Investment Dashboard"
-                style={{
-                  width: "100%",
-                  maxWidth: "460px",
-                  height: "auto",
-                  objectFit: "contain",
-                  zIndex: 100,
-                  position: "absolute ",
-                  top: "215px",
-                }}
-              />
-              <div
-                style={{
-                  position: "relative",
-                  width: "600px",
-                  height: "480px",
-                  background: "#262A35",
-                  borderRadius: "20px",
-                  padding: "20px",
-                  color: "#FFFFFF",
-                  fontSize: "16px",
-                  textAlign: "center",
-                  zIndex: 50, 
-                  transform: "rotate(5deg)", // Added 70-degree rotation
-                }}
-              >
-            <div style={{ display: "flex", gap: "40px", marginTop: "40px", flexWrap: "wrap", 
-                  transform: "rotate(-5deg)", // Added -70-degree rotation
-
-             }}>
-              {[
-                {
-                  img: image2,
-                  title: "Trip Tactix",
-                  type: "Tourism Industry",
-                  stage: "Seed stage",
-                  min: "EGP 50,000",
-                  bg: "#163696",
-                  textColor: "#FFFFFF",
-                },
-                {
-                  img: image1,
-                  title: "OddCrop",
-                  type: "Food & Beverage",
-                  stage: "Start-Up stage",
-                  min: "EGP 150,000",
-                  bg: "#D9EFFF",
-                  textColor: "#2F2828",
-                },
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  style={{
-                    flex: "1 1 400px",
-                    background: item.bg,
-                    borderRadius: "20px",
-                    padding: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "40px",
-                    height: "150px",
-                  }}
-                  variants={cardVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    style={{ width: "80px", height: "80px", objectFit: "contain" }}
-                  />
-                  <div style={{ display: "flex", justifyContent:"space-between", flex: 1 }}>
-                    <div>
-
-                    <h3 style={{ color: item.textColor, fontSize: "24px", fontWeight: "bold", margin: "0 0 10px 0" }}>
-                      {item.title}
-                    </h3>
-                    <p style={{ color: item.textColor, fontSize: "16px", margin: "0 0 10px 0" }}>{item.type}</p>
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-
-                    <div
-                      style={{
-                        background: item.textColor === "#FFFFFF" ? "#F4F4F4E8" : "#C5C5C5E8",
-                        borderRadius: "15px",
-                        padding: "5px 15px",
-                        display: "inline-block",
-                        fontSize: "14px",
-                        color: "#000000",
-                      }}
-                      >
-                      {item.stage}
-                    </div>
-                    <span style={{ color: item.textColor, fontSize: "16px", margin: "10px 0 0 0" }}>
-                      {item.min} Min per Investor
-                    </span>
-                      </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            
-  </div>
-</div>
-            </div>
-
+          </div>
+          <div className="lg:w-1/2">
+            <img
+              src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/279shj4h_expires_30_days.png"
+              alt="Investment Dashboard"
+              className="w-full max-w-md mx-auto object-contain"
+            />
           </div>
         </motion.div>
+      </section>
 
 
 
@@ -251,7 +172,7 @@ function Invest() {
           animate="visible"
           variants={sectionVariants}
         >
-          <Row style={{ alignItems: "center", flexWrap: "wrap", gap: "40px" }}>
+          <Row style={{ alignItems: "center", flexWrap: "wrap", gap: "40px", width: "100%" }}>
             <Col md={6} style={{ flex: "1 1 500px" }}>
               <div style={{ position: "relative", maxWidth: "500px", margin: "0 auto" }}>
                 <div

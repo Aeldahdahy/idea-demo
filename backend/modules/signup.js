@@ -78,21 +78,21 @@ const userSchema = new mongoose.Schema({
   },
   country: {
     type: String,
-    default: null,
+    default: null
   },
   city: {
     type: String,
-    default: null,
+    default: null
   },
   socialAccounts: {
     type: [String],
     validate: {
       validator: function (v) {
-        return v.length > 0 && v.every(account => account.trim() !== '');
+        return v == null || (v.length > 0 && v.every(account => account.trim() !== ''));
       },
-      message: 'At least one valid social account is required'
+      message: 'Social accounts, if provided, must include at least one valid account'
     },
-    required: [true, 'At least one social account is required']
+    default: null
   },
   yearsOfExperience: {
     type: String,
@@ -104,17 +104,13 @@ const userSchema = new mongoose.Schema({
       investorType: {
         type: String,
         enum: ['individual', 'company'],
-        required: function () {
-          return this.role === 'investor';
-        }
+        default: null
       },
       minInvestment: {
         type: Number,
         min: [0, 'Minimum investment cannot be negative'],
         max: [1000000, 'Minimum investment cannot exceed $1,000,000'],
-        required: function () {
-          return this.role === 'investor';
-        }
+        default: null
       },
       maxInvestment: {
         type: Number,
@@ -126,21 +122,17 @@ const userSchema = new mongoose.Schema({
           },
           message: 'Maximum investment must be greater than or equal to minimum investment'
         },
-        required: function () {
-          return this.role === 'investor';
-        }
+        default: null
       },
       industries: {
         type: [String],
         validate: {
           validator: function (v) {
-            return v.length >= 3;
+            return v == null || v.length >= 3;
           },
-          message: 'At least 3 industries must be selected'
+          message: 'At least 3 industries must be selected if industries are provided'
         },
-        required: function () {
-          return this.role === 'investor';
-        }
+        default: null
       }
     },
     default: null

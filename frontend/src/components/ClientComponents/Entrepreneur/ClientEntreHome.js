@@ -1,146 +1,17 @@
 import React from 'react';
-// import { Link } from 'react-router-dom';
-import { CheckIcon } from '@heroicons/react/20/solid'
+import { Link } from 'react-router-dom';
+import { CheckIcon } from '@heroicons/react/20/solid';
+import image from '../../../assets/img-0.56.png';
 
-
-
-// function Component({name, price}) {
-//   return (
-//     <section className="bg-white dark:bg-gray-900">
-//     <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-//         <div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
-//             <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Designed for business teams like yours</h2>
-//             <p className="mb-5 font-light text-gray-500 sm:text-xl dark:text-gray-400">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
-//         </div>
-//         <div className="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
-            
-//             <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
-//                 <h3 className="mb-4 text-2xl font-semibold">Starter</h3>
-//                 <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best option for personal use & for your next project.</p>
-//                 <div className="flex justify-center items-baseline my-8">
-//                     <span className="mr-2 text-5xl font-extrabold">$29</span>
-//                     <span className="text-gray-500 dark:text-gray-400">/month</span>
-//                 </div>
-                
-//                 <ul className="mb-8 space-y-4 text-left">
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Individual configuration</span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>No setup, or hidden fees</span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Team size: <span className="font-semibold">1 developer</span></span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Premium support: <span className="font-semibold">6 months</span></span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Free updates: <span className="font-semibold">6 months</span></span>
-//                     </li>
-//                 </ul>
-//                 <Link to="" className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900">Get started</Link>
-//             </div>
-            
-//             <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
-//                 <h3 className="mb-4 text-2xl font-semibold">Company</h3>
-//                 <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">Relevant for multiple users, extended & premium support.</p>
-//                 <div className="flex justify-center items-baseline my-8">
-//                     <span className="mr-2 text-5xl font-extrabold">$99</span>
-//                     <span className="text-gray-500 dark:text-gray-400">/month</span>
-//                 </div>
-                
-//                 <ul className="mb-8 space-y-4 text-left">
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Individual configuration</span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>No setup, or hidden fees</span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Team size: <span className="font-semibold">10 developers</span></span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Premium support: <span className="font-semibold">24 months</span></span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Free updates: <span className="font-semibold">24 months</span></span>
-//                     </li>
-//                 </ul>
-//                 <Link to="" className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900">Get started</Link>
-//             </div>
-            
-//             <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
-//                 <h3 className="mb-4 text-2xl font-semibold">Enterprise</h3>
-//                 <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best for large scale uses and extended redistribution rights.</p>
-//                 <div className="flex justify-center items-baseline my-8">
-//                     <span className="mr-2 text-5xl font-extrabold">$499</span>
-//                     <span className="text-gray-500 dark:text-gray-400">/month</span>
-//                 </div>
-                
-//                 <ul className="mb-8 space-y-4 text-left">
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Individual configuration</span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>No setup, or hidden fees</span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Team size: <span className="font-semibold">100+ developers</span></span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Premium support: <span className="font-semibold">36 months</span></span>
-//                     </li>
-//                     <li className="flex items-center space-x-3">
-                        
-//                         <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-//                         <span>Free updates: <span className="font-semibold">36 months</span></span>
-//                     </li>
-//                 </ul>
-//                 <Link to="" className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900">Get started</Link>
-//             </div>
-//         </div>
-//     </div>
-//   </section>
-//   );
-// }
-function Component({name, price}) {
+function PricingComponent({ name, price }) {
 
   const tiers = [
     {
-      name: 'Hobby',
-      id: 'tier-hobby',
+      name: 'Basic',
+      id: 'tier-Basic',
       href: '#',
-      priceMonthly: '$29',
-      description: "The perfect plan if you're just getting started with our product.",
+      priceMonthly: 'Free',
+      description: "The perfect plan if you're just getting started with one project.",
       features: ['25 products', 'Up to 10,000 subscribers', 'Advanced analytics', '24-hour support response time'],
       featured: false,
     },
@@ -178,7 +49,7 @@ function Component({name, price}) {
           />
         </div>
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-base/7 font-semibold text-indigo-600">Pricing</h2>
+          <h2 className="text-base/7 font-semibold text-[#163696] ">Pricing</h2>
           <p className="mt-2 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
             Choose the right plan for you
           </p>
@@ -203,7 +74,7 @@ function Component({name, price}) {
             >
               <h3
                 id={tier.id}
-                className={classNames(tier.featured ? 'text-indigo-400' : 'text-indigo-600', 'text-base/7 font-semibold')}
+                className={classNames(tier.featured ? 'text-indigo-400' : 'text-[#163696] ', 'text-base/7 font-semibold')}
               >
                 {tier.name}
               </h3>
@@ -231,7 +102,7 @@ function Component({name, price}) {
                   <li key={feature} className="flex gap-x-3">
                     <CheckIcon
                       aria-hidden="true"
-                      className={classNames(tier.featured ? 'text-indigo-400' : 'text-indigo-600', 'h-6 w-5 flex-none')}
+                      className={classNames(tier.featured ? 'text-indigo-400' : 'text-[#163696] ', 'h-6 w-5 flex-none')}
                     />
                     {feature}
                   </li>
@@ -243,7 +114,7 @@ function Component({name, price}) {
                 className={classNames(
                   tier.featured
                     ? 'bg-indigo-500 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-indigo-500'
-                    : 'text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300 focus-visible:outline-indigo-600',
+                    : 'text-[#163696]  ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300 focus-visible:outline-indigo-600',
                   'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10',
                 )}
               >
@@ -256,85 +127,124 @@ function Component({name, price}) {
     );
 }
 
-
 function ClientEntreHome() {
   return (
-    <div className="client-entre-home">
+    <div className="client-entre-home bg-gray-50 dark:bg-gray-900">
       {/* Welcome Section */}
-
-      <section className="welcome-section">
-  <div className="welcome-content">
-    <h2 className="welcome-heading">Welcome to the network!</h2>
-    <p className="welcome-text">
-      You’re <span className="underline">steps away</span> from connecting with investors and taking your <span className="underline">business</span> to the next level. Find out how it works below.
-    </p>
-
-    <button className="create-pitch-btn">Create a pitch</button>
-
-    <div className="social-section">
-      <small>Follow Us</small>
-      <div className="social-icons">
-        <i className="fa-solid fa-envelope"></i>
-        <i className="fa-brands fa-whatsapp"></i>
-        <i className="fa-brands fa-instagram"></i>
-        <i className="fa-brands fa-twitter"></i>
-      </div>
-    </div>
-  </div>
-
-  <div className="welcome-image">
-    <div className="stars">
-      <div className="star"></div>
-      <div className="star"></div>
-      <div className="star"></div>
-    </div>
-
-    <div className="investor-card">
-      <div className="card-header">
-        <img src="https://via.placeholder.com/40" alt="Investor" className="investor-avatar" />
-        <div>
-          <h4>BOB</h4>
-          <p>Angel Investor</p>
-          <span className="location">Egypt</span>
-        </div>
-        <div className="bell-icon">
-          <i className="fa-solid fa-bell"></i>
-        </div>
-      </div>
-      <div className="card-body">
-        <p>EGP 150,000,000</p>
-        <small>Net Worth</small>
-      </div>
-    </div>
-
-    <div className="swoosh"></div>
-  </div>
-</section>
-
-
-      {/* How It Works Section */}
-      <section className="how-it-works">
-        <h2>How It Works</h2>
-        <div className="steps">
-          <div className="step">
-            <h3>1ST</h3>
-            <h4>Create Your Project</h4>
-            <p>Add a pitch for your business using our tried-and-tested template. The on-screen instructions will guide you through the steps.</p>
-          </div>
-          <div className="step">
-            <h3>2ND</h3>
-            <h4>Connect with investors</h4>
-            <p>After choosing a package, your pitch will be listed on your chosen networks for investors to consider. Search and nudge investors that meet your criteria to maximize your investor reach.</p>
-          </div>
-          <div className="step">
-            <h3>3RD</h3>
-            <h4>Get funded</h4>
-            <p>If an investor likes your pitch, you will receive an email from the Auditor asking to connect. You'll then be able to schedule calls, fix meetings, and close investment!</p>
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#163696] to-[#3B59B8] py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Connect with Investors
+              </h1>
+              <p className="mt-6 text-lg text-indigo-100">
+                You're just <span className="font-semibold underline">steps away</span> from turning your vision into reality. Join our network and pitch to top investors today.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link
+                  to="/client-portal/entrepreneur/entreProjectData"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white text-[#163696]  font-semibold hover:bg-gray-100 transition duration-300"
+                >
+                  Create Your Pitch
+                </Link>
+                <Link
+                  to="/learn-more"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-transparent border border-white text-white font-semibold hover:bg-white hover:text-[#163696]  transition duration-300"
+                >
+                  Learn More
+                </Link>
+              </div>
+              <div className="mt-8">
+                <p className="text-sm text-indigo-200">Follow Us</p>
+                <div className="mt-2 flex gap-4 justify-center lg:justify-start">
+                  <Link to={"#"} className="text-indigo-200 hover:text-white transition duration-300">
+                    <i className="fa-solid fa-envelope text-xl"></i>
+                  </Link>
+                  <Link to={"#"} className="text-indigo-200 hover:text-white transition duration-300">
+                    <i className="fa-brands fa-whatsapp text-xl"></i>
+                  </Link>
+                  <Link to={"#"} className="text-indigo-200 hover:text-white transition duration-300">
+                    <i className="fa-brands fa-instagram text-xl"></i>
+                  </Link>
+                  <Link to={"#"} className="text-indigo-200 hover:text-white transition duration-300">
+                    <i className="fa-brands fa-twitter text-xl"></i>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl"></div>
+              </div>
+              <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 max-w-sm mx-auto transform hover:scale-105 transition duration-300">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={image}
+                    alt="Investor"
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white">BOB</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Angel Investor</p>
+                    <span className="text-xs text-[#163696] ">Egypt</span>
+                  </div>
+                  <div className="ml-auto">
+                    <i className="fa-solid fa-bell text-gray-400"></i>
+                  </div>
+                </div>
+                <div className="mt-6 text-center">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">EGP 150,000,000</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Net Worth</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <Component />
+      {/* How It Works Section */}
+      <section className="py-16 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">How It Works</h2>
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+              Three simple steps to connect with investors and secure funding.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition duration-300">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#163696] to-[#3B59B8] text-white font-bold">1</span>
+              </div>
+              <h3 className="mt-8 text-xl font-semibold text-gray-900 dark:text-white">Create Your Project</h3>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">
+                Build a compelling pitch using our guided template with step-by-step instructions.
+              </p>
+            </div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition duration-300">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#163696] to-[#3B59B8] text-white font-bold">2</span>
+              </div>
+              <h3 className="mt-8 text-xl font-semibold text-gray-900 dark:text-white">Connect with Investors</h3>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">
+                List your pitch on our network and reach out to investors matching your criteria.
+              </p>
+            </div>
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition duration-300">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#163696] to-[#3B59B8] text-white font-bold">3</span>
+              </div>
+              <h3 className="mt-8 text-xl font-semibold text-gray-900 dark:text-white">Get Funded</h3>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">
+                Schedule meetings with interested investors and secure your investment.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <PricingComponent />
     </div>
   );
 }

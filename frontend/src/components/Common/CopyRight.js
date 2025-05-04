@@ -10,7 +10,7 @@ function CopyRight(){
 
     return(
         <div className='CopyRight' onClick={handleSignOut}>
-           Copy Right &copy; 2024 Designed by IDEA.
+           Copy Right &copy; {new Date().getFullYear()}  Designed by IDEA.
         </div>
     );
 }

@@ -18,11 +18,12 @@ import {
   // Play,
   Globe,
 } from "lucide-react";
-import image1 from "../../assets/img-0.51.jpg";
+import image1 from "../../assets/img-0.57.png";
 import image2 from "../../assets/img-0.52.png";
 import image3 from "../../assets/img-0.53.png";
 import image4 from "../../assets/img-0.54.png";
 import image5 from "../../assets/img-0.55.png";
+import image6 from "../../assets/img-0.56.png";
 
 const images = [
   image3,
@@ -62,29 +63,42 @@ function Fundraise() {
 
   return (
     <Container fluid style={{ backgroundColor: "#FFFFFF", padding: "0" }}>
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 15px" }}>
+      <div style={{ maxWidth: "1600px", margin: "0 auto" }}>
         {/* Header Section */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <motion.div
-          style={{ padding: "60px 0" }}
           initial="hidden"
           animate="visible"
           variants={sectionVariants}
+          className="text-center"
         >
-          <Row>
-            <Col xs={12} style={{ textAlign: "left" }}>
-              <h1
-                style={{
-                  color: "#000000",
-                  fontSize: "clamp(36px, 5vw, 48px)",
-                  fontWeight: "bold",
-                  margin: "0 0 0 0",
-                }}
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            We make it easy to start your project.
+          </h1>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
+            Browse hundreds of investment opportunities, connect with investors, and manage your investment contacts with the world's investors network.
+          </p>
+          <div className="flex justify-center gap-4">
+            {[
+              { Icon: Facebook, url: "https://www.facebook.com/share/1JUWs1jYhQ/" },
+              { Icon: Twitter, url: "https://twitter.com" },
+              { Icon: Instagram, url: "https://www.instagram.com/idea.x.venture?utm_source=qr&igsh=MW01cG1hYmF4MGliZg==" },
+              { Icon: Linkedin, url: "https://www.linkedin.com/in/idea-venture-658978362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
+              { Icon: Youtube, url: "https://www.youtube.com" },
+            ].map(({ Icon, url }, index) => (
+              <a
+                key={index}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-blue-600 transition-transform transform hover:scale-110"
               >
-                We make it easy to start your project.
-              </h1>
-            </Col>
-          </Row>
+                <Icon size={24} />
+              </a>
+            ))}
+          </div>
         </motion.div>
+      </section>
 
         {/* Main Content Section */}
         <motion.div
@@ -95,45 +109,11 @@ function Fundraise() {
         >
           <Row style={{ marginBottom: "220px", alignItems: "center" }}>
             <Col xs={12} md={6} style={{ marginBottom: "30px" }}>
-              <h3
-                style={{
-                  color: "#000000",
-                  fontSize: "24px",
-                  fontWeight: "bold",
-                  lineHeight: "1.5",
-                  marginBottom: "45px",
-                }}
-              >
-                Browse hundreds of investment opportunities, connect with investors, and manage your investment contacts with the world's investors network.
-              </h3>
-              <h5 style={{ color: "#000000", fontSize: "20px", fontWeight: "bold", margin: "20px 0 15px 0" }}>
-                Follow Us
-              </h5>
-              <div style={{ display: "flex", gap: "15px" }}>
-  {[
-    { Icon: Facebook, url: "https://www.facebook.com/share/1JUWs1jYhQ/" },
-    { Icon: Twitter, url: "https://twitter.com" }, // Replace with actual Twitter URL if available
-    { Icon: Instagram, url: "https://www.instagram.com/idea.x.venture?utm_source=qr&igsh=MW01cG1hYmF4MGliZg==" },
-    { Icon: Linkedin, url: "https://www.linkedin.com/in/idea-venture-658978362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" },
-    { Icon: Youtube, url: "https://www.youtube.com" }, // Replace with actual YouTube URL if available
-  ].map(({ Icon, url }, index) => (
-    <button
-      key={index}
-      style={{
-        color: "#000000",
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        transition: "transform 0.3s",
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
-      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-      onClick={() => window.open(url, "_blank")} // Opens the URL in a new tab
-    >
-      <Icon size={30} />
-    </button>
-  ))}
-</div>
+            <img
+              src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/279shj4h_expires_30_days.png"
+              alt="Investment Dashboard"
+              className="w-full max-w-md mx-auto object-contain"
+            />
             </Col>
             <Col xs={12} md={6} style={{ marginBottom: "30px" }}>
               <motion.div
@@ -163,7 +143,7 @@ function Fundraise() {
                   <div style={{ flex: "1 1 200px"}}>
                     <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                       <img
-                        src="https://cdn.builder.io/api/v1/image/assets/b01fe73a9d294126b8ebcdfd94d4804e/9681df83f94dc594a2e0a40495d9952f8487f01e?placeholderIfAbsent=true"
+                        src={image6}
                         alt="Investor profile"
                         style={{ width: "60px", height: "60px", borderRadius: "10px" }}
                       />
@@ -248,7 +228,7 @@ function Fundraise() {
             </Col>
           </Row>
 
-          <Row style={{ padding: "60px 0", alignItems: "center" }}>
+          <Row style={{ padding: "60px 0", alignItems: "center", width: "100%" }}>
             <Col xs={12} md={7} style={{ marginBottom: "30px" }}>
               <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto", display: "flex", justifyContent: "center" }}>
                 <div

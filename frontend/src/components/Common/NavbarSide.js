@@ -1,6 +1,6 @@
 import React from 'react';
-import SearchBox from '../Common/SearchBox';
-import LanguageSelector from './LanguageSelector';
+// import SearchBox from '../Common/SearchBox';
+// import LanguageSelector from './LanguageSelector';
 import NavigationLinks from './NavigationLinks';
 import NavUser from './NavUser';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 library.add(fas);
 
 
-function NavbarSide({ isFixed, isVisible, toggleSideBar, sideBarVisible, onSignInClick  }) {
+function NavbarSide({ isFixed, isVisible, toggleSideBar, sideBarVisible, onSignInClick, isAuthenticated, role, clientRole  }) {
   return (
     <>
       <button className={`sideBartoggleButton ${isFixed ? 'fixed-nav' : ''} ${!isVisible ? 'hidden-nav' : ''}`} onClick={toggleSideBar}>
@@ -18,14 +18,23 @@ function NavbarSide({ isFixed, isVisible, toggleSideBar, sideBarVisible, onSignI
       </button>
       <div className={`sideBarNav ${sideBarVisible ? 'visible' : ''}`}>
         <div className="sideBarSearch">
-          <SearchBox />
+          {/* <SearchBox /> */}
         </div>
         <div className='SideBarLinks' onClick={toggleSideBar}>
-          <NavigationLinks />
+        <NavigationLinks
+            isAuthenticated={isAuthenticated}
+            role={role}
+            clientRole={clientRole}
+          />
         </div>
         <div className='SideBarLangUser'>
-          <LanguageSelector />
-          <NavUser onSignInClick={onSignInClick} />
+          {/* <LanguageSelector /> */}
+          <NavUser
+              isAuthenticated={isAuthenticated}
+              role={role}
+              clientRole={clientRole}
+              onSignInClick={onSignInClick}
+            />
         </div>
       </div>
     </>

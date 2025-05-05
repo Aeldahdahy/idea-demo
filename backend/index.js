@@ -19,7 +19,7 @@ const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${d
 
 db_connection();
 
-const hostname = '127.0.0.1';
+const hostname = '0.0.0.0';
 const port = 7030;
 
 // 🟢 Redirect root to /idea-demo

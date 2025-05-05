@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 
 const EmployeeManageProject = () => {
   const [search, setSearch] = useState('');
-  // const [selectedProject, setSelectedProject] = useState([]);
   const { project = [], loading, error, updateProject, getAllProjects, API_BASE_URL } = useFunctions();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -18,16 +17,6 @@ const EmployeeManageProject = () => {
       getAllProjects();
     }
   }, [location.pathname, getAllProjects]);
-
-  // const handleProjectCheckbox = (id) => {
-  //   setSelectedProject((prev) =>
-  //     prev.includes(id) ? prev.filter((projectId) => projectId !== id) : [...prev, id]
-  //   );
-  // };
-
-  // const handleSelectAll = (e) => {
-  //   setSelectedProject(e.target.checked ? project.map((project) => project._id) : []);
-  // };
 
   const filteredProject = Array.isArray(project)
     ? project.filter((project) => {
@@ -47,27 +36,26 @@ const EmployeeManageProject = () => {
   };
 
   const handleOpenProjectPopup = (project) => {
-    // console.log(project.additional_document);
     const transformedProjectData = {
-      images: project.project_images.map(img => `${API_BASE_URL}/${img}`) || [], // Full URL for images
+      images: project.project_images.map(img => `${API_BASE_URL}/${img}`) || [],
       details: {
         step1: {
           projectIndustry: project.project_industry || "N/A",
-          projectStage: project.project_stage || "N/A", // Not in backend response
+          projectStage: project.project_stage || "N/A",
           minimumInvestment: project.min_investment || "N/A",
           maximumInvestment: project.max_investment || "N/A",
-          netWorth: project.networth || "N/A", // Not in backend response
-          dealType: project.deal_type || "N/A", // Not in backend response
+          netWorth: project.networth || "N/A",
+          dealType: project.deal_type || "N/A",
           projectLocation: `${project.city || "N/A"}, ${project.state || "N/A"}`,
-          website: project.website_link || "N/A", // Not in backend response
+          website: project.website_link || "N/A",
         },
         step2: {
           description: {
             marketDescription: project.market_description || "N/A",
-            businessHighlights: project.bussiness_highlights || "N/A", // Not in backend response
-            financialStatus: project.financial_status || "N/A", // Not in backend response
+            businessHighlights: project.bussiness_highlights || "N/A",
+            financialStatus: project.financial_status || "N/A",
             businessObjectives: project.business_objectives || "N/A",
-            businessDescription: project.business_description || "N/A", // Not in backend response
+            businessDescription: project.business_description || "N/A",
           },
         },
         step3: {
@@ -103,7 +91,7 @@ const EmployeeManageProject = () => {
                 color: "#E71D36",
                 path: project.financial_statement,
               }]
-              :[]),
+              : []),
           ],
         },
         step4: {
@@ -123,86 +111,104 @@ const EmployeeManageProject = () => {
     }));
   };
 
-  console.log("Filtered Projects:", filteredProject); // Debugging line
-
   return (
-    <>
-      <div className='dashboard-container-header'>
+    <div className="container mx-auto px-4 py-6 overflow-hidden">
+      <div className="mb-6">
         <input 
           type="text"
-          placeholder="Search..."
+          placeholder="Search projects..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="search-input"
+          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
       </div>
-      {loading && <p>Loading...</p>}
-      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
-      {filteredProject.length === 0 ? (
-        <p>No project found.</p>
-      ) : (
-        <table className="dashboard-table">
-          <thead className='dashboard-table-head'>
-            <tr>
-              {/* <th>
-                <input 
-                  type="checkbox" 
-                  checked={selectedProject.length === filteredProject.length && filteredProject.length > 0}
-                  onChange={handleSelectAll}
-                />
-              </th> */}
-              <th>Logo</th>
-              <th>Project Name</th>
-              <th>Entrepreneur Name</th>
-              <th>Industry Type</th>
-              <th>City</th>
-              <th>State</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProject.map((project) => (
-              <tr key={project._id}>
-                {/* <td>
-                  <input 
-                    type="checkbox" 
-                    checked={selectedProject.includes(project._id)}
-                    onChange={() => handleProjectCheckbox(project._id)}
-                  />
-                </td> */}
-                <td>
-                  <img
-                    src={project.project_images && project.project_images[0] ? `${API_BASE_URL}/${project.project_images[0]}` : defaultImage}
-                    alt={project.project_name}
-                    style={{ width: "40px", height: "40px", borderRadius: "50%", marginRight: "10px" }}
-                  />
-                </td>
-                <td>{project.project_name || "N/A"}</td>
-                <td>{project.user_name || "N/A"}</td>
-                <td>{project.project_industry || "N/A"}</td>
-                <td>{project.city || "N/A"}</td>
-                <td>{project.state || "N/A"}</td>
-                <td>
-                  <div className="toggleStatusContainer" onClick={() => handleUpdateProject(project._id, { status: project.status === "Approved" ? "Rejected" : "Approved" })}>
-                    <div className={`toggleStatus ${project.status === "Approved" ? "" : "active"}`}>
-                      <span className="toggleCircle"></span>
-                      <span className="toggleText">{project.status === "Approved" ? "Approved" : "Rejected"}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  {/* Pass the full project object instead of just the ID */}
-                  <button className="edit-btn" onClick={() => handleOpenProjectPopup(project)}>
-                    <Eye />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {loading && (
+        <div className="flex justify-center">
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        </div>
       )}
-    </>
+      {error && !loading && (
+        <div className="text-red-600 bg-red-100 p-4 rounded-lg">{error}</div>
+      )}
+      {filteredProject.length === 0 && !loading && !error ? (
+        <div className="text-gray-600 text-center py-4">No projects found.</div>
+      ) : (
+        <div className="bg-white shadow-md rounded-lg max-h-[500px] overflow-auto sm:overflow-x-hidden">
+          <table className="min-w-[800px] w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logo</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entrepreneur Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Industry Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredProject.map((project) => (
+                <tr key={project._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <img
+                      src={project.project_images && project.project_images[0] ? `${API_BASE_URL}/${project.project_images[0]}` : defaultImage}
+                      alt={project.project_name}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {project.project_name || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {project.user_name || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {project.project_industry || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {project.city || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {project.state || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <div
+                      className="inline-flex items-center cursor-pointer"
+                      onClick={() => handleUpdateProject(project._id, { status: project.status === "Approved" ? "Rejected" : "Approved" })}
+                      role="switch"
+                      aria-checked={project.status === "Approved"}
+                    >
+                      <div
+                        className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-200 ease-in-out ${
+                          project.status === "Approved" ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`absolute left-0 inline-block w-5 h-5 transform bg-white rounded-full shadow transition-transform duration-200 ease-in-out ${
+                            project.status === "Approved" ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </div>
+                      <span className="ml-2 text-sm text-gray-600">{project.status}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      onClick={() => handleOpenProjectPopup(project)}
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 };
 

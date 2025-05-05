@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // Import useLocation
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Logo from "../Common/Logo";
 import LogoImage from "../../assets/idea.png";
@@ -15,83 +15,97 @@ import {
   Inbox,
   MonitorSmartphoneIcon,
   Megaphone,
+  Menu,
 } from "lucide-react";
 import { useFunctions } from '../../useFunctions';
+import { Tooltip } from 'flowbite-react';
 
 function EmployeeSideBar() {
-  const [isExpanded, setExpanded] = useState(true);
+  const [isExpanded, setExpanded] = useState(false);
   const toggleSidebar = () => setExpanded(!isExpanded);
   const { signOutDistroySession } = useFunctions();
-  
-  const location = useLocation(); // Get current URL path
+  const location = useLocation();
 
   const menuItems = [
-    { path: "/employee-portal/", label: "Dashboard", icon: <LayoutGrid /> },
-    { path: "/employee-portal/manageStaff", label: "Manage Staff", icon: <UsersRound /> },
-    { path: "/employee-portal/manageProject", label: "Projects", icon: <FileStack /> },
-    { path: "/employee-portal/manageMeetingRequest", label: "Meeting Requests", icon: <Presentation /> },
-    { path: "/employee-portal/manageContractRequest", label: "Contract Requests", icon: <BookUser /> },
-    { path: "/employee-portal/manageMessages", label: "Messages", icon: <Inbox /> },
-    { path: "/employee-portal/manageUsers", label: "Users", icon: <UsersRound /> },
+    { path: "/employee-portal/", label: "Dashboard", icon: <LayoutGrid className="w-6 h-6" /> },
+    { path: "/employee-portal/manageStaff", label: "Manage Staff", icon: <UsersRound className="w-6 h-6" /> },
+    { path: "/employee-portal/manageProject", label: "Projects", icon: <FileStack className="w-6 h-6" /> },
+    { path: "/employee-portal/manageMeetingRequest", label: "Meeting Requests", icon: <Presentation className="w-6 h-6" /> },
+    { path: "/employee-portal/manageContractRequest", label: "Contract Requests", icon: <BookUser className="w-6 h-6" /> },
+    { path: "/employee-portal/manageMessages", label: "Messages", icon: <Inbox className="w-6 h-6" /> },
+    { path: "/employee-portal/manageUsers", label: "Users", icon: <UsersRound className="w-6 h-6" /> },
   ];
-  
+
   const moreItems = [
-    { path: "/employee-portal/manageMobileWeb", label: "Mobile App & Website", icon: <MonitorSmartphoneIcon /> },
-    { path: "/employee-portal/manageAd", label: "Manage Advertisements", icon: <Megaphone /> },
+    { path: "/employee-portal/manageMobileWeb", label: "Mobile App & Website", icon: <MonitorSmartphoneIcon className="w-6 h-6" /> },
+    { path: "/employee-portal/manageAd", label: "Manage Advertisements", icon: <Megaphone className="w-6 h-6" /> },
   ];
 
   return (
     <motion.div
-      className={`sidebarContainer ${isExpanded ? "expanded" : "collapsed"}`}
-      initial={{ width: isExpanded ? 320 : 100 }}
-      animate={{ width: isExpanded ? "18%" : "5%" }}
-      transition={{ duration: 0.5 }}
+      className={`bg-white flex flex-col fixed top-0 left-0 h-[96vh] z-20 sm:static sm:z-auto ${
+        isExpanded ? "w-64" : "w-20"
+      } transition-all duration-300 sm:${isExpanded ? "w-64" : "w-20"} shadow-md`}
+      initial={{ width: isExpanded ? 256 : 80 }}
+      animate={{ width: isExpanded ? 256 : 80 }}
+      transition={{ duration: 0.3 }}
     >
-      <motion.div 
-      className="sidebar-header" 
-      initial={{ padding: isExpanded ? '1rem' : '1.5rem' }}  
-      animate={{ padding: isExpanded ? '1rem' : '1.5rem' }} 
-      transition={{ duration: 0.5 }}
-      >
-          {isExpanded ? <Logo /> : <img src={LogoImage} alt="logo" width={50} />}
-        <button className="toggle-btn" onClick={toggleSidebar}>
-          {isExpanded ? <ChevronsLeft /> : <ChevronsRight />}
+      <div className="flex items-center justify-between p-4 border-b">
+        {isExpanded ? <Logo /> : <img src={LogoImage} alt="logo" className="w-10 h-10" />}
+        <button onClick={toggleSidebar} className="text-[#024059] sm:hidden">
+          {isExpanded ? <ChevronsLeft className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-      </motion.div>
-
-      <div className="sidebar-links">
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`sidebar-link ${location.pathname === item.path ? "active" : ""}`} // Apply 'active' class if link matches current path
-          >
-            {item.icon}
-            {isExpanded && <span>{item.label}</span>}
-          </Link>
-        ))}
-
-        {/* Logout Link */}
-        <Link
-          onClick={() => signOutDistroySession()}
-          className="sidebar-link logout-link"
-        >
-          <LogOut />
-          {isExpanded && <span>Logout</span>}
-        </Link>
-        <span className="sidebarLine"></span>
-        <span className="sidebarMoreTitle">More</span>
-        {moreItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`sidebar-link ${location.pathname === item.path ? "active" : ""}`} // Apply 'active' class if link matches current path
-          >
-            {item.icon}
-            {isExpanded && <span>{item.label}</span>}
-          </Link>
-        ))}
+        <button onClick={toggleSidebar} className="text-[#024059] hidden sm:block">
+          {isExpanded ? <ChevronsLeft className="w-6 h-6" /> : <ChevronsRight className="w-6 h-6" />}
+        </button>
       </div>
+      <nav className="flex-1 overflow-y-auto p-2">
+        {menuItems.map((item) => (
+          <Tooltip key={item.path} content={isExpanded ? "" : item.label} placement="right">
+            <Link
+              to={item.path}
+              className={`flex items-center p-3 my-1 transition-colors duration-200 rounded-md ${
+                location.pathname === item.path
+                  ? "bg-[#377E9A] text-white border-l-4 border-[#024059]"
+                  : "text-[#024059] hover:bg-[#377E9A] hover:text-white border-l-4 border-transparent"
+              }`}
+            >
+              {item.icon}
+              {isExpanded && <span className="ml-4">{item.label}</span>}
+            </Link>
+          </Tooltip>
+        ))}
+        <hr className="my-4 border-gray-200" />
+        <span className={`px-4 text-sm text-[#024059] ${isExpanded ? "block" : "hidden"}`}>More</span>
+        {moreItems.map((item) => (
+          <Tooltip key={item.path} content={isExpanded ? "" : item.label} placement="right">
+            <Link
+              to={item.path}
+              className={`flex items-center p-3 my-1 transition-colors duration-200 rounded-md ${
+                location.pathname === item.path
+                  ? "bg-[#377E9A] text-white border-l-4 border-[#024059]"
+                  : "text-[#024059] hover:bg-[#377E9A] hover:text-white border-l-4 border-transparent"
+              }`}
+            >
+              {item.icon}
+              {isExpanded && <span className="ml-4">{item.label}</span>}
+            </Link>
+          </Tooltip>
+        ))}
+        <Tooltip content={isExpanded ? "" : "Logout"} placement="right">
+          <Link
+            onClick={() => signOutDistroySession()}
+            className={`flex items-center p-3 my-1 transition-colors duration-200 rounded-md ${
+              location.pathname === "/logout"
+                ? "bg-[#377E9A] text-white border-l-4 border-[#024059]"
+                : "text-red-500 hover:bg-[#377E9A] hover:text-white border-l-4 border-transparent"
+            }`}
+          >
+            <LogOut className="w-6 h-6" />
+            {isExpanded && <span className="ml-4">Logout</span>}
+          </Link>
+        </Tooltip>
+      </nav>
     </motion.div>
   );
 }

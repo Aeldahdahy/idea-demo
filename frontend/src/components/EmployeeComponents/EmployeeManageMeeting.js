@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Eye, Plus } from "lucide-react"; // Ensure lucide-react is installed
+import { Eye, Plus } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 const EmployeeManageMeeting = () => {
@@ -61,10 +61,6 @@ const EmployeeManageMeeting = () => {
     );
   };
 
-  // const handleSelectAllRequests = (e) => {
-  //   setSelectedRequests(e.target.checked ? requestsData.map((request) => request.id) : []);
-  // };
-
   const handleInvestorCheckbox = (id) => {
     setSelectedInvestorResponses((prev) =>
       prev.includes(id) ? prev.filter((requestId) => requestId !== id) : [...prev, id]
@@ -85,7 +81,6 @@ const EmployeeManageMeeting = () => {
     setSelectedEntrepreneurResponses(e.target.checked ? entrepreneurResponsesData.map((response) => response.id) : []);
   };
 
-  // Filtered data based on search
   const filteredRequests = requestsData.filter(
     (item) =>
       item.projectName.toLowerCase().includes(search.toLowerCase()) ||
@@ -106,86 +101,71 @@ const EmployeeManageMeeting = () => {
   );
 
   return (
-    <div className="meeting-container">
-      {/* Header Section */}
-      <div className='meeting-header'>
-        <input 
+    <div className="container mx-auto px-4 py-6 overflow-hidden">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search meetings..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="search-input"
+          className="w-full sm:max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
-        <button className="add-slots-btn">
-          <Plus size={18} /> Add Slots
+        <button
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Slots
         </button>
       </div>
-  
-      {/* All Requests Table */}
-      <div className="table-container">
-        <h5>All Requests</h5>
-        <div className="scrollable-table">
-          <table className="meeting-table">
-            <thead>
-              <tr>
-                <th>Select</th>
-                <th>Project Name</th>
-                <th>Investor</th>
-                <th>Entrepreneur</th>
-                <th>Auditor</th>
-                <th>Data/Time</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRequests.map((request) => (
-                <tr key={request.id}>
-                  <td>
-                    <input type="checkbox" checked={selectedRequests.includes(request.id)} onChange={() => handleRequestCheckbox(request.id)} />
-                  </td>
-                  <td className="highlight">{request.projectName}</td>
-                  <td>{request.investor}</td>
-                  <td>{request.entrepreneur}</td>
-                  <td>{request.auditor}</td>
-                  <td>{request.email}</td>
-                  <td className={`status ${request.status.toLowerCase()}`}>{request.status}</td>
-                 
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-  
-      <div className="table-separetor"></div>
 
-      {/* Responses Section */}
-      <div className="responses-container">
-        {/* Investor Response Table */}
-        <div className="response-box">
-          <div className="response-header">
-            <h5>Investor Response</h5>
-            <button className="check-btn">
-              <Eye size={16} /> Check
-            </button>
-          </div>
-          <div className="scrollable-table">
-            <table className="meeting-table">
-              <thead>
+      <div className="space-y-8">
+        {/* All Requests Table */}
+        <div>
+          <h5 className="text-lg font-semibold text-gray-900 mb-4">All Requests</h5>
+          <div className="bg-white shadow-md rounded-lg max-h-[300px] overflow-auto sm:overflow-x-hidden">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr>
-                  <th><input type="checkbox" checked={selectedInvestorResponses.length === investorResponsesData.length} onChange={handleSelectAllInvestor} /></th>
-                  <th>Project Name</th>
-                  <th>Investor</th>
-                  <th>Selected Slots</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Investor</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entrepreneur</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auditor</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data/Time</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
-              <tbody>
-                {filteredInvestorResponses.map((response) => (
-                  <tr key={response.id}>
-                    <td><input type="checkbox" checked={selectedInvestorResponses.includes(response.id)} onChange={() => handleInvestorCheckbox(response.id)} /></td>
-                    <td>{response.projectName}</td>
-                    <td>{response.investor}</td>
-                    <td>{response.slots}</td>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredRequests.map((request) => (
+                  <tr key={request.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedRequests.includes(request.id)}
+                        onChange={() => handleRequestCheckbox(request.id)}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{request.projectName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.investor}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.entrepreneur}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.auditor}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          request.status === "Done"
+                            ? "bg-green-100 text-green-800"
+                            : request.status === "Rejected"
+                            ? "bg-red-100 text-red-800"
+                            : request.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}
+                      >
+                        {request.status}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -193,33 +173,83 @@ const EmployeeManageMeeting = () => {
           </div>
         </div>
 
-        <div className="table-separetor"></div>
-  
-        {/* Entrepreneur Response Table */}
-        <div className="response-box">
-          <div className="response-header">
-            <h5>Entrepreneur Response</h5>
-            <button className="check-btn">
-              <Eye size={16} /> Check
+        {/* Investor Response Table */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h5 className="text-lg font-semibold text-gray-900">Investor Response</h5>
+            <button
+              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            >
+              <Eye className="w-4 h-4 mr-1" />
+              Check
             </button>
           </div>
-          <div className="scrollable-table">
-            <table className="meeting-table">
-              <thead>
+          <div className="bg-white shadow-md rounded-lg max-h-[300px] overflow-auto sm:overflow-x-hidden">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0 z-10">
                 <tr>
-                  <th><input type="checkbox" checked={selectedEntrepreneurResponses.length === entrepreneurResponsesData.length} onChange={handleSelectAllEntrepreneur} /></th>
-                  <th>Project Name</th>
-                  <th>Entrepreneur</th>
-                  <th>Selected Slots</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Investor</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selected Slots</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredInvestorResponses.map((response) => (
+                  <tr key={response.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedInvestorResponses.includes(response.id)}
+                        onChange={() => handleInvestorCheckbox(response.id)}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{response.projectName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{response.investor}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{response.slots.replace(/\n/g, ", ")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Entrepreneur Response Table */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h5 className="text-lg font-semibold text-gray-900">Entrepreneur Response</h5>
+            <button
+              className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            >
+              <Eye className="w-4 h-4 mr-1" />
+              Check
+            </button>
+          </div>
+          <div className="bg-white shadow-md rounded-lg max-h-[300px] overflow-auto sm:overflow-x-hidden">
+            <table className="min-w-[800px] w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0 z-10">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entrepreneur</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Selected Slots</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
                 {filteredEntrepreneurResponses.map((response) => (
-                  <tr key={response.id}>
-                    <td><input type="checkbox" checked={selectedEntrepreneurResponses.includes(response.id)} onChange={() => handleEntrepreneurCheckbox(response.id)} /></td>
-                    <td>{response.projectName}</td>
-                    <td>{response.entrepreneur}</td>
-                    <td>{response.slots}</td>
+                  <tr key={response.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedEntrepreneurResponses.includes(response.id)}
+                        onChange={() => handleEntrepreneurCheckbox(response.id)}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{response.projectName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{response.entrepreneur}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{response.slots.replace(/\n/g, ", ")}</td>
                   </tr>
                 ))}
               </tbody>

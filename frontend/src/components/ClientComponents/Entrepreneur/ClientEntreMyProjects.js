@@ -42,7 +42,7 @@ function ClientEntreMyProjects() {
 
   const AddNewPitchCard = () => (
     <motion.div
-      className="w-full bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col"
+      className="max-w-[400px] h-[70vh] bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col"
       whileHover={{ scale: 1.05 }}
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
@@ -80,8 +80,8 @@ function ClientEntreMyProjects() {
   // Determine the grid columns based on item count
   const getGridColumns = () => {
     if (totalItems === 1) return 'grid-cols-1 max-w-sm mx-auto';
-    if (totalItems === 2) return 'grid-cols-1 sm:grid-cols-2';
-    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+    if (totalItems === 2) return 'grid-cols-1 sm:grid-cols-2 justify-items-center';
+    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center';
   };
 
   return (
@@ -103,7 +103,7 @@ function ClientEntreMyProjects() {
           </div>
         )}
         <div style={{ display:'flex', justifyContent:"center"}}>
-        <div className={`grid ${getGridColumns()} gap-10`} style={{width: "62%"}}>
+        <div className={`grid ${getGridColumns()} gap-10`} style={{width: "100%"}}>
           {loading ? (
             [...Array(3)].map((_, index) => (
               <Card key={index} project={{ isPlaceholder: true }} baseUrl={API_BASE_URL} />

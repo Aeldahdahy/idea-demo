@@ -70,7 +70,7 @@ const Card = memo(({ project, errorFetching, baseUrl }) => {
 
   if (isLoading) {
     return (
-      <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
+      <div className="max-w-full  bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
         <div className="absolute top-0 right-0 bg-gray-200 text-gray-200 text-xs font-bold px-2 py-1 rounded-bl-lg">
           LOADING
         </div>
@@ -124,9 +124,9 @@ const Card = memo(({ project, errorFetching, baseUrl }) => {
         </div>
       }
     >
-      <div className="max-w-sm w-full bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
-        <div className="absolute top-0 right-0 bg-orange-400 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
-          {project.project_stage || 'SEED STAGE'}
+      <div className="max-w-[380px] bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col">
+        <div className="absolute top-0 right-0 bg-orange-400 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-10">
+          {project.project_stage}
         </div>
         <div className="relative h-48 w-full">
           {primaryImage ? (

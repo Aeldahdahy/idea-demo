@@ -243,7 +243,7 @@ const getAllReviews = useCallback(async () => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-
+  
     // Validate id
     if (!id || typeof id !== 'string' || id.trim() === '') {
       const errorMessage = 'Invalid or missing user ID';
@@ -252,7 +252,7 @@ const getAllReviews = useCallback(async () => {
       toast.error(errorMessage);
       throw new Error(errorMessage);
     }
-
+  
     // Validate investorPreference for investors
     if (updatedData.role === 'investor' && updatedData.investorPreference) {
       const { investorType, minInvestment, maxInvestment, industries } = updatedData.investorPreference;
@@ -279,14 +279,14 @@ const getAllReviews = useCallback(async () => {
         toast.error(errorMessage);
         throw new Error(errorMessage);
       }
-    } else if (updatedData.role === 'investor' && !updatedData.investorPreference) {
+    } else if (updatedData.role === 'investor') {
       const errorMessage = 'investorPreference is required for investors';
       setError(errorMessage);
       setLoading(false);
       toast.error(errorMessage);
       throw new Error(errorMessage);
     }
-
+  
     // Validate entrepreneurPreference for entrepreneurs
     if (updatedData.role === 'entrepreneur' && updatedData.entrepreneurPreference) {
       const { projectName, projectIndustry, fundingGoal } = updatedData.entrepreneurPreference;
@@ -305,64 +305,74 @@ const getAllReviews = useCallback(async () => {
         throw new Error(errorMessage);
       }
     }
-
-    // Validate root-level fields
-    const { country, city, socialAccounts, yearsOfExperience } = updatedData;
-    if (!country?.trim() || !city?.trim()) {
-      const errorMessage = 'Country and city are required';
-      setError(errorMessage);
-      setLoading(false);
-      toast.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-    const validSocialAccounts = Array.isArray(socialAccounts) ? socialAccounts.filter(account => account.trim() !== '') : [];
-    if (validSocialAccounts.length === 0) {
-      const errorMessage = 'At least one social account is required';
-      setError(errorMessage);
-      setLoading(false);
-      toast.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-    if (!['0-1', '1-3', '3-5', '5+', 'N/A'].includes(yearsOfExperience)) {
-      const errorMessage = 'Invalid years of experience';
-      setError(errorMessage);
-      setLoading(false);
-      toast.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    // Normalize socialAccounts
-    const normalizedSocialAccounts = validSocialAccounts.map(acc => {
-      try {
-        return typeof acc === 'string' && acc.startsWith('[') ? JSON.parse(acc)[0] : acc;
-      } catch {
-        return acc;
+  
+    // Validate root-level fields only for investors on first login
+    const { country, city, socialAccounts, yearsOfExperience, firstLogin } = updatedData;
+    if (updatedData.role === 'investor' && firstLogin === true) {
+      if (!country?.trim() || !city?.trim()) {
+        const errorMessage = 'Country and city are required';
+        setError(errorMessage);
+        setLoading(false);
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
       }
-    });
-
+      const validSocialAccounts = Array.isArray(socialAccounts)
+        ? socialAccounts.filter((account) => account.trim() !== '')
+        : [];
+      if (validSocialAccounts.length === 0) {
+        const errorMessage = 'At least one social account is required';
+        setError(errorMessage);
+        setLoading(false);
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+      if (!['0-1', '1-3', '3-5', '5+', 'N/A'].includes(yearsOfExperience)) {
+        const errorMessage = 'Invalid years of experience';
+        setError(errorMessage);
+        setLoading(false);
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+    }
+  
+    // Normalize socialAccounts (only if provided and needed)
+    const normalizedSocialAccounts = Array.isArray(socialAccounts)
+      ? socialAccounts
+          .filter((acc) => acc.trim() !== '')
+          .map((acc) => {
+            try {
+              return typeof acc === 'string' && acc.startsWith('[') ? JSON.parse(acc)[0] : acc;
+            } catch {
+              return acc;
+            }
+          })
+      : [];
+  
     // Optimistically update the user in the UI
     const optimisticData = {
       ...updatedData,
       socialAccounts: normalizedSocialAccounts,
       image: imageFile ? URL.createObjectURL(imageFile) : updatedData.image || null,
-      ...(updatedData.investorPreference && updatedData.role === 'investor' ? {
-        firstLogin: false,
-        investorPreference: updatedData.investorPreference,
-        entrepreneurPreference: null
-      } : updatedData.role === 'entrepreneur' ? {
-        investorPreference: null,
-        entrepreneurPreference: updatedData.entrepreneurPreference
-      } : {})
+      ...(updatedData.investorPreference && updatedData.role === 'investor'
+        ? {
+            firstLogin: false,
+            investorPreference: updatedData.investorPreference,
+            entrepreneurPreference: null,
+          }
+        : updatedData.role === 'entrepreneur'
+        ? {
+            investorPreference: null,
+            entrepreneurPreference: updatedData.entrepreneurPreference,
+          }
+        : {}),
     };
-
+  
     dispatch(
       setUsers(
-        users.map((user) =>
-          user._id === id ? { ...user, ...optimisticData } : user
-        )
+        users.map((user) => (user._id === id ? { ...user, ...optimisticData } : user))
       )
     );
-
+  
     try {
       const formData = new FormData();
       // Append standard user fields if provided
@@ -379,9 +389,11 @@ const getAllReviews = useCallback(async () => {
       if (updatedData.status) formData.append('status', updatedData.status);
       if (updatedData.country) formData.append('country', updatedData.country);
       if (updatedData.city) formData.append('city', updatedData.city);
-      formData.append('socialAccounts', JSON.stringify(normalizedSocialAccounts));
-      if (updatedData.yearsOfExperience) formData.append('yearsOfExperience', updatedData.yearsOfExperience);
-
+      if (normalizedSocialAccounts.length > 0)
+        formData.append('socialAccounts', JSON.stringify(normalizedSocialAccounts));
+      if (updatedData.yearsOfExperience)
+        formData.append('yearsOfExperience', updatedData.yearsOfExperience);
+  
       // Append role-specific preferences
       if (updatedData.investorPreference && updatedData.role === 'investor') {
         formData.append('investorPreference', JSON.stringify(updatedData.investorPreference));
@@ -390,42 +402,42 @@ const getAllReviews = useCallback(async () => {
       if (updatedData.entrepreneurPreference && updatedData.role === 'entrepreneur') {
         formData.append('entrepreneurPreference', JSON.stringify(updatedData.entrepreneurPreference));
       }
-
+  
       // Append image file if present
       if (imageFile) {
         formData.append('image', imageFile);
       }
-
+  
       const response = await axios.patch(`${API_BASE_URL}/api/users/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       if (response.status !== 200) {
         throw new Error('Failed to update user');
       }
-
+  
       const backendData = response.data.data;
       if (!backendData || !backendData.id || !backendData.role) {
         throw new Error('Invalid response data from server');
       }
-
+  
       const clientData = {
         ...backendData,
         clientRole: backendData.clientRole || (backendData.role ? backendData.role.charAt(0).toUpperCase() + backendData.role.slice(1) : 'Investor'),
-        firstLogin: backendData.firstLogin ?? false
+        firstLogin: backendData.firstLogin ?? false,
       };
-
+  
       dispatch(
         setUsers(
           users.map((user) => (user._id === id ? clientData : user))
         )
       );
-
+  
       dispatch(updateClientData(clientData));
-
+  
       toast.success('Profile updated successfully!');
       return response.data;
     } catch (err) {

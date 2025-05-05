@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import EmployeeMain from './EmployeeMain';
 import EmployeeSideBar from './EmployeeSideBar';
 import EmployeeNavbar from './EmployeeNavbar';
 import EmployeeManageStaff from './EmployeeManageStaff';
@@ -14,8 +13,9 @@ import EmployeeMobileWebContent from './EmployeeMobileWebContent';
 import EmployeeManageMeeting from './EmployeeManageMeeting';
 import EmployeeDataPopUp from './EmployeeDataPopUp';
 import EmployeeProjectPopUp from './EmployeeProjectPopUp';
-// import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
 import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
+import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
+import EmplployeeMain from '../EmployeeComponents/EmployeeMain';
 
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
@@ -25,25 +25,23 @@ function EmployeePortal() {
   const { isOpenClient, typeClient, initialClientData } = useSelector((state) => state.clientData);
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="flex bg-gray-100 h-[96vh]">
       <EmployeeSideBar />
-      <div className="DashboardContentContainer">
+      <div className="flex-1 flex flex-col max-w-full overflow-x-hidden">
         <EmployeeNavbar />
-        <div className="DashboardContent">
-          <div className='dashboardScrollableOutlet'>
-            <Routes>
-              <Route path="" element={<EmployeeMain />} />
-              <Route path="/manageStaff" element={<EmployeeManageStaff />} />
-              <Route path="/manageProject" element={<EmployeeManageProjects />} />
-              <Route path="/manageMeetingRequest" element={<EmployeeManageMeeting />} />
-              <Route path="/manageContractRequest" element={<EmployeeManageContract />} />
-              <Route path="/manageMessages" element={<EmployeeManageMessages />} />
-              <Route path="/manageUsers" element={<EmployeeManageUsers />} />
-              <Route path="/manageMobileWeb" element={<EmployeeMobileWebContent />} />
-              <Route path="/manageAd" element={<EmployeeManageAd />} />
-            </Routes>
-          </div>
-        </div>
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
+          <Routes>
+            <Route path="" element={<EmplployeeMain />} />
+            <Route path="/manageStaff" element={<EmployeeManageStaff />} />
+            <Route path="/manageProject" element={<EmployeeManageProjects />} />
+            <Route path="/manageMeetingRequest" element={<EmployeeManageMeeting />} />
+            <Route path="/manageContractRequest" element={<EmployeeManageContract />} />
+            <Route path="/manageMessages" element={<EmployeeManageMessages />} />
+            <Route path="/manageUsers" element={<EmployeeManageUsers />} />
+            <Route path="/manageMobileWeb" element={<EmployeeMobileWebContent />} />
+            <Route path="/manageAd" element={<EmployeeManageAd />} />
+          </Routes>
+        </main>
       </div>
       {isOpenStaff && <EmployeeDataPopUp typeStaff={typeStaff} initialStaffData={initialStaffData} />}
       {isOpenProject && <EmployeeProjectPopUp typeProject={typeProject} initialProjectData={initialProjectData} />}

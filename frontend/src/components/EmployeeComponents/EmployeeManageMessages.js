@@ -5,7 +5,6 @@ import { useLocation } from "react-router-dom";
 
 function EmployeeManageMessages() {
   const [search, setSearch] = useState("");
-  // const [selectedMessages, setSelectedMessages] = useState([]);
   const { messages = [], users = [], loading, error, getAllMessages, getAllUsers, updateMessages } = useFunctions();
   const location = useLocation();
 
@@ -16,25 +15,15 @@ function EmployeeManageMessages() {
     }
   }, [location.pathname, getAllMessages, getAllUsers]);
 
-  // const handleMessagesCheckbox = (id) => {
-  //   setSelectedMessages((prev) =>
-  //     prev.includes(id) ? prev.filter((messageId) => messageId !== id) : [...prev, id]
-  //   );
-  // };
-
-  // const handleSelectAll = (e) => {
-  //   setSelectedMessages(e.target.checked ? messages.map((message) => message._id) : []);
-  // };
-
   const filteredMessages = Array.isArray(messages)
     ? messages.filter((message) => {
-      const searchTerm = search.toLowerCase();
-      return (
-        message.fullname.toLowerCase().includes(searchTerm) ||
-        message.email.toLowerCase().includes(searchTerm) ||
-        (message.message?.toString() || "").includes(searchTerm)
-      );
-    })
+        const searchTerm = search.toLowerCase();
+        return (
+          message.fullname.toLowerCase().includes(searchTerm) ||
+          message.email.toLowerCase().includes(searchTerm) ||
+          (message.message?.toLowerCase() || "").includes(searchTerm)
+        );
+      })
     : [];
 
   const isExistingUser = (email) => {
@@ -42,72 +31,90 @@ function EmployeeManageMessages() {
   };
 
   return (
-    <>
-      <div className="dashboard-container-header">
+    <div className="container mx-auto px-4 py-6 overflow-hidden">
+      <div className="mb-6">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search messages..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="search-input"
+          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
         />
       </div>
-      {loading && <p>Loading...</p>}
-      {error && !loading && <p style={{ color: "red" }}>{error}</p>}
-      {filteredMessages.length === 0 ? (
-        <p>No Messages found.</p>
-      ) : (
-        <table className="dashboard-table">
-          <thead className="dashboard-table-head">
-            <tr>
-              {/* <th>
-                <input
-                  type="checkbox"
-                  checked={selectedMessages.length === filteredMessages.length && filteredMessages.length > 0}
-                  onChange={handleSelectAll}
-                />
-              </th> */}
-              <th>Name</th>
-              <th>Email</th>
-              <th>Message</th>
-              <th>Existing User</th>
-              <th>Status</th>
-              <th>View</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMessages.map((message) => (
-              <tr key={message._id}>
-                {/* <td>
-                  <input
-                    type="checkbox"
-                    checked={selectedMessages.includes(message._id)}
-                    onChange={() => handleMessagesCheckbox(message._id)}
-                  />
-                </td> */}
-                <td>{message.fullname}</td>
-                <td>{message.email}</td>
-                <td>{message.message}</td>
-                <td>{isExistingUser(message.email) ? "Yes" : "No"}</td>
-                <td>
-                  <div className="toggleStatusContainer" onClick={() => updateMessages(message._id, message.status)}>
-                    <div className={`toggleStatus ${message.status === "Pending" ? "active" : ""}`}>
-                      <span className="toggleCircle"></span>
-                      <span className="toggleText">{message.status === "Pending" ? "Pending" : "Replied"}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <button className="edit-btn">
-                    <Eye />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {loading && (
+        <div className="flex justify-center">
+          <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        </div>
       )}
-    </>
+      {error && !loading && (
+        <div className="text-red-600 bg-red-100 p-4 rounded-lg">{error}</div>
+      )}
+      {filteredMessages.length === 0 && !loading && !error ? (
+        <div className="text-gray-600 text-center py-4">No messages found.</div>
+      ) : (
+        <div className="bg-white shadow-md rounded-lg max-h-[500px] overflow-auto sm:overflow-x-hidden">
+          <table className="min-w-[800px] w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0 z-10">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Existing User</th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">View</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredMessages.map((message) => (
+                <tr key={message._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {message.fullname || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {message.email || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {message.message || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {isExistingUser(message.email) ? "Yes" : "No"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <div
+                      className="inline-flex items-center cursor-pointer"
+                      onClick={() => updateMessages(message._id, message.status === "Pending" ? "Replied" : "Pending")}
+                      role="switch"
+                      aria-checked={message.status === "Replied"}
+                    >
+                      <div
+                        className={`relative inline-flex items-center h-6 w-11 rounded-full transition-colors duration-200 ease-in-out ${
+                          message.status === "Replied" ? "bg-green-500" : "bg-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`absolute left-0 inline-block w-5 h-5 transform bg-white rounded-full shadow transition-transform duration-200 ease-in-out ${
+                            message.status === "Replied" ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </div>
+                      <span className="ml-2 text-sm text-gray-600">{message.status}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }
 

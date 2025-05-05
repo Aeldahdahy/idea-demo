@@ -3,16 +3,14 @@ import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux'; 
 import { jwtDecode } from 'jwt-decode';
 import { UserRound } from 'lucide-react';
+import { Dropdown } from 'flowbite-react';
 
 function EmployeeNavbar() {
     const location = useLocation();
     const [moduleName, setModuleName] = useState('');
-    // Get user details from Redux store
-    const user = useSelector((state) => state.auth.token); // Adjust based on your store structure
+    const user = useSelector((state) => state.auth.token);
     const decodedToken = jwtDecode(user);
 
-    // Map paths to their corresponding module names
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const moduleNames = {
         "/employee-portal/": "Dashboard",
         "/employee-portal/manageStaff": "Manage Staff",
@@ -25,35 +23,55 @@ function EmployeeNavbar() {
         "/employee-portal/manageAd": "Manage Advertisements",
     };
 
-    // Update module name when route changes
     useEffect(() => {
         setModuleName(moduleNames[location.pathname] || "Unknown Module");
-    }, [location.pathname, moduleNames]);
+    }, [location.pathname]);
 
     return (
-        <div className='dashboardNavbarContainer'>
+        <nav className="bg-white shadow-md p-4 flex justify-between items-center">
             {/* Module Name Section */}
-            <div className='dashboardModuleName'>
-                <h1>{moduleName}</h1>
+            <div className="text-2xl font-semibold text-gray-800">
+                {moduleName}
             </div>
 
             {/* User Profile Section */}
-            <div className='dashboardUser'>
+            <div className="flex items-center space-x-4">
                 {user && (
-                    <>
-                        <div className='userInfo'>
-                            <span className='userName'>{decodedToken.username || 'Unknown User'}</span>
-                            <span className='userRole'>{decodedToken.role || 'No Role Assigned'}</span>
-                        </div>
-                        {decodedToken.image ? (
-                            <img src={decodedToken.image} alt='User' className='userImage' />
-                        ) : (
-                            <UserRound className='userImage' />
-                        )}
-                    </>
+                    <Dropdown
+                        label={
+                            <div className="flex items-center space-x-2">
+                                {decodedToken.image ? (
+                                    <img
+                                        src={decodedToken.image}
+                                        alt="User"
+                                        className="w-10 h-10 rounded-full object-cover"
+                                    />
+                                    ) : (
+                                        <UserRound className="w-10 h-10" size={40} />
+                                    )}
+                                </div>
+                            }
+                        >
+                            <>
+                                <Dropdown.Item>
+                                    <span className="text-sm text-gray-700">
+                                        {decodedToken.username || 'Unknown User'}
+                                    </span>
+                                </Dropdown.Item>
+                                <Dropdown.Item>
+                                    <span className="text-sm text-gray-500">
+                                        {decodedToken.role || 'No Role Assigned'}
+                                    </span>
+                                </Dropdown.Item>
+                                <Dropdown.Divider />
+                                <Dropdown.Item>
+                                    <span className="text-sm text-red-600">Logout</span>
+                                </Dropdown.Item>
+                            </>
+                        </Dropdown>
                 )}
             </div>
-        </div>
+        </nav>
     );
 }
 

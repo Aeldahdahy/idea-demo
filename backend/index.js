@@ -28,10 +28,7 @@ db_connection();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      'https://idea-venture.agency',
-      'http://1270.0.0.1:7020'
-    ],
+    origin: process.env.ULR,
     methods: ['GET', 'POST'],
     credentials: true, 
   },

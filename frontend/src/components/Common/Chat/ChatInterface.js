@@ -8,7 +8,7 @@ import Chat from './Chat';
 import { fetchUsers } from '../../../redux/chatSlice';
 
 const SOCKET_URL = process.env.NODE_ENV === 'production'
-  ? window.location.origin // e.g., https://idea-venture.agency
+  ? window.location.origin 
   : 'http://127.0.0.1:7030';
   
   

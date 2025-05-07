@@ -13,6 +13,7 @@ import clientDataSlice from './ClientDataSlice';
 import clientAuthSlice  from './clientAuthSlice';
 import ClientInvestorPreferences from './clientInvestorPreferencesSlice';
 import meetingSlice from './meetingSlice';
+import chatSlice from './chatSlice';
 
 export const store = configureStore({
     reducer: {
@@ -30,7 +31,7 @@ export const store = configureStore({
         clientAuth: clientAuthSlice, 
         clientInvestorPreferences: ClientInvestorPreferences,
         meeting: meetingSlice,
-
+        chat: chatSlice,
     },
     devTools: process.env.NODE_ENV !== 'production',
 });

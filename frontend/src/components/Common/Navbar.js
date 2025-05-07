@@ -7,6 +7,7 @@ import NavUser from './NavUser';
 import NavbarSide from './NavbarSide';
 import { useFunctions } from '../../useFunctions';
 import Logo from '../Common/Logo';
+import Notification from './Notification';
 
 function NavBar({ isAuthenticated, role, clientRole, onSignInClick }) {
   const { isFixed, isVisible, toggleSideBar, sideBarVisible } = useFunctions();
@@ -20,11 +21,18 @@ function NavBar({ isAuthenticated, role, clientRole, onSignInClick }) {
           <div className='navSearchLangUser'>
             {/* <SearchBox /> */}
             {/* <LanguageSelector /> */}
+            <Notification 
+              isAuthenticated={isAuthenticated}
+              isFixed={isFixed}
+              isVisible={isVisible}
+            />
             <NavUser
               isAuthenticated={isAuthenticated}
               role={role}
               clientRole={clientRole}
               onSignInClick={onSignInClick}
+              isFixed={isFixed}
+              isVisible={isVisible}
             />
           </div>
         </div>

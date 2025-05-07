@@ -3,11 +3,15 @@ const app = express();
 const db_connection = require('./config/db');
 const bodyParser = require('body-parser');
 const ideaRoutes = require('./routes/idea_routes');
+const chatRoutes = require('./routes/chat_routes');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
 const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+const Chat = require('./modules/chat'); 
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -18,6 +22,68 @@ const dbOptions = process.env.DB_OPTIONS;
 const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${dbOptions}`;
 
 db_connection();
+
+// Socket io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: true,
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("send_message", async (data) => {
+    console.log("Message received:", data);
+    try {
+      const chatMessage = new Chat({
+        sender: data.sender,
+        receiver: data.receiver,
+        type: 'text',
+        content: data.message,
+      });
+      await chatMessage.save();
+      
+      // Emit to receiver with sound notification flag
+      socket.to(data.receiver).emit("receive_message", {
+        sender: data.sender,
+        receiver: data.receiver,
+        message: data.message,
+        timestamp: chatMessage.timestamp,
+        playSound: true // Sound for receiver
+      });
+      
+      // Emit to sender without sound
+      socket.emit("receive_message", {
+        sender: data.sender,
+        receiver: data.receiver,
+        message: data.message,
+        timestamp: chatMessage.timestamp,
+        playSound: false // No sound for sender
+      });
+    } catch (error) {
+      console.error("Error saving message:", error);
+    }
+  });
+
+  socket.on("join_room", (userId) => {
+    socket.join(userId);
+    console.log(`User ${socket.id} joined room: ${userId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`User Disconnected: ${socket.id}`);
+  });
+
+  socket.on("error", (error) => {
+    console.error("Socket.IO server error:", error);
+  });
+});
+
+// Sound Effect
+app.use('/sounds', express.static('public/sounds'));
 
 const hostname = '127.0.0.1';
 const port = 7030;
@@ -36,11 +102,11 @@ app.get('/idea-demo/*', (req, res) => {
 });
 
 // Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 
 // Session config
 app.use(session({
-  secret: 'your_session_secret_key',
+  secret: process.env.SESSION_SECRET || 'your_session_secret_key',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
@@ -68,8 +134,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
 app.use('/api', ideaRoutes);
+app.use('/api', chatRoutes);
 
 // Start server
-app.listen(port, hostname, () => {
+server.listen(port, hostname, () => {
   console.log(`Server is running at http://${hostname}:${port}`);
 });

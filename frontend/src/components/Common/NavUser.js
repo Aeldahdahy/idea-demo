@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useFunctions } from '../../useFunctions';
@@ -14,6 +14,19 @@ function NavUser({ isAuthenticated, role, clientRole }) {
   const clientData = useSelector((state) => state.clientAuth.clientData); 
   const userImage = clientData?.image ? `${API_BASE_URL}/Uploads/user_images/${clientData.image}` : null; 
   const userName = clientData?.fullName;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isDropdownOpen) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isDropdownOpen]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);

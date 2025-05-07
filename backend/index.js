@@ -12,6 +12,7 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const Chat = require('./modules/chat'); 
+const fs = require('fs'); // Add fs module for file checking
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -88,25 +89,31 @@ app.use('/sounds', express.static('public/sounds'));
 const hostname = '0.0.0.0';
 const port = 7030;
 
-// 🟢 Redirect root to /idea-demo
+// Redirect root to /idea-demo
 app.get('/', (req, res) => {
   res.redirect('/idea-demo');
 });
 
-// 🟢 Serve static files from React build under /idea-demo
-app.use('/idea-demo', express.static(path.join(__dirname, '../frontend/build')));
+// Serve static files from React build under /idea-demo
+const buildPath = path.join(__dirname, '../frontend/build');
+app.use('/idea-demo', express.static(buildPath));
 
-// 🟢 Handle React Router paths under /idea-demo
+// Handle React Router paths under /idea-demo
 app.get('/idea-demo/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  const indexPath = path.join(buildPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('React build not found. Please run `npm run build` in the frontend directory.');
+  }
 });
 
 // Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 
 // Session config
 app.use(session({
-  secret: 'your_session_secret_key',
+  secret: process.env.SESSION_SECRET || 'your_session_secret_key',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
@@ -134,8 +141,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API routes
 app.use('/api', ideaRoutes);
+app.use('/api', chatRoutes);
 
 // Start server
-app.listen(port, hostname, () => {
+server.listen(port, hostname, () => {
   console.log(`Server is running at http://${hostname}:${port}`);
 });

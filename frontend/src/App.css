@@ -110,6 +110,7 @@ nav.hidden-nav {
   margin-right: 1%;
   align-items: center;
   justify-content: flex-end;
+  gap: 15px;
 }
 
 .navlang {

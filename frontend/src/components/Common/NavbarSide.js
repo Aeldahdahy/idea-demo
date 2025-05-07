@@ -6,6 +6,7 @@ import NavUser from './NavUser';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Notification from './Notification';
 
 library.add(fas);
 
@@ -29,6 +30,7 @@ function NavbarSide({ isFixed, isVisible, toggleSideBar, sideBarVisible, onSignI
         </div>
         <div className='SideBarLangUser'>
           {/* <LanguageSelector /> */}
+          <Notification />
           <NavUser
               isAuthenticated={isAuthenticated}
               role={role}

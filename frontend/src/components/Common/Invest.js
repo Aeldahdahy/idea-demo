@@ -172,90 +172,69 @@ function Invest() {
           animate="visible"
           variants={sectionVariants}
         >
-          <Row style={{ alignItems: "center", flexWrap: "wrap", gap: "40px", width: "100%" }}>
-            <Col md={6} style={{ flex: "1 1 500px" }}>
-              <div style={{ position: "relative", maxWidth: "500px", margin: "0 auto" }}>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "400px",
-                    background: "#C5D7F5",
-                    borderRadius: "30px",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: "20px",
-                      left: "20px",
-                      background: "#E8E8E8",
-                      padding: "20px",
-                      borderRadius: "15px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                    }}
-                  >
-                    <img
-                      src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/s9hgmmxf_expires_30_days.png"
-                      alt="Location Icon"
-                      style={{ width: "30px", height: "30px" }}
-                    />
-                    <p style={{ color: "#000000", fontSize: "20px", margin: "0px 40px 0px 0px" }}>
-                      Country<br />Project Industry
-                    </p>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "-50px",
-                    right: "-50px",
-                    width: "300px",
-                    background: "#E7EEFA",
-                    borderRadius: "20px",
-                    padding: "20px",
-                    textAlign: "center",
-                  }}
-                >
-                  <img
-                    src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/f4b0qvx1_expires_30_days.png"
-                    alt="Venture"
-                    style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "10px" }}
-                  />
-                  <h3 style={{ color: "#000000", fontSize: "24px", fontWeight: "bold", margin: "10px 0" }}>
-                    IDEA-Venture
-                  </h3>
-                  <p style={{ color: "#000000", fontSize: "16px" }}>25,000 EGP Min per investor</p>
-                </div>
-              </div>
-            </Col>
-            <Col md={6} style={{ flex: "1 1 400px" }}>
-              <h2 style={{ color: "#000000", fontSize: "32px", fontWeight: "bold", marginBottom: "20px" }}>
-                Find the best investment deals
-              </h2>
-              <p style={{ color: "#000000", fontSize: "18px", lineHeight: "1.6", marginBottom: "30px" }}>
-                Access the largest network of entrepreneurs. Filter opportunities by country, location, industry, stage, investment range, and language to find the deal for you.
+    <div className="flex flex-wrap items-center gap-10 w-full px-4">
+      {/* Left Column */}
+      <div className="flex-1 min-w-[300px] md:min-w-[500px] md:w-1/2">
+        <div className="relative max-w-[500px] mx-auto">
+          <div className="w-full h-[400px] bg-[#C5D7F5] rounded-[30px] relative overflow-hidden">
+            <div className="absolute bottom-5 left-5 bg-[#E8E8E8] p-5 rounded-[15px] flex flex-col gap-2.5">
+              <img
+                src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/s9hgmmxf_expires_30_days.png"
+                alt="Location Icon"
+                className="w-[30px] h-[30px]"
+              />
+              <p className="text-black text-lg sm:text-xl m-0">
+                Country<br />Project Industry
               </p>
-              <div style={{ background: "#EEEEEE", padding: "20px", borderRadius: "15px" }}>
-                <p style={{ color: "#000000", fontSize: "16px", margin: "0 0 10px 0" }}>
-                  How much are you looking to invest?
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <Search size={20} />
-                  <div style={{ flex: 1, background: "#F5F5F5", borderRadius: "4px", height: "6px" }}>
-                    <div style={{ width: "60%", height: "6px", background: "#0029A4", borderRadius: "4px" }}></div>
-                  </div>
-                  <span style={{ color: "#353535", fontSize: "12px" }}>5M</span>
-                </div>
-                <p style={{ color: "#000000", fontSize: "14px", textAlign: "center", marginTop: "10px" }}>
-                  25,000 EGP – 5,000,000 EGP
-                </p>
-              </div>
-            </Col>
-          </Row>
+            </div>
+          </div>
+          <div className="absolute -top-[70px] -right-[23px] max-[550px]:-right-[25px] max-[550px]:-top-[50px] w-[250px] max-[550px]:w-[200px] bg-[#E7EEFA] rounded-[20px] p-3 text-center">
+            <img
+              src="https://storage.googleapis.com/tagjs-prod.appspot.com/v1/axHDWvM9tw/f4b0qvx1_expires_30_days.png"
+              alt="Venture"
+              className="w-full h-[120px] max-[550px]:h-[100px] object-cover rounded-[10px]"
+            />
+            <h3 className="text-black text-lg sm:text-xl font-bold my-2">IDEA-Venture</h3>
+            <p className="text-black text-sm sm:text-base">25,000 EGP Min per investor</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column */}
+      <div className="flex-1 min-w-[300px] md:min-w-[400px] md:w-1/2">
+        <h2 className="text-black text-2xl sm:text-3xl md:text-4xl font-bold mb-5">
+          Find the best investment deals
+        </h2>
+        <p className="text-black text-base sm:text-lg leading-relaxed mb-8">
+          Access the largest network of entrepreneurs. Filter opportunities by country, location, industry, stage, investment range, and language to find the deal for you.
+        </p>
+        <div className="bg-[#EEEEEE] p-5 rounded-[15px]">
+          <p className="text-black text-base mb-2.5">How much are you looking to invest?</p>
+          <div className="flex items-center gap-2.5">
+            {/* Placeholder for Search icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-black"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <div className="flex-1 bg-[#F5F5F5] rounded-[4px] h-[6px]">
+              <div className="w-[60%] h-[6px] bg-[#0029A4] rounded-[4px]"></div>
+            </div>
+            <span className="text-[#353535] text-xs">5M</span>
+          </div>
+          <p className="text-black text-sm text-center mt-2.5">25,000 EGP – 5,000,000 EGP</p>
+        </div>
+      </div>
+    </div>
         </motion.div>
 
         <div className="spacemax" />
@@ -367,67 +346,36 @@ function Invest() {
             </h2>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", justifyContent: "center", maxWidth: "1000px", margin: "0 auto" }}>
             <div style={{ flex: "1 1 300px", color: "#FFFFFF", fontSize: "18px", lineHeight: "2.5", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "50px",
-              height: "50px",
-              background: "#2563EB",
-              borderRadius: "50%",
-              color: "#FFFFFF",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            1
-          </span>
-          <p style={{ margin: "0", fontSize: "22px" }}>
-          Search and manage deals through your private interface.          </p>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "50px",
-              height: "50px",
-              background: "#2563EB",
-              borderRadius: "50%",
-              color: "#FFFFFF",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            2
-          </span>
-          <p style={{ margin: "0", fontSize: "22px" }}>
-          Request a meeting  to discuss deals with projects          </p>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "50px",
-              height: "50px",
-              background: "#2563EB",
-              borderRadius: "50%",
-              color: "#FFFFFF",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            3
-          </span>
-          <p style={{ margin: "0", fontSize: "22px" }}>
-          Manage your investments and grow your portfolio.          </p>
-        </div>
-      </div>
+          {/* Step 1 */}
+          <div className="flex items-center gap-4 mb-5">
+                  <span className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-600 text-white text-base sm:text-lg font-bold aspect-square">
+                    1
+                  </span>
+                  <p className="m-0 text-lg sm:text-[22px] md:text-2xl">
+                    Search and manage deals through your private interface.
+                  </p>
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex items-center gap-4 mb-5">
+                  <span className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-600 text-white text-base sm:text-lg font-bold aspect-square">
+                    2
+                  </span>
+                  <p className="m-0 text-lg sm:text-[22px] md:text-2xl">
+                    Request a meeting to discuss deals with projects.
+                  </p>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex items-center gap-4 mb-5">
+                  <span className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-600 text-white text-base sm:text-lg font-bold aspect-square">
+                    3
+                  </span>
+                  <p className="m-0 text-lg sm:text-[22px] md:text-2xl">
+                    Manage your investments and grow your portfolio.
+                  </p>
+                </div>
+                </div>
               <div >
                
                 <div class="relative mx-auto border-gray-800 dark:border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-xl">

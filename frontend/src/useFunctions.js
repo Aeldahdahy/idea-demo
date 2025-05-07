@@ -243,7 +243,7 @@ const getAllReviews = useCallback(async () => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-  
+
     // Validate id
     if (!id || typeof id !== 'string' || id.trim() === '') {
       const errorMessage = 'Invalid or missing user ID';
@@ -252,60 +252,7 @@ const getAllReviews = useCallback(async () => {
       toast.error(errorMessage);
       throw new Error(errorMessage);
     }
-  
-    // Validate investorPreference for investors
-    if (updatedData.role === 'investor' && updatedData.investorPreference) {
-      const { investorType, minInvestment, maxInvestment, industries } = updatedData.investorPreference;
-      if (!['individual', 'company'].includes(investorType)) {
-        const errorMessage = 'Investor type must be either "individual" or "company"';
-        setError(errorMessage);
-        setLoading(false);
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
-      }
-      const minInvest = Number(minInvestment);
-      const maxInvest = Number(maxInvestment);
-      if (isNaN(minInvest) || isNaN(maxInvest) || minInvest < 0 || maxInvest > 1000000 || maxInvest < minInvest) {
-        const errorMessage = 'Invalid investment range';
-        setError(errorMessage);
-        setLoading(false);
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
-      }
-      if (!Array.isArray(industries) || industries.length < 3) {
-        const errorMessage = 'At least 3 industries must be selected';
-        setError(errorMessage);
-        setLoading(false);
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
-      }
-    } else if (updatedData.role === 'investor') {
-      const errorMessage = 'investorPreference is required for investors';
-      setError(errorMessage);
-      setLoading(false);
-      toast.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-  
-    // Validate entrepreneurPreference for entrepreneurs
-    if (updatedData.role === 'entrepreneur' && updatedData.entrepreneurPreference) {
-      const { projectName, projectIndustry, fundingGoal } = updatedData.entrepreneurPreference;
-      if (!projectName?.trim() || !projectIndustry?.trim()) {
-        const errorMessage = 'Project name and industry are required';
-        setError(errorMessage);
-        setLoading(false);
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
-      }
-      if (fundingGoal < 0) {
-        const errorMessage = 'Funding goal cannot be negative';
-        setError(errorMessage);
-        setLoading(false);
-        toast.error(errorMessage);
-        throw new Error(errorMessage);
-      }
-    }
-  
+
     // Validate root-level fields only for investors on first login
     const { country, city, socialAccounts, yearsOfExperience, firstLogin } = updatedData;
     if (updatedData.role === 'investor' && firstLogin === true) {
@@ -334,7 +281,7 @@ const getAllReviews = useCallback(async () => {
         throw new Error(errorMessage);
       }
     }
-  
+
     // Normalize socialAccounts (only if provided and needed)
     const normalizedSocialAccounts = Array.isArray(socialAccounts)
       ? socialAccounts
@@ -347,7 +294,7 @@ const getAllReviews = useCallback(async () => {
             }
           })
       : [];
-  
+
     // Optimistically update the user in the UI
     const optimisticData = {
       ...updatedData,
@@ -366,16 +313,15 @@ const getAllReviews = useCallback(async () => {
           }
         : {}),
     };
-  
+
     dispatch(
       setUsers(
         users.map((user) => (user._id === id ? { ...user, ...optimisticData } : user))
       )
     );
-  
+
     try {
       const formData = new FormData();
-      // Append standard user fields if provided
       if (updatedData.fullName) formData.append('fullName', updatedData.fullName);
       if (updatedData.email) formData.append('email', updatedData.email);
       if (updatedData.phone) formData.append('phone', updatedData.phone);
@@ -393,8 +339,7 @@ const getAllReviews = useCallback(async () => {
         formData.append('socialAccounts', JSON.stringify(normalizedSocialAccounts));
       if (updatedData.yearsOfExperience)
         formData.append('yearsOfExperience', updatedData.yearsOfExperience);
-  
-      // Append role-specific preferences
+
       if (updatedData.investorPreference && updatedData.role === 'investor') {
         formData.append('investorPreference', JSON.stringify(updatedData.investorPreference));
         formData.append('firstLogin', 'false');
@@ -402,42 +347,43 @@ const getAllReviews = useCallback(async () => {
       if (updatedData.entrepreneurPreference && updatedData.role === 'entrepreneur') {
         formData.append('entrepreneurPreference', JSON.stringify(updatedData.entrepreneurPreference));
       }
-  
-      // Append image file if present
+
       if (imageFile) {
         formData.append('image', imageFile);
       }
-  
+
       const response = await axios.patch(`${API_BASE_URL}/api/users/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
       if (response.status !== 200) {
         throw new Error('Failed to update user');
       }
-  
+
       const backendData = response.data.data;
       if (!backendData || !backendData.id || !backendData.role) {
         throw new Error('Invalid response data from server');
       }
-  
+
+      // Normalize backendData to ensure _id is used
       const clientData = {
         ...backendData,
+        _id: backendData.id, // Convert 'id' to '_id'
         clientRole: backendData.clientRole || (backendData.role ? backendData.role.charAt(0).toUpperCase() + backendData.role.slice(1) : 'Investor'),
         firstLogin: backendData.firstLogin ?? false,
       };
-  
+
       dispatch(
         setUsers(
           users.map((user) => (user._id === id ? clientData : user))
         )
       );
-  
+
       dispatch(updateClientData(clientData));
-  
+
       toast.success('Profile updated successfully!');
       return response.data;
     } catch (err) {

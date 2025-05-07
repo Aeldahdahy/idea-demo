@@ -20,11 +20,13 @@ const Review = require('../modules/review');
 
 // Create a transporter for nodemailer
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.zoho.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: 'tahaelrajel8@gmail.com',
-    pass: 'aaxv kuyj hayf flth'
-  }
+    user: 'idea.venture@idea-venture.agency',
+    pass: '3UzrwDDv4Ati',
+  },
 });
 
 // Generate OTP
@@ -70,11 +72,21 @@ const signUp = async (req, res) => {
     await otpEntry.save();
 
     const mailOptions = {
-      from: 'tahaelrajel8@gmail.com',
+      from: 'idea.venture@idea-venture.agency',
       to: email,
-      subject: 'Your OTP for Signup',
-      text: `Your OTP is ${otp}`
+      subject: 'Your OTP Code',
+      html: `
+        <div style="background:#f9fafb;padding:20px;border-radius:12px;border:1px solid #e5e7eb;max-width:480px;margin:auto;font-family:sans-serif;">
+          <h2 style="color:#111827;">🔐 Your OTP</h2>
+          <p style="color:#374151;">Use the code below to complete your signup process:</p>
+          <div style="font-size:28px;font-weight:bold;color:#10b981;margin:20px 0;">${otp}</div>
+          <p style="color:#6b7280;">This code is valid for 5 minutes. Please don't share it with anyone.</p>
+          <hr style="margin:24px 0;"/>
+          <p style="font-size:12px;color:#9ca3af;">If you didn't request this, just ignore this email.</p>
+        </div>
+      `,
     };
+    
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -474,11 +486,21 @@ const forgotPassword = async (req, res) => {
     await otpEntry.save();
 
     const mailOptions = {
-      from: 'tahaelrajel8@gmail.com',
+      from: 'idea.venture@idea-venture.agency',
       to: email,
-      subject: 'Your OTP for Password Reset',
-      text: `Your OTP is ${otp}`
+      subject: 'Your OTP Code',
+      html: `
+        <div style="background:#f9fafb;padding:20px;border-radius:12px;border:1px solid #e5e7eb;max-width:480px;margin:auto;font-family:sans-serif;">
+          <h2 style="color:#111827;">🔐 Your OTP</h2>
+          <p style="color:#374151;">Use the code below to complete your signup process:</p>
+          <div style="font-size:28px;font-weight:bold;color:#10b981;margin:20px 0;">${otp}</div>
+          <p style="color:#6b7280;">This code is valid for 5 minutes. Please don't share it with anyone.</p>
+          <hr style="margin:24px 0;"/>
+          <p style="font-size:12px;color:#9ca3af;">If you didn't request this, just ignore this email.</p>
+        </div>
+      `,
     };
+    
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {

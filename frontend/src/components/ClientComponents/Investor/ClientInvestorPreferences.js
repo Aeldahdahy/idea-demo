@@ -140,8 +140,8 @@ function ClientInvestorPreferences() {
         navigate('/client-portal/investor', { replace: true });
       } catch (err) {
         const errorMessage = err.response?.data?.message || err.message || 'Failed to save preferences.';
-        dispatch(setError(errorMessage));
-        toast.error(errorMessage, { position: 'top-right', autoClose: 5000 });
+        // dispatch(setError(errorMessage));
+        // toast.error(errorMessage, { position: 'top-right', autoClose: 5000 });
       } finally {
         dispatch(setLoading(false));
       }

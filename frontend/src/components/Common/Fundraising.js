@@ -48,7 +48,7 @@ function Fundraise() {
   const [investmentValue, setInvestmentValue] = useState(25000);
 
   const formatNumber = (num) => {
-    return `$${num.toLocaleString()}`;
+    return `${num.toLocaleString()} EGP`;
   };
 
    useEffect(() => {
@@ -228,271 +228,117 @@ function Fundraise() {
             </Col>
           </Row>
 
-          <Row style={{ padding: "60px 0", alignItems: "center", width: "100%" }}>
-            <Col xs={12} md={7} style={{ marginBottom: "30px" }}>
-              <div style={{ position: "relative", maxWidth: "400px", margin: "0 auto", display: "flex", justifyContent: "center" }}>
-                <div
-                  style={{
-                    width: "90%",
-                    height: "270px",
-                    border: "2px dashed #2563EB",
-                    borderRadius: "20px",
-                    position: "relative",
-                    background: "#F9FAFB",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "2px",
-                      left: "-60px",
-                      background: "#FFFFFF",
-                      border: "1px solid #E5E7EB",
-                      borderRadius: "15px",
-                      padding: "15px",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                      transform: "scale(0.9)",
-                    }}
-                  >
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      {[
-                        { id: "location", label: "Country" },
-                        { id: "industry", label: "Project Industry" },
-                        { id: "stage", label: "Project Stage" },
-                      ].map((item) => (
-                        <div key={item.id} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <input
-                            id={item.id}
-                            type="checkbox"
-                            checked
-                            disabled
-                            style={{
-                              width: "20px",
-                              height: "20px",
-                              borderRadius: "4px",
-                              border: "1px solid #D1D5DB",
-                              background: "#2563EB",
-                              appearance: "none",
-                              position: "relative",
-                            }}
-                          />
-                          <label
-                            htmlFor={item.id}
-                            style={{ color: "#1F2937", fontSize: "16px" }}
-                          >
-                            {item.label}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
+          <div className="flex flex-col md:flex-row items-center w-full py-16 px-4">
+      {/* Left Column */}
+      <div className="w-full md:w-7/12 mb-8 md:mb-0 flex justify-center">
+        <div className="relative max-w-[400px] w-full flex justify-center">
+          <div className="w-[90%] h-[270px] border-2 border-dashed border-blue-600 rounded-[20px] bg-gray-50 relative">
+            {/* Left Card (Checkboxes) */}
+            <div className="absolute top-0.5 -left-16 bg-white border border-gray-200 rounded-[15px] p-4 shadow-md scale-90">
+              <div className="flex flex-col gap-2.5">
+                {[
+                  { id: "location", label: "Country" },
+                  { id: "industry", label: "Project Industry" },
+                  { id: "stage", label: "Project Stage" },
+                ].map((item) => (
+                  <div key={item.id} className="flex items-center gap-2.5">
+                    <input
+                      id={item.id}
+                      type="checkbox"
+                      checked
+                      disabled
+                      className="w-5 h-5 rounded border-gray-300 bg-blue-600 appearance-none relative"
+                    />
+                    <label htmlFor={item.id} className="text-gray-800 text-base">
+                      {item.label}
+                    </label>
                   </div>
-                  <div
-                  style={{
-                    position: "absolute",
-                    top: "-120px",
-                    right: "-100px",
-                    background: "#FFFFFF",
-                    border: "1px solid #E5E7EB",
-                    borderRadius: "15px",
-                    padding: "15px",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    transform: "scale(0.9)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      padding: "20px",
-                      backgroundColor: "#F9FAFB",
-                      borderRadius: "12px",
-                      border: "1px solid #E5E7EB",
-                      gap: "10px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "48px",
-                        height: "48px",
-                        backgroundColor: "#1E3A8A",
-                        borderRadius: "8px",
-                      }}
-                    ></div>
-
-                    <div
-                      style={{
-                        width: "60%",
-                        height: "10px",
-                        backgroundColor: "#E5E7EB",
-                        borderRadius: "5px",
-                      }}
-                    ></div>
-
-                    <div
-                      style={{
-                        width: "80%",
-                        height: "8px",
-                        backgroundColor: "#E5E7EB",
-                        borderRadius: "5px",
-                      }}
-                    ></div>
-                    <div
-                      style={{
-                        width: "70%",
-                        height: "8px",
-                        backgroundColor: "#E5E7EB",
-                        borderRadius: "5px",
-                      }}
-                    ></div>
-                    <div
-                      style={{
-                        width: "90%",
-                        height: "8px",
-                        backgroundColor: "#E5E7EB",
-                        borderRadius: "5px",
-                      }}
-                    ></div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-              marginTop: "20px",
-            }}
-          >
-            <div style={{ textAlign: "center" }}>
-              <div
-                style={{ fontWeight: "bold", fontSize: "18px", color: "#111827" }}
-              >
-                25,000 EGP
-              </div>
-              <div style={{ fontSize: "14px", color: "#6B7280" }}>
-                Total Required
+                ))}
               </div>
             </div>
 
-            <div style={{ textAlign: "center" }}>
-              <div
-                style={{ fontWeight: "bold", fontSize: "18px", color: "#111827" }}
-              >
-                {formatNumber(investmentValue)}
+            {/* Right Top Card (Placeholder Content) */}
+            <div className="absolute -top-[80px] -right-[60px] bg-white border border-gray-200 rounded-[10px] p-2 shadow-md scale-75 sm:scale-80">
+              <div className="flex flex-col justify-center items-center p-3 bg-gray-50 rounded-[8px] border border-gray-200 gap-1.5">
+                <div className="w-8 h-8 bg-blue-900 rounded-md"></div>
+                <div className="w-[60%] h-1.5 bg-gray-200 rounded-[3px]"></div>
+                <div className="w-[80%] h-1 bg-gray-200 rounded-[3px]"></div>
+                <div className="w-[70%] h-1 bg-gray-200 rounded-[3px]"></div>
+                <div className="w-[90%] h-1 bg-gray-200 rounded-[3px]"></div>
+                <div className="flex justify-between w-full mt-3">
+                  <div className="text-center">
+                    <div className="font-bold text-sm text-gray-900">25,000 EGP</div>
+                    <div className="text-[10px] text-gray-500">Total Required</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-bold text-sm text-gray-900">{formatNumber(investmentValue)}</div>
+                    <div className="text-[10px] text-gray-500">Min per Investor</div>
+                  </div>
+                </div>
               </div>
-              <div style={{ fontSize: "14px", color: "#6B7280" }}>
-                Min per Investor
+            </div>
+
+            {/* Bottom Right Card (Investment Range Slider) */}
+            <div className="absolute -bottom-[75px] right-[50px] bg-white border border-gray-200 rounded-[15px] p-4 shadow-md scale-90">
+              <div className="flex flex-col gap-2.5">
+                <div>
+                  <h2 className="text-gray-800 text-lg font-semibold">Investment Range</h2>
+                  <p className="text-gray-500 text-sm mt-1">How much are you looking to invest?</p>
+                </div>
+                <div>
+                  <input
+                    type="range"
+                    min="25000"
+                    max="5000000"
+                    value={investmentValue}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      setInvestmentValue(value);
+                      e.target.style.background = `linear-gradient(to right, #2563EB 0%, #2563EB ${
+                        ((value - 25000) / (5000000 - 25000)) * 100
+                      }%, #E5E7EB ${((value - 25000) / (5000000 - 25000)) * 100}%, #E5E7EB 100%)`;
+                    }}
+                    className="w-full h-2 bg-gray-200 rounded-[5px] outline-none appearance-none cursor-pointer"
+                  />
+                  <style>
+                    {`
+                      input[type="range"]::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        appearance: none;
+                        width: 20px;
+                        height: 20px;
+                        background: #2563EB;
+                        border-radius: 50%;
+                        cursor: pointer;
+                      }
+                      input[type="range"]::-moz-range-thumb {
+                        width: 20px;
+                        height: 20px;
+                        background: #2563EB;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        border: none;
+                      }
+                    `}
+                  </style>
+                  <p className="text-gray-800 text-sm mt-2.5 text-center">
+                    {formatNumber(investmentValue)} - 5,000,000 EGP
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-                  </div>
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: "-75px",
-                      right: "50px",
-                      background: "#FFFFFF",
-                      border: "1px solid #E5E7EB",
-                      borderRadius: "15px",
-                      padding: "15px",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                      transform: "scale(0.9)",
-                    }}
-                  >
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      <div>
-                        <h2
-                          style={{ color: "#1F2937", fontSize: "18px", fontWeight: "600" }}
-                        >
-                          Investment Range
-                        </h2>
-                        <p
-                          style={{ color: "#6B7280", fontSize: "14px", marginTop: "5px" }}
-                        >
-                          How much are you looking to invest?
-                        </p>
-                      </div>
-                      <div>
-                        <input
-                          type="range"
-                          min="25000"
-                          max="5000000"
-                          value={investmentValue}
-                          onChange={(e) => {
-                            const value = parseInt(e.target.value);
-                            setInvestmentValue(value);
-                            e.target.style.background = `linear-gradient(to right, #2563EB 0%, #2563EB ${
-                              ((value - 25000) / (5000000 - 25000)) * 100
-                            }%, #E5E7EB ${
-                              ((value - 25000) / (5000000 - 25000)) * 100
-                            }%, #E5E7EB 100%)`;
-                          }}
-                          style={{
-                            width: "100%",
-                            height: "8px",
-                            background: "#E5E7EB",
-                            borderRadius: "5px",
-                            outline: "none",
-                            appearance: "none",
-                            cursor: "pointer",
-                          }}
-                        />
-                        <style>
-                          {`
-                            input[type="range"]::-webkit-slider-thumb {
-                              -webkit-appearance: none;
-                              appearance: none;
-                              width: 20px;
-                              height: 20px;
-                              background: #2563EB;
-                              borderRadius: 50%;
-                              cursor: pointer;
-                            }
-                            input[type="range"]::-moz-range-thumb {
-                              width: 20px;
-                              height: "20px",
-                              background: #2563EB;
-                              borderRadius: "50%",
-                              cursor: "pointer",
-                              border: "none",
-                            }
-                          `}
-                        </style>
-                        <p
-                          style={{
-                            color: "#1F2937",
-                            fontSize: "14px",
-                            marginTop: "10px",
-                            textAlign: "center",
-                          }}
-                        >
-                          {formatNumber(investmentValue)} - 5,000,000 EGP
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Col>
-            <Col xs={12} md={5} style={{ marginBottom: "30px" }}>
-              <div style={{ textAlign: "center" }}>
-                <h3
-                  style={{
-                    color: "#000000",
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    marginBottom: "20px",
-                  }}
-                >
-                  Find investors for your project
-                </h3>
-                <p style={{ color: "#000000", fontSize: "18px", lineHeight: "1.6" }}>
-                  Access the largest opportunities to reach investors in your field. Filter opportunities by country, location, industry, stage, investment range, and language to find the deal for you.
-                </p>
-              </div>
-            </Col>
-          </Row>
+      </div>
+
+      {/* Right Column */}
+      <div className="w-full md:w-5/12 mb-8 text-center">
+        <h3 className="text-black text-2xl font-bold mb-5">Find investors for your project</h3>
+        <p className="text-black text-lg leading-relaxed">
+          Access the largest opportunities to reach investors in your field. Filter opportunities by country, location, industry, stage, investment range, and language to find the deal for you.
+        </p>
+      </div>
+    </div>
         </motion.div>
         <div className="spacemax" />
                 <div className="bg-white py-16">
@@ -599,69 +445,37 @@ function Fundraise() {
             </h2>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", justifyContent: "center", maxWidth: "1000px", margin: "0 auto" }}>
             <div style={{ flex: "1 1 300px", color: "#FFFFFF", fontSize: "18px", lineHeight: "2.5", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "50px",
-              height: "50px",
-              background: "#2563EB",
-              borderRadius: "50%",
-              color: "#FFFFFF",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            1
-          </span>
-          <p style={{ margin: "0", fontSize: "22px" }}>
-            Search for opportunists through your private interface.          
-          </p>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "50px",
-              height: "50px",
-              background: "#2563EB",
-              borderRadius: "50%",
-              color: "#FFFFFF",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            2
-          </span>
-          <p style={{ margin: "0", fontSize: "22px" }}>
-            Request a meeting  to discuss deals with investors.
-          </p>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "50px",
-              height: "50px",
-              background: "#2563EB",
-              borderRadius: "50%",
-              color: "#FFFFFF",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
-          >
-            3
-          </span>
-          <p style={{ margin: "0", fontSize: "22px" }}>
-            Manage your  project grow  and your portfolio.
-          </p>
-        </div>
+            <div className="flex flex-col gap-5">
+      {/* Step 1 */}
+      <div className="flex items-center gap-4 mb-5">
+        <span className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-600 text-white text-base sm:text-lg font-bold aspect-square">
+          1
+        </span>
+        <p className="m-0 text-lg sm:text-[22px] md:text-2xl">
+          Search for opportunists through your private interface.
+        </p>
+      </div>
+
+      {/* Step 2 */}
+      <div className="flex items-center gap-4 mb-5">
+        <span className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-600 text-white text-base sm:text-lg font-bold aspect-square">
+          2
+        </span>
+        <p className="m-0 text-lg sm:text-[22px] md:text-2xl">
+          Request a meeting to discuss deals with investors.
+        </p>
+      </div>
+
+      {/* Step 3 */}
+      <div className="flex items-center gap-4 mb-5">
+        <span className="flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-600 text-white text-base sm:text-lg font-bold aspect-square">
+          3
+        </span>
+        <p className="m-0 text-lg sm:text-[22px] md:text-2xl">
+          Manage your project growth and your portfolio.
+        </p>
+      </div>
+    </div>
       </div>
               <div >
                 <div >

@@ -28,8 +28,12 @@ db_connection();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: true,
-    methods: ["GET", "POST"],
+    origin: [
+      'https://idea-venture.agency',
+      'http://1270.0.0.1:7020'
+    ],
+    methods: ['GET', 'POST'],
+    credentials: true, 
   },
 });
 

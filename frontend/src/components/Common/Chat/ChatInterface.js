@@ -7,7 +7,17 @@ import { useFunctions } from "../../../useFunctions";
 import Chat from './Chat';
 import { fetchUsers } from '../../../redux/chatSlice';
 
-const socket = io.connect('http://127.0.0.1:7030');
+const SOCKET_URL = process.env.NODE_ENV === 'production'
+  ? window.location.origin // e.g., https://idea-venture.agency
+  : 'http://127.0.0.1:7030';
+  
+  
+  const socket = io.connect(SOCKET_URL, {
+    transports: ['websocket', 'polling'], // Prioritize WebSocket, fallback to polling
+    reconnection: true,
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
+  });
 
 function ChatInterface() {
   const { API_BASE_URL } = useFunctions();
@@ -68,14 +78,14 @@ function ChatInterface() {
 
   useEffect(() => {
     if (!currentUserId) return;
-
+  
     socket.emit("join_room", currentUserId);
-
+  
     const handleNewMessage = (data) => {
       if (data.sender !== currentUserId && data.playSound && audioRef.current) {
         audioRef.current.play().catch(err => console.log("Audio play failed:", err));
       }
-
+  
       setMessages((prevMessages) => [
         ...prevMessages,
         {
@@ -88,7 +98,7 @@ function ChatInterface() {
           timestamp: data.timestamp,
         },
       ]);
-
+  
       if (data.receiver === currentUserId) {
         setRecentMessages((prev) => {
           const newMap = new Map(prev);
@@ -98,26 +108,40 @@ function ChatInterface() {
         getAllUsers();
       }
     };
-
+  
     socket.on("connect", () => {
       console.log("Connected to Socket.IO server");
+      toast.success("Chat server connected");
     });
-
+  
     socket.on("receive_message", handleNewMessage);
-
+  
     socket.on("connect_error", (error) => {
       console.error("Socket.IO connection error:", error);
-      toast.error("Failed to connect to chat server");
+      toast.error("Failed to connect to chat server. Retrying...");
     });
-
+  
+    socket.on("reconnect", (attempt) => {
+      console.log(`Reconnected to Socket.IO server after ${attempt} attempts`);
+      toast.success("Chat server reconnected");
+    });
+  
+    socket.on("reconnect_error", (error) => {
+      console.error("Socket.IO reconnect error:", error);
+      toast.error("Failed to reconnect to chat server");
+    });
+  
     socket.on("disconnect", () => {
       console.log("Disconnected from Socket.IO server");
+      toast.warn("Disconnected from chat server");
     });
-
+  
     return () => {
       socket.off("connect");
       socket.off("receive_message", handleNewMessage);
       socket.off("connect_error");
+      socket.off("reconnect");
+      socket.off("reconnect_error");
       socket.off("disconnect");
     };
   }, [currentUserId, getAllUsers]);

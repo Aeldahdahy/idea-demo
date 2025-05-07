@@ -11,8 +11,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-const Chat = require('./modules/chat'); 
-const fs = require('fs'); // Add fs module for file checking
+const Chat = require('./modules/chat');
+const fs = require('fs'); // File system module for file checking
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -24,13 +24,13 @@ const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${d
 
 db_connection();
 
-// Socket io
+// Socket.io configuration
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: process.env.ULR,
     methods: ['GET', 'POST'],
-    credentials: true, 
+    credentials: true,
   },
 });
 
@@ -84,21 +84,21 @@ io.on("connection", (socket) => {
   });
 });
 
-// Sound Effect
+// Serve sound effects
 app.use('/sounds', express.static('public/sounds'));
 
 const hostname = '0.0.0.0';
 const port = 7030;
 
-// 🟢 Redirect root to /idea-demo
+// Redirect root to /idea-demo
 app.get('/', (req, res) => {
   res.redirect('/idea-demo');
 });
 
-// 🟢 Serve static files from React build under /idea-demo
+// Serve static files from React build
 app.use('/idea-demo', express.static(path.join(__dirname, '../frontend/build')));
 
-// 🟢 Handle React Router paths under /idea-demo
+// Handle React Router paths
 app.get('/idea-demo/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
@@ -106,7 +106,7 @@ app.get('/idea-demo/*', (req, res) => {
 // Serve uploaded files
 app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 
-// Session config
+// Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret_key',
   resave: false,
@@ -117,14 +117,16 @@ app.use(session({
     ttl: 2 * 60 * 60
   }),
   cookie: {
-    secure: false,
-    maxAge: 2 * 60 * 60 * 1000
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 2 * 60 * 60 * 1000,
+    sameSite: 'strict',
+    httpOnly: true
   }
 }));
 
 // Middleware setup
 app.use(cors({
-  origin: true,
+  origin: process.env.ULR,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true

@@ -89,23 +89,17 @@ app.use('/sounds', express.static('public/sounds'));
 const hostname = '0.0.0.0';
 const port = 7030;
 
-// Redirect root to /idea-demo
+// 🟢 Redirect root to /idea-demo
 app.get('/', (req, res) => {
   res.redirect('/idea-demo');
 });
 
-// Serve static files from React build under /idea-demo
-const buildPath = path.join(__dirname, '../frontend/build');
-app.use('/idea-demo', express.static(buildPath));
+// 🟢 Serve static files from React build under /idea-demo
+app.use('/idea-demo', express.static(path.join(__dirname, '../frontend/build')));
 
-// Handle React Router paths under /idea-demo
+// 🟢 Handle React Router paths under /idea-demo
 app.get('/idea-demo/*', (req, res) => {
-  const indexPath = path.join(buildPath, 'index.html');
-  if (fs.existsSync(indexPath)) {
-    res.sendFile(indexPath);
-  } else {
-    res.status(404).send('React build not found. Please run `npm run build` in the frontend directory.');
-  }
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
 
 // Serve uploaded files

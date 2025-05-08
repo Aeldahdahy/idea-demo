@@ -103,7 +103,7 @@ app.get('/idea-demo/*', (req, res) => {
 });
 
 // Serve uploaded files
-app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Session config
 app.use(session({

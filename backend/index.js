@@ -11,8 +11,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-const Chat = require('./modules/chat');
-const fs = require('fs'); // File system module for file checking
+const Chat = require('./modules/chat'); 
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -24,13 +23,13 @@ const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${d
 
 db_connection();
 
-// Socket.io configuration
+// Socket io
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.ULR,
+    origin: 'https://idea-venture.agency',
     methods: ['GET', 'POST'],
-    credentials: true,
+    credentials: true
   },
 });
 
@@ -84,21 +83,21 @@ io.on("connection", (socket) => {
   });
 });
 
-// Serve sound effects
+// Sound Effect
 app.use('/sounds', express.static('public/sounds'));
 
 const hostname = '0.0.0.0';
 const port = 7030;
 
-// Redirect root to /idea-demo
+// 🟢 Redirect root to /idea-demo
 app.get('/', (req, res) => {
   res.redirect('/idea-demo');
 });
 
-// Serve static files from React build
+// 🟢 Serve static files from React build under /idea-demo
 app.use('/idea-demo', express.static(path.join(__dirname, '../frontend/build')));
 
-// Handle React Router paths
+// 🟢 Handle React Router paths under /idea-demo
 app.get('/idea-demo/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
@@ -106,7 +105,7 @@ app.get('/idea-demo/*', (req, res) => {
 // Serve uploaded files
 app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 
-// Session configuration
+// Session config
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret_key',
   resave: false,
@@ -117,16 +116,14 @@ app.use(session({
     ttl: 2 * 60 * 60
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 2 * 60 * 60 * 1000,
-    sameSite: 'strict',
-    httpOnly: true
+    secure: true, // Enforce secure cookies for HTTPS in production
+    maxAge: 2 * 60 * 60 * 1000
   }
 }));
 
 // Middleware setup
 app.use(cors({
-  origin: process.env.ULR,
+  origin: 'https://idea-venture.agency',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true

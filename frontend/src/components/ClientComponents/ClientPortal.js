@@ -17,7 +17,7 @@ import ClientInvestorHome from './Investor/ClientInvestorHome';
 import ClientInvestorMyInvestment from './Investor/ClientInvestorMyInvestment';
 import ClientInvestorViewProject from './Investor/ClientInvestorViewProject';
 // import ClientInvestorMessages from './Investor/ClientInvestorMessages';
-import ChatInterface from '../Common/Chat/ChatInterface';
+// import ChatInterface from '../Common/Chat/ChatInterface';
 import ClientInvestorPreferences from './Investor/ClientInvestorPreferences';
 
 const ProtectedRoute = ({ children, allowedRoles, requireFirstLogin = false }) => {
@@ -110,14 +110,6 @@ function ClientPortal() {
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
             <ClientInvestorViewProject />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="investor/messages"
-        element={
-          <ProtectedRoute allowedRoles={['Investor']}>
-            <ChatInterface />
           </ProtectedRoute>
         }
       />

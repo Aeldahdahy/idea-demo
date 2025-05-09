@@ -99,7 +99,17 @@ const loginStaff = async (req, res) => {
           return res.status(403).json({ message: 'Access denied. User is inactive.' });
         }
 
-        const token = jwt.sign({ id: staff._id, role: staff.role, username: staff.username }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ 
+          id: staff._id,
+          fullName: staff.fullName,
+          username: staff.username,
+          email: staff.email,
+          role: staff.role, 
+          permissions: staff.permissions,
+          image: staff.image,
+          status: staff.status,
+        }, JWT_SECRET, { expiresIn: '1h' });
+        
         res.status(200).json({ token });
     } catch (error) {
       res.status(500).json({ message: 'Server error!' });

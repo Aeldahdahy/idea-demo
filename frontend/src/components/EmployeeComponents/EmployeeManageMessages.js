@@ -2,32 +2,106 @@ import React, { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import { useFunctions } from "../../useFunctions";
 import { useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { openChatPopup, setSelectedUser } from '../../redux/chatSlice';
+import { toast } from 'react-toastify';
 
 function EmployeeManageMessages() {
   const [search, setSearch] = useState("");
-  const { messages = [], users = [], loading, error, getAllMessages, getAllUsers, updateMessages } = useFunctions();
+  const {
+    messages = [],
+    users = [],
+    loading,
+    error,
+    getAllMessages,
+    getAllUsers,
+    updateMessages,
+    // API_BASE_URL
+  } = useFunctions();
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const { role: employeeRole, user } = useSelector((state) => state.auth || {});
+  const { clientData } = useSelector((state) => state.clientAuth || {});
+  const isEmployee = !!employeeRole;
+  const userRole = isEmployee ? employeeRole : (clientData?.role || 'client');
+  const currentUserEmail = isEmployee ? user?.email : clientData?.email;
+
+  const allowedRoles = ['Admin', 'CS', 'employee', 'investor', 'entrepreneur'];
+  const hasPermission = allowedRoles.includes(userRole);
 
   useEffect(() => {
-    if (location.pathname === '/employee-portal/manageMessages') {
+    if (hasPermission && location.pathname === '/employee-portal/manageMessages') {
       getAllMessages();
       getAllUsers();
     }
-  }, [location.pathname, getAllMessages, getAllUsers]);
+  }, [hasPermission, location.pathname, getAllMessages, getAllUsers]);
+
+  if (!hasPermission) {
+    return (
+      <div className="text-center py-10 text-red-600 font-semibold text-lg">
+        You do not have permission to view this page.
+      </div>
+    );
+  }
+
+  const isExistingUser = (email) => {
+    return users.some(user => user.email === email);
+  };
 
   const filteredMessages = Array.isArray(messages)
     ? messages.filter((message) => {
         const searchTerm = search.toLowerCase();
-        return (
-          message.fullname.toLowerCase().includes(searchTerm) ||
-          message.email.toLowerCase().includes(searchTerm) ||
-          (message.message?.toLowerCase() || "").includes(searchTerm)
-        );
+        if (['Admin', 'CS', 'employee'].includes(userRole)) {
+          return (
+            message.fullname.toLowerCase().includes(searchTerm) ||
+            message.email.toLowerCase().includes(searchTerm) ||
+            (message.message?.toLowerCase() || "").includes(searchTerm)
+          );
+        } else {
+          const sender = users.find(user => user.email === message.email);
+          return sender && ['Admin', 'CS', 'employee'].includes(sender.role) &&
+            message.recipientEmail === currentUserEmail &&
+            (
+              message.fullname.toLowerCase().includes(searchTerm) ||
+              message.email.toLowerCase().includes(searchTerm) ||
+              (message.message?.toLowerCase() || "").includes(searchTerm)
+            );
+        }
       })
     : [];
 
-  const isExistingUser = (email) => {
-    return users.some(user => user.email === email);
+  const handleViewMessage = async (message) => {
+    console.log('handleViewMessage called for message:', message.email);
+    if (isExistingUser(message.email)) {
+      const selectedUser = users.find(user => user.email === message.email);
+      if (selectedUser) {
+        console.log('Dispatching setSelectedUser:', selectedUser);
+        dispatch(setSelectedUser(selectedUser));
+        console.log('Dispatching openChatPopup');
+        dispatch(openChatPopup());
+      } else {
+        console.error('User not found in chat system:', message.email);
+        toast.error("User not found in chat system");
+      }
+    } else if (['Admin', 'CS'].includes(userRole)) {
+      const tempUser = {
+        _id: message.email,
+        email: message.email,
+        fullName: message.fullname || message.email.split("@")[0],
+        role: 'external',
+        isTemporary: true,
+        originalMessage: message.message,
+        messageId: message._id
+      };
+      console.log('Dispatching setSelectedUser (temp):', tempUser);
+      dispatch(setSelectedUser(tempUser));
+      console.log('Dispatching openChatPopup');
+      dispatch(openChatPopup());
+    } else {
+      console.error('Permission denied for non-Admin/CS:', userRole);
+      toast.error("Only Admins or CS can respond to non-existing users");
+    }
   };
 
   return (
@@ -102,6 +176,7 @@ function EmployeeManageMessages() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
+                      onClick={() => handleViewMessage(message)}
                       className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                     >
                       <Eye className="w-4 h-4 mr-1" />

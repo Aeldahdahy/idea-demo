@@ -61,6 +61,8 @@ const initialState = {
   error: null,
   lastFetched: null,
   unreadCounts: {},
+  isChatPopupOpen: false,
+  selectedUser: null, // Added for pre-selecting user
 };
 
 const chatSlice = createSlice({
@@ -72,6 +74,16 @@ const chatSlice = createSlice({
       state.unreadCounts[userId] = count;
     },
     resetChatState: () => initialState,
+    openChatPopup: (state) => {
+      state.isChatPopupOpen = true;
+    },
+    closeChatPopup: (state) => {
+      state.isChatPopupOpen = false;
+      state.selectedUser = null; // Clear selected user on close
+    },
+    setSelectedUser: (state, action) => {
+      state.selectedUser = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -119,10 +131,12 @@ const chatSlice = createSlice({
   },
 });
 
-export const { updateUnreadCount, resetChatState } = chatSlice.actions;
+export const { updateUnreadCount, resetChatState, openChatPopup, closeChatPopup, setSelectedUser } = chatSlice.actions;
 
 export const selectUnreadCount = (userId) => (state) => state.chat.unreadCounts[userId] || 0;
 export const selectTotalUnreadCount = (state) => 
   Object.values(state.chat.unreadCounts).reduce((sum, count) => sum + count, 0);
+export const selectIsChatPopupOpen = (state) => state.chat.isChatPopupOpen;
+export const selectSelectedUser = (state) => state.chat.selectedUser;
 
 export default chatSlice.reducer;

@@ -577,18 +577,49 @@ const getAllReviews = useCallback(async () => {
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem('authToken', token);
-  
+        
         const decodedToken = jwtDecode(token);
+        console.log(decodedToken);
         console.log('Decoded Token:', decodedToken);
   
         if (decodedToken && decodedToken.id) {
-          localStorage.setItem('userId', decodedToken.id);
-          localStorage.setItem('userName', decodedToken.username);
-          localStorage.setItem('userRole', decodedToken.role);
-          localStorage.setItem('hasAccessedPortal', 'true');
-          localStorage.setItem('portalType', 'employee');
-  
-          dispatch(login({ token, role: 'employee' }));
+          const {
+            id,
+            username,
+            role: userRole, // actual role like 'Admin'
+            fullName,
+            email,
+            image,
+            permissions,
+            status,
+          } = decodedToken;
+        
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('userId', id);
+          localStorage.setItem('username', username);
+          localStorage.setItem('portalType', 'employee'); // access point
+          localStorage.setItem('userRole', userRole); // actual user role
+          localStorage.setItem('fullName', fullName);
+          localStorage.setItem('email', email);
+          localStorage.setItem('image', image);
+          localStorage.setItem('permissions', JSON.stringify(permissions));
+          localStorage.setItem('status', status);
+        
+          dispatch(
+            login({
+              token,
+              username,
+              role: 'employee',
+              userRole,
+              id,
+              fullName,
+              email,
+              image,
+              permissions,
+              status,
+            })
+          );
+        
           setTokenExpiration();
           navigate('/employee-portal/');
           toast.success('Login successfully!');

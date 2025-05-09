@@ -98,7 +98,7 @@ function ClientInvestorHome() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters Section */}
         {isFilterOpen && (
           <div className="bg-white rounded-2xl p-6 mb-8 shadow-lg transition-all duration-300">

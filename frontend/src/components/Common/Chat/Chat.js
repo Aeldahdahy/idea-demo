@@ -67,7 +67,16 @@ function Chat({
   const currentUser = users.find((u) => u._id === currentUserId) || { fullName: 'Unknown' };
   const currentUserImage = currentUser.image ? `${API_BASE_URL}/Uploads/user_images/${currentUser.image}` : null;
   const currentUserInitial = currentUser.fullName.charAt(0).toUpperCase() || 'U';
-  console.log(currentUser)
+  console.log(currentUser);
+
+  // Filter messages to ensure clients only see messages from Admins, employees, or CS
+  const validMessages = messages.filter(message => {
+    if (currentUser.role === 'client') {
+      const sender = users.find(u => u._id === message.sender);
+      return sender && ["Admin", "employee", "CS"].includes(sender.role);
+    }
+    return true;
+  });
 
   return (
     <div className="fixed inset-0 z-50 bg-gray-100 flex font-sans hidelogo">
@@ -83,10 +92,10 @@ function Chat({
             <div className="h-10 w-10 mr-2">
               {currentUserImage && !showCurrentUserFallback ? (
                 <img
-                src={currentUserImage}
-                alt="Profile"
-                className="w-full h-full object-cover rounded-full"
-                onError={() => setShowCurrentUserFallback(true)}
+                  src={currentUserImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover rounded-full"
+                  onError={() => setShowCurrentUserFallback(true)}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-700">
@@ -94,7 +103,7 @@ function Chat({
                 </div>
               )}
             </div>
-             <p>{currentUser.fullName}</p>
+            <p>{currentUser.fullName}</p>
           </div>
           <button onClick={handleClose} className="text-white hover:text-gray-200">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -192,7 +201,7 @@ function Chat({
               style={{ backgroundSize: 'auto', backgroundPosition: 'center' }}
             >
               <div className="flex flex-col gap-2">
-                {messages.map((message) => (
+                {validMessages.map((message) => (
                   <ChatBubble
                     key={message.id}
                     side={message.side}

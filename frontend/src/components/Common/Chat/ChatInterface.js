@@ -12,23 +12,23 @@ import {
   selectSelectedUser,
 } from "../../../redux/chatSlice";
 
-const socket = io.connect("http://127.0.0.1:7030", {
-  transports: ['websocket', 'polling'],
-  reconnection: true,
-  reconnectionAttempts: 5,
-});
+const SOCKET_URL = "http://127.0.0.1:7030"; // Define socket URL as a constant
+let socket = null; // Initialize socket outside to manage reconnects
 
 function ChatInterface() {
   const { API_BASE_URL, updateMessages } = useFunctions();
   const dispatch = useDispatch();
 
   // Auth
-  const { role: empRole, user } = useSelector(s => s.auth || {});
+  const { role: portalType, userRole, user } = useSelector(s => s.auth || {});
   const { clientData } = useSelector(s => s.clientAuth || {});
-  const isEmployee = empRole && ["Admin", "employee", "CS"].includes(empRole);
+  const isEmployee = !!portalType;
   const isClient = !!clientData;
   const currentUserId = isClient ? clientData._id : isEmployee ? user?._id : null;
-  const userRole = isEmployee ? empRole : isClient ? clientData.role : null;
+  const currentUserRole = isEmployee ? userRole : isClient ? clientData.role : null;
+
+  // Debug role
+  console.log('ChatInterface: portalType=', portalType, 'userRole=', userRole, 'currentUserRole=', currentUserRole);
 
   // Redux chat state
   const { users: allUsers, loading, error, lastFetched } = useSelector(s => s.chat);
@@ -40,30 +40,74 @@ function ChatInterface() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const [recentMessages, setRecent] = useState(new Map());
+  const [connectionError, setConnectionError] = useState(null);
   const audioRef = useRef(null);
+
+  // Initialize Socket.IO connection
+  const initializeSocket = useCallback(() => {
+    if (socket) {
+      socket.disconnect();
+    }
+    socket = io.connect(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    socket.on('connect', () => {
+      console.log('Socket.IO connected');
+      setConnectionError(null);
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('Socket.IO connect_error:', err.message);
+      setConnectionError('Failed to connect to the chat server. Please try again later.');
+    });
+
+    socket.on('reconnect_failed', () => {
+      console.error('Socket.IO reconnect_failed');
+      setConnectionError('Unable to reconnect to the chat server. Please try again.');
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('connect_error');
+      socket.off('reconnect_failed');
+    };
+  }, []);
+
+  // Attempt to reconnect
+  const handleReconnect = () => {
+    console.log('Attempting to reconnect...');
+    initializeSocket();
+  };
 
   // Debug logs
   useEffect(() => {
     console.log('ChatInterface: isOpen=', isOpen, 'selectedUser=', selectedUser);
   }, [isOpen, selectedUser]);
 
-  // Socket.IO debug
+  // Initialize socket on mount
   useEffect(() => {
-    socket.on('connect', () => console.log('Socket.IO connected'));
-    socket.on('connect_error', (err) => console.error('Socket.IO error:', err.message));
+    initializeSocket();
     return () => {
-      socket.off('connect');
-      socket.off('connect_error');
+      if (socket) {
+        socket.disconnect();
+      }
     };
-  }, []);
+  }, [initializeSocket]);
 
   // Sidebar: inject temporary user first
   const sidebarUsers = selectedUser?.isTemporary
     ? [selectedUser, ...allUsers.filter(u => u._id !== selectedUser._id)]
     : allUsers;
-  const users = (["Admin", "CS"].includes(userRole)
+  const users = (["Admin", "CS"].includes(currentUserRole)
     ? sidebarUsers
-    : sidebarUsers.filter(u => ["Admin", "employee", "CS"].includes(u.role))
+    : sidebarUsers.filter(u =>
+        ["Admin", "employee", "CS"].includes(u.role) &&
+        recentMessages.has(u._id) // Only include users with message history
+      )
   );
 
   // Fetch available users
@@ -115,8 +159,8 @@ function ChatInterface() {
 
   // Subscribe to sockets
   useEffect(() => {
-    if (!currentUserId) {
-      console.log('Socket: Skipping, no currentUserId');
+    if (!currentUserId || !socket) {
+      console.log('Socket: Skipping, no currentUserId or socket');
       return;
     }
     console.log('Socket: Joining room', currentUserId);
@@ -208,6 +252,10 @@ function ChatInterface() {
       console.log('sendChat: Invalid input', { inputMessage, selectedUser, currentUserId });
       return;
     }
+    if (connectionError) {
+      toast.error("Cannot send message: No connection to the chat server");
+      return;
+    }
     const now = Date.now();
 
     if (selectedUser.isTemporary) {
@@ -275,6 +323,20 @@ function ChatInterface() {
     setInputMessage("");
     getAllUsers();
   };
+
+  if (connectionError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-gray-700">
+        <p className="text-lg mb-4">{connectionError}</p>
+        <button
+          onClick={handleReconnect}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Try Reconnecting
+        </button>
+      </div>
+    );
+  }
 
   return (
     <Chat

@@ -12,6 +12,19 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Middleware to check roles
+const checkRole = (allowedRoles) => async (req, res, next) => {
+  try {
+    const userRole = req.user.role || 'client';
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Role check failed', error: error.message });
+  }
+};
+
 // Get messages between two users
 exports.getMessages = async (req, res) => {
   try {
@@ -98,17 +111,23 @@ exports.getRecentUsers = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const currentUserId = req.user._id;
-    const user = await User.findById(currentUserId).select('role');
+    const userRole = req.user.role || 'client';
+
+    console.log('getAllUsers: currentUserId=', currentUserId, 'userRole=', userRole);
 
     let users;
-    if (user.role === 'Admin' || user.role === 'CS') {
+    if (userRole === 'Admin' || userRole === 'CS') {
       // Admins and CS see all users
       users = await User.find({ _id: { $ne: currentUserId } })
         .select('fullName image createdAt role email');
     } else {
-      // Others see only admins, employees, CS
+      // Others see only admins, employees, CS with message history
+      const chats = await Chat.find({
+        $or: [{ sender: currentUserId }, { receiver: currentUserId }],
+      }).distinct('sender receiver');
+      const chatUserIds = chats.filter(id => id !== currentUserId);
       users = await User.find({
-        _id: { $ne: currentUserId },
+        _id: { $in: chatUserIds },
         role: { $in: ['Admin', 'employee', 'CS'] },
       }).select('fullName image createdAt role email');
     }
@@ -191,6 +210,7 @@ exports.getAllUsers = async (req, res) => {
 
     res.status(200).json({ success: true, data: usersWithChatInfo });
   } catch (error) {
+    console.error('Error fetching users:', error);
     res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
   }
 };
@@ -221,6 +241,11 @@ exports.markAsSeen = async (req, res) => {
 exports.sendEmail = async (req, res) => {
   try {
     const { email, message, reply } = req.body;
+    const userRole = req.user.role || 'client';
+
+    if (!['Admin', 'CS'].includes(userRole)) {
+      return res.status(403).json({ success: false, message: 'Only Admins or CS can send emails' });
+    }
 
     if (!email || !message) {
       return res.status(400).json({ success: false, message: 'Email and message are required' });

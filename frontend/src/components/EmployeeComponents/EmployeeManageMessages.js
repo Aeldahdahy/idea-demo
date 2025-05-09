@@ -16,19 +16,22 @@ function EmployeeManageMessages() {
     getAllMessages,
     getAllUsers,
     updateMessages,
-    // API_BASE_URL
   } = useFunctions();
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const { role: employeeRole, user } = useSelector((state) => state.auth || {});
+  // Retrieve auth state
+  const { role: portalType, userRole, user } = useSelector((state) => state.auth || {});
   const { clientData } = useSelector((state) => state.clientAuth || {});
-  const isEmployee = !!employeeRole;
-  const userRole = isEmployee ? employeeRole : (clientData?.role || 'client');
+  const isEmployee = !!portalType; // Check if user is logged in as an employee
+  const currentUserRole = isEmployee ? userRole : (clientData?.role || 'client'); // Use userRole from auth
   const currentUserEmail = isEmployee ? user?.email : clientData?.email;
 
+  // Debug role
+  console.log('EmployeeManageMessages: portalType=', portalType, 'userRole=', userRole, 'currentUserRole=', currentUserRole);
+
   const allowedRoles = ['Admin', 'CS', 'employee', 'investor', 'entrepreneur'];
-  const hasPermission = allowedRoles.includes(userRole);
+  const hasPermission = allowedRoles.includes(currentUserRole);
 
   useEffect(() => {
     if (hasPermission && location.pathname === '/employee-portal/manageMessages') {
@@ -52,7 +55,7 @@ function EmployeeManageMessages() {
   const filteredMessages = Array.isArray(messages)
     ? messages.filter((message) => {
         const searchTerm = search.toLowerCase();
-        if (['Admin', 'CS', 'employee'].includes(userRole)) {
+        if (['Admin', 'CS', 'employee'].includes(currentUserRole)) {
           return (
             message.fullname.toLowerCase().includes(searchTerm) ||
             message.email.toLowerCase().includes(searchTerm) ||
@@ -72,7 +75,7 @@ function EmployeeManageMessages() {
     : [];
 
   const handleViewMessage = async (message) => {
-    console.log('handleViewMessage called for message:', message.email);
+    console.log('handleViewMessage called for message:', message.email, 'currentUserRole:', currentUserRole);
     if (isExistingUser(message.email)) {
       const selectedUser = users.find(user => user.email === message.email);
       if (selectedUser) {
@@ -84,9 +87,9 @@ function EmployeeManageMessages() {
         console.error('User not found in chat system:', message.email);
         toast.error("User not found in chat system");
       }
-    } else if (['Admin', 'CS'].includes(userRole)) {
+    } else if (['Admin', 'CS'].includes(currentUserRole)) {
       const tempUser = {
-        _id: message.email,
+        _id: message._id, // Use message ID for uniqueness
         email: message.email,
         fullName: message.fullname || message.email.split("@")[0],
         role: 'external',
@@ -99,7 +102,7 @@ function EmployeeManageMessages() {
       console.log('Dispatching openChatPopup');
       dispatch(openChatPopup());
     } else {
-      console.error('Permission denied for non-Admin/CS:', userRole);
+      console.error('Permission denied for non-Admin/CS:', currentUserRole);
       toast.error("Only Admins or CS can respond to non-existing users");
     }
   };

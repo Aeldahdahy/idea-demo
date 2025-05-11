@@ -13,14 +13,14 @@ const verifyToken = (req, res, next) => {
     req.user = decoded.user || decoded;
     // Ensure req.user._id is set for consistency
     req.user._id = req.user.id;
-    console.log('verifyToken: req.user=', {
-      _id: req.user._id,
-      role: req.user.role,
-      email: req.user.email,
-    });
+    // console.log('verifyToken: req.user=', {
+    //   _id: req.user._id,
+    //   role: req.user.role,
+    //   email: req.user.email,
+    // });
     next();
   } catch (error) {
-    console.error('Token verification error:', error.message);
+    // console.error('Token verification error:', error.message);
     res.status(401).json({ message: 'Invalid token' });
   }
 };

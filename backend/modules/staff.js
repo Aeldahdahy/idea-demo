@@ -14,7 +14,7 @@ const staffSchema = new mongoose.Schema({
     lowercase: true,
     validate: {
       validator: function (v) {
-        return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v); // Ensure valid email format
+        return /^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$/.test(v); // Simpler regex
       },
       message: 'Invalid email format'
     }
@@ -30,7 +30,7 @@ const staffSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: function (v) {
-        return /^[0-9]{10,15}$/.test(v); // Ensure it's a valid phone number
+        return /^[0-9]{10,15}$/.test(v);
       },
       message: 'Invalid phone number format'
     }
@@ -40,8 +40,8 @@ const staffSchema = new mongoose.Schema({
     required: true
   },
   image: {
-    type: String,  // Stores image URL or file path
-    default: null // Default profile image
+    type: String,
+    default: null
   },
   role: {
     type: String,
@@ -49,7 +49,7 @@ const staffSchema = new mongoose.Schema({
     default: 'Employee'
   },
   permissions: {
-    type: [String], 
+    type: [String],
     enum: [
       'Manage Staff',
       'Manage Projects',
@@ -60,23 +60,21 @@ const staffSchema = new mongoose.Schema({
       'Manage Web & App',
       'Manage Advertisements',
     ],
-    default: [] // Empty array if no permissions assigned
+    default: []
   },
   createdAt: {
     type: Date,
     default: Date.now
   },
   status: {
-    type: String, 
-    enum: ['Active', 'Inactive'], 
-    default: 'Active' 
+    type: String,
+    enum: ['Active', 'Inactive'],
+    default: 'Active'
   },
 });
 
-// Hash the password before saving the staff member
 staffSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);

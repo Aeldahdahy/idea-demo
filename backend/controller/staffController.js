@@ -33,9 +33,9 @@ const createStaff = async (req, res) => {
       }
 
       // Validate email format
-      if (!/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-          return res.status(400).json({ success: false, message: 'Invalid email format' });
-      }
+      if (!/^[\w\.-]+@[\w-]+(\.[\w-]+)*\.[\w-]{2,}$/.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email format' });
+    }
 
       // Validate phone number
       if (!/^[0-9]{10,15}$/.test(phone)) {
@@ -145,89 +145,102 @@ const getStaffById = async (req, res) => {
 
 // Update Staff 
 const updateStaff = async (req, res) => {
-    try {
-      const { staffId } = req.params;
-      let { fullName, email, username, phone, password, role, permissions, status } = req.body;
-  
-      // Find staff member
-      const staff = await Staff.findById(staffId);
-      if (!staff) {
-        return res.status(404).json({ success: false, message: 'Staff member not found' });
+  try {
+    const { staffId } = req.params;
+    let { fullName, email, username, phone, password, role, permissions, status } = req.body;
+
+    // Validate staffId
+    if (!mongoose.isValidObjectId(staffId)) {
+      return res.status(400).json({ success: false, message: 'Invalid staff ID' });
+    }
+
+    // Find staff member
+    const staff = await Staff.findById(staffId);
+    if (!staff) {
+      return res.status(404).json({ success: false, message: 'Staff member not found' });
+    }
+
+    // Check for email uniqueness if email is being updated
+    if (email && email !== staff.email) {
+      const existingEmail = await Staff.findOne({ email });
+      if (existingEmail) {
+        return res.status(400).json({ success: false, message: 'Email already in use' });
       }
-  
-      // Handle image upload (retain existing image if no new upload)
-      const image = req.files?.image ? req.files.image[0].path : staff.image;
-  
-      // Validate role
-      const validRoles = ['Admin', 'Auditor', 'Cs', 'Employee'];
-      if (role && !validRoles.includes(role)) {
-        return res.status(400).json({ success: false, message: 'Invalid role provided' });
-      }
-  
       // Validate email format
-      if (email && !/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      if (!/^[\w\.-]+@[\w-]+(\.[\w-]+)*\.[\w-]{2,}$/.test(email)) {
         return res.status(400).json({ success: false, message: 'Invalid email format' });
       }
-  
-      // Validate phone number
-      if (phone && !/^[0-9]{10,15}$/.test(phone)) {
-        return res.status(400).json({ success: false, message: 'Invalid phone number format' });
-      }
-  
-      // Parse permissions if it's a string
-      if (typeof permissions === 'string') {
-        try {
-          permissions = JSON.parse(permissions);
-        } catch (error) {
-          return res.status(400).json({ success: false, message: 'Invalid permissions format: must be a valid JSON array' });
-        }
-      }
-  
-      // Validate permissions
-      const validPermissions = [
-        'Manage Staff',
-        'Manage Projects',
-        'Schedule Meetings',
-        'Manage Contracts',
-        'Manage Support Requests',
-        'Manage Users',
-        'Manage Web & App',
-        'Manage Advertisements',
-      ];
-      if (permissions && (!Array.isArray(permissions) || permissions.some((p) => !validPermissions.includes(p)))) {
-        return res.status(400).json({ success: false, message: 'Invalid permissions provided' });
-      }
-  
-      // Hash password if provided
-      if (password) {
-        const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash(password, salt);
-      }
-  
-      // Create update object
-      const updateData = {};
-      if (fullName) updateData.fullName = fullName;
-      if (email) updateData.email = email;
-      if (username) updateData.username = username;
-      if (phone) updateData.phone = phone;
-      if (password) updateData.password = password;
-      if (role) updateData.role = role;
-      if (permissions) updateData.permissions = permissions;
-      if (status) updateData.status = status;
-      if (image !== staff.image) updateData.image = image; // Only update if changed
-  
-      // Update staff member
-      const updatedStaff = await Staff.findByIdAndUpdate(
-        staffId,
-        { $set: updateData },
-        { new: true, runValidators: true }
-      );
-  
-      res.status(200).json({ success: true, message: 'Staff data updated successfully', data: updatedStaff });
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Error updating staff data', error: error.message });
     }
-  };
+
+    // Handle image upload
+    const image = req.files?.image ? req.files.image[0].path : staff.image;
+
+    // Validate role
+    const validRoles = ['Admin', 'Auditor', 'Cs', 'Employee'];
+    if (role && !validRoles.includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role provided' });
+    }
+
+    // Validate phone number
+    if (phone && !/^[0-9]{10,15}$/.test(phone)) {
+      return res.status(400).json({ success: false, message: 'Invalid phone number format' });
+    }
+
+    // Parse permissions if it's a string
+    if (typeof permissions === 'string') {
+      try {
+        permissions = JSON.parse(permissions);
+      } catch (error) {
+        return res.status(400).json({ success: false, message: 'Invalid permissions format: must be a valid JSON array' });
+      }
+    }
+
+    // Validate permissions
+    const validPermissions = [
+      'Manage Staff',
+      'Manage Projects',
+      'Schedule Meetings',
+      'Manage Contracts',
+      'Manage Support Requests',
+      'Manage Users',
+      'Manage Web & App',
+      'Manage Advertisements',
+    ];
+    if (permissions && (!Array.isArray(permissions) || permissions.some((p) => !validPermissions.includes(p)))) {
+      return res.status(400).json({ success: false, message: 'Invalid permissions provided' });
+    }
+
+    // Hash password if provided
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      password = await bcrypt.hash(password, salt);
+    }
+
+    // Create update object
+    const updateData = {};
+    if (fullName) updateData.fullName = fullName;
+    if (email && email !== staff.email) updateData.email = email; // Only update if changed
+    if (username) updateData.username = username;
+    if (phone) updateData.phone = phone;
+    if (password) updateData.password = password;
+    if (role) updateData.role = role;
+    if (permissions) updateData.permissions = permissions;
+    if (status) updateData.status = status;
+    if (image !== staff.image) updateData.image = image;
+
+    // Update staff member
+    const updatedStaff = await Staff.findByIdAndUpdate(
+      staffId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({ success: true, message: 'Staff data updated successfully', data: updatedStaff });
+  } catch (error) {
+    console.error('Update Staff Error:', error); // Log full error
+    res.status(500).json({ success: false, message: 'Error updating staff data', error: error.message });
+  }
+};
 
 
 // Step 1: Investor requests a meeting

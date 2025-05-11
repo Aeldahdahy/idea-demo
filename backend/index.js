@@ -12,6 +12,7 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const Chat = require('./modules/chat'); 
+const Staff = require('./modules/staff');
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -23,7 +24,6 @@ const db_URL = `mongodb+srv://${dbUsername}:${dbPassword}@${dbHost}/${dbName}${d
 
 db_connection();
 
-// Socket io
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -33,35 +33,40 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log(`User Connected: ${socket.id}`);
-
   socket.on("send_message", async (data) => {
-    console.log("Message received:", data);
     try {
+      const senderUser = await Staff.findById(data.sender).select('fullName image role');
+      const senderName = senderUser?.fullName || data.senderName || 'Unknown';
+      const senderImage = senderUser?.image || null;
+      const senderRole = senderUser?.role?.toLowerCase() || 'admin';
+
       const chatMessage = new Chat({
         sender: data.sender,
         receiver: data.receiver,
         type: 'text',
         content: data.message,
+        senderName,
       });
       await chatMessage.save();
       
-      // Emit to receiver with sound notification flag
-      socket.to(data.receiver).emit("receive_message", {
+      const messageData = {
         sender: data.sender,
         receiver: data.receiver,
         message: data.message,
+        senderName,
+        senderImage,
+        senderRole,
         timestamp: chatMessage.timestamp,
-        playSound: true // Sound for receiver
+      };
+
+      socket.to(data.receiver).emit("receive_message", {
+        ...messageData,
+        playSound: true,
       });
       
-      // Emit to sender without sound
       socket.emit("receive_message", {
-        sender: data.sender,
-        receiver: data.receiver,
-        message: data.message,
-        timestamp: chatMessage.timestamp,
-        playSound: false // No sound for sender
+        ...messageData,
+        playSound: false,
       });
     } catch (error) {
       console.error("Error saving message:", error);
@@ -70,11 +75,9 @@ io.on("connection", (socket) => {
 
   socket.on("join_room", (userId) => {
     socket.join(userId);
-    console.log(`User ${socket.id} joined room: ${userId}`);
   });
 
   socket.on("disconnect", () => {
-    console.log(`User Disconnected: ${socket.id}`);
   });
 
   socket.on("error", (error) => {
@@ -82,29 +85,20 @@ io.on("connection", (socket) => {
   });
 });
 
-// Sound Effect
 app.use('/sounds', express.static('public/sounds'));
 
-const hostname = '127.0.0.1';
-const port = 7030;
-
-// 🟢 Redirect root to /idea-demo
 app.get('/', (req, res) => {
   res.redirect('/idea-demo');
 });
 
-// 🟢 Serve static files from React build under /idea-demo
 app.use('/idea-demo', express.static(path.join(__dirname, '../frontend/build')));
 
-// 🟢 Handle React Router paths under /idea-demo
 app.get('/idea-demo/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
 
-// Serve uploaded files
 app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 
-// Session config
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret_key',
   resave: false,
@@ -120,7 +114,6 @@ app.use(session({
   }
 }));
 
-// Middleware setup
 app.use(cors({
   origin: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -132,11 +125,9 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// API routes
 app.use('/api', ideaRoutes);
 app.use('/api', chatRoutes);
 
-// Start server
-server.listen(port, hostname, () => {
-  console.log(`Server is running at http://${hostname}:${port}`);
+server.listen(7030, '127.0.0.1', () => {
+  console.log(`Server is running at http://127.0.0.1:7030`);
 });

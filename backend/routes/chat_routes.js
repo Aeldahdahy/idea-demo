@@ -16,6 +16,9 @@ router.get('/users/recent', authenticateToken, chatController.getRecentUsers);
 // Get all available users to chat with
 router.get('/users/available', authenticateToken, verifyToken, chatController.getAllUsers);
 
+// Get all messages for a specific investor & enturepreneur
+router.get('/admins/available', verifyToken, chatController.getInvestorEntrepreneurUsers);
+
 // Mark messages as seen
 router.put('/chats/mark-seen/:userId/:otherUserId', authenticateToken, chatController.markAsSeen);
 

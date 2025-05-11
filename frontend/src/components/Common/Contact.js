@@ -146,7 +146,7 @@ function Contact() {
                     </div>
                     <div className="ml-6 grow">
                       <p className="mb-2 font-bold">Technical support</p>
-                      <p className="text-sm text-neutral-500">idea-venture2025@outlook.com</p>
+                      <p className="text-sm text-neutral-500">idea.venture@idea-venture.agency</p>
                     </div>
                   </div>
                 </div>

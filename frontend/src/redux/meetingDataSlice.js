@@ -1,4 +1,30 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { useFunctions } from '../useFunctions';
+
+// Async thunk to fetch meetings
+export const fetchMeetings = createAsyncThunk(
+  'meetingData/fetchMeetings',
+  async (token, { rejectWithValue }) => {
+    const {API_BASE_URL} = useFunctions();
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/meetings`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch meetings: ${response.statusText}`);
+      }
+      const { success, data } = await response.json();
+      if (!success) {
+        throw new Error('API returned unsuccessful response');
+      }
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const meetingDataSlice = createSlice({
   name: 'meetingData',
@@ -6,9 +32,12 @@ const meetingDataSlice = createSlice({
     meetingData: [],
     lastMeetingFetched: null,
     selectedAuditor: null,
+    selectedMeetingId: null,
     slot1State: 'available',
     slot2State: 'available',
-    isPopupOpen: true, // Added state to track popup visibility
+    isPopupOpen: false,
+    status: 'idle', // Added for async thunk status
+    error: null, // Added for async thunk error
   },
   reducers: {
     setMeetingData: (state, action) => {
@@ -17,6 +46,9 @@ const meetingDataSlice = createSlice({
     },
     setSelectedAuditor: (state, action) => {
       state.selectedAuditor = action.payload;
+    },
+    setSelectedMeetingId: (state, action) => {
+      state.selectedMeetingId = action.payload;
     },
     setSlot1State: (state, action) => {
       state.slot1State = action.payload;
@@ -28,14 +60,41 @@ const meetingDataSlice = createSlice({
       state.slot1State = 'available';
       state.slot2State = 'available';
     },
-    openPopup: (state) => { // Added action to open the popup
+    openPopup: (state) => {
       state.isPopupOpen = true;
     },
-    closePopup: (state) => { // Added action to close the popup
+    closePopup: (state) => {
       state.isPopupOpen = false;
+      state.selectedMeetingId = null;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMeetings.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchMeetings.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.meetingData = Array.isArray(action.payload) ? action.payload : [];
+        state.lastMeetingFetched = Date.now();
+        state.error = null;
+      })
+      .addCase(fetchMeetings.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      });
   },
 });
 
-export const { setMeetingData, setSelectedAuditor, setSlot1State, setSlot2State, resetSlots, openPopup, closePopup } = meetingDataSlice.actions;
+export const {
+  setMeetingData,
+  setSelectedAuditor,
+  setSelectedMeetingId,
+  setSlot1State,
+  setSlot2State,
+  resetSlots,
+  openPopup,
+  closePopup,
+} = meetingDataSlice.actions;
+
 export default meetingDataSlice.reducer;

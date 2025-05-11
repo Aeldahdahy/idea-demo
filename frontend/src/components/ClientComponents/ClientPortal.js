@@ -6,6 +6,7 @@ import Blog from '../Common/Blog';
 import AboutUs from '../Common/AboutUs';
 import Contact from '../Common/Contact';
 import Profile from '../Common/Profile';
+import ClientChatInterface from '../Common/Chat/ClientChatInterface';
 
 // Entrepreneur components
 import ClientEntreHome from './Entrepreneur/ClientEntreHome';
@@ -17,8 +18,9 @@ import ClientInvestorHome from './Investor/ClientInvestorHome';
 import ClientInvestorMyInvestment from './Investor/ClientInvestorMyInvestment';
 import ClientInvestorViewProject from './Investor/ClientInvestorViewProject';
 // import ClientInvestorMessages from './Investor/ClientInvestorMessages';
-import ChatInterface from '../Common/Chat/ChatInterface';
+// import ChatInterface from '../Common/Chat/ChatInterface';
 import ClientInvestorPreferences from './Investor/ClientInvestorPreferences';
+
 
 const ProtectedRoute = ({ children, allowedRoles, requireFirstLogin = false }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -70,6 +72,7 @@ function ClientPortal() {
   const clientRole = useSelector((state) => state.clientAuth.clientData?.clientRole);
 
   return (
+    <>
     <Routes>
       <Route
         path="/"
@@ -110,14 +113,6 @@ function ClientPortal() {
         element={
           <ProtectedRoute allowedRoles={['Investor']}>
             <ClientInvestorViewProject />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="investor/messages"
-        element={
-          <ProtectedRoute allowedRoles={['Investor']}>
-            <ChatInterface />
           </ProtectedRoute>
         }
       />
@@ -212,8 +207,11 @@ function ClientPortal() {
         }
       />
 
+
       <Route path="*" element={<Navigate to="/client-portal/" replace />} />
     </Routes>
+    <ClientChatInterface />
+    </>
   );
 }
 

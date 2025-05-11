@@ -12,6 +12,7 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const Chat = require('./modules/chat'); 
+const Staff = require('./modules/staff');
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -27,42 +28,46 @@ db_connection();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'https://idea-venture.agency',
-    methods: ['GET', 'POST'],
-    credentials: true
+    origin: true,
+    methods: ["GET", "POST"],
   },
 });
 
 io.on("connection", (socket) => {
-  console.log(`User Connected: ${socket.id}`);
-
   socket.on("send_message", async (data) => {
-    console.log("Message received:", data);
     try {
+      const senderUser = await Staff.findById(data.sender).select('fullName image role');
+      const senderName = senderUser?.fullName || data.senderName || 'Unknown';
+      const senderImage = senderUser?.image || null;
+      const senderRole = senderUser?.role?.toLowerCase() || 'admin';
+
       const chatMessage = new Chat({
         sender: data.sender,
         receiver: data.receiver,
         type: 'text',
         content: data.message,
+        senderName,
       });
       await chatMessage.save();
       
-      // Emit to receiver with sound notification flag
-      socket.to(data.receiver).emit("receive_message", {
+      const messageData = {
         sender: data.sender,
         receiver: data.receiver,
         message: data.message,
+        senderName,
+        senderImage,
+        senderRole,
         timestamp: chatMessage.timestamp,
-        playSound: true // Sound for receiver
+      };
+
+      socket.to(data.receiver).emit("receive_message", {
+        ...messageData,
+        playSound: true,
       });
       
-      // Emit to sender without sound
       socket.emit("receive_message", {
-        sender: data.sender,
-        receiver: data.receiver,
-        message: data.message,
-        timestamp: chatMessage.timestamp,
-        playSound: false // No sound for sender
+        ...messageData,
+        playSound: false,
       });
     } catch (error) {
       console.error("Error saving message:", error);
@@ -71,11 +76,9 @@ io.on("connection", (socket) => {
 
   socket.on("join_room", (userId) => {
     socket.join(userId);
-    console.log(`User ${socket.id} joined room: ${userId}`);
   });
 
   socket.on("disconnect", () => {
-    console.log(`User Disconnected: ${socket.id}`);
   });
 
   socket.on("error", (error) => {

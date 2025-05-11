@@ -1217,7 +1217,7 @@ const getAllReviews = useCallback(async () => {
       console.error('Create project error:', err);
       let errorMessage = 'An error occurred. Please try again.';
       if (err.code === 'ERR_NETWORK') {
-        // errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
+        // errorMessage = 'Cannot connect to the server. Please check if the server is running on.';
       } else if (err.response) {
         errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
       }

@@ -1,21 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'react-toastify';
-import { MapPin, Calendar, Briefcase, DollarSign, ChevronLeft, Share2, ChevronRight, Send, Star, StarOff, Heart, Linkedin } from 'lucide-react';
-import { useFunctions } from '../../../useFunctions';
+import { MapPin, Calendar, Briefcase, DollarSign, ChevronLeft, Share2, ChevronRight, Send, Star, StarOff, Heart, Linkedin, X } from 'lucide-react';
 import { decryptId } from '../../../Security/encryptionUtils';
 
 const ClientInvestorViewProject = () => {
   const { projectId: encryptedProjectId } = useParams();
-  const { getProjectById, loading, error, API_BASE_URL } = useFunctions();
   const [projectData, setProjectData] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [isShortlisted, setIsShortlisted] = useState(false);
+  const [meetingId, setMeetingId] = useState(null);
   const [isInterested, setIsInterested] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const mountedRef = useRef(true);
   const lastFetchedProjectId = useRef(null);
+
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:7030';
 
   let projectId;
   try {
@@ -26,7 +30,6 @@ const ClientInvestorViewProject = () => {
   }
 
   useEffect(() => {
-    // Cleanup to prevent state updates after unmount
     return () => {
       mountedRef.current = false;
     };
@@ -38,25 +41,59 @@ const ClientInvestorViewProject = () => {
       return;
     }
 
-    // Skip fetching if data for this projectId is already loaded
     if (lastFetchedProjectId.current === projectId && projectData) {
-      // console.log('Skipping fetch: Data already loaded for projectId', projectId);
       return;
     }
 
-    const fetchProject = async () => {
-      // console.log('Fetching project for projectId:', projectId);
-      const data = await getProjectById(projectId);
-      if (data && mountedRef.current) {
-        setProjectData(data);
-        lastFetchedProjectId.current = projectId;
-        // console.log('Project data set:', data);
+    const fetchProjectAndMeetingStatus = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          throw new Error('No authentication token found. Please log in again.');
+        }
+
+        const projectResponse = await axios.get(`${API_BASE_URL}/api/projects/${projectId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (projectResponse.data.data && mountedRef.current) {
+          setProjectData(projectResponse.data.data);
+          lastFetchedProjectId.current = projectId;
+
+          const clientData = JSON.parse(localStorage.getItem('clientData'));
+          if (!clientData || !clientData._id) {
+            throw new Error('Investor ID not found. Please log in again.');
+          }
+          const investorId = clientData._id;
+
+          const meetingResponse = await axios.get(
+            `${API_BASE_URL}/api/meeting/status/${projectId}/${investorId}/${projectResponse.data.data.user_id}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          if (meetingResponse.data.exists && meetingResponse.data.status !== 'Cancelled' && meetingResponse.data.status !== 'Completed') {
+            setIsShortlisted(true);
+            setMeetingId(meetingResponse.data.meetingId);
+          }
+        }
+        setError(null);
+      } catch (err) {
+        if (err.response?.status === 403) {
+          setError('Access forbidden. Please log in again or contact support.');
+          toast.error('Access forbidden. Please log in again.');
+        } else {
+          setError(err.response?.data?.message || err.message || 'Failed to load project data');
+          toast.error(err.response?.data?.message || err.message || 'Failed to load project data');
+        }
+      } finally {
+        setLoading(false);
       }
     };
-    fetchProject();
-  }, [projectId]); // Removed getProjectById from dependencies
 
-  // Auto-slide for gallery
+    fetchProjectAndMeetingStatus();
+  }, [projectId, API_BASE_URL]);
+
   useEffect(() => {
     if (projectData?.project_images?.length > 0) {
       const interval = setInterval(() => {
@@ -66,7 +103,95 @@ const ClientInvestorViewProject = () => {
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [projectData?.project_images?.length]); // Depend on length to avoid unnecessary runs
+  }, [projectData?.project_images?.length]);
+
+  const handleRequestMeeting = async () => {
+    if (isShortlisted) {
+      toast.info('Meeting already requested');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No authentication token found. Please log in again.');
+      }
+
+      const clientData = JSON.parse(localStorage.getItem('clientData'));
+      if (!clientData || !clientData._id) {
+        throw new Error('Investor ID not found. Please log in again.');
+      }
+      const investorId = clientData._id;
+
+      if (!projectData?.user_id) {
+        throw new Error('Entrepreneur ID is missing for this project.');
+      }
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/meetings`,
+        { project_id: projectId, investor_id: investorId, entrepreneur_id: projectData.user_id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.data) {
+        setIsShortlisted(true);
+        setMeetingId(response.data.data._id);
+        toast.success('Meeting request created successfully');
+      }
+      setError(null);
+    } catch (err) {
+      if (err.response?.status === 403) {
+        toast.error('Access forbidden. Please log in again.');
+        setError('Access forbidden. Please log in again or contact support.');
+      } else if (err.response?.status === 404) {
+        toast.error('Invalid project or user ID. Please contact support.');
+        setError('Invalid project or user ID.');
+      } else {
+        toast.error(err.response?.data?.message || 'Failed to create meeting request');
+        setError(err.response?.data?.message || 'Failed to create meeting');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelMeeting = async () => {
+    if (!isShortlisted || !meetingId) {
+      toast.info('No meeting to cancel');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No authentication token found. Please log in again.');
+      }
+
+      await axios.delete(`${API_BASE_URL}/api/cancel-meeting/${meetingId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setIsShortlisted(false);
+      setMeetingId(null);
+      toast.success('Meeting canceled successfully');
+      setError(null);
+    } catch (err) {
+      if (err.response?.status === 403) {
+        toast.error('Not authorized to cancel this meeting.');
+        setError('Not authorized to cancel this meeting.');
+      } else if (err.response?.status === 404) {
+        toast.error('Meeting not found.');
+        setError('Meeting not found.');
+      } else {
+        toast.error(err.response?.data?.message || 'Failed to cancel meeting');
+        setError(err.response?.data?.message || 'Failed to cancel meeting');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const defaultImage = "https://images.pexels.com/photos/3290068/pexels-photo-3290068.jpeg";
   const images = projectData?.project_images?.length
@@ -109,6 +234,14 @@ const ClientInvestorViewProject = () => {
         <div className="text-center p-8">
           <h2 className="text-2xl font-bold text-red-600">Error</h2>
           <p className="text-gray-600 mt-2">{error || 'Failed to load project data.'}</p>
+          {error?.includes('log in') && (
+            <button
+              onClick={() => window.location.href = '/login'}
+              className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Log In
+            </button>
+          )}
         </div>
       </div>
     );
@@ -118,13 +251,13 @@ const ClientInvestorViewProject = () => {
     { icon: <MapPin className="w-5 h-5" />, label: 'Location', value: `${projectData.city || 'N/A'}, ${projectData.state || 'N/A'}` },
     { icon: <Calendar className="w-5 h-5" />, label: 'Stage', value: projectData.project_stage || 'N/A' },
     { icon: <Briefcase className="w-5 h-5" />, label: 'Industry', value: projectData.project_industry || 'N/A' },
-    { icon: <DollarSign className="w-5 h-5" />, label: 'Investment', value: `$${projectData.min_investment || 'N/A'} - $${projectData.max_investment || 'N/A'}` },
+    { icon: '', label: 'Investment', value: `EGP ${projectData.min_investment || 'N/A'} - EGP ${projectData.max_investment || 'N/A'}` },
   ];
 
   const investmentData = [
-    { label: 'Min Investment', value: projectData.min_investment ? `$${projectData.min_investment}` : 'N/A', color: 'bg-blue-50' },
-    { label: 'Max Investment', value: projectData.max_investment ? `$${projectData.max_investment}` : 'N/A', color: 'bg-indigo-50' },
-    { label: 'Net Worth', value: projectData.networth ? `$${projectData.networth}` : 'N/A', color: 'bg-purple-50' },
+    { label: 'Min Investment', value: projectData.min_investment ? `EGP ${projectData.min_investment}` : 'N/A', color: 'bg-blue-50' },
+    { label: 'Max Investment', value: projectData.max_investment ? `EGP ${projectData.max_investment}` : 'N/A', color: 'bg-indigo-50' },
+    { label: 'Net Worth', value: projectData.networth ? `EGP ${projectData.networth}` : 'N/A', color: 'bg-purple-50' },
     {
       label: 'Deal Type',
       value: Array.isArray(projectData.deal_type)
@@ -209,15 +342,15 @@ const ClientInvestorViewProject = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="bg-blue-50 rounded-lg p-4">
                   <p className="text-sm text-gray-600">Min Investment</p>
-                  <p className="text-lg font-semibold">${projectData.min_investment || 'N/A'}</p>
+                  <p className="text-lg font-semibold">EGP{projectData.min_investment || 'N/A'}</p>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-4">
                   <p className="text-sm text-gray-600">Max Investment</p>
-                  <p className="text-lg font-semibold">${projectData.max_investment || 'N/A'}</p>
+                  <p className="text-lg font-semibold">EGP{projectData.max_investment || 'N/A'}</p>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-4">
                   <p className="text-sm text-gray-600">Net Worth</p>
-                  <p className="text-lg font-semibold">${projectData.networth || 'N/A'}</p>
+                  <p className="text-lg font-semibold">EGP{projectData.networth || 'N/A'}</p>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-4">
                   <p className="text-sm text-gray-600">Deal Type</p>
@@ -238,7 +371,6 @@ const ClientInvestorViewProject = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Project Header */}
       <div className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center mb-4">
@@ -271,13 +403,10 @@ const ClientInvestorViewProject = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4 py-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Project Gallery */}
               <div className="relative bg-white rounded-xl overflow-hidden shadow-sm group">
                 <div className="aspect-w-16 aspect-h-9 bg-gray-100">
                   {displayImages.map((image, index) => (
@@ -321,7 +450,7 @@ const ClientInvestorViewProject = () => {
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
                           className={`w-2 h-2 rounded-full transition-all ${
-                            index === currentImageIndex ? 'bg-white scale-125' : 'bg-White/50'
+                            index === currentImageIndex ? 'bg-white scale-125' : 'bg-white/50'
                           }`}
                         />
                       ))}
@@ -330,7 +459,6 @@ const ClientInvestorViewProject = () => {
                 )}
               </div>
 
-              {/* Project Tabs */}
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="flex border-b">
                   {tabs.map((tab) => (
@@ -351,11 +479,9 @@ const ClientInvestorViewProject = () => {
               </div>
             </div>
 
-            {/* Right Column */}
             <div className="space-y-6">
-              {/* Project Stats */}
               <div className="bg-white rounded-xl shadow-sm p-6">
-                <h3 className="text-xl font-semibold mb-4">Project Stats</h3>
+                <h3 className="text-xl font-semibold mb-4">Project Status</h3>
                 <div className="grid grid-cols-2 gap-4">
                   {projectStats.map((stat, index) => (
                     <div key={index} className="flex flex-col">
@@ -369,7 +495,6 @@ const ClientInvestorViewProject = () => {
                 </div>
               </div>
 
-              {/* Investment Details */}
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold">Investment</h3>
@@ -390,7 +515,7 @@ const ClientInvestorViewProject = () => {
                 </div>
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <div className="flex items-center text-gray-700 text-sm">
-                    <DollarSign className="w-5 h-5 mr-1" />
+                    {/* <DollarSign className="w-5 h-5 mr-1" /> */}
                     <span>
                       <span className="font-medium">Deal Type:</span>{' '}
                       {Array.isArray(projectData.deal_type)
@@ -401,7 +526,6 @@ const ClientInvestorViewProject = () => {
                 </div>
               </div>
 
-              {/* Team Section */}
               {projectData.team_members && projectData.team_members.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm p-6">
                   <h3 className="text-xl font-semibold mb-4">Team</h3>
@@ -443,7 +567,6 @@ const ClientInvestorViewProject = () => {
                 </div>
               )}
 
-              {/* Action Buttons */}
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <button
                   onClick={() => setIsInterested(!isInterested)}
@@ -459,25 +582,42 @@ const ClientInvestorViewProject = () => {
                   {isInterested ? 'Interested' : "I'm Interested"}
                 </button>
                 <button
-                  onClick={() => setIsShortlisted(!isShortlisted)}
-                  className={`w-full py-3 rounded-lg font-medium flex items-center justify-center transition-all ${
+                  onClick={handleRequestMeeting}
+                  disabled={loading || isShortlisted}
+                  className={`w-full mb-3 py-3 rounded-lg font-medium flex items-center justify-center transition-all ${
                     isShortlisted
                       ? 'bg-amber-100 text-amber-700'
+                      : loading
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
                   {isShortlisted ? (
                     <>
                       <StarOff className="w-5 h-5 mr-2" />
-                      Remove from Shortlist
+                      Meeting Requested
                     </>
                   ) : (
                     <>
                       <Star className="w-5 h-5 mr-2" />
-                      Add to Shortlist
+                      Request Meeting
                     </>
                   )}
                 </button>
+                {isShortlisted && (
+                  <button
+                    onClick={handleCancelMeeting}
+                    disabled={loading}
+                    className={`w-full py-3 rounded-lg font-medium flex items-center justify-center transition-all ${
+                      loading
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-red-100 text-red-700 hover:bg-red-200'
+                    }`}
+                  >
+                    <X className="w-5 h-5 mr-2" />
+                    Cancel Meeting
+                  </button>
+                )}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <div className="flex items-center justify-between">
                     <button className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">

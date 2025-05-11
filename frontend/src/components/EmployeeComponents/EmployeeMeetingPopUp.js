@@ -1,59 +1,104 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setMeetingData, setSelectedAuditor, setSlot1State, setSlot2State, resetSlots, closePopup } from '../../redux/meetingDataSlice';
+import { setMeetingData, setSelectedAuditor, setSlot1State, setSlot2State, resetSlots, closePopup, fetchMeetings } from '../../redux/meetingDataSlice';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useFunctions } from '../../useFunctions';
 
 function EmployeeMeetingPopUp() {
+  const {API_BASE_URL} = useFunctions();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [auditors, setAuditors] = useState([]);
   const [submissionError, setSubmissionError] = useState(null);
   const [savedSlots, setSavedSlots] = useState([]);
   const dispatch = useDispatch();
-  const { meetingData, selectedAuditor, slot1State, slot2State, isPopupOpen } = useSelector((state) => state.meetingData);
+  const { meetingData, selectedAuditor, selectedMeetingId, slot1State, slot2State, isPopupOpen } = useSelector((state) => state.meetingData);
+  const token = useSelector((state) => state.auth.token);
 
   const timelineHours = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00'];
   const timeSlots = [
     { time: '09:00-11:00', state: slot1State, setState: (state) => dispatch(setSlot1State(state)), startHour: '09:00' },
     { time: '12:00-14:00', state: slot2State, setState: (state) => dispatch(setSlot2State(state)), startHour: '12:00' },
   ];
-  const allowedDaysOfWeek = [1, 2, 3];
+  const allowedDaysOfWeek = [1, 2, 3]; // Monday, Tuesday, Wednesday
   const isDayAllowed = selectedDate && allowedDaysOfWeek.includes(selectedDate.getDay());
 
   useEffect(() => {
-    const dummyMeetings = [
-      {
-        _id: 'meeting1',
-        project_id: { title: 'Project Alpha' },
-        investor_id: { fullName: 'Investor 1' },
-        entrepreneur_id: { fullName: 'Entrepreneur 1' },
-        status: 'Requested',
-      },
-      {
-        _id: 'meeting2',
-        project_id: { title: 'Project Beta' },
-        investor_id: { fullName: 'Investor 2' },
-        entrepreneur_id: { fullName: 'Entrepreneur 2' },
-        status: 'Requested',
-      },
-    ];
-    dispatch(setMeetingData(dummyMeetings));
-  }, [dispatch]);
+    const fetchMeetings = async () => {
+      if (!token) {
+        setSubmissionError('Authentication token missing.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/meetings`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch meetings: ${response.statusText}`);
+        }
+
+        const { success, data } = await response.json();
+        if (success) {
+          dispatch(setMeetingData(data));
+        } else {
+          throw new Error('API returned unsuccessful response');
+        }
+      } catch (err) {
+        setSubmissionError(err.message);
+      }
+    };
+
+    fetchMeetings();
+  }, [dispatch, token]);
 
   useEffect(() => {
-    const dummyAuditors = [
-      { _id: 'auditor1', fullName: 'Auditor One' },
-      { _id: 'auditor2', fullName: 'Auditor Two' },
-    ];
-    const auditorOptions = dummyAuditors.map(auditor => ({
-      label: auditor.fullName,
-      value: auditor._id,
-    }));
-    setAuditors(auditorOptions);
-  }, []);
+    const fetchAuditors = async () => {
+      if (!token) {
+        setSubmissionError('Authentication token missing.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/staff/auditors`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch auditors: ${response.statusText}`);
+        }
+
+        const { success, data } = await response.json();
+        if (success) {
+          const auditorOptions = data.map(auditor => ({
+            label: auditor.fullName,
+            value: auditor._id,
+          }));
+          setAuditors(auditorOptions);
+        } else {
+          throw new Error('API returned unsuccessful response');
+        }
+      } catch (err) {
+        setSubmissionError(err.message);
+      }
+    };
+
+    fetchAuditors();
+  }, [token]);
+
+  useEffect(() => {
+    if (selectedMeetingId && meetingData.length > 0) {
+      setSelectedMeeting(selectedMeetingId);
+    }
+  }, [selectedMeetingId, meetingData]);
 
   useEffect(() => {
     dispatch(resetSlots());
@@ -112,7 +157,7 @@ function EmployeeMeetingPopUp() {
     setSavedSlots(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedMeeting) {
       setSubmissionError('Please select a meeting.');
@@ -126,14 +171,42 @@ function EmployeeMeetingPopUp() {
       setSubmissionError('Please save exactly 3 slots (one for Monday, Tuesday, and Wednesday).');
       return;
     }
-    const formData = {
-      meetingId: selectedMeeting,
-      auditor_id: selectedAuditor,
-      slots: savedSlots,
-    };
-    console.log('Form Submission Data:', formData);
-    alert('Auditor and slots assigned successfully!');
-    dispatch(closePopup());
+    if (!token) {
+      setSubmissionError('Authentication token missing.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/assign-auditor/${selectedMeeting}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          auditor_id: selectedAuditor,
+          slots: savedSlots.map(slot => ({
+            day: slot.day,
+            time: slot.time,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to assign auditor: ${response.statusText}`);
+      }
+
+      const { success, data } = await response.json();
+      if (success) {
+        alert('Auditor and slots assigned successfully!');
+        dispatch(fetchMeetings(token)); // Refresh meeting list
+        dispatch(closePopup());
+      } else {
+        throw new Error('API returned unsuccessful response');
+      }
+    } catch (err) {
+      setSubmissionError(err.message);
+    }
   };
 
   const getDayName = (date) => {
@@ -243,7 +316,7 @@ function EmployeeMeetingPopUp() {
                     id="meeting-select"
                     value={selectedMeeting}
                     options={meetingData.map(meeting => ({
-                      label: `Meeting ${meeting._id} (Project: ${meeting.project_id?.title || 'N/A'})`,
+                      label: `Meeting ${meeting._id} (Project: ${meeting.project_name || 'N/A'})`,
                       value: meeting._id,
                     }))}
                     onChange={(e) => setSelectedMeeting(e.value)}

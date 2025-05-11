@@ -1,202 +1,213 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import io from 'socket.io-client';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useEffect, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import Chat from "./Chat";
+import { fetchAdminsUsers, closeChatPopup, selectIsChatPopupOpen, selectSelectedUser } from "../../../redux/chatSlice";
 import { useFunctions } from "../../../useFunctions";
-import Chat from './Chat';
-import { fetchUsers } from '../../../redux/chatSlice';
+import { useSocket } from "./Hooks/useSocket";
+import { useMessages } from "./Hooks/useMessages";
+import { useSendChat } from "./Hooks/useSendChat";
+import { addNotification } from "../../../redux/chatSlice";
 
-// Initialize Socket.IO with production URL
-const socket = io.connect('https://idea-venture.agency', {
-  secure: true,
-  reconnection: true,
-  rejectUnauthorized: false // Optional: adjust based on your SSL setup
-});
-
-function ChatInterface() {
-  const { API_BASE_URL } = useFunctions();
+function ClientChatInterface() {
+  const { API_BASE_URL, updateMessages } = useFunctions();
   const dispatch = useDispatch();
-  const currentUserId = useSelector((state) => state.clientAuth?.clientData?._id);
-  const { users, loading, error, lastFetched } = useSelector((state) => state.chat);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
-  const [recentMessages, setRecentMessages] = useState(new Map());
-  const audioRef = useRef(null);
 
-  // Initialize audio
-  useEffect(() => {
-    if (!API_BASE_URL) {
-      console.warn("API_BASE_URL is not defined, skipping audio initialization");
-      return;
-    }
+  const clientAuth = useSelector(s => s.clientAuth || {});
+  const { clientData } = clientAuth;
+  const currentUserId = clientData?._id || null;
+  const currentUserRole = clientData?.role || null;
+  const currentUserData = clientData
+    ? { _id: clientData._id, fullName: clientData.fullName, image: clientData.image, role: clientData.role }
+    : null;
 
-    try {
-      audioRef.current = new Audio(`${API_BASE_URL}/sounds/notification.mp3`);
-      if (audioRef.current && typeof audioRef.current.load === 'function') {
-        audioRef.current.load().catch(err => console.error("Audio preload failed:", err));
-      } else {
-        console.warn("Audio object or load method is not available");
-      }
-    } catch (err) {
-      console.error("Failed to initialize audio:", err);
-    }
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, [API_BASE_URL]);
+  const isOpen = useSelector(selectIsChatPopupOpen);
+  const reduxUser = useSelector(selectSelectedUser);
+  const { users: allUsers, loading, error, lastFetched } = useSelector(s => s.chat);
 
   const getAllUsers = useCallback(() => {
-    if (!currentUserId) return;
-
-    const THIRTY_MINUTES = 30 * 60 * 1000;
-    const now = Date.now();
-
-    if (lastFetched && now - lastFetched < THIRTY_MINUTES) {
+    if (!currentUserId) {
+      console.log('getAllUsers: Skipping, no currentUserId');
       return;
     }
-
-    dispatch(fetchUsers({ API_BASE_URL }))
-      .unwrap()
-      .catch((err) => toast.error(err));
+    if (lastFetched && Date.now() - lastFetched < 30 * 60e3) {
+      console.log('getAllUsers: Skipping, recently fetched');
+      return;
+    }
+    console.log('getAllUsers: Dispatching fetchAdminsUsers');
+    dispatch(fetchAdminsUsers({ API_BASE_URL })).unwrap().catch(err => {
+      console.error('fetchAdminsUsers error:', err);
+    });
   }, [currentUserId, lastFetched, dispatch, API_BASE_URL]);
 
+  const { connectionError, handleReconnect, emitMessage } = useSocket({
+    currentUserId,
+    API_BASE_URL,
+    onMessageReceived: (data) => {
+      handleSocketMessage(data);
+      const senderUser = allUsers.find(u => u._id === data.sender);
+      dispatch(addNotification({
+        id: data.messageId || `msg-${Date.now()}`,
+        user: {
+          _id: data.sender,
+          fullName: senderUser?.fullName || data.senderName || 'Unknown',
+          image: senderUser?.image || data.senderImage || null,
+          role: senderUser?.role || data.senderRole || 'admin',
+        },
+        title: senderUser?.fullName || data.senderName || 'Unknown',
+        message: data.message.length > 50 ? `${data.message.substring(0, 50)}...` : data.message,
+        type: 'message',
+        timestamp: data.timestamp || Date.now(),
+        seen: false,
+      }));
+      getAllUsers();
+    },
+  });
+
+  const [selectedUser, setSelectedUser] = React.useState(null);
+  const {
+    messages,
+    setMessages,
+    recentMessages,
+    fetchHistory,
+    detectMissingUsers,
+    handleTemporaryUser,
+    handleSocketMessage,
+  } = useMessages({
+    API_BASE_URL,
+    currentUserId,
+    selectedUser,
+    allUsers,
+    onFetchUsers: getAllUsers,
+  });
+
+  const { inputMessage, setInputMessage, sendSocketMessage, sendEmailReply } = useSendChat({
+    API_BASE_URL,
+    updateMessages,
+    currentUserId,
+    currentUserData,
+    currentUserRole,
+    emitMessage,
+    onFetchUsers: getAllUsers,
+  });
+
+  const sidebarUsers = selectedUser?.isTemporary
+    ? [selectedUser, ...allUsers.filter(u => u._id !== selectedUser._id)]
+    : allUsers;
+
+  const users = sidebarUsers.filter(u => {
+    return messages.some(
+      m => (m.sender === u._id && m.receiver === currentUserId) || (m.receiver === u._id && m.sender === currentUserId)
+    ) && u._id !== currentUserId;
+  });
+
+  console.log('ClientChatInterface: users=', users.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
+  console.log('ClientChatInterface: messages=', messages.map(m => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })));
+
   useEffect(() => {
-    getAllUsers();
+    if (isOpen && reduxUser && reduxUser._id !== selectedUser?._id) {
+      console.log('Syncing selectedUser:', reduxUser);
+      setSelectedUser(reduxUser);
+    }
+  }, [isOpen, reduxUser, setSelectedUser, selectedUser?._id]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  useEffect(() => {
+    handleTemporaryUser();
+  }, [handleTemporaryUser]);
+
+  useEffect(() => {
+    detectMissingUsers();
+  }, [detectMissingUsers, messages]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getAllUsers();
+    }, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, [getAllUsers]);
 
   useEffect(() => {
-    if (!currentUserId) return;
-
-    socket.emit("join_room", currentUserId);
-
-    const handleNewMessage = (data) => {
-      if (data.sender !== currentUserId && data.playSound && audioRef.current) {
-        audioRef.current.play().catch(err => console.log("Audio play failed:", err));
-      }
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: prevMessages.length + 1,
-          sender: data.sender,
-          receiver: data.receiver,
-          text: data.message,
-          side: data.sender === currentUserId ? "right" : "left",
-          seen: data.sender === currentUserId,
-          timestamp: data.timestamp,
+    const timer = setTimeout(() => {
+      const dummyData = {
+        messageId: `dummy-${Date.now()}`,
+        sender: 'admin123',
+        receiver: currentUserId,
+        message: 'This is a test message from Admin',
+        senderName: 'Test Admin',
+        senderImage: null,
+        senderRole: 'admin',
+        timestamp: Date.now(),
+      };
+      handleSocketMessage(dummyData);
+      dispatch(addNotification({
+        id: dummyData.messageId,
+        user: {
+          _id: dummyData.sender,
+          fullName: dummyData.senderName,
+          image: dummyData.senderImage,
+          role: dummyData.senderRole,
         },
-      ]);
+        title: dummyData.senderName,
+        message: dummyData.message.length > 50 ? `${dummyData.message.substring(0, 50)}...` : dummyData.message,
+        type: 'message',
+        timestamp: dummyData.timestamp,
+        seen: false,
+      }));
+      getAllUsers();
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [currentUserId, handleSocketMessage, dispatch, getAllUsers]);
 
-      if (data.receiver === currentUserId) {
-        setRecentMessages((prev) => {
-          const newMap = new Map(prev);
-          newMap.set(data.sender, data.timestamp);
-          return newMap;
-        });
+  const sendChat = useCallback(async () => {
+    if (connectionError) {
+      return;
+    }
+    if (selectedUser?.isTemporary) {
+      const success = await sendEmailReply(selectedUser);
+      if (success) {
+        dispatch(closeChatPopup());
+      }
+    } else {
+      const newMessage = await sendSocketMessage(selectedUser);
+      if (newMessage) {
+        setMessages(prev => [...prev, newMessage]);
+        setInputMessage("");
         getAllUsers();
       }
-    };
-
-    socket.on("connect", () => {
-      console.log("Connected to Socket.IO server");
-    });
-
-    socket.on("receive_message", handleNewMessage);
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket.IO connection error:", error);
-      toast.error("Failed to connect to chat server");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from Socket.IO server");
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("receive_message", handleNewMessage);
-      socket.off("connect_error");
-      socket.off("disconnect");
-    };
-  }, [currentUserId, getAllUsers]);
-
-  const fetchMessages = useCallback(async () => {
-    if (!selectedUser || !currentUserId) return;
-
-    try {
-      const token = localStorage.getItem('authToken');
-      
-      await axios.put(
-        `${API_BASE_URL}/api/chats/mark-seen/${currentUserId}/${selectedUser._id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      const response = await axios.get(
-        `${API_BASE_URL}/api/chats/${currentUserId}/${selectedUser._id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      setMessages(
-        response.data.map((msg, index) => ({
-          id: index + 1,
-          sender: msg.sender,
-          receiver: msg.receiver,
-          text: msg.content,
-          side: msg.sender === currentUserId ? "right" : "left",
-          seen: msg.seen,
-          timestamp: msg.timestamp,
-        }))
-      );
-      
-      setRecentMessages(prev => {
-        const newMap = new Map(prev);
-        newMap.delete(selectedUser._id);
-        return newMap;
-      });
-      
-      getAllUsers();
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      toast.error("Failed to fetch messages");
     }
-  }, [API_BASE_URL, selectedUser, currentUserId, getAllUsers]);
+  }, [connectionError, selectedUser, sendEmailReply, sendSocketMessage, setMessages, setInputMessage, getAllUsers, dispatch]);
 
-  useEffect(() => {
-    fetchMessages();
-  }, [fetchMessages]);
+  if (!currentUserId || !currentUserData) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100 text-gray-700">
+        Loading user data... Please log in if this persists.
+      </div>
+    );
+  }
 
-  const sendChat = () => {
-    if (inputMessage.trim() && selectedUser && currentUserId) {
-      const now = Date.now();
-      socket.emit("send_message", {
-        sender: currentUserId,
-        receiver: selectedUser._id,
-        message: inputMessage,
-        timestamp: now,
-      });
-      setRecentMessages((prev) => {
-        const newMap = new Map(prev);
-        newMap.set(selectedUser._id, now);
-        return newMap;
-      });
-      setInputMessage("");
-      getAllUsers();
-    }
-  };
+  if (connectionError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-gray-700">
+        <p className="text-lg mb-4">{connectionError}</p>
+        <button
+          onClick={handleReconnect}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Try Reconnecting
+        </button>
+      </div>
+    );
+  }
 
-  const handleClose = () => setIsOpen(false);
+  console.log("users=", users, "messages=", messages, "inputMessage=", inputMessage, "selectedUser=", selectedUser);
 
   return (
     <Chat
       currentUserId={currentUserId}
+      currentUserData={currentUserData}
       isOpen={isOpen}
       users={users}
       loading={loading}
@@ -207,11 +218,11 @@ function ChatInterface() {
       inputMessage={inputMessage}
       setInputMessage={setInputMessage}
       sendChat={sendChat}
-      handleClose={handleClose}
+      handleClose={() => dispatch(closeChatPopup())}
       recentMessages={recentMessages}
       API_BASE_URL={API_BASE_URL}
     />
   );
 }
 
-export default ChatInterface;
+export default ClientChatInterface;

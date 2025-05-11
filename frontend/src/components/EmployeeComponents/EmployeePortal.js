@@ -16,6 +16,7 @@ import EmployeeProjectPopUp from './EmployeeProjectPopUp';
 import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
 import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
 import EmplployeeMain from '../EmployeeComponents/EmployeeMain';
+import EmployeeChatInterface from '../Common/Chat/EmployeeChatInterface';
 
 function EmployeePortal() {
   const staffData = useSelector((state) => state.staffData);
@@ -46,6 +47,7 @@ function EmployeePortal() {
       {isOpenStaff && <EmployeeDataPopUp typeStaff={typeStaff} initialStaffData={initialStaffData} />}
       {isOpenProject && <EmployeeProjectPopUp typeProject={typeProject} initialProjectData={initialProjectData} />}
       {isOpenClient && <EmployeeClientDataPopUp typeClient={typeClient} initialClientData={initialClientData} />}
+      <EmployeeChatInterface />
     </div>
   );
 }

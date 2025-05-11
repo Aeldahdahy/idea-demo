@@ -11,7 +11,7 @@ export const fetchUsers = createAsyncThunk(
         throw new Error('Authentication token is missing. Please sign in again.');
       }
 
-      const response = await axios.get(`${API_BASE_URL}/api/users/available`, {
+      const response = await axios.get(`${API_BASE_URL}/api/support`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

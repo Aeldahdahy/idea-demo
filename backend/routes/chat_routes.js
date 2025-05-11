@@ -14,7 +14,7 @@ router.post('/chats', chatController.postMessage);
 router.get('/users/recent', authenticateToken, chatController.getRecentUsers);
 
 // Get all available users to chat with
-router.get('/users/available', authenticateToken, verifyToken, chatController.getAllUsers);
+router.get('/support', authenticateToken, chatController.getAllUsers);
 
 // Get all messages for a specific investor & enturepreneur
 router.get('/admins/available', verifyToken, chatController.getInvestorEntrepreneurUsers);

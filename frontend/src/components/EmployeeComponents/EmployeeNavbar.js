@@ -1,74 +1,77 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux'; 
-import { jwtDecode } from 'jwt-decode';
-import { UserRound } from 'lucide-react';
-import { Dropdown } from 'flowbite-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { UserCircle, Inbox, User, ChevronDown } from 'lucide-react';
+import { openChatPopup, selectTotalUnreadCount } from '../../redux/chatSlice';
 
 function EmployeeNavbar() {
     const location = useLocation();
+    const dispatch = useDispatch();
     const [moduleName, setModuleName] = useState('');
-    const user = useSelector((state) => state.auth.token);
-    const decodedToken = jwtDecode(user);
-
-    const moduleNames = {
-        "/employee-portal/": "Dashboard",
-        "/employee-portal/manageStaff": "Manage Staff",
-        "/employee-portal/manageProject": "Projects",
-        "/employee-portal/manageMeetingRequest": "Meeting Requests",
-        "/employee-portal/manageContractRequest": "Contract Requests",
-        "/employee-portal/manageMessages": "Messages",
-        "/employee-portal/manageUsers": "Users",
-        "/employee-portal/manageMobileWeb": "Mobile App & Website",
-        "/employee-portal/manageAd": "Manage Advertisements",
-    };
+    const [isOpen, setIsOpen] = useState(false);
+    const { token, username } = useSelector((state) => state.auth);
+    const totalUnreadCount = useSelector(selectTotalUnreadCount);
 
     useEffect(() => {
-        setModuleName(moduleNames[location.pathname] || "Unknown Module");
+        const moduleNames = {
+            "/employee-portal/": "Dashboard",
+            "/employee-portal/manageStaff": "Manage Staff",
+            "/employee-portal/manageProject": "Projects",
+            "/employee-portal/manageMeetingRequest": "Meeting Requests",
+            "/employee-portal/manageContractRequest": "Contract Requests",
+            "/employee-portal/manageMessages": "Messages",
+            "/employee-portal/manageUsers": "Users",
+            "/employee-portal/manageMobileWeb": "Mobile App & Website",
+            "/employee-portal/manageAd": "Manage Advertisements",
+        };
+        setModuleName(moduleNames[location.pathname] || 'Unknown Module');
     }, [location.pathname]);
 
+    const handleOpenChat = () => {
+        dispatch(openChatPopup());
+        setIsOpen(false); // Close dropdown after clicking Inbox
+    };
+
     return (
-        <nav className="bg-white shadow-md p-4 flex justify-between items-center">
+        <nav className="bg-white shadow-lg p-4 flex justify-between items-center">
             {/* Module Name Section */}
-            <div className="text-2xl font-semibold text-gray-800">
+            <div className="text-2xl font-bold text-gray-900">
                 {moduleName}
             </div>
 
             {/* User Profile Section */}
             <div className="flex items-center space-x-4">
-                {user && (
-                    <Dropdown
-                        label={
-                            <div className="flex items-center space-x-2">
-                                {decodedToken.image ? (
-                                    <img
-                                        src={decodedToken.image}
-                                        alt="User"
-                                        className="w-10 h-10 rounded-full object-cover"
-                                    />
-                                    ) : (
-                                        <UserRound className="w-10 h-10" size={40} />
+                {token && (
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="flex items-center space-x-2 focus:outline-none"
+                        >
+                            <UserCircle className="w-10 h-10 text-gray-600" />
+                            <span className="text-sm text-gray-700">{username || 'User'}</span>
+                            <ChevronDown className="w-4 h-4 text-gray-600" />
+                        </button>
+                        {isOpen && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-md z-10">
+                                <div
+                                    className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={handleOpenChat}
+                                >
+                                    <Inbox className="w-5 h-5 text-gray-600" />
+                                    <span className="text-sm text-gray-700">Inbox</span>
+                                    {totalUnreadCount > 0 && (
+                                        <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-semibold text-white bg-red-500 rounded-full">
+                                            {totalUnreadCount}
+                                        </span>
                                     )}
                                 </div>
-                            }
-                        >
-                            <>
-                                <Dropdown.Item>
-                                    <span className="text-sm text-gray-700">
-                                        {decodedToken.username || 'Unknown User'}
-                                    </span>
-                                </Dropdown.Item>
-                                <Dropdown.Item>
-                                    <span className="text-sm text-gray-500">
-                                        {decodedToken.role || 'No Role Assigned'}
-                                    </span>
-                                </Dropdown.Item>
-                                <Dropdown.Divider />
-                                <Dropdown.Item>
-                                    <span className="text-sm text-red-600">Logout</span>
-                                </Dropdown.Item>
-                            </>
-                        </Dropdown>
+                                <div className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                    <User className="w-5 h-5 text-gray-600" />
+                                    <span className="text-sm text-gray-700">Profile</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
         </nav>

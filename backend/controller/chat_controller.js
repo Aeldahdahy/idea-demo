@@ -1,5 +1,29 @@
 const Chat = require('../modules/chat');
-const User = require('../modules/signup'); // Adjust path as needed
+const User = require('../modules/signup');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.zoho.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: 'idea.venture@idea-venture.agency',
+    pass: '3UzrwDDv4Ati',
+  },
+});
+
+// Middleware to check roles
+const checkRole = (allowedRoles) => async (req, res, next) => {
+  try {
+    const userRole = req.user.role || 'client';
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Role check failed', error: error.message });
+  }
+};
 
 // Get messages between two users
 exports.getMessages = async (req, res) => {
@@ -10,7 +34,7 @@ exports.getMessages = async (req, res) => {
         { sender: userId, receiver: otherUserId },
         { sender: otherUserId, receiver: userId },
       ],
-    }).sort({ timestamp: 1 }); // Sort by timestamp ascending
+    }).sort({ timestamp: 1 });
     res.status(200).json(messages);
   } catch (error) {
     console.error("Error fetching messages:", error);
@@ -39,9 +63,8 @@ exports.postMessage = async (req, res) => {
 // Get users with recent messages
 exports.getRecentUsers = async (req, res) => {
   try {
-    const currentUserId = req.user._id; // Assuming authenticateToken sets req.user
+    const currentUserId = req.user._id;
 
-    // Aggregate chats to find the latest message per user (sent or received)
     const recentChats = await Chat.aggregate([
       {
         $match: {
@@ -49,7 +72,7 @@ exports.getRecentUsers = async (req, res) => {
         },
       },
       {
-        $sort: { timestamp: -1 }, // Sort by timestamp descending
+        $sort: { timestamp: -1 },
       },
       {
         $group: {
@@ -65,14 +88,11 @@ exports.getRecentUsers = async (req, res) => {
       },
     ]);
 
-    // Map user IDs from recent chats
     const recentUserIds = recentChats.map((chat) => chat._id);
 
-    // Fetch user details (excluding the current user)
     const users = await User.find({ _id: { $nin: [currentUserId], $in: recentUserIds } })
       .select('fullName image');
 
-    // Add last message timestamp to each user
     const usersWithRecent = users.map((user) => {
       const recentChat = recentChats.find((chat) => chat._id.toString() === user._id.toString());
       return {
@@ -87,87 +107,98 @@ exports.getRecentUsers = async (req, res) => {
   }
 };
 
+// Get all available users to chat with
 exports.getAllUsers = async (req, res) => {
   try {
     const currentUserId = req.user._id;
-    
-    // Find all users except the current user
-    const users = await User.find({ _id: { $ne: currentUserId } })
-      .select('fullName image createdAt');
-    
-    // Find unread messages count for each user
+    const userRole = req.user.role || 'client';
+
+    console.log('getAllUsers: currentUserId=', currentUserId, 'userRole=', userRole);
+
+    let users;
+    if (userRole === 'Admin' || userRole === 'CS') {
+      // Admins and CS see all users
+      users = await User.find({ _id: { $ne: currentUserId } })
+        .select('fullName image createdAt role email');
+    } else {
+      // Others see only admins, employees, CS with message history
+      const chats = await Chat.find({
+        $or: [{ sender: currentUserId }, { receiver: currentUserId }],
+      }).distinct('sender receiver');
+      const chatUserIds = chats.filter(id => id !== currentUserId);
+      users = await User.find({
+        _id: { $in: chatUserIds },
+        role: { $in: ['Admin', 'employee', 'CS'] },
+      }).select('fullName image createdAt role email');
+    }
+
     const unreadCounts = await Chat.aggregate([
       {
         $match: {
           receiver: currentUserId,
-          seen: { $ne: true }
-        }
+          seen: { $ne: true },
+        },
       },
       {
         $group: {
           _id: '$sender',
-          count: { $sum: 1 }
-        }
-      }
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
-    // Find last received message time for each user
     const lastReceivedMessages = await Chat.aggregate([
       {
         $match: {
-          receiver: currentUserId
-        }
+          receiver: currentUserId,
+        },
       },
       {
-        $sort: { timestamp: -1 }
+        $sort: { timestamp: -1 },
       },
       {
         $group: {
           _id: '$sender',
           lastMessageTime: { $first: '$timestamp' },
-          lastMessageContent: { $first: '$content' }
-        }
-      }
+          lastMessageContent: { $first: '$content' },
+        },
+      },
     ]);
 
-    // Find last sent message time for each user (for users with no received messages)
     const lastSentMessages = await Chat.aggregate([
       {
         $match: {
-          sender: currentUserId
-        }
+          sender: currentUserId,
+        },
       },
       {
-        $sort: { timestamp: -1 }
+        $sort: { timestamp: -1 },
       },
       {
         $group: {
           _id: '$receiver',
           lastMessageTime: { $first: '$timestamp' },
-          lastMessageContent: { $first: '$content' }
-        }
-      }
+          lastMessageContent: { $first: '$content' },
+        },
+      },
     ]);
 
-    // Combine all data
-    const usersWithChatInfo = users.map(user => {
-      const unread = unreadCounts.find(u => u._id.toString() === user._id.toString());
-      const lastReceived = lastReceivedMessages.find(m => m._id.toString() === user._id.toString());
-      const lastSent = lastSentMessages.find(m => m._id.toString() === user._id.toString());
-      
-      // Use received message time if available, otherwise use sent message time
+    const usersWithChatInfo = users.map((user) => {
+      const unread = unreadCounts.find((u) => u._id.toString() === user._id.toString());
+      const lastReceived = lastReceivedMessages.find((m) => m._id.toString() === user._id.toString());
+      const lastSent = lastSentMessages.find((m) => m._id.toString() === user._id.toString());
+
       const lastMessageTime = lastReceived?.lastMessageTime || lastSent?.lastMessageTime || null;
       const lastMessageContent = lastReceived?.lastMessageContent || lastSent?.lastMessageContent || null;
-      
+
       return {
         ...user.toObject(),
         unreadCount: unread ? unread.count : 0,
         lastMessageTime,
-        lastMessageContent
+        lastMessageContent,
       };
     });
 
-    // Sort by last received message time (most recent first), then by unread count
     usersWithChatInfo.sort((a, b) => {
       if (a.lastMessageTime && b.lastMessageTime) {
         return b.lastMessageTime - a.lastMessageTime;
@@ -179,27 +210,70 @@ exports.getAllUsers = async (req, res) => {
 
     res.status(200).json({ success: true, data: usersWithChatInfo });
   } catch (error) {
+    console.error('Error fetching users:', error);
     res.status(500).json({ success: false, message: 'Error fetching users', error: error.message });
   }
 };
 
+// Mark messages as seen
 exports.markAsSeen = async (req, res) => {
   try {
     const { userId, otherUserId } = req.params;
-    
+
     await Chat.updateMany(
       {
         sender: otherUserId,
         receiver: userId,
-        seen: false
+        seen: false,
       },
       {
-        $set: { seen: true }
+        $set: { seen: true },
       }
     );
-    
+
     res.status(200).json({ success: true });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error marking messages as seen', error: error.message });
+  }
+};
+
+// Send email to non-existing user
+exports.sendEmail = async (req, res) => {
+  try {
+    const { email, message, reply } = req.body;
+    const userRole = req.user.role || 'client';
+
+    if (!['Admin', 'CS'].includes(userRole)) {
+      return res.status(403).json({ success: false, message: 'Only Admins or CS can send emails' });
+    }
+
+    if (!email || !message) {
+      return res.status(400).json({ success: false, message: 'Email and message are required' });
+    }
+
+    const mailOptions = {
+      from: 'idea.venture@idea-venture.agency',
+      to: email,
+      subject: 'Message from Idea Venture',
+      html: `
+        <div style="background:#f9fafb;padding:20px;border-radius:12px;border:1px solid #e5e7eb;max-width:480px;margin:auto;font-family:sans-serif;">
+          <h2 style="color:#111827;">📩 New Message</h2>
+          <p style="color:#374151;">You have received a message from Idea Venture:</p>
+          <div style="font-size:16px;color:#111827;margin:20px 0;">
+            <strong>Original Message:</strong><br>${message}
+            ${reply ? `<br><br><strong>Reply:</strong><br>${reply}` : ''}
+          </div>
+          <p style="color:#6b7280;">Please contact us at idea.venture@idea-venture.agency for further communication.</p>
+          <hr style="margin:24px 0;"/>
+          <p style="font-size:12px;color:#9ca3af;">If you believe this is an error, please ignore this email.</p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send email', error: error.message });
   }
 };

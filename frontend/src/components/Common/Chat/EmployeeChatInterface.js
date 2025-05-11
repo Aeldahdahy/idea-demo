@@ -2,7 +2,12 @@ import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import Chat from "./Chat";
-import { fetchUsers, closeChatPopup, selectIsChatPopupOpen, selectSelectedUser } from "../../../redux/chatSlice";
+import {
+  fetchUsers,
+  closeChatPopup,
+  selectIsChatPopupOpen,
+  selectSelectedUser,
+} from "../../../redux/chatSlice";
 import { useFunctions } from "../../../useFunctions";
 import { useSocket } from "./Hooks/useSocket";
 import { useMessages } from "./Hooks/useMessages";
@@ -13,7 +18,7 @@ function EmployeeChatInterface() {
   const dispatch = useDispatch();
 
   // Auth
-  const auth = useSelector(s => s.auth || {});
+  const auth = useSelector((s) => s.auth || {});
   const { userRole, user } = auth;
   const currentUserId = user?._id || null;
   const currentUserRole = userRole || null;
@@ -24,35 +29,38 @@ function EmployeeChatInterface() {
   // Redux chat state
   const isOpen = useSelector(selectIsChatPopupOpen);
   const reduxUser = useSelector(selectSelectedUser);
-  const { users: allUsers, loading, error, lastFetched } = useSelector(s => s.chat);
+  const { users: allUsers, loading, error, lastFetched } = useSelector((s) => s.chat);
 
   // Fetch users
   const getAllUsers = useCallback(() => {
     if (!currentUserId) {
-      console.log('getAllUsers: Skipping, no currentUserId');
+      console.log("getAllUsers: Skipping, no currentUserId");
       return;
     }
     if (lastFetched && Date.now() - lastFetched < 30 * 60e3) {
-      console.log('getAllUsers: Skipping, recently fetched');
+      console.log("getAllUsers: Skipping, recently fetched");
       return;
     }
-    console.log('getAllUsers: Dispatching fetchUsers');
-    dispatch(fetchUsers({ API_BASE_URL })).unwrap().catch(err => {
-      console.error('fetchUsers error:', err);
-      toast.error("Failed to fetch users");
-    });
+    console.log("getAllUsers: Dispatching fetchUsers");
+    dispatch(fetchUsers({ API_BASE_URL }))
+      .unwrap()
+      .then(() => console.log("fetchUsers: Success"))
+      .catch((err) => {
+        console.error("fetchUsers error:", err);
+        toast.error("Failed to fetch users");
+      });
   }, [currentUserId, lastFetched, dispatch, API_BASE_URL]);
 
   // Fetch users when chat popup opens
   useEffect(() => {
     if (isOpen && currentUserId) {
-      console.log('Chat popup opened, triggering getAllUsers');
+      console.log("Chat popup opened, triggering getAllUsers");
       getAllUsers();
     }
   }, [isOpen, currentUserId, getAllUsers]);
 
   // Socket hook
-  const { connectionError, handleReconnect, emitMessage } = useSocket({
+  const { socket, connectionError, handleReconnect, emitMessage } = useSocket({
     currentUserId,
     API_BASE_URL,
     onMessageReceived: (data) => {
@@ -92,23 +100,34 @@ function EmployeeChatInterface() {
 
   // Sidebar: inject temporary user first
   const sidebarUsers = selectedUser?.isTemporary
-    ? [selectedUser, ...allUsers.filter(u => u._id !== selectedUser._id)]
+    ? [selectedUser, ...allUsers.filter((u) => u._id !== selectedUser._id)]
     : allUsers;
 
   // Employees see all users
   const users = [...sidebarUsers].concat(currentUserData ? [currentUserData] : []);
 
-  // Debug users array
-  console.log('EmployeeChatInterface: users=', users.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
-  console.log('EmployeeChatInterface: messages=', messages.map(m => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })));
+  // Debug state
+  useEffect(() => {
+    console.log("EmployeeChatInterface State:", {
+      users: users.map((u) => ({ _id: u._id, fullName: u.fullName, role: u.role })),
+      messages: messages.map((m) => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })),
+      selectedUser,
+      isOpen,
+      reduxUser,
+      loading,
+      error,
+      connectionError,
+      socketConnected: socket?.connected,
+    });
+  }, [users, messages, selectedUser, isOpen, reduxUser, loading, error, connectionError, socket]);
 
   // Sync popup selection
   useEffect(() => {
     if (isOpen && reduxUser && reduxUser._id !== selectedUser?._id) {
-      console.log('Syncing selectedUser:', reduxUser);
+      console.log("Syncing selectedUser:", reduxUser);
       setSelectedUser(reduxUser);
     }
-  }, [isOpen, reduxUser, setSelectedUser, selectedUser?._id]);
+  }, [isOpen, reduxUser, selectedUser?._id]);
 
   // Fetch history and handle temporary users
   useEffect(() => {
@@ -130,6 +149,10 @@ function EmployeeChatInterface() {
       toast.error("Cannot send message: No connection to the chat server");
       return;
     }
+    if (!selectedUser) {
+      toast.error("No user selected for chat");
+      return;
+    }
     if (selectedUser?.isTemporary) {
       const success = await sendEmailReply(selectedUser);
       if (success) {
@@ -138,12 +161,21 @@ function EmployeeChatInterface() {
     } else {
       const newMessage = await sendSocketMessage(selectedUser);
       if (newMessage) {
-        setMessages(prev => [...prev, newMessage]);
+        setMessages((prev) => [...prev, newMessage]);
         setInputMessage("");
         getAllUsers();
       }
     }
-  }, [connectionError, selectedUser, sendEmailReply, sendSocketMessage, setMessages, setInputMessage, getAllUsers, dispatch]);
+  }, [
+    connectionError,
+    selectedUser,
+    sendEmailReply,
+    sendSocketMessage,
+    setMessages,
+    setInputMessage,
+    getAllUsers,
+    dispatch,
+  ]);
 
   // Render loading state if no valid user data
   if (!currentUserId || !currentUserData) {
@@ -154,15 +186,16 @@ function EmployeeChatInterface() {
     );
   }
 
-  if (connectionError) {
+  // Render error state for fetch users or socket failure
+  if (error || connectionError) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-gray-700">
-        <p className="text-lg mb-4">{connectionError}</p>
+        <p className="text-lg mb-4">{connectionError || `Failed to load chat users: ${error}`}</p>
         <button
-          onClick={handleReconnect}
+          onClick={connectionError ? handleReconnect : getAllUsers}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          Try Reconnecting
+          {connectionError ? "Try Reconnecting" : "Retry Loading Users"}
         </button>
       </div>
     );

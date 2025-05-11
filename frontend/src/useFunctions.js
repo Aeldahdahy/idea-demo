@@ -980,7 +980,10 @@ const getAllReviews = useCallback(async () => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-
+  
+    // Log updatedData to inspect
+    console.log('updatedData:', Object.fromEntries(updatedData));
+  
     // Optimistically update the staff status in the UI
     const updatedDataObject = {};
     updatedData.forEach((value, key) => {
@@ -995,7 +998,7 @@ const getAllReviews = useCallback(async () => {
         updatedDataObject[key] = value;
       }
     });
-
+  
     dispatch(
       setStaff(
         staff.map((s) =>
@@ -1003,14 +1006,25 @@ const getAllReviews = useCallback(async () => {
         )
       )
     );
-
+  
     try {
-      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, updatedData, {
+      // Ensure FormData is correctly populated
+      const formData = new FormData();
+      updatedData.forEach((value, key) => {
+        if (key === 'permissions' && Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value)); // Stringify arrays
+        } else {
+          formData.append(key, value);
+        }
+      });
+  
+      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
+  
       if (response.status !== 200) {
         throw new Error('Failed to update staff');
       }

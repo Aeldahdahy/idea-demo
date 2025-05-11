@@ -7,7 +7,7 @@ function loadItem(key, defaultValue = null) {
 }
 
 // Helper to safely load JSON from localStorage, with fallback
-function loadJSONItem(key, defaultValue = []) {
+function loadJSONItem(key, defaultValue = null) {
   const raw = localStorage.getItem(key);
   if (raw === null) return defaultValue;
   try {
@@ -24,10 +24,7 @@ const initialState = {
   username: loadItem('username'),
   role: loadItem('portalType'),      // e.g., 'employee'
   userRole: loadItem('userRole'),   // e.g., 'Admin'
-  id: loadItem('userId'),
-  fullName: loadItem('fullName'),
-  email: loadItem('email'),
-  image: loadItem('image'),
+  user: loadJSONItem('user', null), // Store user object with _id, fullName, etc.
   permissions: loadJSONItem('permissions', []),
   status: loadItem('status'),
 };
@@ -50,12 +47,38 @@ const authSlice = createSlice({
         status,
       } = action.payload;
 
+      // Construct user object
+      const user = {
+        _id: id,
+        fullName,
+        email,
+        image,
+      };
+
       console.log('authSlice.login: payload=', {
+        token,
+        username,
         role,
         userRole,
-        id,
-        email,
+        user,
+        permissions,
+        status,
       });
+
+      // Clear all existing auth-related keys from localStorage
+      [
+        'authToken',
+        'username',
+        'portalType',
+        'userRole',
+        'userId',
+        'fullName',
+        'email',
+        'image',
+        'permissions',
+        'status',
+        'user',
+      ].forEach((key) => localStorage.removeItem(key));
 
       // Update state
       state.isAuthenticated = true;
@@ -63,11 +86,8 @@ const authSlice = createSlice({
       state.username = username;
       state.role = role;
       state.userRole = userRole;
-      state.id = id;
-      state.fullName = fullName;
-      state.email = email;
-      state.image = image;
-      state.permissions = permissions;
+      state.user = user;
+      state.permissions = permissions || [];
       state.status = status;
 
       // Persist to localStorage
@@ -75,12 +95,20 @@ const authSlice = createSlice({
       localStorage.setItem('username', username);
       localStorage.setItem('portalType', role);
       localStorage.setItem('userRole', userRole);
-      localStorage.setItem('userId', id);
-      localStorage.setItem('fullName', fullName);
-      localStorage.setItem('email', email);
-      localStorage.setItem('image', image);
-      localStorage.setItem('permissions', JSON.stringify(permissions));
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('permissions', JSON.stringify(permissions || []));
       localStorage.setItem('status', status);
+
+      // Debug localStorage contents
+      console.log('authSlice.login: localStorage=', {
+        authToken: localStorage.getItem('authToken'),
+        username: localStorage.getItem('username'),
+        portalType: localStorage.getItem('portalType'),
+        userRole: localStorage.getItem('userRole'),
+        user: localStorage.getItem('user'),
+        permissions: localStorage.getItem('permissions'),
+        status: localStorage.getItem('status'),
+      });
     },
     logout: (state) => {
       // Reset state values
@@ -90,10 +118,7 @@ const authSlice = createSlice({
         username: null,
         role: null,
         userRole: null,
-        id: null,
-        fullName: null,
-        email: null,
-        image: null,
+        user: null,
         permissions: [],
         status: null,
       });
@@ -110,7 +135,11 @@ const authSlice = createSlice({
         'image',
         'permissions',
         'status',
+        'user',
       ].forEach((key) => localStorage.removeItem(key));
+
+      // Debug localStorage after logout
+      console.log('authSlice.logout: localStorage cleared');
     },
   },
 });

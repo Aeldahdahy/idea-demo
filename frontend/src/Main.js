@@ -17,7 +17,7 @@ import Fundraising from './components/Common/Fundraising';
 import Invest from './components/Common/Invest';
 // import PopUpConfirmationOk from './components/Common/PopUpConfirmationOk';
 // import PopUpConfirmationYesNo from './components/Common/PopUpConfirmationYesNo';
-import ChatInterface from './components/Common/Chat/ChatInterface';
+// import ChatInterface from './components/Common/Chat/ChatInterface';
 
 // Employee Portal components
 import EmployeePortal from './components/EmployeeComponents/EmployeePortal';
@@ -91,7 +91,7 @@ function Main() {
       {/* <PopUpConfirmationOk />
       <PopUpConfirmationYesNo /> */}
       <ToastContainer />
-      <ChatInterface />
+      {/* <ChatInterface /> */}
     </>
   );
 }

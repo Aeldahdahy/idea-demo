@@ -94,11 +94,14 @@ function ClientChatInterface() {
     ? [selectedUser, ...allUsers.filter(u => u._id !== selectedUser._id)]
     : allUsers;
 
-  const users = sidebarUsers.filter(u => {
-    return messages.some(
-      m => (m.sender === u._id && m.receiver === currentUserId) || (m.receiver === u._id && m.sender === currentUserId)
-    ) && u._id !== currentUserId;
-  });
+  const users = [
+    ...sidebarUsers.filter(u => {
+      const hasSentMessage = messages.some(
+        m => m.sender === u._id && m.receiver === currentUserId
+      );
+      return hasSentMessage || u._id === currentUserId;
+    }),
+  ].concat(currentUserData ? [currentUserData] : []);
 
   console.log('ClientChatInterface: users=', users.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
   console.log('ClientChatInterface: messages=', messages.map(m => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })));

@@ -1,29 +1,32 @@
 import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import Chat from "./Chat";
-import { fetchAdminsUsers, closeChatPopup, selectIsChatPopupOpen, selectSelectedUser } from "../../../redux/chatSlice";
+import { fetchUsers, closeChatPopup, selectIsChatPopupOpen, selectSelectedUser } from "../../../redux/chatSlice";
 import { useFunctions } from "../../../useFunctions";
 import { useSocket } from "./Hooks/useSocket";
 import { useMessages } from "./Hooks/useMessages";
 import { useSendChat } from "./Hooks/useSendChat";
-import { addNotification } from "../../../redux/chatSlice";
 
-function ClientChatInterface() {
+function EmployeeChatInterface() {
   const { API_BASE_URL, updateMessages } = useFunctions();
   const dispatch = useDispatch();
 
-  const clientAuth = useSelector(s => s.clientAuth || {});
-  const { clientData } = clientAuth;
-  const currentUserId = clientData?._id || null;
-  const currentUserRole = clientData?.role || null;
-  const currentUserData = clientData
-    ? { _id: clientData._id, fullName: clientData.fullName, image: clientData.image, role: clientData.role }
+  // Auth
+  const auth = useSelector(s => s.auth || {});
+  const { userRole, user } = auth;
+  const currentUserId = user?._id || null;
+  const currentUserRole = userRole || null;
+  const currentUserData = user
+    ? { _id: user._id, fullName: user.fullName, image: user.image, role: userRole }
     : null;
 
+  // Redux chat state
   const isOpen = useSelector(selectIsChatPopupOpen);
   const reduxUser = useSelector(selectSelectedUser);
   const { users: allUsers, loading, error, lastFetched } = useSelector(s => s.chat);
 
+  // Fetch users
   const getAllUsers = useCallback(() => {
     if (!currentUserId) {
       console.log('getAllUsers: Skipping, no currentUserId');
@@ -33,36 +36,32 @@ function ClientChatInterface() {
       console.log('getAllUsers: Skipping, recently fetched');
       return;
     }
-    console.log('getAllUsers: Dispatching fetchAdminsUsers');
-    dispatch(fetchAdminsUsers({ API_BASE_URL })).unwrap().catch(err => {
-      console.error('fetchAdminsUsers error:', err);
+    console.log('getAllUsers: Dispatching fetchUsers');
+    dispatch(fetchUsers({ API_BASE_URL })).unwrap().catch(err => {
+      console.error('fetchUsers error:', err);
+      toast.error("Failed to fetch users");
     });
   }, [currentUserId, lastFetched, dispatch, API_BASE_URL]);
 
+  // Fetch users when chat popup opens
+  useEffect(() => {
+    if (isOpen && currentUserId) {
+      console.log('Chat popup opened, triggering getAllUsers');
+      getAllUsers();
+    }
+  }, [isOpen, currentUserId, getAllUsers]);
+
+  // Socket hook
   const { connectionError, handleReconnect, emitMessage } = useSocket({
     currentUserId,
     API_BASE_URL,
     onMessageReceived: (data) => {
       handleSocketMessage(data);
-      const senderUser = allUsers.find(u => u._id === data.sender);
-      dispatch(addNotification({
-        id: data.messageId || `msg-${Date.now()}`,
-        user: {
-          _id: data.sender,
-          fullName: senderUser?.fullName || data.senderName || 'Unknown',
-          image: senderUser?.image || data.senderImage || null,
-          role: senderUser?.role || data.senderRole || 'admin',
-        },
-        title: senderUser?.fullName || data.senderName || 'Unknown',
-        message: data.message.length > 50 ? `${data.message.substring(0, 50)}...` : data.message,
-        type: 'message',
-        timestamp: data.timestamp || Date.now(),
-        seen: false,
-      }));
-      getAllUsers();
+      getAllUsers(); // Refresh users on new message
     },
   });
 
+  // Messages hook
   const [selectedUser, setSelectedUser] = React.useState(null);
   const {
     messages,
@@ -80,6 +79,7 @@ function ClientChatInterface() {
     onFetchUsers: getAllUsers,
   });
 
+  // Send chat hook
   const { inputMessage, setInputMessage, sendSocketMessage, sendEmailReply } = useSendChat({
     API_BASE_URL,
     updateMessages,
@@ -90,19 +90,19 @@ function ClientChatInterface() {
     onFetchUsers: getAllUsers,
   });
 
+  // Sidebar: inject temporary user first
   const sidebarUsers = selectedUser?.isTemporary
     ? [selectedUser, ...allUsers.filter(u => u._id !== selectedUser._id)]
     : allUsers;
 
-  const users = sidebarUsers.filter(u => {
-    return messages.some(
-      m => (m.sender === u._id && m.receiver === currentUserId) || (m.receiver === u._id && m.sender === currentUserId)
-    ) && u._id !== currentUserId;
-  });
+  // Employees see all users
+  const users = [...sidebarUsers].concat(currentUserData ? [currentUserData] : []);
 
-  console.log('ClientChatInterface: users=', users.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
-  console.log('ClientChatInterface: messages=', messages.map(m => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })));
+  // Debug users array
+  console.log('EmployeeChatInterface: users=', users.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
+  console.log('EmployeeChatInterface: messages=', messages.map(m => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })));
 
+  // Sync popup selection
   useEffect(() => {
     if (isOpen && reduxUser && reduxUser._id !== selectedUser?._id) {
       console.log('Syncing selectedUser:', reduxUser);
@@ -110,6 +110,7 @@ function ClientChatInterface() {
     }
   }, [isOpen, reduxUser, setSelectedUser, selectedUser?._id]);
 
+  // Fetch history and handle temporary users
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory]);
@@ -118,51 +119,15 @@ function ClientChatInterface() {
     handleTemporaryUser();
   }, [handleTemporaryUser]);
 
+  // Detect missing users
   useEffect(() => {
     detectMissingUsers();
-  }, [detectMissingUsers, messages]);
+  }, [detectMissingUsers]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getAllUsers();
-    }, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [getAllUsers]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const dummyData = {
-        messageId: `dummy-${Date.now()}`,
-        sender: 'admin123',
-        receiver: currentUserId,
-        message: 'This is a test message from Admin',
-        senderName: 'Test Admin',
-        senderImage: null,
-        senderRole: 'admin',
-        timestamp: Date.now(),
-      };
-      handleSocketMessage(dummyData);
-      dispatch(addNotification({
-        id: dummyData.messageId,
-        user: {
-          _id: dummyData.sender,
-          fullName: dummyData.senderName,
-          image: dummyData.senderImage,
-          role: dummyData.senderRole,
-        },
-        title: dummyData.senderName,
-        message: dummyData.message.length > 50 ? `${dummyData.message.substring(0, 50)}...` : dummyData.message,
-        type: 'message',
-        timestamp: dummyData.timestamp,
-        seen: false,
-      }));
-      getAllUsers();
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [currentUserId, handleSocketMessage, dispatch, getAllUsers]);
-
+  // Handle send chat
   const sendChat = useCallback(async () => {
     if (connectionError) {
+      toast.error("Cannot send message: No connection to the chat server");
       return;
     }
     if (selectedUser?.isTemporary) {
@@ -180,6 +145,7 @@ function ClientChatInterface() {
     }
   }, [connectionError, selectedUser, sendEmailReply, sendSocketMessage, setMessages, setInputMessage, getAllUsers, dispatch]);
 
+  // Render loading state if no valid user data
   if (!currentUserId || !currentUserData) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100 text-gray-700">
@@ -202,8 +168,6 @@ function ClientChatInterface() {
     );
   }
 
-  console.log("users=", users, "messages=", messages, "inputMessage=", inputMessage, "selectedUser=", selectedUser);
-
   return (
     <Chat
       currentUserId={currentUserId}
@@ -225,4 +189,4 @@ function ClientChatInterface() {
   );
 }
 
-export default ClientChatInterface;
+export default EmployeeChatInterface;

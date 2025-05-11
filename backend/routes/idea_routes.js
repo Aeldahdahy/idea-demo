@@ -41,7 +41,11 @@ const { createStaff,
    getAllMeetings,
    getMeetingById,
    cancelMeeting,
-   getMeetingStatus } = require('../controller/staffController');
+   getMeetingStatus,
+   getInvestorMeetings,
+   getUserByID,
+   getAllAuditors
+  } = require('../controller/staffController');
 const { authenticateToken, isAdmin } = require('../middleWare/middleWare');
 const userImageUploads = require('../middleWare/userImageUploads');
 const staffImageUploads = require('../middleWare/staffImageUploads'); // Import multer middleware
@@ -62,6 +66,9 @@ router.post('/staff/login', loginStaff);
 
 // Get all staff members (Admin only)
 router.get('/staff', authenticateToken, isAdmin, getAllStaff);
+
+// Get all auditors (Admin only)
+router.get('/staff/auditors', authenticateToken, getAllAuditors);
 
 // Get a single staff member by ID (Admin only)
 router.get('/staff/:staffId', authenticateToken, isAdmin, getStaffById);
@@ -87,13 +94,17 @@ router.get('/projectBeforLogin', getAllProjects);
 // Get a single project by ID (Admin only)
 router.get('/projects/:projectId', authenticateToken, getProjectById);
 
+// Get a singel user by ID (Admin only)
+router.get('/users/:userID', authenticateToken, getUserByID);
+
 // Step 1: Investor requests a meeting
-router.post('/create-meeting', authenticateToken, createMeeting);
+router.post('/meetings', authenticateToken, createMeeting);
+
 // step 1.5: Entrepreneur cancels a meeting
 router.delete('/cancel-meeting/:meetingId', authenticateToken, cancelMeeting);
 
 // Step 2: Admin assigns an auditor and generates 3 slots
-router.put('/assign-auditor/:meetingId', authenticateToken, isAdmin, assignAuditor);
+router.put('/assign-auditor/:meetingId', authenticateToken, assignAuditor);
 
 // Step 3: Investor selects 2 slots
 router.put('/investor-select/:meetingId', authenticateToken, validateMeetingSlots, investorSelectSlots);
@@ -105,10 +116,14 @@ router.put('/entrepreneur-confirm/:meetingId', authenticateToken, validateMeetin
 router.get('/meetings', authenticateToken, getAllMeetings);
 
 // Route to get a meeting by ID
-router.get('/meetings/:id', getMeetingById);
+router.get('/meetings/:id', authenticateToken, getMeetingById);
 
 // Route to get meeting status
 router.get('/meeting/status/:project_id/:investor_id/:entrepreneur_id', authenticateToken, getMeetingStatus);
+
+// Route to get investor's meetings
+router.get('/investor-meetings', authenticateToken, getInvestorMeetings);
+
 
 // -----------------------------------------------------------------------------------> client portal <-----------------------------------------------------------------------------------
 

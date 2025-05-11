@@ -577,18 +577,49 @@ const getAllReviews = useCallback(async () => {
       if (response.status === 200) {
         const { token } = response.data;
         localStorage.setItem('authToken', token);
-  
+        
         const decodedToken = jwtDecode(token);
+        console.log(decodedToken);
         console.log('Decoded Token:', decodedToken);
   
         if (decodedToken && decodedToken.id) {
-          localStorage.setItem('userId', decodedToken.id);
-          localStorage.setItem('userName', decodedToken.username);
-          localStorage.setItem('userRole', decodedToken.role);
-          localStorage.setItem('hasAccessedPortal', 'true');
-          localStorage.setItem('portalType', 'employee');
-  
-          dispatch(login({ token, role: 'employee' }));
+          const {
+            id,
+            username,
+            role: userRole, // actual role like 'Admin'
+            fullName,
+            email,
+            image,
+            permissions,
+            status,
+          } = decodedToken;
+        
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('userId', id);
+          localStorage.setItem('username', username);
+          localStorage.setItem('portalType', 'employee'); // access point
+          localStorage.setItem('userRole', userRole); // actual user role
+          localStorage.setItem('fullName', fullName);
+          localStorage.setItem('email', email);
+          localStorage.setItem('image', image);
+          localStorage.setItem('permissions', JSON.stringify(permissions));
+          localStorage.setItem('status', status);
+        
+          dispatch(
+            login({
+              token,
+              username,
+              role: 'employee',
+              userRole,
+              id,
+              fullName,
+              email,
+              image,
+              permissions,
+              status,
+            })
+          );
+        
           setTokenExpiration();
           navigate('/employee-portal/');
           toast.success('Login successfully!');
@@ -949,7 +980,10 @@ const getAllReviews = useCallback(async () => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
-
+  
+    // Log updatedData to inspect
+    console.log('updatedData:', Object.fromEntries(updatedData));
+  
     // Optimistically update the staff status in the UI
     const updatedDataObject = {};
     updatedData.forEach((value, key) => {
@@ -964,7 +998,7 @@ const getAllReviews = useCallback(async () => {
         updatedDataObject[key] = value;
       }
     });
-
+  
     dispatch(
       setStaff(
         staff.map((s) =>
@@ -972,14 +1006,25 @@ const getAllReviews = useCallback(async () => {
         )
       )
     );
-
+  
     try {
-      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, updatedData, {
+      // Ensure FormData is correctly populated
+      const formData = new FormData();
+      updatedData.forEach((value, key) => {
+        if (key === 'permissions' && Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value)); // Stringify arrays
+        } else {
+          formData.append(key, value);
+        }
+      });
+  
+      const response = await axios.put(`${API_BASE_URL}/api/staff/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
+  
       if (response.status !== 200) {
         throw new Error('Failed to update staff');
       }
@@ -1217,7 +1262,7 @@ const getAllReviews = useCallback(async () => {
       console.error('Create project error:', err);
       let errorMessage = 'An error occurred. Please try again.';
       if (err.code === 'ERR_NETWORK') {
-        // errorMessage = 'Cannot connect to the server. Please check if the server is running on.';
+        // errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
       } else if (err.response) {
         errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
       }

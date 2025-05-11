@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { useFunctions } from '../useFunctions';
 
 // Async thunk to fetch meetings
 export const fetchMeetings = createAsyncThunk(
   'meetingData/fetchMeetings',
   async (token, { rejectWithValue }) => {
-    const {API_BASE_URL} = useFunctions();
     try {
-      const response = await fetch(`${API_BASE_URL}/api/meetings`, {
+      const response = await fetch('https://idea-venture.agency/api/meetings', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

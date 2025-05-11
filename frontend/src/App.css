@@ -69,6 +69,10 @@ nav.hidden-nav {
   transform: translateY(-100%);
 }
 
+.hidelogo{
+z-index: 100001;
+}
+
 .nav-link,
 .LogoName,
 .user-icon {

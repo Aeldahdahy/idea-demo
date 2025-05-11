@@ -125,7 +125,7 @@ function ClientInvestorPreferences() {
             industries: formData.industries
           }
         };
-        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:7030';
+        const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://idea-venture.agency';
         const response = await updateUsers(userId, updatedData, null, {
           dispatch,
           setLoading: (value) => dispatch(setLoading(value)),

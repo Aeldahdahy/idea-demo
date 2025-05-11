@@ -5,10 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { openPopup, setSelectedMeetingId } from '../../redux/meetingDataSlice';
 import MeetingTable from './Meeting/MeetingTables';
 import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
-import { useFunctions } from '../../useFunctions';
 
 const EmployeeManageMeeting = () => {
-  const {API_BASE_URL} = useFunctions();
   const [search, setSearch] = useState('');
   const [selectedRequests, setSelectedRequests] = useState([]);
   const [selectedInvestorResponses, setSelectedInvestorResponses] = useState([]);
@@ -43,7 +41,7 @@ const EmployeeManageMeeting = () => {
           console.log('Fetch timeout triggered');
           controller.abort();
         }, 10000);
-        const response = await fetch(`${API_BASE_URL}/api/meetings`, {
+        const response = await fetch('https://idea-venture.agency/api/meetings', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

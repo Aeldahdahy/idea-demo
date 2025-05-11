@@ -11,7 +11,7 @@ const setUsers = (users) => ({
   payload: users,
 });
 
-const socket = io.connect('http://127.0.0.1:7030');
+const socket = io.connect('https://idea-venture.agency');
 
 const ChatInterface = () => {
   const { API_BASE_URL } = useFunctions();

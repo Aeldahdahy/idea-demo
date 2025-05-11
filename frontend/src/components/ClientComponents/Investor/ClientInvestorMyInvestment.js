@@ -8,7 +8,7 @@ function ClientInvestorMyInvestment() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:7030';
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://idea-venture.agency';
 
   // Fetch investor meetings
   const fetchMeetings = async () => {

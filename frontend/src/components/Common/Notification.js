@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import { setSelectedUser, openChatPopup, selectTotalUnreadCount, updateUnreadCount } from "../../redux/chatSlice";
 import { toast } from 'react-toastify';
 
-const SOCKET_URL = "http://127.0.0.1:7030";
+const SOCKET_URL = 'https://idea-venture.agency';
 
 const Notification = ({ isAuthenticated, isFixed, isVisible, API_BASE_URL }) => {
   const dispatch = useDispatch();

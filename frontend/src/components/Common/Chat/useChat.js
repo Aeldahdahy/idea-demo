@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { fetchUsers, closeChatPopup } from "../../../redux/chatSlice";
 
-const SOCKET_URL = "https://idea-venture.agency";
+const SOCKET_URL = 'https://idea-venture.agency';
 
 export const useChat = ({ API_BASE_URL, updateMessages, currentUserId, currentUserData, currentUserRole }) => {
   const dispatch = useDispatch();

@@ -5,10 +5,8 @@ import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { useFunctions } from '../../useFunctions';
 
 function EmployeeMeetingPopUp() {
-  const {API_BASE_URL} = useFunctions();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [auditors, setAuditors] = useState([]);
@@ -34,7 +32,7 @@ function EmployeeMeetingPopUp() {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/meetings`, {
+        const response = await fetch('https://idea-venture.agency/api/meetings', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -66,7 +64,7 @@ function EmployeeMeetingPopUp() {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/staff/auditors`, {
+        const response = await fetch('https://idea-venture.agency/api/staff/auditors', {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -177,7 +175,7 @@ function EmployeeMeetingPopUp() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/assign-auditor/${selectedMeeting}`, {
+      const response = await fetch(`https://idea-venture.agency/api/assign-auditor/${selectedMeeting}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

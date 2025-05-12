@@ -33,9 +33,9 @@ const createStaff = async (req, res) => {
       }
 
       // Validate email format
-      if (!/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-          return res.status(400).json({ success: false, message: 'Invalid email format' });
-      }
+      if (!/^[\w\.-]+@[\w-]+(\.[\w-]+)*\.[\w-]{2,}$/.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email format' });
+    }
 
       // Validate phone number
       if (!/^[0-9]{10,15}$/.test(phone)) {
@@ -99,7 +99,17 @@ const loginStaff = async (req, res) => {
           return res.status(403).json({ message: 'Access denied. User is inactive.' });
         }
 
-        const token = jwt.sign({ id: staff._id, role: staff.role, username: staff.username }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ 
+          id: staff._id,
+          fullName: staff.fullName,
+          username: staff.username,
+          email: staff.email,
+          role: staff.role, 
+          permissions: staff.permissions,
+          image: staff.image,
+          status: staff.status,
+        }, JWT_SECRET, { expiresIn: '1h' });
+        
         res.status(200).json({ token });
     } catch (error) {
       res.status(500).json({ message: 'Server error!' });
@@ -135,110 +145,173 @@ const getStaffById = async (req, res) => {
 
 // Update Staff 
 const updateStaff = async (req, res) => {
-    try {
-      const { staffId } = req.params;
-      let { fullName, email, username, phone, password, role, permissions, status } = req.body;
-  
-      // Find staff member
-      const staff = await Staff.findById(staffId);
-      if (!staff) {
-        return res.status(404).json({ success: false, message: 'Staff member not found' });
+  try {
+    const { staffId } = req.params;
+    let { fullName, email, username, phone, password, role, permissions, status } = req.body;
+
+    // Validate staffId
+    if (!mongoose.isValidObjectId(staffId)) {
+      return res.status(400).json({ success: false, message: 'Invalid staff ID' });
+    }
+
+    // Find staff member
+    const staff = await Staff.findById(staffId);
+    if (!staff) {
+      return res.status(404).json({ success: false, message: 'Staff member not found' });
+    }
+
+    // Check for email uniqueness if email is being updated
+    if (email && email !== staff.email) {
+      const existingEmail = await Staff.findOne({ email });
+      if (existingEmail) {
+        return res.status(400).json({ success: false, message: 'Email already in use' });
       }
-  
-      // Handle image upload (retain existing image if no new upload)
-      const image = req.files?.image ? req.files.image[0].path : staff.image;
-  
-      // Validate role
-      const validRoles = ['Admin', 'Auditor', 'Cs', 'Employee'];
-      if (role && !validRoles.includes(role)) {
-        return res.status(400).json({ success: false, message: 'Invalid role provided' });
-      }
-  
       // Validate email format
-      if (email && !/^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      if (!/^[\w\.-]+@[\w-]+(\.[\w-]+)*\.[\w-]{2,}$/.test(email)) {
         return res.status(400).json({ success: false, message: 'Invalid email format' });
       }
-  
-      // Validate phone number
-      if (phone && !/^[0-9]{10,15}$/.test(phone)) {
-        return res.status(400).json({ success: false, message: 'Invalid phone number format' });
-      }
-  
-      // Parse permissions if it's a string
-      if (typeof permissions === 'string') {
-        try {
-          permissions = JSON.parse(permissions);
-        } catch (error) {
-          return res.status(400).json({ success: false, message: 'Invalid permissions format: must be a valid JSON array' });
-        }
-      }
-  
-      // Validate permissions
-      const validPermissions = [
-        'Manage Staff',
-        'Manage Projects',
-        'Schedule Meetings',
-        'Manage Contracts',
-        'Manage Support Requests',
-        'Manage Users',
-        'Manage Web & App',
-        'Manage Advertisements',
-      ];
-      if (permissions && (!Array.isArray(permissions) || permissions.some((p) => !validPermissions.includes(p)))) {
-        return res.status(400).json({ success: false, message: 'Invalid permissions provided' });
-      }
-  
-      // Hash password if provided
-      if (password) {
-        const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash(password, salt);
-      }
-  
-      // Create update object
-      const updateData = {};
-      if (fullName) updateData.fullName = fullName;
-      if (email) updateData.email = email;
-      if (username) updateData.username = username;
-      if (phone) updateData.phone = phone;
-      if (password) updateData.password = password;
-      if (role) updateData.role = role;
-      if (permissions) updateData.permissions = permissions;
-      if (status) updateData.status = status;
-      if (image !== staff.image) updateData.image = image; // Only update if changed
-  
-      // Update staff member
-      const updatedStaff = await Staff.findByIdAndUpdate(
-        staffId,
-        { $set: updateData },
-        { new: true, runValidators: true }
-      );
-  
-      res.status(200).json({ success: true, message: 'Staff data updated successfully', data: updatedStaff });
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Error updating staff data', error: error.message });
     }
-  };
+
+    // Handle image upload
+    const image = req.files?.image ? req.files.image[0].path : staff.image;
+
+    // Validate role
+    const validRoles = ['Admin', 'Auditor', 'Cs', 'Employee'];
+    if (role && !validRoles.includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role provided' });
+    }
+
+    // Validate phone number
+    if (phone && !/^[0-9]{10,15}$/.test(phone)) {
+      return res.status(400).json({ success: false, message: 'Invalid phone number format' });
+    }
+
+    // Parse permissions if it's a string
+    if (typeof permissions === 'string') {
+      try {
+        permissions = JSON.parse(permissions);
+      } catch (error) {
+        return res.status(400).json({ success: false, message: 'Invalid permissions format: must be a valid JSON array' });
+      }
+    }
+
+    // Validate permissions
+    const validPermissions = [
+      'Manage Staff',
+      'Manage Projects',
+      'Schedule Meetings',
+      'Manage Contracts',
+      'Manage Support Requests',
+      'Manage Users',
+      'Manage Web & App',
+      'Manage Advertisements',
+    ];
+    if (permissions && (!Array.isArray(permissions) || permissions.some((p) => !validPermissions.includes(p)))) {
+      return res.status(400).json({ success: false, message: 'Invalid permissions provided' });
+    }
+
+    // Hash password if provided
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      password = await bcrypt.hash(password, salt);
+    }
+
+    // Create update object
+    const updateData = {};
+    if (fullName) updateData.fullName = fullName;
+    if (email && email !== staff.email) updateData.email = email; // Only update if changed
+    if (username) updateData.username = username;
+    if (phone) updateData.phone = phone;
+    if (password) updateData.password = password;
+    if (role) updateData.role = role;
+    if (permissions) updateData.permissions = permissions;
+    if (status) updateData.status = status;
+    if (image !== staff.image) updateData.image = image;
+
+    // Update staff member
+    const updatedStaff = await Staff.findByIdAndUpdate(
+      staffId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({ success: true, message: 'Staff data updated successfully', data: updatedStaff });
+  } catch (error) {
+    console.error('Update Staff Error:', error); // Log full error
+    res.status(500).json({ success: false, message: 'Error updating staff data', error: error.message });
+  }
+};
 
 
 // Step 1: Investor requests a meeting
 const createMeeting = async (req, res) => {
   try {
-    const { project_id, entrepreneur_id } = req.body;
-    const investor_id = req.user.user.id;
-    console.log(investor_id);
-    console.log(project_id);
-    console.log(entrepreneur_id);
+    const { project_id, investor_id, entrepreneur_id } = req.body;
 
-    const newMeeting = new Meeting({
+    // Validate required fields
+    if (!project_id || !investor_id || !entrepreneur_id) {
+      return res.status(400).json({ success: false, message: 'Project ID, Investor ID, and Entrepreneur ID are required' });
+    }
+
+    // Validate project_id
+    const project = await Project.findById(project_id);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    // Validate investor_id
+    const investor = await User.findById(investor_id);
+    if (!investor || investor.role !== 'investor') {
+      return res.status(404).json({ success: false, message: 'Valid investor not found' });
+    }
+
+    // Validate entrepreneur_id
+    const entrepreneur = await User.findById(entrepreneur_id);
+    if (!entrepreneur || entrepreneur.role !== 'entrepreneur') {
+      return res.status(404).json({ success: false, message: 'Valid entrepreneur not found' });
+    }
+
+    // Check for existing meeting
+    const existingMeeting = await Meeting.findOne({
       project_id,
       investor_id,
       entrepreneur_id,
+      status: { $nin: ['Cancelled', 'Completed'] }
+    });
+    if (existingMeeting) {
+      return res.status(400).json({ success: false, message: 'Meeting request already exists' });
+    }
+
+    // Create meeting
+    const meeting = new Meeting({
+      project_id,
+      investor_id,
+      entrepreneur_id,
+      status: 'Requested',
+      investor_selected_slots: [],
+      available_slots: [],
     });
 
-    await newMeeting.save();
-    res.status(201).json({ success: true, data: newMeeting });
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Error creating meeting', error: err.message });
+    await meeting.save();
+    res.status(201).json({ success: true, data: meeting });
+  } catch (error) {
+    console.error('Error creating meeting:', error.message);
+    res.status(500).json({ success: false, message: 'Error creating meeting', error: error.message });
+  }
+};
+
+// New endpoint: Get meetings for the logged-in investor
+const getInvestorMeetings = async (req, res) => {
+  try {
+    const investor_id = req.user.user.id;
+
+    const meetings = await Meeting.find({ investor_id })
+      .populate('project_id')
+      .populate('entrepreneur_id', 'fullName email');
+
+    res.status(200).json({ success: true, data: meetings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching investor meetings', error: error.message });
   }
 };
 
@@ -412,9 +485,30 @@ const entrepreneurConfirmSlot = async (req, res) => {
 // Get all meetings
 const getAllMeetings = async (req, res) => {
   try {
-    const meetings = await Meeting.find(); // Fetch all meetings from the database
-    res.status(200).json({ success: true, data: meetings });
+    const meetings = await Meeting.find()
+      .populate('project_id', 'project_name')
+      .populate('investor_id', 'fullName email')
+      .populate('entrepreneur_id', 'fullName')
+      .populate('auditor_id', 'fullName')
+      .lean();
+
+    // Transform data to handle missing references
+    const transformedMeetings = meetings.map((meeting) => ({
+      ...meeting,
+      project_id: meeting.project_id?._id || meeting.project_id,
+      project_name: meeting.project_id?.project_name || `Unknown Project-${String(meeting.project_id).slice(-6)}`,
+      investor_id: meeting.investor_id?._id || meeting.investor_id,
+      investor_name: meeting.investor_id?.fullName || `Unknown Investor-${String(meeting.investor_id).slice(-6)}`,
+      investor_email: meeting.investor_id?.email || `unknown-${String(meeting.investor_id).slice(-6)}@example.com`,
+      entrepreneur_id: meeting.entrepreneur_id?._id || meeting.entrepreneur_id,
+      entrepreneur_name: meeting.entrepreneur_id?.fullName || `Unknown Entrepreneur-${String(meeting.entrepreneur_id).slice(-6)}`,
+      auditor_id: meeting.auditor_id?._id || null,
+      auditor_name: meeting.auditor_id?.fullName || 'No Auditor',
+    }));
+
+    res.status(200).json({ success: true, data: transformedMeetings });
   } catch (error) {
+    console.error('Error fetching meetings:', error.message);
     res.status(500).json({ success: false, message: 'Error fetching meetings', error: error.message });
   }
 };
@@ -436,8 +530,31 @@ const getMeetingById = async (req, res) => {
 };
 
 
+const getUserByID = async (req, res) =>{
+  try {
+    const {id} = req.params;
+    const user = await User.findById(id);
+
+    if(!user){
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.status(200).json({success: true, data: user});
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching user', error: error.message });
+  }
+}
 
 
+// Get all auditors
+const getAllAuditors = async (req, res) => {
+  try {
+    const auditors = await Staff.find({ role: 'Auditor' }); // Fetch only staff with role 'Auditor'
+    res.status(200).json({ success: true, data: auditors });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching auditors', error: error.message });
+  }
+};
 
 module.exports = 
 { 
@@ -454,4 +571,7 @@ module.exports =
     getMeetingById,
     cancelMeeting,
     getMeetingStatus,
+    getInvestorMeetings,
+    getUserByID,
+    getAllAuditors
 };

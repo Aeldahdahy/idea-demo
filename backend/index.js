@@ -1,18 +1,18 @@
 const express = require("express");
 const app = express();
-const db_connection = require("./config/db");
-const bodyParser = require("body-parser");
-const ideaRoutes = require("./routes/idea_routes");
-const chatRoutes = require("./routes/chat_routes");
-const cors = require("cors");
-const session = require("express-session");
-const MongoStore = require("connect-mongo");
-const mongoose = require("mongoose");
-const path = require("path");
-const http = require("http");
-const { Server } = require("socket.io");
-const Chat = require("./modules/chat");
-const Staff = require("./modules/staff");
+const db_connection = require('./config/db');
+const bodyParser = require('body-parser');
+const ideaRoutes = require('./routes/idea_routes');
+const chatRoutes = require('./routes/chat_routes');
+const cors = require('cors');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const mongoose = require('mongoose');
+const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+const Chat = require('./modules/chat'); 
+const Staff = require('./modules/staff');
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
 app.use("/sounds", express.static("public/sounds"));
 
 const hostname = "0.0.0.0";
-const port = process.env.PORT || 7030;
+const port = process.env.PORT;
 
 // Redirect root to /idea-demo
 app.get("/", (req, res) => {

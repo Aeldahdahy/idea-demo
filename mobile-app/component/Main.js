@@ -25,8 +25,8 @@ export default function Main() {
         return (
           <View style={{ flex: 1, width: "100%" }}>
             <WebView
-              source={{ uri: "http://192.168.1.26:7020/#/client-portal/clientSignForm" }}
-              // source={{ uri: "https://idea-venture.agency/idea-demo/#/client-portal/clientSignForm" }}
+              // source={{ uri: "http://192.168.1.26:7020/#/client-portal/clientSignForm" }}
+              source={{ uri: "https://idea-venture.agency/idea-demo/#/client-portal/clientSignForm" }}
               style={{ flex: 1 }}
               onError={(syntheticEvent) => {
                 const { nativeEvent } = syntheticEvent;

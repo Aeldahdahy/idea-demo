@@ -86,7 +86,7 @@ export default function OnBoarding({ onComplete }) {
             <Pressable style={styles.rectangleParent} onPress={handleNext}>
                 <View style={styles.groupChild} />
                 <Text style={styles.next}>
-                    {currentPage === 5 ? 'Go to Sign In' : 'Next'}  {/* Change text on the last page */}
+                    {currentPage === 5 ? 'Register Now' : 'Next'}  {/* Change text on the last page */}
                 </Text>
             </Pressable>
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ActivityIndicator, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { WebView } from "react-native-webview";
 import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
@@ -8,35 +8,25 @@ import { useFunctions } from "../useFunctions";
 import { Color, FontSize, FontFamily } from "../GlobalStyles";
 
 export default function Main() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3); // Start with SignUp
 
   const { loading } = useFunctions();
+
+  const handleWebViewMessage = (event) => {
+    const message = event.nativeEvent.data;
+    if (message === "navigateToSignUp") {
+      setStep(3); // Navigate to SignUp form in mobile app
+    }
+  };
 
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
-          <SignIn
-            onForgetPassword={() => setStep(2)}
-            onSignUp={() => setStep(3)}
-            onViewWebsite={() => setStep(4)}
-          />
-        );
-      case 2:
-        return <ForgetPassword onSignIn={() => setStep(1)} />;
-      case 3:
-        return <SignUp onSignIn={() => setStep(1)} />;
-      case 4:
-        return (
           <View style={{ flex: 1, width: "100%" }}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => setStep(1)}
-            >
-              <Text style={styles.backButtonText}>Back to Sign In</Text>
-            </TouchableOpacity>
             <WebView
-              source={{ uri: "https://idea-venture.agency" }}
+              source={{ uri: "http://192.168.1.26:7020/#/client-portal/clientSignForm" }}
+              // source={{ uri: "https://idea-venture.agency/idea-demo/#/client-portal/clientSignForm" }}
               style={{ flex: 1 }}
               onError={(syntheticEvent) => {
                 const { nativeEvent } = syntheticEvent;
@@ -54,8 +44,21 @@ export default function Main() {
                   style={{ flex: 1 }}
                 />
               )}
+              onMessage={handleWebViewMessage}
             />
           </View>
+        );
+      case 2:
+        return <ForgetPassword onSignIn={() => setStep(1)} />;
+      case 3:
+        return <SignUp onSignIn={() => setStep(1)} />;
+      case 4:
+        return (
+          <SignIn
+            onForgetPassword={() => setStep(2)}
+            onSignUp={() => setStep(3)}
+            onViewWebsite={() => setStep(1)}
+          />
         );
       default:
         return null;

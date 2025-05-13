@@ -101,10 +101,10 @@ export default function RegisterForm({
             <TouchableOpacity style={styles.createAccountButton} onPress={handleCreateAccount}>
               <Text style={styles.createAccountText}>Create Account</Text>
             </TouchableOpacity>
-            <Text style={styles.orText}>Or register with</Text>
+            {/* <Text style={styles.orText}>Or register with</Text>
             <View style={styles.socialIcons}>
               <Image style={styles.socialIcon} resizeMode="cover" source={require("../assets/google.png")} />
-            </View>
+            </View> */}
           </View>
         )}
       </ScrollView>

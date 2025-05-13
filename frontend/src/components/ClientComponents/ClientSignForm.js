@@ -3,22 +3,22 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import LogImage from '../../assets/log.svg';
 import RegisterImage from '../../assets/register.svg';
-// import Logo from '../../assets/idea.png';
 
 import SignInForm from './SignInForm';
 import SignUpForm from './SignUpForm';
 
-
 library.add(fas);
-
-
-
 
 function ClientSignForm() {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
 
   const handleSignUpClick = () => {
-    setIsSignUpMode(true);
+    // Post message to WebView to navigate to mobile app's SignUp form
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage("navigateToSignUp");
+    } else {
+      setIsSignUpMode(true); // Fallback to web app's SignUp form
+    }
   };
 
   const handleSignInClick = () => {
@@ -36,10 +36,8 @@ function ClientSignForm() {
       <div className="panels-container">
         <div className="panel left-panel">
           <div className="content">
-            <h3> Do not have an account?</h3>
-            <p>
-             {/*  */}
-            </p>
+            <h3>Do not have an account?</h3>
+            <p></p>
             <button className="btn transparent" id="sign-up-btn" onClick={handleSignUpClick}>
               Sign up
             </button>
@@ -49,9 +47,7 @@ function ClientSignForm() {
         <div className="panel right-panel">
           <div className="content">
             <h3>Already have an account?</h3>
-            <p>
-              {/*  */}
-            </p>
+            <p></p>
             <button className="btn transparent" id="sign-in-btn" onClick={handleSignInClick}>
               Sign in
             </button>

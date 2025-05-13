@@ -10,6 +10,8 @@ library.add(fas);
 
 function NavUser({ isAuthenticated, role, clientRole }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { signOutDistroySession, API_BASE_URL } = useFunctions();
   const clientData = useSelector((state) => state.clientAuth.clientData); 
   const userImage = clientData?.image ? `${API_BASE_URL}/Uploads/user_images/${clientData.image}` : null; 
@@ -33,7 +35,7 @@ function NavUser({ isAuthenticated, role, clientRole }) {
   };
 
   const handleSignOut = () => {
-    signOutDistroySession();
+    signOutDistroySession(setLoading, setError);
     toggleDropdown();
   };
 

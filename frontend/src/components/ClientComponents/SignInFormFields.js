@@ -53,13 +53,13 @@ function SignInFormFields({
       <p className="forgot-pass">
         <Link to="#" onClick={handleForgotPassword}>Forgot Password?</Link>
       </p>
-      <p className="social-text">Or Sign in with social platforms</p>
-      <div className="social-media">
+      {/* <p className="social-text">Or Sign in with social platforms</p> */}
+      {/* <div className="social-media">
         <Link to="#" className="social-icon" >
           <FontAwesomeIcon icon={['fab', 'google']} />
           Sign-in with Gmail
         </Link>
-      </div>
+      </div> */}
     </form>
   );
 }

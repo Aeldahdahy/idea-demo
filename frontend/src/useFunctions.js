@@ -10,7 +10,7 @@ import { setStaff } from './redux/staffSlice';
 import { setProject } from './redux/projectSlice';
 import { setClientAuth } from './redux/clientAuthSlice'; // Import the action to set client auth data
 import { toast } from 'react-toastify';
-import { updateClientData } from './redux/clientAuthSlice'; // Import the action to update client data
+import { updateClientData, clearClientAuth } from './redux/clientAuthSlice'; // Import the action to update client data
 
 
 
@@ -559,10 +559,14 @@ const getAllReviews = useCallback(async () => {
   };
 
   const setTokenExpiration = () => {
-    setTimeout(() => {
-      dispatch(logout());
-      navigate('/');
-    }, 18000000); // 5 hour in milliseconds
+    if (window.ReactNativeWebView) { 
+        window.ReactNativeWebView.postMessage(JSON.stringify({ action: 'logout' }));
+    } else {
+        setTimeout(() => {
+          dispatch(logout());
+          navigate('/');
+        }, 18000000); // 5 hour in milliseconds
+      }
   };
 
   const StaffSignIn = async (formData) => {
@@ -724,27 +728,32 @@ const getAllReviews = useCallback(async () => {
   };
   
   // sign out
-  const signOutDistroySession = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post(`${API_BASE_URL}/api/signout`);
-      console.log(response.data);
-  
-      // Clear local storage
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userFullName');
-      localStorage.removeItem('username');
-      localStorage.removeItem('hasAccessedPortal'); // Remove portal access flag
-      navigate('/'); 
-      dispatch(logout());
-      toast.success('Signed out successfully!');
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An error occurred. please try again later.';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
+  const signOutDistroySession = async (setLoading, setError) => {
+   if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(JSON.stringify({ action: 'logout' }));
+    } else {
+      setLoading(true); // Error: setLoading is not a function
+      setError(null);
+        try {
+          const response = await axios.post(`${API_BASE_URL}/api/signout`);
+          console.log(response.data);
+
+          // Clear local storage
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userFullName');
+          localStorage.removeItem('username');
+          localStorage.removeItem('hasAccessedPortal'); // Remove portal access flag
+          navigate('/');
+          dispatch(logout());
+          dispatch(clearClientAuth()); // Clear clientAuth state
+          toast.success('Signed out successfully!');
+        } catch (error) {
+          const errorMessage = error.response?.data?.message || 'An error occurred. please try again later.';
+          setError(errorMessage);
+          toast.error(errorMessage);
+        } finally {
+          setLoading(false);
+        }
     }
   };
 

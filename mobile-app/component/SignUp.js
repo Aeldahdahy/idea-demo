@@ -1,11 +1,11 @@
-import React, { useState,useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator, Alert, TouchableOpacity, Text } from 'react-native';
 import RegisterForm from './RegisterForm';
 import Identity from './Identity';
 import OtpVerification from './OtpVerification';
 import Success from './Success';
 import { useFunctions } from '../useFunctions';
-import { Color } from '../GlobalStyles';
+import { Color, FontSize, FontFamily } from '../GlobalStyles';
 
 export default function SignUp({ onSignIn }) {
     const [step, setStep] = useState(1);
@@ -17,8 +17,6 @@ export default function SignUp({ onSignIn }) {
     const [role, setRole] = useState("");
     const [timer, setTimer] = useState(180); 
     const [isTimerActive, setIsTimerActive] = useState(true);
-
-
 
     const formData = {
         email,
@@ -75,7 +73,6 @@ export default function SignUp({ onSignIn }) {
         setError(null);
         setTimer(180);
 
-    
         const formData = { email, fullName, password, role }; 
     
         try {
@@ -91,7 +88,6 @@ export default function SignUp({ onSignIn }) {
                 Alert.alert('Sign-Up Error', errorMessage);
             }
         } catch (error) {
-            // Detailed error logging (useful for debugging)
             console.error("Sign-Up Error:", error);
     
             errorMessage = error.message || 'Failed to create account. Please check your connection and try again.';
@@ -102,7 +98,6 @@ export default function SignUp({ onSignIn }) {
         }
     };
    
-    // Handle OTP verification
     const handleVerifyOtp = async () => {
         const combinedOtp = otp.join('');
     
@@ -118,14 +113,13 @@ export default function SignUp({ onSignIn }) {
             const result = await verifyOtp(formData, combinedOtp);
     
             if (result.success) {
-                setStep(4); // Move to the next step after successful OTP verification
-            }  else {
+                setStep(4);
+            } else {
                 const errorMessage = result.message || 'Failed to verify OTP. Please try again.';
                 setError(errorMessage);
                 Alert.alert(result.message.includes('Invalid OTP') ? 'Invalid OTP' : 'Error', errorMessage);
             }
         } catch (error) {
-            // Fallback error handling
             console.error("OTP Verification Error:", error);
     
             const errorMessage = error.message || 'Failed to verify OTP. Please check your connection and try again.';
@@ -136,14 +130,10 @@ export default function SignUp({ onSignIn }) {
         }
     };
     
-    
-    // Handle OTP resend
     const handleResendOtp = async () => {
         setLoading(true);
         setError(null);
         setTimer(180);
-
-        
 
         try {
             console.log("Email before resending OTP:", email);
@@ -151,7 +141,6 @@ export default function SignUp({ onSignIn }) {
             const result = await resendOtp(email);
     
             if (result.success) {
-                // Timer should already be set inside resendOtp
                 console.log('OTP resend successful');
             } else {
                 const errorMessage = result.message || 'Failed to resend OTP. Please try again.';
@@ -159,7 +148,6 @@ export default function SignUp({ onSignIn }) {
                 Alert.alert('Resend OTP Error', errorMessage);
             }
         } catch (error) {
-            // Detailed error logging
             console.error("Resend OTP Error:", error);
     
             const errorMessage = error.message || 'Failed to resend OTP. Please check your connection and try again.';
@@ -170,17 +158,26 @@ export default function SignUp({ onSignIn }) {
         }
     };
 
-    // Render component based on current step
     const renderStep = () => {
         switch (step) {
             case 1:
                 return (
-                    <Identity
-                        onBack={onSignIn}
-                        role={role}
-                        setRole={setRole}
-                        handlePress={handlePress}
-                    />
+                    <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
+                        <Identity
+                            onBack={onSignIn}
+                            role={role}
+                            setRole={setRole}
+                            handlePress={handlePress}
+                        />
+                        <TouchableOpacity
+                            style={styles.signInButton}
+                            onPress={onSignIn}
+                        >
+                            <Text style={styles.signInButtonText}>
+                                Already have an account? Sign in
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 );
             case 2:
                 return (
@@ -238,13 +235,22 @@ export default function SignUp({ onSignIn }) {
     );
 }
 
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        width:"100%",
+        width: "100%",
         alignItems: 'center',
         backgroundColor: Color.colorWhite,
         justifyContent: 'center',
+    },
+    signInButton: {
+        marginTop: 20,
+        padding: 10,
+    },
+    signInButtonText: {
+        color: Color.colorMidnightblue,
+        fontFamily: FontFamily.signikaRegular,
+        fontSize: FontSize.size_base,
+        textAlign: "center",
     },
 });

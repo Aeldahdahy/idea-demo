@@ -1,5 +1,5 @@
 // Navbar.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 // import SearchBox from '../Common/SearchBox';
 // import LanguageSelector from './LanguageSelector';
 import NavigationLinks from './NavigationLinks';
@@ -12,20 +12,46 @@ import Notification from './Notification';
 function NavBar({ isAuthenticated, role, clientRole, onSignInClick }) {
   const { isFixed, isVisible, toggleSideBar, sideBarVisible } = useFunctions();
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 870);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 870);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Set initial value
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <>
       <nav className={`${isFixed ? 'fixed-nav' : ''} ${!isVisible ? 'hidden-nav' : ''}`}>
         <div className='spacemin'></div>
         <div className='logoSearchLangUserNav'>
           <Logo />
-          <div className='navSearchLangUser'>
-            {/* <SearchBox /> */}
-            {/* <LanguageSelector /> */}
+          {isMobile ? (
             <Notification 
               isAuthenticated={isAuthenticated}
               isFixed={isFixed}
               isVisible={isVisible}
             />
+          ) : null}
+          <div className='navSearchLangUser'>
+            {/* <SearchBox /> */}
+            {/* <LanguageSelector /> */}
+            {!isMobile ? (
+              <Notification 
+                isAuthenticated={isAuthenticated}
+                isFixed={isFixed}
+                isVisible={isVisible}
+              />
+            ) : null}
             <NavUser
               isAuthenticated={isAuthenticated}
               role={role}

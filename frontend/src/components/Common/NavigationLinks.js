@@ -17,8 +17,6 @@ function NavigationLinks({ isAuthenticated, role, clientRole }) {
   const investorLinks = [
     { to: '/client-portal/investor', label: 'Home' },
     { to: '/client-portal/investor/myInvestments', label: 'My Investments' },
-    // { to: '/client-portal/investor/viewProject' },
-    { to: '/client-portal/investor/messages', label: 'Messages' },
     { to: '/client-portal/investor/stories', label: 'Blogs' },
     { to: '/client-portal/investor/about', label: 'About Us' },
     { to: '/client-portal/investor/contact', label: 'Contact Us' },
@@ -28,7 +26,6 @@ function NavigationLinks({ isAuthenticated, role, clientRole }) {
   const entrepreneurLinks = [
     { to: '/client-portal/entrepreneur', label: 'Home' },
     { to: '/client-portal/entrepreneur/myProjects', label: 'My Projects' },
-    { to: '/client-portal/entrepreneur/messages', label: 'Messages' },
     { to: '/client-portal/entrepreneur/stories', label: 'Blogs' },
     { to: '/client-portal/entrepreneur/about', label: 'About Us' },
     { to: '/client-portal/entrepreneur/contact', label: 'Contact Us' },

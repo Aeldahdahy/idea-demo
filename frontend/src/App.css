@@ -48,6 +48,9 @@ h6 {
 
 
 /* Main Navigation bar */
+.navbarbutton{
+  display: none;
+}
 
 nav {
   position: static;
@@ -478,7 +481,7 @@ z-index: 100001;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  margin-bottom: 20%;
+  /* margin-bottom: 20%; */
 }
 
 .SideBarLangUser {
@@ -2050,19 +2053,19 @@ small {
     justify-content: center;
   }
 
-  .dropdownMenu {
+  /* .dropdownMenu {
     top: -5em;
     right: -1em;
-  }
+  } */
 
   .dropdown {
     top: -5.3em;
     right: -2.5em;
   }
 
-  .navUser .dropdownMenu {
+  /* .navUser .dropdownMenu {
     top: -5em;
-  }
+  } */
 
   .footerContainer {
     display: flex;
@@ -2199,6 +2202,13 @@ small {
   .SignContainer.sign-up-mode .signin-signup {
     top: 5%;
     transform: translate(-50%, 0);
+  }
+
+  .navbarbutton{
+    display: block !important;
+  }
+  .notificationResponsiveView{
+    margin-right: 65px;
   }
 }
 

@@ -16,6 +16,9 @@ export const useFunctions = () => {
   const [formError, setFormError] = useState({});
   const [backendError, setBackendError] = useState(null);
 
+  // const API_BASE_URL = 'http://10.0.2.2:7030';
+  const API_BASE_URL = 'https://idea-venture.agency';
+
   // Helper functions
   const chunkArray = (arr, size) => {
     return arr.reduce((acc, _, i) => {
@@ -30,7 +33,7 @@ export const useFunctions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://10.0.2.2:7030/api/signup', { email: formData.email });
+      const response = await axios.post(`${API_BASE_URL}/api/signup`, { email: formData.email });
       if (response.status === 200) {
       setIsOtpSent(true);
       return { success: true, data: response.data };
@@ -61,7 +64,7 @@ const verifyOtp = async (formData, otp) => {
   setError(null);
   
   try {
-      const response = await axios.post('http://10.0.2.2:7030/api/verify-otp', {
+      const response = await axios.post(`${API_BASE_URL}/api/verify-otp`, {
           email: formData.email,
           otp,
           role: formData.role,
@@ -103,7 +106,7 @@ const verifyOtp = async (formData, otp) => {
     setError(null);
 
     try {
-      const response = await axios.post('http://10.0.2.2:7030/api/signup', { email });
+      const response = await axios.post(`${API_BASE_URL}/api/signup`, { email });
       
       if(response.status === 200){
         setIsTimerActive(true);
@@ -136,7 +139,7 @@ const verifyOtp = async (formData, otp) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://10.0.2.2:7030/api/signin', {
+      const response = await axios.post(`${API_BASE_URL}/api/signin`, {
         email: formData.email,
         password: formData.password,
       });
@@ -176,7 +179,7 @@ const verifyOtp = async (formData, otp) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:7030/api/forgot-password', { email });
+        const response = await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
 
         if (response.status === 200) {
             setIsOtpSent(true);
@@ -211,7 +214,7 @@ const verifyOtpForPasswordReset = async (email, otp) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:7030/api/verify-otp-for-reset', { email, otp });
+        const response = await axios.post(`${API_BASE_URL}/api/verify-otp-for-reset`, { email, otp });
 
         if (response.status === 200) {
             setIsOtpVerified(true);
@@ -246,7 +249,7 @@ const resetPassword = async (data) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:7030/api/reset-password', data);
+        const response = await axios.post(`${API_BASE_URL}/api/reset-password`, data);
 
         if (response.status === 200) {
             return { success: true, data: response.data };
@@ -280,7 +283,7 @@ const resendForgetPasswordOtp = async (email) => {
     setError(null);
 
     try {
-        const response = await axios.post('http://10.0.2.2:7030/api/forgot-password', { email });
+        const response = await axios.post(`${API_BASE_URL}/api/forgot-password`, { email });
 
         if (response.status === 200) {
             setIsTimerActive(true);
@@ -316,7 +319,7 @@ const resendForgetPasswordOtp = async (email) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post('http://10.0.2.2:7030/api/contact-us', contactData);
+      const response = await axios.post(`${API_BASE_URL}/api/contact-us`, contactData);
       if (response.status === 200) {
         return response.data;
       } else {

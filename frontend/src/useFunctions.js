@@ -729,31 +729,37 @@ const getAllReviews = useCallback(async () => {
   
   // sign out
   const signOutDistroySession = async (setLoading, setError) => {
-   if (window.ReactNativeWebView) {
-    window.ReactNativeWebView.postMessage(JSON.stringify({ action: 'logout' }));
-    } else {
-      setLoading(true); // Error: setLoading is not a function
-      setError(null);
-        try {
-          const response = await axios.post(`${API_BASE_URL}/api/signout`);
-          console.log(response.data);
+    setLoading(true);
+    setError(null);
 
-          // Clear local storage
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('userFullName');
-          localStorage.removeItem('username');
-          localStorage.removeItem('hasAccessedPortal'); // Remove portal access flag
-          navigate('/');
-          dispatch(logout());
-          dispatch(clearClientAuth()); // Clear clientAuth state
-          toast.success('Signed out successfully!');
-        } catch (error) {
-          const errorMessage = error.response?.data?.message || 'An error occurred. please try again later.';
-          setError(errorMessage);
-          toast.error(errorMessage);
-        } finally {
-          setLoading(false);
-        }
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/signout`);
+      console.log(response.data);
+
+      // Clear web storage
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userFullName');
+      localStorage.removeItem('username');
+      localStorage.removeItem('hasAccessedPortal');
+      sessionStorage.clear(); // Clear session storage
+
+      if (window.ReactNativeWebView) {
+        // Notify mobile app
+        window.ReactNativeWebView.postMessage(JSON.stringify({ action: 'logout' }));
+      } else {
+        // Web-only navigation
+        navigate('/');
+      }
+
+      dispatch(logout());
+      dispatch(clearClientAuth());
+      toast.success('Signed out successfully!');
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'An error occurred. please try again later.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

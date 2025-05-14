@@ -28,10 +28,11 @@ db_connection();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://192.168.1.3:7020", // Allow local development
-      "https://idea-venture.agency", // Allow production
-    ],
+    origin: true, 
+    // [
+    //   "http://192.168.1.3:7020", // Allow local development
+    //   "https://idea-venture.agency", // Allow production
+    // ],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -136,10 +137,11 @@ app.use(
 // Middleware setup
 app.use(
   cors({
-    origin: [
-      "http://192.168.1.3:7020", // Allow local development
-      "https://idea-venture.agency", // Allow production
-    ],
+    origin: true, 
+    // [
+    //   "http://192.168.1.3:7020", // Allow local development
+    //   "https://idea-venture.agency", // Allow production
+    // ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,

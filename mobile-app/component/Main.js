@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { WebView } from "react-native-webview";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignIn from './SignIn';
 import ForgetPassword from "./ForgetPassword";
 import SignUp from "./SignUp";
@@ -9,13 +10,40 @@ import { Color, FontSize, FontFamily } from "../GlobalStyles";
 
 export default function Main() {
   const [step, setStep] = useState(3); // Start with SignUp
-
   const { loading } = useFunctions();
+  const webViewRef = useRef(null); // Reference to WebView
 
-  const handleWebViewMessage = (event) => {
-    const message = event.nativeEvent.data;
-    if (message === "navigateToSignUp") {
-      setStep(3); // Navigate to SignUp form in mobile app
+  const handleWebViewMessage = async (event) => {
+    try {
+      const message = event.nativeEvent.data;
+      const parsedMessage = JSON.parse(message); // Parse the JSON message
+
+      if (parsedMessage.action === "logout") {
+        // Clear AsyncStorage (e.g., auth token, user data)
+        await AsyncStorage.removeItem("authToken");
+        await AsyncStorage.removeItem("userFullName");
+        await AsyncStorage.removeItem("username");
+        await AsyncStorage.removeItem("hasAccessedPortal");
+
+        // Clear WebView data
+        if (webViewRef.current) {
+          // Clear cache (including local storage and session storage)
+          webViewRef.current.clearCache?.(true);
+          // Clear cookies
+          webViewRef.current.clearCookies?.(() => {
+            console.log("Cookies cleared");
+          });
+          // Optionally reload WebView to ensure clean state
+          webViewRef.current.reload();
+        }
+
+        // Navigate to SignIn screen
+        setStep(4);
+      } else if (message === "navigateToSignUp") {
+        setStep(3); // Navigate to SignUp form in mobile app
+      }
+    } catch (error) {
+      console.warn("WebView message error: ", error);
     }
   };
 
@@ -25,6 +53,7 @@ export default function Main() {
         return (
           <View style={{ flex: 1, width: "100%" }}>
             <WebView
+              ref={webViewRef}
               // source={{ uri: "http://192.168.1.26:7020/#/client-portal/clientSignForm" }}
               source={{ uri: "https://idea-venture.agency/idea-demo/#/client-portal/clientSignForm" }}
               style={{ flex: 1 }}
@@ -52,16 +81,8 @@ export default function Main() {
         return <ForgetPassword onSignIn={() => setStep(1)} />;
       case 3:
         return <SignUp onSignIn={() => setStep(1)} />;
-      case 4:
-        return (
-          <SignIn
-            onForgetPassword={() => setStep(2)}
-            onSignUp={() => setStep(3)}
-            onViewWebsite={() => setStep(1)}
-          />
-        );
       default:
-        return null;
+        return <SignUp onSignIn={() => setStep(1)} />;
     }
   };
 

@@ -193,7 +193,7 @@ const Notification = ({ isAuthenticated, isFixed, isVisible, API_BASE_URL }) => 
 
   return (
     <div
-      className={`relative inline-block ${isFixed ? 'fixed top-0 right-0' : ''} ${!isVisible ? 'hidden' : ''}`}
+      className={`relative inline-block ${isFixed ? 'fixed top-0 right-0' : ''} ${!isVisible ? 'hidden' : ''} notificationResponsiveView`}
     >
       <button
         ref={buttonRef}

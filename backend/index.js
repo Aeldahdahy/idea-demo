@@ -97,7 +97,7 @@ app.get('/idea-demo/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'your_session_secret_key',

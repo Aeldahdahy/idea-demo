@@ -16,6 +16,14 @@ export default function Main() {
   const handleWebViewMessage = async (event) => {
     try {
       const message = event.nativeEvent.data;
+
+      // Check if message is a string (e.g., "navigateToSignUp")
+      if (message === "navigateToSignUp") {
+        setStep(1);
+        return;
+      }
+
+      // Otherwise, assume JSON (e.g., { action: "logout" })
       const parsedMessage = JSON.parse(message); // Parse the JSON message
 
       if (parsedMessage.action === "logout") {
@@ -38,9 +46,7 @@ export default function Main() {
         }
 
         // Navigate to SignIn screen
-        setStep(4);
-      } else if (message === "navigateToSignUp") {
-        setStep(3); // Navigate to SignUp form in mobile app
+        setStep(3);
       }
     } catch (error) {
       console.warn("WebView message error: ", error);
@@ -50,8 +56,12 @@ export default function Main() {
   const renderStep = () => {
     switch (step) {
       case 1:
+        return <SignUp onSignIn={() => setStep(3)} />;
+      case 2:
+        return <ForgetPassword onSignIn={() => setStep(3)} />;
+      case 3:
         return (
-          <View style={{ flex: 1, width: "100%" }}>
+          <View style={{ flex: 1, width: "100%", paddingTop: 40 }}>
             <WebView
               ref={webViewRef}
               // source={{ uri: "http://192.168.1.26:7020/#/client-portal/clientSignForm" }}
@@ -77,10 +87,6 @@ export default function Main() {
             />
           </View>
         );
-      case 2:
-        return <ForgetPassword onSignIn={() => setStep(1)} />;
-      case 3:
-        return <SignUp onSignIn={() => setStep(1)} />;
       default:
         return <SignUp onSignIn={() => setStep(1)} />;
     }

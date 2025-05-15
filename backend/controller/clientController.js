@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
 const fs = require('fs');
 const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
-
+const Notification = require('../modules/notifications'); // adjust path if needed
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -1077,42 +1077,74 @@ const getAllReviews = async (req, res) => {
 };
 
 // save notifications
-const createNotification = async (req, res) => {
-  try {
-    const { recipientId, recipientModel, title, body, sourceType, metadata } = req.body;
-    
-
-    const notification = new Notification({
-      recipientId,
-      recipientModel,
-      title,
-      body,
-      sourceType,
-      metadata,
-    });
-
-    await notification.save();
-    res.status(201).json({ success: true, notification });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+const createNotification = async ({ recipientId, recipientModel, title, body, sourceType = 'message', metadata = {} }) => {
+  if (!recipientId || !recipientModel || !title || !body) {
+    console.warn('Missing fields when trying to create a notification');
+    return;
   }
+
+  const notification = new Notification({
+    recipientId,
+    recipientModel,
+    title,
+    body,
+    sourceType,
+    metadata,
+  });
+
+  await notification.save();
+  console.log(`Notification saved: ${notification._id} for recipient ${recipientId}`);
+  return notification;
 };
 
-// Get notifications for a specific user
 const getNotifications = async (req, res) => {
   try {
-    const { recipientId, recipientModel } = req.query;
+    const { recipientId, recipientModel, page = 1, limit = 100 } = req.query;
+    const user = req.user; // From authenticateToken middleware
 
+    if (recipientId !== user._id) {
+      console.warn(`Unauthorized access attempt: user ${user._id} requested notifications for ${recipientId}`);
+      return res.status(403).json({ success: false, message: 'Unauthorized access' });
+    }
+
+    const skip = (page - 1) * limit;
     const notifications = await Notification.find({
       recipientId,
       recipientModel,
     })
       .sort({ createdAt: -1 })
-      .limit(50); // or use pagination
+      .skip(skip)
+      .limit(parseInt(limit));
 
-    res.status(200).json({ success: true, notifications });
+    const total = await Notification.countDocuments({ recipientId, recipientModel });
+
+    res.status(200).json({
+      success: true,
+      notifications,
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
+    console.error('Error in getNotifications:', error);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const updateNotification = async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndUpdate(
+      req.params.id,
+      { isRead: true },
+      { new: true }
+    );
+    if (!notification) {
+      return res.status(404).json({ success: false, message: 'Notification not found' });
+    }
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error updating notification:', error);
+    res.status(500).json({ success: false, message: 'Failed to mark as read' });
   }
 };
 
@@ -1143,4 +1175,5 @@ module.exports =
   getAllReviews,
   createNotification,
   getNotifications,
+  updateNotification,
 };

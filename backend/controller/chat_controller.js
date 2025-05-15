@@ -430,7 +430,7 @@ exports.getInvestorEntrepreneurUsers = async (req, res) => {
         return a.fullName.localeCompare(b.fullName);
       });
 
-      console.log('getInvestorEntrepreneurUsers: Returning all admins for Client=', usersWithChatInfo);
+      // console.log('getInvestorEntrepreneurUsers: Returning all admins for Client=', usersWithChatInfo);
       return res.status(200).json({ success: true, data: usersWithChatInfo });
     }
 

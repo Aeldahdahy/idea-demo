@@ -30,6 +30,7 @@ const { createContact,
    getAllReviews,
    createNotification,
    getNotifications,
+   updateNotification,
   } = require('../controller/clientController'); 
 
 const { createStaff,
@@ -194,5 +195,8 @@ router.post('/save-notifications', authenticateToken, createNotification);
 
 // Get notifications for a specific user
 router.get('/get-notifications', authenticateToken, getNotifications);
+
+// update notification status
+router.put('/notifications/mark-read/:id', authenticateToken, updateNotification);
 
 module.exports = router;

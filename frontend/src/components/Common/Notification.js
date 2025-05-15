@@ -5,12 +5,14 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { setSelectedUser, openChatPopup, selectTotalUnreadCount, updateUnreadCount } from "../../redux/chatSlice";
 import { toast } from 'react-toastify';
+import { useFunctions } from '../../useFunctions';
 
 const SOCKET_URL = "http://127.0.0.1:7030";
 
-const Notification = ({ isAuthenticated, isFixed, isVisible, API_BASE_URL }) => {
+const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
   const dispatch = useDispatch();
   const socketRef = useRef(null);
+  const { API_BASE_URL } = useFunctions();
 
   const auth = useSelector((state) => state.auth || {});
   const clientAuth = useSelector((state) => state.clientAuth || {});
@@ -31,6 +33,55 @@ const Notification = ({ isAuthenticated, isFixed, isVisible, API_BASE_URL }) => 
       ? auth.user._id
       : null;
 
+  const fetchNotifications = useCallback(async (page = 1) => {
+    if (!currentUserId || !API_BASE_URL) return;
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.warn('No auth token found in localStorage');
+      toast.error('Please log in to view notifications');
+      return;
+    }
+
+    try {
+      const role = isClient ? 'User' : 'Staff';
+      const response = await axios.get(`${API_BASE_URL}/api/get-notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          recipientId: currentUserId,
+          recipientModel: role,
+          page,
+          limit: 100, // Increased limit
+        },
+      });
+
+      if (response.data.success) {
+        const backendNotifications = response.data.notifications.map((n) => ({
+          id: n._id,
+          title: n.title,
+          message: n.body.length > 50 ? `${n.body.substring(0, 50)}...` : n.body,
+          type: n.sourceType,
+          timestamp: new Date(n.createdAt),
+          seen: n.isRead,
+          user: {
+            _id: n.metadata?.senderId || 'system',
+            fullName: n.title,
+          },
+        }));
+        setNotifications((prev) => {
+          const existingIds = new Set(backendNotifications.map((n) => n.id));
+          const uniqueSocketNotifications = prev.filter((n) => !existingIds.has(n.id));
+          return [...backendNotifications, ...uniqueSocketNotifications].sort(
+            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+          );
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error.response?.data || error.message);
+      toast.error('Failed to fetch notifications: ' + (error.response?.data?.message || 'Server error'));
+    }
+  }, [API_BASE_URL, currentUserId, isClient]);
+
   useEffect(() => {
     if (!isAuthenticated || !currentUserId) return;
 
@@ -42,181 +93,100 @@ const Notification = ({ isAuthenticated, isFixed, isVisible, API_BASE_URL }) => 
     });
 
     socketRef.current.on('connect', () => {
-      console.log('Notification: Socket.IO connected');
       socketRef.current.emit('join_room', currentUserId);
     });
 
     socketRef.current.on('receive_message', (data) => {
-      console.log('Notification: Received message', data);
       if (data.receiver === currentUserId) {
         const senderUser = users.find((u) => u._id === data.sender) || {};
+        const newNotification = {
+          id: data.notificationId,
+          user: {
+            _id: data.sender,
+            fullName: senderUser.fullName || data.senderName || 'Unknown',
+            image: senderUser.image || data.senderImage || null,
+            role: senderUser.role || data.senderRole || 'Admin',
+          },
+          title: senderUser.fullName || data.senderName || 'Unknown',
+          message: data.message.length > 50 ? `${data.message.substring(0, 50)}...` : data.message,
+          type: 'message',
+          timestamp: data.timestamp,
+          seen: false,
+        };
         setNotifications((prev) => {
-          const newNotification = {
-            id: `socket-${Date.now()}`,
-            user: {
-              _id: data.sender,
-              fullName: senderUser.fullName || data.senderName || 'Unknown',
-              image: senderUser.image || data.senderImage || null,
-              role: senderUser.role || data.senderRole || 'Admin',
-            },
-            title: senderUser.fullName || data.senderName || 'Unknown',
-            message: data.message.length > 50 ? `${data.message.substring(0, 50)}...` : data.message,
-            type: 'message',
-            timestamp: data.timestamp,
-            seen: false,
-          };
-          const updated = prev.filter((n) => n.user._id !== data.sender);
-          return [newNotification, ...updated].sort((a, b) => b.timestamp - a.timestamp);
+          const filteredPrev = prev.filter((n) => n.id !== data.notificationId);
+          return [newNotification, ...filteredPrev].sort(
+            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+          );
         });
         dispatch(updateUnreadCount({ userId: data.sender, count: (unreadCounts[data.sender] || 0) + 1 }));
+        // Refetch to sync with backend
+        fetchNotifications();
       }
     });
 
     socketRef.current.on('connect_error', (err) => {
-      console.error('Notification: Socket.IO connect_error:', err.message);
       toast.error('Failed to connect to chat server');
     });
 
     return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
+      socketRef.current?.disconnect();
     };
-  }, [isAuthenticated, currentUserId, dispatch, unreadCounts, users]);
-
-  const fetchRecentMessages = useCallback(async () => {
-    if (!currentUserId || !API_BASE_URL) {
-      console.log('fetchRecentMessages: Skipping, no currentUserId or API_BASE_URL');
-      return;
-    }
-    try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        console.log('fetchRecentMessages: No auth token');
-        return;
-      }
-      const response = await axios.get(
-        `${API_BASE_URL}/api/chats/recent/${currentUserId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (response.data.success && Array.isArray(response.data.data)) {
-        const newNotifications = response.data.data.map((msg) => ({
-          id: msg._id,
-          user: {
-            _id: msg.sender._id,
-            fullName: msg.sender.fullName,
-            image: msg.sender.image,
-            role: msg.sender.role,
-          },
-          title: msg.sender.fullName,
-          message: msg.content.length > 50 ? `${msg.content.substring(0, 50)}...` : msg.content,
-          type: 'message',
-          timestamp: msg.timestamp,
-          seen: msg.seen,
-        }));
-        setNotifications(newNotifications.sort((a, b) => b.timestamp - a.timestamp));
-      } else {
-        console.warn('fetchRecentMessages: Invalid response data');
-      }
-    } catch (error) {
-      console.error('fetchRecentMessages error:', error);
-      toast.error('Failed to load recent messages');
-    }
-  }, [currentUserId, API_BASE_URL]);
+  }, [isAuthenticated, currentUserId, dispatch, unreadCounts, users, fetchNotifications]);
 
   useEffect(() => {
     if (isAuthenticated && currentUserId) {
-      fetchRecentMessages();
+      fetchNotifications();
     }
-  }, [isAuthenticated, currentUserId, fetchRecentMessages]);
+  }, [isAuthenticated, currentUserId, fetchNotifications]);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  const markAsRead = async (id) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        toast.error('Please log in to mark notifications as read');
+        return;
+      }
+      await axios.put(`${API_BASE_URL}/api/notifications/mark-read/${id}`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, seen: true } : n))
+      );
+    } catch (error) {
+      console.error('Error marking notification as read:', error.response?.data || error.message);
+      toast.error('Failed to mark notification as read');
+    }
   };
 
-  useEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const spaceBelow = viewportHeight - rect.bottom;
-      setOpenUpward(spaceBelow < viewportHeight / 2);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    if (isAuthenticated) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isOpen) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [isOpen]);
-
-  const openChat = useCallback((user) => {
-    dispatch(setSelectedUser(user));
+  const openChat = useCallback((notification) => {
+    dispatch(setSelectedUser(notification.user));
     dispatch(openChatPopup());
+    markAsRead(notification.id);
     setIsOpen(false);
   }, [dispatch]);
 
   const memoizedNotifications = useMemo(() => {
     return notifications.map((notification) => ({
       ...notification,
-      onClick: () => openChat(notification.user),
+      onClick: () => openChat(notification),
     }));
   }, [notifications, openChat]);
 
-  if (!isAuthenticated || !currentUserId) {
-    return null;
-  }
+  if (!isAuthenticated || !currentUserId) return null;
 
   return (
-    <div
-      className={`relative inline-block ${isFixed ? 'fixed top-0 right-0' : ''} ${!isVisible ? 'hidden' : ''} notificationResponsiveView`}
-    >
+    <div className={`relative inline-block ${isFixed ? 'fixed top-0 right-0' : ''} ${!isVisible ? 'hidden' : ''} notificationResponsiveView`}>
       <button
         ref={buttonRef}
-        onClick={toggleDropdown}
+        onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-600 hover:text-gray-800 focus:outline-none"
       >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-          />
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
         </svg>
-        {totalUnread > 0 && (
-          <span className="absolute top-0 right-0 block h-2 w-2 bg-red-500 rounded-full" />
-        )}
+        {totalUnread > 0 && <span className="absolute top-0 right-0 block h-2 w-2 bg-red-500 rounded-full" />}
       </button>
       <div
         ref={dropdownRef}
@@ -235,14 +205,16 @@ const Notification = ({ isAuthenticated, isFixed, isVisible, API_BASE_URL }) => 
               <Link
                 key={notification.id}
                 to="#"
-                className="block p-4 hover:bg-gray-50 transition-colors"
+                className={`block p-4 hover:bg-gray-50 transition-colors ${!notification.seen ? 'bg-gray-100' : ''}`}
                 onClick={notification.onClick}
               >
                 <div className="flex items-start">
                   <div className="flex-1">
                     <div className="flex items-center">
-                      <h4 className="text-sm font-medium text-gray-800">{notification.title}</h4>
-                      {notification.type === 'message' && !notification.seen && (
+                      <h4 className={`text-sm font-medium ${!notification.seen ? 'text-black' : 'text-gray-800'}`}>
+                        {notification.title}
+                      </h4>
+                      {!notification.seen && (
                         <span className="ml-2 h-2 w-2 bg-blue-500 rounded-full" />
                       )}
                     </div>

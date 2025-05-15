@@ -27,7 +27,10 @@ const { createContact,
    updateBlog,
    getAllBlogs,
    createReview,
-   getAllReviews } = require('../controller/clientController'); 
+   getAllReviews,
+   createNotification,
+   getNotifications,
+  } = require('../controller/clientController'); 
 
 const { createStaff,
    loginStaff,
@@ -185,5 +188,11 @@ router.post('/review/:userId', authenticateToken, createReview);
 
 // Get All Reviews
 router.get('/review', getAllReviews); 
+
+// notification routes
+router.post('/save-notifications', authenticateToken, createNotification);
+
+// Get notifications for a specific user
+router.get('/get-notifications', authenticateToken, getNotifications);
 
 module.exports = router;

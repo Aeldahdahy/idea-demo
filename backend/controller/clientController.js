@@ -1076,6 +1076,46 @@ const getAllReviews = async (req, res) => {
   }
 };
 
+// save notifications
+const createNotification = async (req, res) => {
+  try {
+    const { recipientId, recipientModel, title, body, sourceType, metadata } = req.body;
+    
+
+    const notification = new Notification({
+      recipientId,
+      recipientModel,
+      title,
+      body,
+      sourceType,
+      metadata,
+    });
+
+    await notification.save();
+    res.status(201).json({ success: true, notification });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get notifications for a specific user
+const getNotifications = async (req, res) => {
+  try {
+    const { recipientId, recipientModel } = req.query;
+
+    const notifications = await Notification.find({
+      recipientId,
+      recipientModel,
+    })
+      .sort({ createdAt: -1 })
+      .limit(50); // or use pagination
+
+    res.status(200).json({ success: true, notifications });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports =
 {
   createContact,
@@ -1100,5 +1140,7 @@ module.exports =
   updateBlog,
   getAllBlogs,
   createReview,
-  getAllReviews
+  getAllReviews,
+  createNotification,
+  getNotifications,
 };

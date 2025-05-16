@@ -163,7 +163,7 @@ router.post('/verify-otp-for-reset', verifyOtpForReset);
 router.post('/reset-password', resetPassword);
 
 // Create a new project (Authenticated users only)
-router.post('/projects', authenticateToken, upload, createProject);
+router.patch('/projects', authenticateToken, upload, createProject);
 
 // Update project (Authenticated users only)
 router.put('/projects/:projectId', authenticateToken, upload, updateProject);

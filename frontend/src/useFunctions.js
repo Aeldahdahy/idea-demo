@@ -1259,7 +1259,7 @@ const getAllReviews = useCallback(async () => {
     setError(null);
     const authToken = localStorage.getItem('authToken');
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/projects`, projectData, {
+      const response = await axios.patch(`${API_BASE_URL}/api/projects`, projectData, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       if (response.status !== 201) {

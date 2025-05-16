@@ -37,7 +37,7 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
     const token = localStorage.getItem('authToken');
     if (!token) {
       console.warn('No auth token found');
-      toast.error('Please log in to view notifications');
+      // toast.error('Please log in to view notifications');
       setError('Authentication required');
       return;
     }
@@ -139,12 +139,12 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
 
     socketRef.current.on('disconnect', (reason) => {
       console.warn('Socket disconnected:', reason);
-      toast.warn('Real-time notifications disconnected...', { toastId: 'socket-error' });
+      // toast.warn('Real-time notifications disconnected...', { toastId: 'socket-error' });
     });
 
     socketRef.current.on('connect_error', (error) => {
       console.error('Socket connection error:', error.message);
-      toast.error('Failed to connect to real-time notifications', { toastId: 'socket-error' });
+      // toast.error('Failed to connect to real-time notifications', { toastId: 'socket-error' });
     });
 
     return () => {
@@ -162,14 +162,14 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
   const markAsRead = useCallback(async (id) => {
     try {
       const token = localStorage.getItem('authToken');
-      if (!token) return toast.error('Please log in to mark notifications as read');
+      // if (!token) return toast.error('Please log in to mark notifications as read');
       await axios.put(`${API_BASE_URL}/api/notifications/mark-read/${id}`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, seen: true } : n)));
     } catch (error) {
       console.error('Error marking notification as read:', error.response?.data || error.message);
-      toast.error('Failed to mark notification as read');
+      // toast.error('Failed to mark notification as read');
     }
   }, [API_BASE_URL]);
 

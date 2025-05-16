@@ -1150,32 +1150,7 @@ const getAllReviews = useCallback(async () => {
       }
     }, [API_BASE_URL]);
 
-  // update project
-  const updateProject = async (id, updatedData) => {
-    setLoading(true);
-    setError(null);
-    const authToken = localStorage.getItem('authToken');
 
-    dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
-
-    try {
-      const response = await axios.put(`${API_BASE_URL}/api/projects/${id}`, updatedData, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
-      if (response.status !== 200) {
-        throw new Error('Failed to update project');
-      }
-      toast.success('Project data updated successfully!');
-    } catch (err) {
-      dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
-      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // create meeting
   const createMeeting = async (meetingData) => {
@@ -1254,34 +1229,104 @@ const getAllReviews = useCallback(async () => {
     }
   };
 
-  const createProject = async (projectData) => {
+  // const createProject = async (projectData) => {
+  //   setLoading(true);
+  //   setError(null);
+  //   const authToken = localStorage.getItem('authToken');
+  //   try {
+  //     const response = await axios.post(`${API_BASE_URL}/api/projects`, projectData, {
+  //       headers: { Authorization: `Bearer ${authToken}` },
+  //     });
+  //     if (response.status !== 201) {
+  //       throw new Error('Failed to create project');
+  //     }
+  //     toast.success('Project created successfully!');
+  //     return response.data;
+  //   } catch (err) {
+  //     console.error('Create project error:', err);
+  //     let errorMessage = 'An error occurred. Please try again.';
+  //     if (err.code === 'ERR_NETWORK') {
+  //       // errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
+  //     } else if (err.response) {
+  //       errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
+  //     }
+  //     setError(errorMessage);
+  //     toast.error(errorMessage);
+  //     throw new Error(errorMessage);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const getAuthHeaders = () => {
+    const authToken = localStorage.getItem('authToken');
+    return {
+      Authorization: `Bearer ${authToken}`,
+    };
+  };
+
+  const initProject = async (basicData) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/api/projects/init`, basicData, {
+        headers: getAuthHeaders(),
+      });
+      // toast.success('General information saved!');
+      return res.data.data; // Contains _id
+    } catch (err) {
+      console.error('Init project error:', err);
+      toast.error('Failed to initialize project.');
+      throw err;
+    }
+  };
+
+  const updateProjectSection = async (projectId, data, section, isFile = false) => {
+    try {
+      const headers = {
+        ...getAuthHeaders(),
+        ...(isFile ? { 'Content-Type': 'multipart/form-data' } : {}),
+      };
+
+      const res = await axios.patch(`${API_BASE_URL}/api/projects/${projectId}/${section}`, data, {
+        headers,
+      });
+
+      // toast.success(`${section.charAt(0).toUpperCase() + section.slice(1)} updated!`);
+      return res.data;
+    } catch (err) {
+      console.error(`Error updating ${section}:`, err);
+      toast.error(`Failed to update ${section}`);
+      throw err;
+    }
+  };
+
+      // update project
+  const updateProject = async (id, updatedData) => {
     setLoading(true);
     setError(null);
     const authToken = localStorage.getItem('authToken');
+
+    dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
+
     try {
-      const response = await axios.patch(`${API_BASE_URL}/api/projects`, projectData, {
+      const response = await axios.put(`${API_BASE_URL}/api/projects/${id}`, updatedData, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      if (response.status !== 201) {
-        throw new Error('Failed to create project');
+      if (response.status !== 200) {
+        throw new Error('Failed to update project');
       }
-      toast.success('Project created successfully!');
-      return response.data;
+      toast.success('Project data updated successfully!');
     } catch (err) {
-      console.error('Create project error:', err);
-      let errorMessage = 'An error occurred. Please try again.';
-      if (err.code === 'ERR_NETWORK') {
-        // errorMessage = 'Cannot connect to the server. Please check if the server is running on http://127.0.0.1:7030.';
-      } else if (err.response) {
-        errorMessage = err.response.data?.message || `Server error: ${err.response.status}`;
-      }
+      dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
+      const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);
-      throw new Error(errorMessage);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
+
+
 
   const { token } = useSelector((state) => state.auth);
   const { clientData } = useSelector((state) => state.clientAuth);
@@ -1404,7 +1449,9 @@ const getAllReviews = useCallback(async () => {
     updateProject,
     toggleSideBar,
     createMeeting,
-    createProject,
+    // createProject,
+    initProject,
+    updateProjectSection,
     getAllProjects,
     updateMessages,
     toggleDropdown,

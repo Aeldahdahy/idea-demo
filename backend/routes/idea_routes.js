@@ -15,7 +15,11 @@ const { createContact,
    getAllUsers,
    getAllContacts,
    updateContactStatus,
-   createProject,
+  //  createProject,
+  initProject,
+  updateDescription,
+  updateDocuments,
+  updateTeam,
    getAllProjects,
    getProjectById,
    getProjectByUserId,
@@ -163,7 +167,13 @@ router.post('/verify-otp-for-reset', verifyOtpForReset);
 router.post('/reset-password', resetPassword);
 
 // Create a new project (Authenticated users only)
-router.patch('/projects', authenticateToken, upload, createProject);
+// router.post('/projects', authenticateToken, upload, createProject);
+router.post('/projects/init', authenticateToken, initProject);
+// router.patch('/projects/:id/general', authenticateToken, updateGeneralInfo);
+router.patch('/projects/:id/description', authenticateToken, updateDescription);
+router.patch('/projects/:id/documents', authenticateToken, upload, updateDocuments);
+router.patch('/projects/:id/team', authenticateToken, upload, updateTeam);
+
 
 // Update project (Authenticated users only)
 router.put('/projects/:projectId', authenticateToken, upload, updateProject);

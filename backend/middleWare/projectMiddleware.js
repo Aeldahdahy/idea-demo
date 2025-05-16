@@ -25,10 +25,10 @@ const FIELD_LIMITS = [
   { name: 'business_plan', maxCount: 1 },
   { name: 'additional_document', maxCount: 1 },
   { name: 'financial_statement', maxCount: 1 },
-  { name: 'exective_sunnary', maxCount: 1 }, // TODO: Rename to 'executive_summary' in schema and frontend
+  { name: 'exective_sunnary', maxCount: 1 },
   { name: 'project_images', maxCount: 5 },
   { name: 'project_logo', maxCount: 1 },
-  { name: 'member_image', maxCount: 10 },
+  { name: 'member_image[]', maxCount: 10 }, // Keep as 'member_image' for multer
 ];
 
 // Create upload directories if they don’t exist
@@ -109,7 +109,7 @@ const upload = multer({
   storage,
   limits: {
     fileSize: MAX_FILE_SIZE,
-    files: FIELD_LIMITS.reduce((sum, field) => sum + field.maxCount, 0), // Total file limit
+    files: FIELD_LIMITS.reduce((sum, field) => sum + field.maxCount, 0),
   },
   fileFilter,
 }).fields(FIELD_LIMITS);

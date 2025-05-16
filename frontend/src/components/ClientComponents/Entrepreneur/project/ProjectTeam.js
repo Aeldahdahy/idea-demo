@@ -176,7 +176,8 @@ function ProjectTeam({
   ButtonRow,
   Button,
   setStep,
-  step
+  step,
+  handleNextStep
 }) {
   return (
     <>

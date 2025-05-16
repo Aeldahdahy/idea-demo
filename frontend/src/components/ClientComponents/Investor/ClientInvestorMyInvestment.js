@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Card from '../../Common/Card';
+import {useFunctions} from '../../../useFunctions'
 
 function ClientInvestorMyInvestment() {
+  const { API_BASE_URL } = useFunctions();
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:7030';
 
   // Fetch investor meetings
   const fetchMeetings = async () => {

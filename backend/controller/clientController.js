@@ -1060,11 +1060,11 @@ const getAllReviews = async (req, res) => {
     const reviews = await Review.find().populate('user', 'fullName image');
     // console.log('Fetched reviews:', reviews); // Log raw reviews
     const formattedReviews = reviews.map(review => {
-      console.log('Processing review:', review); // Log each review
+      // console.log('Processing review:', review); 
       return {
         _id: review._id,
-        client_name: review.user?.fullName || 'Unknown User', // Fallback for missing user
-        client_image: review.user?.image || null, // Fallback for missing image
+        client_name: review.user?.fullName || 'Unknown User',
+        client_image: review.user?.image || null, 
         client_review: review.client_review,
         review_rate: review.review_rate,
         createdAt: review.createdAt
@@ -1122,7 +1122,7 @@ const getNotifications = async (req, res) => {
         : null;
 
     if (!recipientModel) {
-      console.warn(`Unauthorized role in JWT: ${user.role}`);
+      // console.warn(`Unauthorized role in JWT: ${user.role}`);
       return res.status(403).json({ success: false, message: 'Unauthorized role' });
     }
 

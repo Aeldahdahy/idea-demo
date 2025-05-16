@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
-import { setSelectedUser, openChatPopup, selectTotalUnreadCount, updateUnreadCount } from "../../redux/chatSlice";
+import { setSelectedUser, openChatPopup, selectTotalUnreadCount, updateUnreadCount } from '../../redux/chatSlice';
 import { toast } from 'react-toastify';
 import { useFunctions } from '../../useFunctions';
 
-const SOCKET_URL = "http://127.0.0.1:7030";
+const SOCKET_URL = 'http://127.0.0.1:7030';
 
 const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
   const dispatch = useDispatch();
@@ -22,8 +22,11 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [openUpward, setOpenUpward] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
+  const reconnectAttemptsRef = useRef(0);
 
   const isEmployee = !!auth.role;
   const isClient = !!clientAuth.clientData;
@@ -38,47 +41,62 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
 
     const token = localStorage.getItem('authToken');
     if (!token) {
-      console.warn('No auth token found in localStorage');
+      console.warn('No auth token found');
       toast.error('Please log in to view notifications');
+      setError('Authentication required');
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
     try {
-      const role = isClient ? 'User' : 'Staff';
       const response = await axios.get(`${API_BASE_URL}/api/get-notifications`, {
         headers: { Authorization: `Bearer ${token}` },
-        params: {
-          recipientId: currentUserId,
-          recipientModel: role,
-          page,
-          limit: 100, // Increased limit
-        },
+        params: { page }, // Removed limit to fetch all
       });
+
+      console.log('Notifications response:', response.data); // Debug raw response
 
       if (response.data.success) {
         const backendNotifications = response.data.notifications.map((n) => ({
           id: n._id,
-          title: n.title,
-          message: n.body.length > 50 ? `${n.body.substring(0, 50)}...` : n.body,
-          type: n.sourceType,
-          timestamp: new Date(n.createdAt),
-          seen: n.isRead,
+          title: n.title || 'Untitled', // Fallback for missing title
+          message: n.body?.length > 50 ? `${n.body.substring(0, 50)}...` : n.body || 'No message',
+          type: n.sourceType || 'other',
+          timestamp: new Date(n.createdAt) || new Date(),
+          seen: n.isRead || false,
           user: {
             _id: n.metadata?.senderId || 'system',
-            fullName: n.title,
+            fullName: n.title || 'System',
           },
         }));
+
         setNotifications((prev) => {
           const existingIds = new Set(backendNotifications.map((n) => n.id));
           const uniqueSocketNotifications = prev.filter((n) => !existingIds.has(n.id));
-          return [...backendNotifications, ...uniqueSocketNotifications].sort(
+          const updatedNotifications = [...backendNotifications, ...uniqueSocketNotifications].sort(
             (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
           );
+          console.log('Updated notifications state:', updatedNotifications); // Debug state
+          return updatedNotifications;
         });
+
+        // Fetch additional pages if more notifications exist
+        if (response.data.total > response.data.notifications.length * page) {
+          fetchNotifications(page + 1);
+        }
+      } else {
+        setError(response.data.message || 'Failed to fetch notifications');
+        toast.error(response.data.message || 'Failed to fetch notifications');
       }
     } catch (error) {
       console.error('Error fetching notifications:', error.response?.data || error.message);
-      toast.error('Failed to fetch notifications: ' + (error.response?.data?.message || 'Server error'));
+      const errorMessage = error.response?.data?.message || 'Server error';
+      setError(errorMessage);
+      toast.error(`Failed to fetch notifications: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
     }
   }, [API_BASE_URL, currentUserId, isClient]);
 
@@ -88,12 +106,16 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
     socketRef.current = io.connect(SOCKET_URL, {
       transports: ['websocket', 'polling'],
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
+      auth: { userId: currentUserId },
     });
 
     socketRef.current.on('connect', () => {
+      console.log('Socket connected:', socketRef.current.id);
       socketRef.current.emit('join_room', currentUserId);
+      reconnectAttemptsRef.current = 0;
+      toast.dismiss('socket-error');
     });
 
     socketRef.current.on('receive_message', (data) => {
@@ -108,28 +130,48 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
             role: senderUser.role || data.senderRole || 'Admin',
           },
           title: senderUser.fullName || data.senderName || 'Unknown',
-          message: data.message.length > 50 ? `${data.message.substring(0, 50)}...` : data.message,
+          message: data.message?.length > 50 ? `${data.message.substring(0, 50)}...` : data.message || 'No message',
           type: 'message',
-          timestamp: data.timestamp,
+          timestamp: data.timestamp || new Date(),
           seen: false,
         };
         setNotifications((prev) => {
-          const filteredPrev = prev.filter((n) => n.id !== data.notificationId);
-          return [newNotification, ...filteredPrev].sort(
+          const filteredPrev = prev.filter((n) => n.id !== newNotification.id);
+          const updatedNotifications = [newNotification, ...filteredPrev].sort(
             (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
           );
+          console.log('Updated notifications with socket:', updatedNotifications);
+          return updatedNotifications;
         });
         dispatch(updateUnreadCount({ userId: data.sender, count: (unreadCounts[data.sender] || 0) + 1 }));
-        // Refetch to sync with backend
-        fetchNotifications();
+        fetchNotifications(); // Sync with backend
       }
     });
 
-    socketRef.current.on('connect_error', (err) => {
-      toast.error('Failed to connect to chat server');
+    socketRef.current.on('disconnect', (reason) => {
+      console.warn('Socket disconnected:', reason);
+      toast.warn('Real-time notifications disconnected. Attempting to reconnect...', {
+        toastId: 'socket-error',
+        autoClose: false,
+      });
+    });
+
+    socketRef.current.on('reconnect', (attempt) => {
+      console.log(`Reconnected after ${attempt} attempts`);
+      toast.success('Real-time notifications reconnected!');
+      toast.dismiss('socket-error');
+    });
+
+    socketRef.current.on('connect_error', (error) => {
+      console.error('Socket connection error:', error.message);
+      toast.error('Failed to connect to real-time notifications: ' + error.message, {
+        toastId: 'socket-error',
+        autoClose: false,
+      });
     });
 
     return () => {
+      console.log('Cleaning up socket connection');
       socketRef.current?.disconnect();
     };
   }, [isAuthenticated, currentUserId, dispatch, unreadCounts, users, fetchNotifications]);
@@ -198,10 +240,14 @@ const Notification = ({ isAuthenticated, isFixed, isVisible }) => {
           <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
         </div>
         <div className="divide-y divide-gray-200">
-          {memoizedNotifications.length === 0 ? (
-            <div className="p-4 text-sm text-gray-500">No new notifications</div>
+          {isLoading ? (
+            <div className="p-4 text-sm text-gray-500">Loading notifications...</div>
+          ) : error ? (
+            <div className="p-4 text-sm text-red-500">{error}</div>
+          ) : notifications.length === 0 ? (
+            <div className="p-4 text-sm text-gray-500">No notifications available</div>
           ) : (
-            memoizedNotifications.map((notification) => (
+            notifications.map((notification) => (
               <Link
                 key={notification.id}
                 to="#"

@@ -29,14 +29,14 @@ function EmployeeChatInterface() {
   // Fetch users
   const getAllUsers = useCallback(() => {
     if (!currentUserId) {
-      console.log('getAllUsers: Skipping, no currentUserId');
+      // console.log('getAllUsers: Skipping, no currentUserId');
       return;
     }
     if (lastFetched && Date.now() - lastFetched < 30 * 60e3) {
-      console.log('getAllUsers: Skipping, recently fetched');
+      // console.log('getAllUsers: Skipping, recently fetched');
       return;
     }
-    console.log('getAllUsers: Dispatching fetchUsers');
+    // console.log('getAllUsers: Dispatching fetchUsers');
     dispatch(fetchUsers({ API_BASE_URL })).unwrap().catch(err => {
       console.error('fetchUsers error:', err);
       toast.error("Failed to fetch users");

@@ -81,18 +81,18 @@ export const useSocket = ({ currentUserId, API_BASE_URL, onMessageReceived }) =>
   // Subscribe to sockets
   useEffect(() => {
     if (!currentUserId || !socketRef.current) {
-      console.log('Socket: Skipping, no currentUserId or socket');
+      // console.log('Socket: Skipping, no currentUserId or socket');
       return;
     }
-    console.log('Socket: Joining room', currentUserId);
+    // console.log('Socket: Joining room', currentUserId);
     socketRef.current.emit("join_room", currentUserId);
     const handler = (data) => {
-      console.log('Socket: Received message', data);
+      // console.log('Socket: Received message', data);
       if (data.sender !== currentUserId && data.playSound) {
         if (audioRef.current && typeof audioRef.current.play === 'function') {
           audioRef.current.play().catch(err => console.error('Audio play error:', err));
         } else {
-          console.warn('Socket: Audio play not supported');
+          // console.warn('Socket: Audio play not supported');
         }
       }
       if (data.receiver === currentUserId) {

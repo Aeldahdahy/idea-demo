@@ -26,16 +26,16 @@ function ClientChatInterface() {
 
   const getAllUsers = useCallback(() => {
     if (!currentUserId) {
-      console.log('getAllUsers: Skipping, no currentUserId');
+      // console.log('getAllUsers: Skipping, no currentUserId');
       return;
     }
     if (lastFetched && Date.now() - lastFetched < 30 * 60e3) {
-      console.log('getAllUsers: Skipping, recently fetched');
+      // console.log('getAllUsers: Skipping, recently fetched');
       return;
     }
-    console.log('getAllUsers: Dispatching fetchAdminsUsers');
+    // console.log('getAllUsers: Dispatching fetchAdminsUsers');
     dispatch(fetchAdminsUsers({ API_BASE_URL })).unwrap().catch(err => {
-      console.error('fetchAdminsUsers error:', err);
+      // console.error('fetchAdminsUsers error:', err);
     });
   }, [currentUserId, lastFetched, dispatch, API_BASE_URL]);
 
@@ -100,8 +100,8 @@ function ClientChatInterface() {
     ) && u._id !== currentUserId;
   });
 
-  console.log('ClientChatInterface: users=', users.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
-  console.log('ClientChatInterface: messages=', messages.map(m => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })));
+  // console.log('ClientChatInterface: users=', users.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
+  // console.log('ClientChatInterface: messages=', messages.map(m => ({ id: m.id, sender: m.sender, senderName: m.senderName, text: m.text })));
 
   useEffect(() => {
     if (isOpen && reduxUser && reduxUser._id !== selectedUser?._id) {
@@ -202,7 +202,7 @@ function ClientChatInterface() {
     );
   }
 
-  console.log("users=", users, "messages=", messages, "inputMessage=", inputMessage, "selectedUser=", selectedUser);
+  // console.log("users=", users, "messages=", messages, "inputMessage=", inputMessage, "selectedUser=", selectedUser);
 
   return (
     <Chat

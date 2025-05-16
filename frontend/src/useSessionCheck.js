@@ -43,12 +43,12 @@ const useSessionCheck = () => {
     }
 
     // Log session status
-    console.log('Session Check:', {
-      hasValidToken,
-      isTokenExpired,
-      isUserAuthenticated,
-      pathname: location.pathname,
-    });
+    // console.log('Session Check:', {
+    //   hasValidToken,
+    //   isTokenExpired,
+    //   isUserAuthenticated,
+    //   pathname: location.pathname,
+    // });
 
     // Redirect to appropriate sign-in page if no valid token
     if ((!hasValidToken || isTokenExpired) && !isUserAuthenticated) {

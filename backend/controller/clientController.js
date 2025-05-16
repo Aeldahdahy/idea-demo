@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
 const fs = require('fs');
-const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
-const Notification = require('../modules/notifications'); // adjust path if needed
+const upload = require('../middleWare/projectMiddleware');
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -17,6 +16,7 @@ const Otp = require('../modules/otp');
 const Project = require('../modules/project');
 const Blog = require('../modules/blog');
 const Review = require('../modules/review');
+const Notification = require('../modules/notifications');
 
 // Create a transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -776,7 +776,6 @@ const getProjectByUserId = async (req, res) => {
   }
 };
 
-
 // Update Project Controller
 const updateProject = async (req, res) => {
   try {
@@ -1058,25 +1057,27 @@ const createReview = async (req, res) => {
 // Fetch all reviews with client name and image
 const getAllReviews = async (req, res) => {
   try {
-    const reviews = await Review.find()
-      .populate('user', 'fullName image');
-
-    const formattedReviews = reviews.map(review => ({
-      _id: review._id,
-      client_name: review.user.fullName,
-      client_image: review.user.image,
-      client_review: review.client_review,
-      review_rate: review.review_rate,
-      createdAt: review.createdAt
-    }));
-
+    const reviews = await Review.find().populate('user', 'fullName image');
+    // console.log('Fetched reviews:', reviews); // Log raw reviews
+    const formattedReviews = reviews.map(review => {
+      console.log('Processing review:', review); // Log each review
+      return {
+        _id: review._id,
+        client_name: review.user?.fullName || 'Unknown User', // Fallback for missing user
+        client_image: review.user?.image || null, // Fallback for missing image
+        client_review: review.client_review,
+        review_rate: review.review_rate,
+        createdAt: review.createdAt
+      };
+    });
     res.status(200).json(formattedReviews);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch reviews' });
+    console.error('Error in getAllReviews:', err); // Log full error
+    res.status(500).json({ error: 'Failed to fetch reviews', details: err.message });
   }
 };
 
-// save notifications
+// Save notification (for internal use like chat/socket, not HTTP request)
 const createNotification = async ({ recipientId, recipientModel, title, body, sourceType = 'message', metadata = {} }) => {
   if (!recipientId || !recipientModel || !title || !body) {
     console.warn('Missing fields when trying to create a notification');
@@ -1097,40 +1098,60 @@ const createNotification = async ({ recipientId, recipientModel, title, body, so
   return notification;
 };
 
+// 🔒 Secure: get notifications only for authenticated user
 const getNotifications = async (req, res) => {
   try {
-    const { recipientId, recipientModel, page = 1, limit = 100 } = req.query;
-    const user = req.user; // From authenticateToken middleware
+    const { user } = req;
 
-    if (recipientId !== user._id) {
-      console.warn(`Unauthorized access attempt: user ${user._id} requested notifications for ${recipientId}`);
-      return res.status(403).json({ success: false, message: 'Unauthorized access' });
+    // Check for required user data
+    if (!user || !user._id || !user.role) {
+      return res.status(403).json({ success: false, message: 'Missing user data in token' });
     }
 
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(user._id)) {
+      return res.status(400).json({ success: false, message: 'Invalid user ID' });
+    }
+
+    // Map role to recipientModel
+    const role = user.role.toLowerCase();
+    const recipientModel = ['entrepreneur', 'investor', 'user', 'client'].includes(role)
+      ? 'User'
+      : ['admin', 'auditor', 'cs', 'employee'].includes(role)
+        ? 'Staff'
+        : null;
+
+    if (!recipientModel) {
+      console.warn(`Unauthorized role in JWT: ${user.role}`);
+      return res.status(403).json({ success: false, message: 'Unauthorized role' });
+    }
+
+    // Fetch notifications
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
     const skip = (page - 1) * limit;
-    const notifications = await Notification.find({
-      recipientId,
-      recipientModel,
-    })
+
+    const notifications = await Notification.find({ recipientId: user._id, recipientModel })
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(parseInt(limit));
+      .limit(limit);
 
-    const total = await Notification.countDocuments({ recipientId, recipientModel });
+    const total = await Notification.countDocuments({ recipientId: user._id, recipientModel });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       notifications,
       total,
-      page: parseInt(page),
+      page,
       pages: Math.ceil(total / limit),
     });
   } catch (error) {
-    console.error('Error in getNotifications:', error);
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Error in getNotifications:', error.message);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
+// Mark one notification as read
 const updateNotification = async (req, res) => {
   try {
     const notification = await Notification.findByIdAndUpdate(
@@ -1138,15 +1159,18 @@ const updateNotification = async (req, res) => {
       { isRead: true },
       { new: true }
     );
+
     if (!notification) {
       return res.status(404).json({ success: false, message: 'Notification not found' });
     }
-    res.status(200).json({ success: true });
+
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error('Error updating notification:', error);
-    res.status(500).json({ success: false, message: 'Failed to mark as read' });
+    return res.status(500).json({ success: false, message: 'Failed to mark as read' });
   }
 };
+
 
 module.exports =
 {

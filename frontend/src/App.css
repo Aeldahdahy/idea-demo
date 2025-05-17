@@ -2012,6 +2012,7 @@ small {
   width: auto;
   max-width: 90%;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000010 !important;
 }
 
 .custom-toast-body {
@@ -2310,10 +2311,12 @@ small {
 
 @media (max-width: 600px) {
   .custom-toast {
-    margin-top: 10px;
+    margin-top: 55px;
     max-width: 85%;
     font-size: 0.85rem;
-    z-index: 9999999999;
+  }
+  .ha3rfasmha{
+    margin-right: 65px;
   }
 }
 

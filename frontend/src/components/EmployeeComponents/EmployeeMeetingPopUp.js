@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setMeetingData, setSelectedAuditor, setSlot1State, setSlot2State, resetSlots, closePopup, fetchMeetings } from '../../redux/meetingDataSlice';
 import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
-import { Button } from 'primereact/button';
+// import { Button } from 'primereact/button';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 function EmployeeMeetingPopUp() {
@@ -194,7 +194,9 @@ function EmployeeMeetingPopUp() {
         throw new Error(`Failed to assign auditor: ${response.statusText}`);
       }
 
-      const { success, data } = await response.json();
+      const { success,
+        //  data
+       } = await response.json();
       if (success) {
         alert('Auditor and slots assigned successfully!');
         dispatch(fetchMeetings(token)); // Refresh meeting list

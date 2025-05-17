@@ -53,6 +53,7 @@ const Profile = () => {
       .catch((err) => {
         const errorMessage = err.response?.data?.message || 'Failed to update profile. Please try again.';
         console.error('Failed to update user:', err);
+        console.error(errorMessage);
         // toast.error(errorMessage);
       });
   };

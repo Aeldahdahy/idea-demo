@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { initFlowbite } from "flowbite";
 import "react-country-state-city/dist/react-country-state-city.css";
 import { useFunctions } from '../../../useFunctions';
@@ -8,8 +8,7 @@ import ProjectGeneralInfo from "./project/ProjectGeneralInfo";
 import ProjectDescription from "./project/ProjectDescription";
 import ProjectsDocuments from "./project/ProjectsDocuments";
 import ProjectTeam from "./project/ProjectTeam";
-// import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // --- Styled Components ---
 const WizardContainer = styled.div`
@@ -595,7 +594,7 @@ const handleSubmitStep0 = async () => {
   }
 
   if (errors.length > 0) {
-    // toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
+    toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
     return;
   }
 
@@ -618,7 +617,7 @@ const handleSubmitStep0 = async () => {
   if (!isEditMode) {
     const userData = localStorage.getItem('clientData');
     if (!userData) {
-      // toast.error('User data not found. Please log in again.');
+      toast.error('User data not found. Please log in again.');
       return;
     }
 
@@ -627,12 +626,12 @@ const handleSubmitStep0 = async () => {
       user = JSON.parse(userData);
     } catch (err) {
       console.error('Error parsing clientData:', err);
-      // toast.error('Invalid user data. Please log in again.');
+      toast.error('Invalid user data. Please log in again.');
       return;
     }
 
     if (!user._id || !user.fullName) {
-      // toast.error('User ID or full name missing. Please log in again.');
+      toast.error('User ID or full name missing. Please log in again.');
       return;
     }
 
@@ -665,7 +664,7 @@ const handleSubmitStep0 = async () => {
 const handleSubmitStep1 = async () => {
   if (!projectId) {
     console.error('Project ID is missing in Step 1');
-    // return toast.error('Project ID missing. Please restart the pitch process.');
+    return toast.error('Project ID missing. Please restart the pitch process.');
   }
 
   // Validate form data
@@ -678,7 +677,7 @@ const handleSubmitStep1 = async () => {
   }
 
   if (errors.length > 0) {
-    // toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
+    toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
     return;
   }
 
@@ -724,7 +723,7 @@ const handleSubmitStep1 = async () => {
       if (!data.project_stage) requiredErrors.push('Project stage is required');
 
       if (requiredErrors.length) {
-        // toast.error(`Please provide required fields:\n${requiredErrors.join('\n')}`);
+        toast.error(`Please provide required fields:\n${requiredErrors.join('\n')}`);
         return;
       }
 
@@ -747,7 +746,7 @@ const handleSubmitStep1 = async () => {
 const handleSubmitStep2 = async () => {
   if (!projectId) {
     console.error('Project ID is missing in Step 2');
-    // return toast.error('Project ID missing. Please restart the pitch process.');
+    return toast.error('Project ID missing. Please restart the pitch process.');
   }
 
   // Validate files
@@ -773,7 +772,7 @@ const handleSubmitStep2 = async () => {
   });
 
   if (errors.length > 0) {
-    // toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
+    toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
     return;
   }
 
@@ -830,7 +829,7 @@ const handleSubmitStep2 = async () => {
       if (!data.get('project_stage')) requiredErrors.push('Project stage is required');
 
       if (requiredErrors.length) {
-        // toast.error(`Please provide required fields:\n${requiredErrors.join('\n')}`);
+        toast.error(`Please provide required fields:\n${requiredErrors.join('\n')}`);
         return;
       }
 
@@ -856,7 +855,7 @@ const handleSubmitStep2 = async () => {
 const handleSubmitStep3 = async () => {
   if (!projectId) {
     console.error('Project ID is missing in Step 3');
-    // return toast.error('Project ID missing. Please restart the pitch process.');
+    return toast.error('Project ID missing. Please restart the pitch process.');
   }
 
   // Validate team members
@@ -864,6 +863,7 @@ const handleSubmitStep3 = async () => {
   if (teamMembers.length === 0) {
     errors.push('At least one team member is required');
   }
+
   teamMembers.forEach((member, index) => {
     if (!member.name?.trim()) {
       errors.push(`Team Member ${index + 1}: Name is required`);
@@ -885,101 +885,60 @@ const handleSubmitStep3 = async () => {
   });
 
   if (errors.length > 0) {
-    // toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
+    toast.error(`Please fix the following errors:\n${errors.join('\n')}`);
     return;
   }
 
+  // Build FormData for PUT
   const formData = new FormData();
+  formData.append('project_name', form.projectName?.trim() || '');
+  formData.append('project_industry', form.industry?.trim() || '');
+  formData.append('min_investment', Number(form.minInvestment));
+  formData.append('max_investment', Number(form.maxInvestment));
+  formData.append('networth', Number(form.networth));
+  formData.append('deal_type', JSON.stringify(form.dealType));
+  formData.append('project_location', form.project_location?.trim() || '');
+  formData.append('postal_code', form.zip?.trim() || '');
+  formData.append('project_stage', form.stage || '');
+  formData.append('city', form.city?.trim() || '');
+  formData.append('state', form.state?.trim() || '');
+  formData.append('website_link', form.website?.trim() || '');
   formData.append('team_overview', teamOverview?.trim() || '');
 
-  teamMembers.forEach((member, index) => {
-    formData.append('member_name[]', member.name?.trim() || '');
-    formData.append('linkedin_account[]', member.linkedin?.trim() || '');
-    formData.append('member_position[]', member.position?.trim() || '');
-    formData.append('member_bio[]', member.bio?.trim() || '');
+  // Build team_members JSON string
+  const teamList = teamMembers.map((member, index) => ({
+    member_name: member.name?.trim() || '',
+    linkedin_account: member.linkedin?.trim() || '',
+    member_position: member.position?.trim() || '',
+    member_bio: member.bio?.trim() || '',
+    member_image: member.avatar ? undefined : (member.avatarPreview || null)
+  }));
+  formData.append('team_members', JSON.stringify(teamList));
+
+  // Append new avatar files
+  teamMembers.forEach((member) => {
     if (member.avatar) {
       formData.append('member_image[]', member.avatar);
-    } else if (member.avatarPreview && isEditMode) {
-      formData.append('member_image_url[]', member.avatarPreview);
     }
   });
 
-  // Log FormData for debugging
-  console.log('FormData entries (Step 3):');
+  // Debug: log FormData
+  console.log('Submitting FormData (Step 3):');
   for (let [key, value] of formData.entries()) {
     console.log(`${key}: ${value instanceof File ? value.name : value}`);
   }
 
   try {
-    if (isEditMode) {
-      // Include required Step 0 fields and team members for updateProject
-      const data = new FormData();
-      data.append('project_name', form.projectName?.trim() || project.project_name);
-      data.append('project_industry', form.industry?.trim() || project.project_industry);
-      data.append('min_investment', Number(form.minInvestment) || project.min_investment);
-      data.append('max_investment', Number(form.maxInvestment) || project.max_investment);
-      data.append('networth', Number(form.networth) || project.networth);
-      data.append('deal_type', JSON.stringify(form.dealType?.length ? form.dealType : project.deal_type));
-      data.append('project_location', form.project_location?.trim() || project.project_location);
-      data.append('postal_code', form.zip?.trim() || project.postal_code);
-      data.append('project_stage', form.stage || project.project_stage);
-      data.append('city', form.city?.trim() || project.city);
-      data.append('state', form.state?.trim() || project.state);
-      data.append('website_link', form.website?.trim() || project.website_link);
-      data.append('team_overview', teamOverview?.trim() || '');
-
-      // Append team members as JSON, preserving existing images
-      data.append('team_members', JSON.stringify(teamMembers.map((member, index) => ({
-        member_name: member.name?.trim() || '',
-        linkedin_account: member.linkedin?.trim() || '',
-        member_position: member.position?.trim() || '',
-        member_bio: member.bio?.trim() || '',
-        member_image: member.avatar ? undefined : (member.avatarPreview || project.team_members?.[index]?.member_image || null),
-      }))));
-
-      // Append file fields
-      teamMembers.forEach((member, index) => {
-        if (member.avatar) {
-          data.append('member_image[]', member.avatar);
-        }
-      });
-
-      // Validate required fields
-      const requiredErrors = [];
-      if (!data.get('project_name')) requiredErrors.push('Project name is required');
-      if (!data.get('project_industry')) requiredErrors.push('Project industry is required');
-      if (Number(data.get('min_investment')) <= 0) requiredErrors.push('Minimum investment must be greater than 0');
-      if (Number(data.get('max_investment')) <= Number(data.get('min_investment'))) requiredErrors.push('Maximum investment must be greater than minimum investment');
-      if (Number(data.get('networth')) <= 0) requiredErrors.push('Net worth must be greater than 0');
-      if (!JSON.parse(data.get('deal_type') || '[]').length) requiredErrors.push('At least one deal type is required');
-      if (!data.get('project_location')) requiredErrors.push('Project location is required');
-      if (!data.get('postal_code')) requiredErrors.push('Postal code is required');
-      if (!data.get('project_stage')) requiredErrors.push('Project stage is required');
-      if (!JSON.parse(data.get('team_members') || '[]').length) requiredErrors.push('At least one team member is required');
-
-      if (requiredErrors.length) {
-        // toast.error(`Please provide required fields:\n${requiredErrors.join('\n')}`);
-        return;
-      }
-
-      console.log('Sending updateProject FormData (Step 3):');
-      for (let [key, value] of data.entries()) {
-        console.log(`${key}: ${value instanceof File ? value.name : value}`);
-      }
-      await updateProject(projectId, data);
-    } else {
-      await updateProjectSection(projectId, formData, 'team', true);
-    }
-    // toast.success('Pitch submitted successfully!');
+    await updateProject(projectId, formData);
+    toast.success(isEditMode ? 'Pitch updated successfully!' : 'Pitch submitted successfully!');
     navigate('/client-portal/entrepreneur/myProjects');
   } catch (err) {
-    // console.error('Step 3 error:', err);
-    // console.log('Full error response:', JSON.stringify(err.response?.data, null, 2));
     const errorMessage = err.response?.data?.message || 'Failed to submit team.';
-    console.log(errorMessage)
-    // toast.error(errorMessage);
+    console.error('Submission error:', errorMessage);
+    toast.error(errorMessage);
   }
 };
+
 
 
 
@@ -1080,21 +1039,7 @@ const handleSubmitStep3 = async () => {
           />
         );
       default:
-        return (
-          <ProjectGeneralInfo
-            form={form}
-            setForm={setForm}
-            isEditMode={isEditMode}
-            Title={Title}
-            handleChange={handleChange}
-            Label={Label}
-            ButtonRow={ButtonRow}
-            Button={Button}
-            setStep={setStep}
-            step={step}
-            handleNextStep={handleSubmitStep0} // ✅ New prop
-          />
-        );
+        return null;
     }
   };
 

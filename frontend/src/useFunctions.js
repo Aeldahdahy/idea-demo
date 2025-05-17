@@ -1314,7 +1314,7 @@ const getAllReviews = useCallback(async () => {
       if (response.status !== 200) {
         throw new Error('Failed to update project');
       }
-      toast.success('Project data updated successfully!');
+      // toast.success('Project data updated successfully!');
     } catch (err) {
       dispatch(setProject(project.map(proj => proj._id === id ? { ...proj, ...updatedData } : proj)));
       const errorMessage = err.response?.data?.message || 'An error occurred. Please try again.';

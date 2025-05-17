@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from "react-bootstrap";
+import { Container,
+  //  Row, Col
+   } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { motion } from "framer-motion";
 import {
@@ -9,7 +11,7 @@ import {
   Instagram,
   Linkedin,
   Youtube,
-  Search,
+  // Search,
 } from "lucide-react";
 import image1 from "../../assets/img-0.49.png";
 import image2 from "../../assets/img-0.50.jpg";

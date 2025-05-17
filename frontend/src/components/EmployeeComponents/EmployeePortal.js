@@ -14,7 +14,7 @@ import EmployeeManageMeeting from './EmployeeManageMeeting';
 import EmployeeDataPopUp from './EmployeeDataPopUp';
 import EmployeeProjectPopUp from './EmployeeProjectPopUp';
 import EmployeeClientDataPopUp from './EmployeeClientDataPopUp';
-import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
+// import EmployeeMeetingPopUp from './EmployeeMeetingPopUp';
 import EmplployeeMain from '../EmployeeComponents/EmployeeMain';
 import EmployeeChatInterface from '../Common/Chat/EmployeeChatInterface';
 

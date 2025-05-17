@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { initFlowbite } from 'flowbite';
+import {Link} from 'react-router-dom';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend);
 
@@ -216,7 +217,7 @@ function EmployeeMain() {
               </ul>
             </div>
           </div>
-          <a
+          <Link
             href="#"
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 px-3 py-2"
           >
@@ -224,7 +225,7 @@ function EmployeeMain() {
             <svg className="w-2.5 h-2.5 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -252,12 +253,12 @@ function EmployeeMain() {
                 <div className="p-3 space-y-2">
                   <h3 className="font-semibold text-gray-900 dark:text-white">Clicks growth</h3>
                   <p>Tracks cumulative growth of community activities.</p>
-                  <a href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
+                  <Link href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
                     Read more
                     <svg className="w-2 h-2 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
                     </svg>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </h5>
@@ -284,12 +285,12 @@ function EmployeeMain() {
                 <div className="p-3 space-y-2">
                   <h3 className="font-semibold text-gray-900 dark:text-white">CPC growth</h3>
                   <p>Tracks cumulative growth of community activities.</p>
-                  <a href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
+                  <Link href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
                     Read more
                     <svg className="w-2 h-2 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
                     </svg>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </h5>
@@ -328,7 +329,7 @@ function EmployeeMain() {
               </ul>
             </div>
           </div>
-          <a
+          <Link
             href="#"
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 px-3 py-2"
           >
@@ -336,7 +337,7 @@ function EmployeeMain() {
             <svg className="w-2.5 h-2.5 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -404,7 +405,7 @@ function EmployeeMain() {
               </ul>
             </div>
           </div>
-          <a
+          <Link
             href="#"
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 px-3 py-2"
           >
@@ -412,7 +413,7 @@ function EmployeeMain() {
             <svg className="w-2.5 h-2.5 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -439,12 +440,12 @@ function EmployeeMain() {
               <div className="p-3 space-y-2">
                 <h3 className="font-semibold text-gray-900 dark:text-white">Traffic growth</h3>
                 <p>Tracks cumulative growth of website traffic.</p>
-                <a href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
+                <Link href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
                   Read more
                   <svg className="w-2 h-2 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -510,7 +511,7 @@ function EmployeeMain() {
               </ul>
             </div>
           </div>
-          <a
+          <Link
             href="#"
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 px-3 py-2"
           >
@@ -518,7 +519,7 @@ function EmployeeMain() {
             <svg className="w-2.5 h-2.5 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -545,12 +546,12 @@ function EmployeeMain() {
               <div className="p-3 space-y-2">
                 <h3 className="font-semibold text-gray-900 dark:text-white">Traffic by device</h3>
                 <p>Tracks traffic distribution across devices.</p>
-                <a href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
+                <Link href="#" className="flex items-center text-blue-600 dark:text-blue-500 hover:underline">
                   Read more
                   <svg className="w-2 h-2 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -611,7 +612,7 @@ function EmployeeMain() {
               </ul>
             </div>
           </div>
-          <a
+          <Link
             href="#"
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 px-3 py-2"
           >
@@ -619,7 +620,7 @@ function EmployeeMain() {
             <svg className="w-2.5 h-2.5 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -669,7 +670,7 @@ function EmployeeMain() {
               </ul>
             </div>
           </div>
-          <a
+          <Link
             href="#"
             className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 px-3 py-2"
           >
@@ -677,7 +678,7 @@ function EmployeeMain() {
             <svg className="w-2.5 h-2.5 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

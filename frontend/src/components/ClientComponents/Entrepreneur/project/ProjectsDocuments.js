@@ -95,7 +95,8 @@ function ProjectsDocuments({
   ButtonRow,
   Button,
   setStep,
-  step
+  step,
+  handleNextStep,
 }) {
   return (
     <>
@@ -401,7 +402,7 @@ function ProjectsDocuments({
       </DocSection>
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)}>Back</Button>
-        <Button primary onClick={() => setStep(step + 1)}>Next</Button>
+        <Button primary onClick={handleNextStep}>Next</Button>
       </ButtonRow>
     </>
   );

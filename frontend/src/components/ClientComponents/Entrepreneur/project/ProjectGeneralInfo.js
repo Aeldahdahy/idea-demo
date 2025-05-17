@@ -59,9 +59,11 @@ function ProjectGeneralInfo({
   ButtonRow,
   Button,
   setStep,
-  step
+  step,
+  handleNextStep, 
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
 
   const dealTypeOptions = [
     { id: "deal-type-equity", value: "equity", label: "Equity" },
@@ -341,7 +343,7 @@ function ProjectGeneralInfo({
       </Row>
       <ButtonRow>
         <Button onClick={() => setStep(step - 1)} disabled={step === 0}>Back</Button>
-        <Button primary onClick={() => setStep(step + 1)}>Next</Button>
+        <Button primary onClick={handleNextStep}>Next</Button>
       </ButtonRow>
     </>
   );

@@ -13,6 +13,8 @@ const http = require('http');
 const { Server } = require('socket.io');
 const Chat = require('./modules/chat'); 
 const Staff = require('./modules/staff');
+const User = require('./modules/signup');
+const { createNotification } = require('./controller/clientController');
 
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
@@ -56,6 +58,33 @@ io.on("connection", (socket) => {
       });
       await chatMessage.save();
 
+      let receiverModel = 'Staff';
+      const isUser = await User.exists({ _id: data.receiver });
+      if (!isUser) {
+        const isStaff = await Staff.exists({ _id: data.receiver });
+        if (isStaff) receiverModel = 'User';
+      }
+
+      const notification = await createNotification({
+        recipientId: data.receiver,
+        recipientModel: receiverModel,
+        title: senderName,
+        body: data.message,
+        sourceType: 'message',
+        metadata: {
+          chatId: chatMessage._id,
+          senderId: data.sender,
+        },
+      }).catch((error) => {
+        console.error("Error creating notification:", error);
+        return null;
+      });
+
+      if (!notification) {
+        console.error("Failed to create notification for message:", data);
+        return;
+      }
+
       const messageData = {
         sender: data.sender,
         receiver: data.receiver,
@@ -64,6 +93,7 @@ io.on("connection", (socket) => {
         senderImage,
         senderRole,
         timestamp: chatMessage.timestamp,
+        notificationId: notification._id, // Include backend notification ID
       };
 
       socket.to(data.receiver).emit("receive_message", {
@@ -86,7 +116,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("Socket.IO disconnected:", socket.id);
+    console.log("Socket disconnected");
   });
 
   socket.on("error", (error) => {

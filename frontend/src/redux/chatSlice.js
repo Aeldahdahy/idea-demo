@@ -35,7 +35,7 @@ export const fetchAdminsUsers = createAsyncThunk(
   async ({ API_BASE_URL }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('authToken');
-      console.log('Token being sent:', token);
+      // console.log('Token being sent:', token);
       if (!token) throw new Error('Missing token');
 
       const response = await axios.get(`${API_BASE_URL}/api/admins/available`, {

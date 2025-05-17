@@ -56,8 +56,8 @@ export const useMessages = ({ API_BASE_URL, currentUserId, selectedUser, allUser
         id => !allUsers.some(u => u._id === id)
       );
       if (missingIds.length > 0) {
-        console.log('useMessages: Missing users detected:', missingIds);
-        console.log('useMessages: Current allUsers=', allUsers.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
+        // console.log('useMessages: Missing users detected:', missingIds);
+        // console.log('useMessages: Current allUsers=', allUsers.map(u => ({ _id: u._id, fullName: u.fullName, role: u.role })));
         onFetchUsers();
       }
     }

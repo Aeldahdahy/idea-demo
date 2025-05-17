@@ -303,7 +303,7 @@ const createMeeting = async (req, res) => {
 // New endpoint: Get meetings for the logged-in investor
 const getInvestorMeetings = async (req, res) => {
   try {
-    const investor_id = req.user.user.id;
+    const investor_id = req.user.id;
 
     const meetings = await Meeting.find({ investor_id })
       .populate('project_id')
@@ -318,7 +318,7 @@ const getInvestorMeetings = async (req, res) => {
 const cancelMeeting = async (req, res) => {
   try {
     const { meetingId } = req.params;
-    const investor_id = req.user.user.id;
+    const investor_id = req.user.id;
 
     // Find the meeting
     const meeting = await Meeting.findById(meetingId);

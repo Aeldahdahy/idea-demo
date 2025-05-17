@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { validationResult } = require('express-validator');
 const fs = require('fs');
-const upload = require('../middleWare/projectMiddleware'); // Import multer middleware
-
+const upload = require('../middleWare/projectMiddleware');
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -17,6 +16,7 @@ const Otp = require('../modules/otp');
 const Project = require('../modules/project');
 const Blog = require('../modules/blog');
 const Review = require('../modules/review');
+const Notification = require('../modules/notifications');
 
 // Create a transporter for nodemailer
 const transporter = nodemailer.createTransport({
@@ -591,147 +591,559 @@ const updateContactStatus = async (req, res) => {
 };
 
 // create project controller
-const createProject = async (req, res) => {
+// const createProject = async (req, res) => {
+//   try {
+//     const {
+//       project_name,
+//       project_industry,
+//       max_investment,
+//       min_investment,
+//       city,
+//       state,
+//       postal_code,
+//       market_description,
+//       business_objectives,
+//       project_stage,
+//       networth,
+//       deal_type,
+//       website_link,
+//       bussiness_highlights,
+//       financial_status,
+//       team_overview,
+//       member_name,
+//       linkedin_account,
+//       member_position,
+//       member_bio,
+//     } = req.body;
+
+//     // File uploads from middleware
+//     const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : null;
+//     const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : null;
+//     const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : null;
+//     const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : null;
+//     const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : null;
+//     const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
+
+//     // Get uploaded member images
+//     const member_images = req.files?.member_image ? req.files.member_image.map(file => file.path) : [];
+
+//     // Get user data from token
+//     const user_id = req.user.user.id;
+//     const user_name = req.user.user.fullName;
+
+//     // Parse deal_type if it's a JSON string
+//     let dealTypeArray = [];
+//     if (deal_type) {
+//       try {
+//         dealTypeArray = JSON.parse(deal_type);
+//         if (!Array.isArray(dealTypeArray)) {
+//           dealTypeArray = [dealTypeArray];
+//         }
+//       } catch (e) {
+//         dealTypeArray = Array.isArray(deal_type) ? deal_type : deal_type ? [deal_type] : [];
+//       }
+//     }
+
+//     // Build team_members array
+//     let team_members = [];
+//     if (Array.isArray(member_name)) {
+//       team_members = member_name.map((name, index) => ({
+//         member_name: name,
+//         linkedin_account: linkedin_account[index],
+//         member_position: member_position[index],
+//         member_bio: member_bio[index],
+//         member_image: member_images[index] || null,
+//       }));
+//     } else if (member_name) {
+//       team_members.push({
+//         member_name,
+//         linkedin_account,
+//         member_position,
+//         member_bio,
+//         member_image: member_images[0] || null,
+//       });
+//     }
+
+//     // Validate required fields
+//     const requiredFields = {
+//       project_name,
+//       project_industry,
+//       max_investment,
+//       min_investment,
+//       market_description,
+//       business_objectives,
+//       project_stage,
+//       networth,
+//       deal_type: dealTypeArray,
+//       postal_code,
+//     };
+
+//     const missingFields = Object.keys(requiredFields).filter(key => !requiredFields[key]);
+//     if (missingFields.length > 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: `Missing required fields: ${missingFields.join(', ')}`,
+//       });
+//     }
+
+//     // Create new project
+//     const newProject = new Project({
+//       user_id,
+//       user_name,
+//       project_name,
+//       project_industry,
+//       max_investment,
+//       min_investment,
+//       project_location: req.body.project_location || '',
+//       city: city || '',
+//       state: state || '',
+//       postal_code,
+//       market_description,
+//       business_objectives,
+//       business_plan,
+//       additional_document,
+//       financial_statement,
+//       exective_sunnary,
+//       project_images,
+//       project_logo,
+//       project_stage,
+//       networth,
+//       deal_type: dealTypeArray,
+//       website_link,
+//       bussiness_highlights,
+//       financial_status,
+//       team_overview,
+//       team_members,
+//       status: 'Rejected',
+//     });
+
+//     await newProject.save();
+//     res.status(201).json({
+//       success: true,
+//       message: 'Project created successfully',
+//       data: newProject,
+//     });
+//   } catch (error) {
+//     console.error('Error creating project:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Error creating project',
+//       error: error.message,
+//     });
+//   }
+// };
+
+const initProject = async (req, res) => {
   try {
     const {
       project_name,
       project_industry,
-      max_investment,
       min_investment,
+      max_investment,
+      networth,
+      deal_type,
+      project_location,
       city,
       state,
       postal_code,
-      market_description,
-      business_objectives,
-      project_stage,
-      networth,
-      deal_type,
       website_link,
-      bussiness_highlights,
-      financial_status,
-      team_overview,
-      member_name,
-      linkedin_account,
-      member_position,
-      member_bio,
+      project_stage
     } = req.body;
 
-    // File uploads from middleware
-    const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : null;
-    const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : null;
-    const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : null;
-    const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : null;
-    const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : null;
-    const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : [];
+    // Debug log
+    console.log("Received initProject request:", req.body);
 
-    // Get uploaded member images
-    const member_images = req.files?.member_image ? req.files.member_image.map(file => file.path) : [];
+    // ✅ Auth check: ensure user data is set by middleware
+    const user_id = req.user?.id;
+    const user_name = req.user?.fullName;
 
-    // Get user data from token
-    const user_id = req.user.user.id;
-    const user_name = req.user.user.fullName;
+    if (!user_id || !user_name) {
+      return res.status(401).json({
+        success: false,
+        message: 'User authentication failed. User data missing in token.'
+      });
+    }
 
-    // Parse deal_type if it's a JSON string
+    // ✅ Parse deal_type safely
     let dealTypeArray = [];
-    if (deal_type) {
+    if (Array.isArray(deal_type)) {
+      dealTypeArray = deal_type;
+    } else if (typeof deal_type === "string") {
       try {
-        dealTypeArray = JSON.parse(deal_type);
-        if (!Array.isArray(dealTypeArray)) {
-          dealTypeArray = [dealTypeArray];
-        }
+        const parsed = JSON.parse(deal_type);
+        dealTypeArray = Array.isArray(parsed) ? parsed : [parsed];
       } catch (e) {
-        dealTypeArray = Array.isArray(deal_type) ? deal_type : deal_type ? [deal_type] : [];
+        dealTypeArray = [deal_type];
       }
     }
 
-    // Build team_members array
-    let team_members = [];
-    if (Array.isArray(member_name)) {
-      team_members = member_name.map((name, index) => ({
-        member_name: name,
-        linkedin_account: linkedin_account[index],
-        member_position: member_position[index],
-        member_bio: member_bio[index],
-        member_image: member_images[index] || null,
-      }));
-    } else if (member_name) {
-      team_members.push({
-        member_name,
-        linkedin_account,
-        member_position,
-        member_bio,
-        member_image: member_images[0] || null,
-      });
-    }
-
-    // Validate required fields
+    // ✅ Validate required fields for step 1
     const requiredFields = {
       project_name,
       project_industry,
-      max_investment,
       min_investment,
-      market_description,
-      business_objectives,
-      project_stage,
+      max_investment,
       networth,
-      deal_type: dealTypeArray,
+      project_stage,
       postal_code,
+      deal_type: dealTypeArray
     };
 
-    const missingFields = Object.keys(requiredFields).filter(key => !requiredFields[key]);
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, value]) => !value || (Array.isArray(value) && value.length === 0))
+      .map(([key]) => key);
+
     if (missingFields.length > 0) {
       return res.status(400).json({
         success: false,
-        message: `Missing required fields: ${missingFields.join(', ')}`,
+        message: `Missing required fields: ${missingFields.join(', ')}`
       });
     }
 
-    // Create new project
+    // ✅ Create project draft
     const newProject = new Project({
       user_id,
       user_name,
       project_name,
       project_industry,
-      max_investment,
       min_investment,
-      project_location: req.body.project_location || '',
-      city: city || '',
-      state: state || '',
-      postal_code,
-      market_description,
-      business_objectives,
-      business_plan,
-      additional_document,
-      financial_statement,
-      exective_sunnary,
-      project_images,
-      project_logo,
-      project_stage,
+      max_investment,
       networth,
       deal_type: dealTypeArray,
+      project_location,
+      city,
+      state,
+      postal_code,
       website_link,
-      bussiness_highlights,
-      financial_status,
-      team_overview,
-      team_members,
-      status: 'Rejected',
+      project_stage,
+      status: 'Draft' // Must match your enum
     });
 
     await newProject.save();
+
     res.status(201).json({
       success: true,
-      message: 'Project created successfully',
-      data: newProject,
+      message: 'Initial project created successfully',
+      data: newProject
     });
+
   } catch (error) {
-    console.error('Error creating project:', error);
+    console.error('initProject error:', error);
     res.status(500).json({
       success: false,
-      message: 'Error creating project',
-      error: error.message,
+      message: 'Internal server error',
+      error: error.message
     });
   }
 };
+
+const updateDescription = async (req, res) => {
+  try {
+    const { market_description, business_objectives, financial_status, bussiness_highlights } = req.body;
+
+    const updated = await Project.findByIdAndUpdate(
+      req.params.id,
+      {
+        market_description,
+        business_objectives,
+        financial_status,
+        bussiness_highlights,
+      },
+      { new: true }
+    );
+
+    res.json({ success: true, message: 'Description updated', data: updated });
+  } catch (err) {
+    console.error('updateDescription error:', err);
+    res.status(500).json({ success: false, message: 'Error updating description', error: err.message });
+  }
+};
+
+const updateDocuments = async (req, res) => {
+  try {
+    const updates = {};
+    if (req.files?.business_plan) updates.business_plan = req.files.business_plan[0].path;
+    if (req.files?.financial_statement) updates.financial_statement = req.files.financial_statement[0].path;
+    if (req.files?.exective_sunnary) updates.exective_sunnary = req.files.exective_sunnary[0].path;
+    if (req.files?.additional_document) updates.additional_document = req.files.additional_document[0].path;
+    if (req.files?.project_logo) updates.project_logo = req.files.project_logo[0].path;
+    if (req.files?.project_images) updates.project_images = req.files.project_images.map(f => f.path);
+
+    const updated = await Project.findByIdAndUpdate(req.params.id, updates, { new: true });
+
+    res.json({ success: true, message: 'Documents updated', data: updated });
+  } catch (err) {
+    console.error('updateDocuments error:', err);
+    res.status(500).json({ success: false, message: 'Error updating documents', error: err.message });
+  }
+};
+
+const updateTeam = async (req, res) => {
+  try {
+    const { team_overview } = req.body;
+
+    // Ensure project exists
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    // Extract form fields as arrays
+    const member_name = Array.isArray(req.body['member_name[]'])
+      ? req.body['member_name[]']
+      : req.body['member_name[]']
+      ? [req.body['member_name[]']]
+      : [];
+    const linkedin_account = Array.isArray(req.body['linkedin_account[]'])
+      ? req.body['linkedin_account[]']
+      : req.body['linkedin_account[]']
+      ? [req.body['linkedin_account[]']]
+      : [];
+    const member_position = Array.isArray(req.body['member_position[]'])
+      ? req.body['member_position[]']
+      : req.body['member_position[]']
+      ? [req.body['member_position[]']]
+      : [];
+    const member_bio = Array.isArray(req.body['member_bio[]'])
+      ? req.body['member_bio[]']
+      : req.body['member_bio[]']
+      ? [req.body['member_bio[]']]
+      : [];
+    const member_image_urls = Array.isArray(req.body['member_image_url[]'])
+      ? req.body['member_image_url[]']
+      : req.body['member_image_url[]']
+      ? [req.body['member_image_url[]']]
+      : [];
+
+    // Extract member images
+    const member_images = req.files?.['member_image[]'] || [];
+
+    // Log parsed data for debugging
+    console.log('Parsed member data:', {
+      member_name,
+      linkedin_account,
+      member_position,
+      member_bio,
+      member_image_urls,
+      member_images: member_images.map(img => ({ path: img.path, fieldname: img.fieldname })),
+    });
+
+    // Build team members array
+    const team_members = member_name.map((name, index) => {
+      const existingMember = project.team_members?.[index];
+      const newImage = member_images[index]?.path;
+      const providedImageUrl = member_image_urls[index];
+      return {
+        member_name: name?.trim() || existingMember?.member_name || '',
+        linkedin_account: linkedin_account[index]?.trim() || existingMember?.linkedin_account || '',
+        member_position: member_position[index]?.trim() || existingMember?.member_position || '',
+        member_bio: member_bio[index]?.trim() || existingMember?.member_bio || '',
+        member_image: newImage || providedImageUrl || existingMember?.member_image || null,
+      };
+    });
+
+    // Validate team members
+    const validationErrors = [];
+    team_members.forEach((m, index) => {
+      const errors = [];
+      if (!m.member_name) errors.push(`Name is required`);
+      if (!m.member_position) errors.push(`Position is required`);
+      if (!m.member_bio) errors.push(`Bio is required`);
+      if (!m.linkedin_account) errors.push(`LinkedIn URL is required`);
+      else if (!/^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(m.linkedin_account)) {
+        errors.push(`Valid LinkedIn URL is required`);
+      }
+      if (!m.member_image && project.team_members?.length === 0) {
+        errors.push(`Image is required for new projects`);
+      }
+      if (errors.length) {
+        validationErrors.push(`Member ${index + 1}: ${errors.join(', ')}`);
+      }
+    });
+
+    if (validationErrors.length) {
+      console.error('Validation errors:', validationErrors);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed: ' + validationErrors.join('; '),
+      });
+    }
+
+    // Perform update
+    const updated = await Project.findByIdAndUpdate(
+      req.params.id,
+      {
+        team_overview: team_overview ?? project.team_overview,
+        team_members,
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      console.error('Failed to update project:', req.params.id);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update project',
+      });
+    }
+
+    console.log('Updated project team_members:', updated.team_members);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Team updated successfully',
+      data: updated,
+    });
+  } catch (err) {
+    console.error('updateTeam error:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during team update',
+      error: err.message,
+    });
+  }
+};
+
+// Helper to determine if project is in edit mode
+const isEditMode = (project) => {
+  return !!project.team_members?.length;
+};
+
+// Update Project Controller
+const updateProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    let {
+      project_name, project_industry, max_investment, min_investment,
+      city, state, postal_code, market_description, business_objectives,
+      status, project_stage, networth, deal_type, website_link,
+      bussiness_highlights, financial_status, team_overview, team_members
+    } = req.body;
+
+    // Validate status
+    const validStatuses = ['Approved', 'Rejected'];
+    if (status && !validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status value' });
+    }
+
+    // Find the project
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    // Handle file uploads
+    const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : project.business_plan;
+    const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : project.additional_document;
+    const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : project.financial_statement;
+    const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : project.exective_sunnary;
+    const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : project.project_images;
+    const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : project.project_logo;
+
+    // Handle team_members update
+    let parsedTeamMembers = project.team_members;
+    if (team_members) {
+      parsedTeamMembers = typeof team_members === 'string' ? JSON.parse(team_members) : team_members;
+      const memberImages = req.files?.['member_image[]'] || [];
+
+      parsedTeamMembers = parsedTeamMembers.map((member, index) => {
+        const existingImage = project.team_members?.[index]?.member_image;
+        const newImage = memberImages[index]?.path;
+        return {
+          member_name: member.member_name?.trim() || existingImage?.member_name,
+          linkedin_account: member.linkedin_account?.trim() || existingImage?.linkedin_account,
+          member_position: member.member_position?.trim() || existingImage?.member_position,
+          member_bio: member.member_bio?.trim() || existingImage?.member_bio,
+          member_image: newImage || member.member_image || existingImage || null,
+        };
+      });
+
+      // Validate team members
+      const validationErrors = [];
+      parsedTeamMembers.forEach((m, index) => {
+        const errors = [];
+        if (!m.member_name) errors.push(`Name is required`);
+        if (!m.member_position) errors.push(`Position is required`);
+        if (!m.member_bio) errors.push(`Bio is required`);
+        if (!m.linkedin_account) errors.push(`LinkedIn URL is required`);
+        else if (!/^https?:\/\/(www\.)?linkedin\.com\/.*$/.test(m.linkedin_account)) {
+          errors.push(`Valid LinkedIn URL is required`);
+        }
+        if (!m.member_image && project.team_members?.length === 0) {
+          errors.push(`Image is required for new projects`);
+        }
+        if (errors.length) {
+          validationErrors.push(`Member ${index + 1}: ${errors.join(', ')}`);
+        }
+      });
+
+      if (validationErrors.length) {
+        console.error('Validation errors:', validationErrors);
+        return res.status(400).json({
+          success: false,
+          message: 'Validation failed: ' + validationErrors.join('; '),
+        });
+      }
+    }
+
+    // Update the project
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        project_name: project_name || project.project_name,
+        project_industry: project_industry || project.project_industry,
+        max_investment: max_investment ?? project.max_investment,
+        min_investment: min_investment ?? project.min_investment,
+        city: city ?? project.city,
+        state: state ?? project.state,
+        postal_code: postal_code || project.postal_code,
+        market_description: market_description ?? project.market_description,
+        business_objectives: business_objectives ?? project.business_objectives,
+        business_plan,
+        additional_document,
+        financial_statement,
+        exective_sunnary,
+        project_images,
+        project_logo,
+        project_stage: project_stage || project.project_stage,
+        networth: networth ?? project.networth,
+        deal_type: deal_type || project.deal_type,
+        website_link: website_link ?? project.website_link,
+        bussiness_highlights: bussiness_highlights ?? project.bussiness_highlights,
+        financial_status: financial_status ?? project.financial_status,
+        team_overview: team_overview ?? project.team_overview,
+        status: status || project.status,
+        team_members: parsedTeamMembers
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update project',
+      });
+    }
+
+    console.log('Updated project:', JSON.stringify(updatedProject, null, 2));
+
+    res.status(200).json({
+      success: true,
+      message: 'Project updated successfully',
+      data: updatedProject
+    });
+  } catch (error) {
+    console.error('updateProject error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating project',
+      error: error.message
+    });
+  }
+};
+
+
 
 // Get All Projects Controller
 const getAllProjects = async (req, res) => {
@@ -777,106 +1189,6 @@ const getProjectByUserId = async (req, res) => {
 };
 
 
-// Update Project Controller
-const updateProject = async (req, res) => {
-  try {
-    const { projectId } = req.params;
-
-    let {
-      project_name, project_industry, max_investment, min_investment,
-      city, state, postal_code, market_description, business_objectives,
-      status, project_stage, networth, deal_type, website_link,
-      bussiness_highlights, financial_status, business_description, comment,
-      team_members // expect team_members as JSON string
-    } = req.body;
-
-    // Validate status
-    const validStatuses = ['Approved', 'Rejected'];
-    if (status && !validStatuses.includes(status)) {
-      return res.status(400).json({ success: false, message: 'Invalid status value' });
-    }
-
-    // Find the project
-    const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({ success: false, message: 'Project not found' });
-    }
-
-    // Handle file uploads
-    const business_plan = req.files?.business_plan ? req.files.business_plan[0].path : project.business_plan;
-    const additional_document = req.files?.additional_document ? req.files.additional_document[0].path : project.additional_document;
-    const financial_statement = req.files?.financial_statement ? req.files.financial_statement[0].path : project.financial_statement;
-    const exective_sunnary = req.files?.exective_sunnary ? req.files.exective_sunnary[0].path : project.exective_sunnary;
-    const project_images = req.files?.project_images ? req.files.project_images.map(file => file.path) : project.project_images;
-    const project_logo = req.files?.project_logo ? req.files.project_logo[0].path : project.project_logo;
-
-    // Handle team_members update
-    let parsedTeamMembers = [];
-    if (team_members) {
-      parsedTeamMembers = JSON.parse(team_members);
-
-      // If there are member_image files uploaded, match them
-      const memberImages = req.files?.member_image || [];
-
-      parsedTeamMembers = parsedTeamMembers.map((member, index) => {
-        return {
-          member_image: memberImages[index] ? memberImages[index].path : (project.team_members[index]?.member_image || null),
-          member_name: member.member_name,
-          linkedin_account: member.linkedin_account,
-          member_position: member.member_position,
-          member_bio: member.member_bio
-        };
-      });
-    } else {
-      parsedTeamMembers = project.team_members; // If no update provided, keep the existing
-    }
-
-    // Update the project
-    const updatedProject = await Project.findByIdAndUpdate(
-      projectId,
-      {
-        project_name,
-        project_industry,
-        max_investment,
-        min_investment,
-        city,
-        state,
-        postal_code,
-        market_description,
-        business_objectives,
-        business_plan,
-        additional_document,
-        financial_statement,
-        exective_sunnary,
-        project_images,
-        project_logo,
-        project_stage,
-        networth,
-        deal_type,
-        website_link,
-        bussiness_highlights,
-        financial_status,
-        business_description,
-        comment,
-        status: status || project.status,
-        team_members: parsedTeamMembers
-      },
-      { new: true, runValidators: true }
-    );
-
-    res.status(200).json({
-      success: true,
-      message: 'Project updated successfully',
-      data: updatedProject
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error updating project',
-      error: error.message
-    });
-  }
-};
 
 // Delete Project by ID Controller
 const deleteProject = async (req, res) => {
@@ -1058,23 +1370,120 @@ const createReview = async (req, res) => {
 // Fetch all reviews with client name and image
 const getAllReviews = async (req, res) => {
   try {
-    const reviews = await Review.find()
-      .populate('user', 'fullName image');
-
-    const formattedReviews = reviews.map(review => ({
-      _id: review._id,
-      client_name: review.user.fullName,
-      client_image: review.user.image,
-      client_review: review.client_review,
-      review_rate: review.review_rate,
-      createdAt: review.createdAt
-    }));
-
+    const reviews = await Review.find().populate('user', 'fullName image');
+    // console.log('Fetched reviews:', reviews); // Log raw reviews
+    const formattedReviews = reviews.map(review => {
+      // console.log('Processing review:', review); 
+      return {
+        _id: review._id,
+        client_name: review.user?.fullName || 'Unknown User',
+        client_image: review.user?.image || null, 
+        client_review: review.client_review,
+        review_rate: review.review_rate,
+        createdAt: review.createdAt
+      };
+    });
     res.status(200).json(formattedReviews);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch reviews' });
+    console.error('Error in getAllReviews:', err); // Log full error
+    res.status(500).json({ error: 'Failed to fetch reviews', details: err.message });
   }
 };
+
+// Save notification (for internal use like chat/socket, not HTTP request)
+const createNotification = async ({ recipientId, recipientModel, title, body, sourceType = 'message', metadata = {} }) => {
+  if (!recipientId || !recipientModel || !title || !body) {
+    console.warn('Missing fields when trying to create a notification');
+    return;
+  }
+
+  const notification = new Notification({
+    recipientId,
+    recipientModel,
+    title,
+    body,
+    sourceType,
+    metadata,
+  });
+
+  await notification.save();
+  console.log(`Notification saved: ${notification._id} for recipient ${recipientId}`);
+  return notification;
+};
+
+// 🔒 Secure: get notifications only for authenticated user
+const getNotifications = async (req, res) => {
+  try {
+    const { user } = req;
+
+    // Check for required user data
+    if (!user || !user._id || !user.role) {
+      return res.status(403).json({ success: false, message: 'Missing user data in token' });
+    }
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(user._id)) {
+      return res.status(400).json({ success: false, message: 'Invalid user ID' });
+    }
+
+    // Map role to recipientModel
+    const role = user.role.toLowerCase();
+    const recipientModel = ['entrepreneur', 'investor', 'user', 'client'].includes(role)
+      ? 'User'
+      : ['admin', 'auditor', 'cs', 'employee'].includes(role)
+        ? 'Staff'
+        : null;
+
+    if (!recipientModel) {
+      // console.warn(`Unauthorized role in JWT: ${user.role}`);
+      return res.status(403).json({ success: false, message: 'Unauthorized role' });
+    }
+
+    // Fetch notifications
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+
+    const notifications = await Notification.find({ recipientId: user._id, recipientModel })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Notification.countDocuments({ recipientId: user._id, recipientModel });
+
+    return res.status(200).json({
+      success: true,
+      notifications,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    console.error('Error in getNotifications:', error.message);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Mark one notification as read
+const updateNotification = async (req, res) => {
+  try {
+    const notification = await Notification.findByIdAndUpdate(
+      req.params.id,
+      { isRead: true },
+      { new: true }
+    );
+
+    if (!notification) {
+      return res.status(404).json({ success: false, message: 'Notification not found' });
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error updating notification:', error);
+    return res.status(500).json({ success: false, message: 'Failed to mark as read' });
+  }
+};
+
 
 module.exports =
 {
@@ -1089,7 +1498,11 @@ module.exports =
   getAllUsers,
   getAllContacts,
   updateContactStatus,
-  createProject,
+  // createProject,
+  initProject,
+  updateDescription,
+  updateDocuments,
+  updateTeam,
   getAllProjects,
   getProjectById,
   getProjectByUserId,
@@ -1100,5 +1513,8 @@ module.exports =
   updateBlog,
   getAllBlogs,
   createReview,
-  getAllReviews
+  getAllReviews,
+  createNotification,
+  getNotifications,
+  updateNotification,
 };

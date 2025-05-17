@@ -25,6 +25,8 @@ function EmployeeSideBar() {
   const toggleSidebar = () => setExpanded(!isExpanded);
   const { signOutDistroySession } = useFunctions();
   const location = useLocation();
+    const [loading, setLoading] = useState(false); // Add this
+  const [error, setError] = useState(null);      // Add this
 
   const menuItems = [
     { path: "/employee-portal/", label: "Dashboard", icon: <LayoutGrid className="w-6 h-6" /> },
@@ -94,7 +96,7 @@ function EmployeeSideBar() {
         ))}
         <Tooltip content={isExpanded ? "" : "Logout"} placement="right">
           <Link
-            onClick={() => signOutDistroySession()}
+            onClick={() => signOutDistroySession(setLoading, setError)}
             className={`flex items-center p-3 my-1 transition-colors duration-200 rounded-md ${
               location.pathname === "/logout"
                 ? "bg-[#377E9A] text-white border-l-4 border-[#024059]"

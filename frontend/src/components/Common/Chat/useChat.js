@@ -62,14 +62,14 @@ export const useChat = ({ API_BASE_URL, updateMessages, currentUserId, currentUs
 
   const getAllUsers = useCallback(() => {
     if (!currentUserId) {
-      console.log('getAllUsers: Skipping, no currentUserId');
+      // console.log('getAllUsers: Skipping, no currentUserId');
       return;
     }
     if (lastFetched && Date.now() - lastFetched < 30 * 60e3) {
-      console.log('getAllUsers: Skipping, recently fetched');
+      // console.log('getAllUsers: Skipping, recently fetched');
       return;
     }
-    console.log('getAllUsers: Dispatching fetchUsers');
+    // console.log('getAllUsers: Dispatching fetchUsers');
     dispatch(fetchUsers({ API_BASE_URL })).unwrap().catch(err => {
       console.error('fetchUsers error:', err);
       toast.error(err);
@@ -109,18 +109,18 @@ export const useChat = ({ API_BASE_URL, updateMessages, currentUserId, currentUs
   // Subscribe to sockets
   useEffect(() => {
     if (!currentUserId || !socket) {
-      console.log('Socket: Skipping, no currentUserId or socket');
+      // console.log('Socket: Skipping, no currentUserId or socket');
       return;
     }
-    console.log('Socket: Joining room', currentUserId);
+    // console.log('Socket: Joining room', currentUserId);
     socket.emit("join_room", currentUserId);
     const handler = (data) => {
-      console.log('Socket: Received message', data);
+      // console.log('Socket: Received message', data);
       if (data.sender !== currentUserId && data.playSound) {
         if (audioRef.current && typeof audioRef.current.play === 'function') {
           audioRef.current.play().catch(err => console.error('Audio play error:', err));
         } else {
-          console.warn('Socket: Audio play not supported');
+          // console.warn('Socket: Audio play not supported');
         }
       }
       if (data.receiver === currentUserId) {

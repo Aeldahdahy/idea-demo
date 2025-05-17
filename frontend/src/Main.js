@@ -90,7 +90,20 @@ function Main() {
       <CopyRight />
       {/* <PopUpConfirmationOk />
       <PopUpConfirmationYesNo /> */}
-      <ToastContainer />
+      <ToastContainer
+        position="top-center"
+        toastClassName="custom-toast"
+        bodyClassName="custom-toast-body"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+
       {/* <ChatInterface /> */}
     </>
   );

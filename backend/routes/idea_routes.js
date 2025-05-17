@@ -13,10 +13,13 @@ const { createContact,
    verifyOtpForReset,
    resetPassword,
    getAllUsers,
-   updateUser,
    getAllContacts,
    updateContactStatus,
-   createProject,
+  //  createProject,
+  initProject,
+  updateDescription,
+  updateDocuments,
+  updateTeam,
    getAllProjects,
    getProjectById,
    getProjectByUserId,
@@ -27,7 +30,11 @@ const { createContact,
    updateBlog,
    getAllBlogs,
    createReview,
-   getAllReviews } = require('../controller/clientController'); 
+   getAllReviews,
+   createNotification,
+   getNotifications,
+   updateNotification,
+  } = require('../controller/clientController'); 
 
 const { createStaff,
    loginStaff,
@@ -160,7 +167,13 @@ router.post('/verify-otp-for-reset', verifyOtpForReset);
 router.post('/reset-password', resetPassword);
 
 // Create a new project (Authenticated users only)
-router.post('/projects', authenticateToken, upload, createProject);
+// router.post('/projects', authenticateToken, upload, createProject);
+router.post('/projects/init', authenticateToken, initProject);
+// router.patch('/projects/:id/general', authenticateToken, updateGeneralInfo);
+router.patch('/projects/:id/description', authenticateToken, updateDescription);
+router.patch('/projects/:id/documents', authenticateToken, upload, updateDocuments);
+router.patch('/projects/:id/team', authenticateToken, upload, updateTeam);
+
 
 // Update project (Authenticated users only)
 router.put('/projects/:projectId', authenticateToken, upload, updateProject);
@@ -185,5 +198,14 @@ router.post('/review/:userId', authenticateToken, createReview);
 
 // Get All Reviews
 router.get('/review', getAllReviews); 
+
+// notification routes
+router.post('/save-notifications', authenticateToken, createNotification);
+
+// Get notifications for a specific user
+router.get('/get-notifications', authenticateToken, getNotifications);
+
+// update notification status
+router.put('/notifications/mark-read/:id', authenticateToken, updateNotification);
 
 module.exports = router;
